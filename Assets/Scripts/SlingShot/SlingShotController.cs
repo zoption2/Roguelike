@@ -1,82 +1,90 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
+using System;
 
 namespace SlingShot
 {
-    public class SlingShotController : MonoBehaviour
+    public interface ISlingShot
     {
-        [SerializeField] float _power;
-        [SerializeField] Rigidbody2D _rigidBody;
-        [SerializeField] Vector2 _minPower;
-        [SerializeField] Vector2 _maxPower;
-        SlingShotLine _slingShotLine;
+        public void Init();
+        public event Action<Vector2, float> OnShoot;
+    }
+    public class SlingShotController : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
+    {
+        public event Action<Vector2, float> OnShoot;
 
-        Camera _camera;
-        Vector2 _force;
-        Vector2 _startPoint;
-        Vector2 _endPoint;
+        private Vector2 _direction;
+        private Vector2 _startPoint;
+        private Vector2 _endPoint;
+        private Vector2 _touchPositionInWorld;
 
-        private bool _isInMotion = false;
+        private GameObject _touchZone;
+        private GameObject _cursor;
 
-        private void Start()
+        private Collider2D _touchZoneCollider;
+
+        private float _dragDistance;
+
+        private bool _isDragging = false;
+        public void Init()
         {
-            _camera = Camera.main;
-            _slingShotLine = GetComponent<SlingShotLine>();
+            gameObject.SetActive(true);
+            _cursor = transform.Find("TouchZone/Cursor").gameObject;
+            _touchZone = transform.Find("TouchZone").gameObject;
+            _touchZoneCollider = _touchZone.GetComponent<Collider2D>();
+            _startPoint = transform.position;
+            _cursor.transform.position = _startPoint;
+            if(!_isDragging) StartCoroutine(DeactivateAfterDelay(0.3f));
         }
 
-        private void Update()
+        private System.Collections.IEnumerator DeactivateAfterDelay(float delay)
         {
-            if (_rigidBody.velocity.magnitude < 0.1f)
-            {
-
-
-                _isInMotion = false;
-
-
-
-            }
-            else { _isInMotion = true; }
-
-            if (! _isInMotion )
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-
-                    _startPoint = transform.position;
-
-                }
-
-                if (Input.GetMouseButton(0))
-                {
-                    Vector2 _currentPoint = _camera.ScreenToWorldPoint(Input.mousePosition);
-                    //Debug.Log("Зараз я тут: " + _currentPoint);
-
-                    _slingShotLine.RenderLine(_startPoint, _currentPoint);
-                }
-
-                if (Input.GetMouseButtonUp(0))
-                {
-
-                    _endPoint = _camera.ScreenToWorldPoint(Input.mousePosition);
-                    //Debug.Log("Кінець: " + _endPoint);
-                    Vector2 _direction = _startPoint - _endPoint;
-                    _direction.Normalize();
-                    _force = new Vector2(Math.Clamp(_direction.x, _minPower.x, _maxPower.x), Math.Clamp(_direction.y, _minPower.y, _maxPower.y));
-
-                    _rigidBody.AddForce(_force * _power, ForceMode2D.Impulse);
-
-
-                    _slingShotLine.EndLine();
-                }
-            }
-            
-
-            
-            Debug.Log("Рух? " + _isInMotion);
+            yield return new WaitForSeconds(delay);
+            gameObject.SetActive(false);
         }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            _touchPositionInWorld = Camera.main.ScreenToWorldPoint(eventData.position);
+            StopAllCoroutines();
+            _isDragging = true;
+
+            if (_touchZoneCollider.bounds.Contains(_touchPositionInWorld))
+            {
+                _cursor.transform.position = _touchPositionInWorld;
+                _endPoint = _cursor.transform.position;
+                _direction = _startPoint - _endPoint;
+            }
+            else
+            {
+                Vector2 clampedPosition = _touchZoneCollider.ClosestPoint(_touchPositionInWorld);
+                _cursor.transform.position = clampedPosition;
+                _endPoint = clampedPosition;
+                _direction = _startPoint - _endPoint;
+            }
+        }
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            _isDragging = false;
+
+            if (IsInDeadZone(_touchPositionInWorld))
+            {
+                gameObject.SetActive(false);
+
+            } else
+            {
+                _dragDistance = Vector2.Distance(_startPoint, _endPoint);
+                OnShoot?.Invoke(_direction, _dragDistance);
+                gameObject.SetActive(false);
+            }
+            
+        }
+
+        private bool IsInDeadZone(Vector2 position)
+        {
+            float innerRadius = _touchZoneCollider.bounds.size.x / 2f * 0.2f;
+            return Vector2.Distance(position, _touchZoneCollider.bounds.center) < innerRadius;
+        }
+
     }
 }
