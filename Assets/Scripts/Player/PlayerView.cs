@@ -1,7 +1,10 @@
-using System.Collections;
+﻿using Enemy;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace Player
@@ -15,7 +18,7 @@ namespace Player
             _playerController = playerController;
         }
 
-        public void Lauch(/*Power, direction and etc...*/)
+        public void Lauch(float power, Vector2 direction)
         {
             Debug.Log("Nothing happened yet");
         }
@@ -25,5 +28,4 @@ namespace Player
             _playerController.OnClick();
         }
     }
-
 }

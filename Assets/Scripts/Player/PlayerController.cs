@@ -1,31 +1,46 @@
+using Gameplay;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 namespace Player
 {
-    public class PlayerController : IPlayerController
+    public interface ICharacterController
+    {
+        public void Init();
+        public bool IsActive { get; set; }
+    }
+
+    public class PlayerController : ICharacterController
     {
         private PlayerView _playerView;
         private PlayerModel _playerModel;
+        public delegate void OnSwitchState();
+        public static event OnSwitchState OnSwitch;
+        public bool IsActive { get; set; }
 
-        //TODO: add methods.
-        public void Init()
+        public virtual void Init()
         {
-            _playerView = GameObject.Find("PlayerView").GetComponent<PlayerView>();
+            _playerView = GameObject.Find("Player").GetComponent<PlayerView>();
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
-            Debug.Log("Controller was initialized successfully");
+        }
+        public  void  Init(PlayerView playerView, PlayerModel playerModel)
+        {
+            _playerView = playerView;
+            _playerView.Initialize(this);
+            _playerModel = playerModel;
         }
         public void OnClick()
         {
-            Debug.Log("Player was clicked");
+            if (IsActive)
+            {
+                Debug.Log("Player was clicked");
+                OnSwitch?.Invoke();
+                //Switch state
+            }
+                
         }
     }
-    public interface IPlayerController
-    {
-        public void Init();
-    }
-
 }

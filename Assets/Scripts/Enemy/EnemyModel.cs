@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Player;
 
-namespace Player
+namespace Enemy
 {
-    public class PlayerModel
+    public class EnemyModel
     {
         private float _power;
 
@@ -19,4 +17,3 @@ namespace Player
         }
     }
 }
-

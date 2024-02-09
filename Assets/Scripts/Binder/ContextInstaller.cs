@@ -1,3 +1,4 @@
+using Gameplay;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,9 @@ public class ContextInstaller : MonoInstaller
     private PrefabHolder _prefabHolder;
     public override void InstallBindings()
     {
-        Container.Bind<IPlayerController>().To<PlayerController>().AsSingle();
+        Container.Bind<ICharacterController>().To<PlayerController>().AsSingle();
         Container.Bind<PrefabHolder>().FromInstance(_prefabHolder).AsSingle();
+        Container.Bind<IPooler>().To<ObjectPooler>().AsSingle();
+        Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();
     }
 }

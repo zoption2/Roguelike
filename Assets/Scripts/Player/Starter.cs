@@ -1,3 +1,5 @@
+using Enemy;
+using Gameplay;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,17 +10,25 @@ namespace Player
 {
     public class Starter : MonoBehaviour
     {
-        private IPlayerController _controller;
+        private ICharacterController _controller;
+        private IGameplayService _gameplayService;
+        private ICharacterController _enemyController = new EnemyController();
 
         [Inject]
-        public void Construct(IPlayerController controller)
+        public void Construct(ICharacterController controller, IGameplayService service)
         {
             _controller = controller;
+            _controller.IsActive = true;
+            _gameplayService = service;
         }
 
         public void Start()
         {
             _controller.Init();
+            _enemyController.Init();
+            _gameplayService.Players.Add(_controller);
+            _gameplayService.Enemies.Add(_enemyController);
+            _gameplayService.Init(TypeOfScenario.Default);
         }
     }
 }
