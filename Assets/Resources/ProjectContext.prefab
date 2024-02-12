@@ -74,4 +74,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b426e86be32bfc4e8b759344d09b8ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefabHolder: {fileID: 11400000, guid: edd4b2ca99a57ef4b94920423f22291c, type: 2}
+  _prefabHolder: {fileID: 11400000, guid: 2e329738a025d7342a43412e474b0232, type: 2}
+  _objectPooler: {fileID: 0}

@@ -10,6 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 89e765048b298084fa7cb0ca3328cea4, type: 3}
-  m_Name: Prefab Holder
+  m_Name: New Prefab Holder
   m_EditorClassIdentifier: 
-  prefab1: {fileID: 0}

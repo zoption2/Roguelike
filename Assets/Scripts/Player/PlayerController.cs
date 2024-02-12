@@ -1,4 +1,5 @@
 using Gameplay;
+using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,9 @@ namespace Player
         private PlayerModel _playerModel;
         public delegate void OnSwitchState();
         public static event OnSwitchState OnSwitch;
+
+        [Inject]
+        private IPrefabByEnumProvider _provider;
         public bool IsActive { get; set; }
 
         public virtual void Init()

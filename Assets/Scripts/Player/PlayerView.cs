@@ -9,7 +9,11 @@ using UnityEngine.EventSystems;
 
 namespace Player
 {
-    public class PlayerView : MonoBehaviour, IPointerDownHandler
+    public interface IPlayerView
+    {
+        public void Initialize(PlayerController playerController);
+    }
+    public class PlayerView : MonoBehaviour, IPointerDownHandler,IPlayerView
     {
         private PlayerController _playerController;
 

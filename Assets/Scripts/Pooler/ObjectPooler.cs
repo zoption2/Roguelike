@@ -1,55 +1,72 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Player;
+using System;
+using Prefab;
 
-public interface IPooler
+namespace Pool
 {
-    public void Init();
-}
-
-public class ObjectPooler :  IPooler
-{
-    private List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionary;
-
-    public void Init()
+    public interface IPooler
     {
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
-        foreach (Pool pool in pools)
+        public void Init();
+        public IPlayerView GetView<IPlayerView>(Enum _enum,Vector2 position,Quaternion rotation, Transform parent);
+    }
+
+    public  class ObjectPooler : MonoBehaviour,IPooler
+    {
+        private List<Pool> pools;
+        public Dictionary<PlayerType, Queue<GameObject>> poolDictionary;
+
+        private IPrefabByEnumProvider _provider;
+
+        public void Init()
         {
-            poolDictionary.Add(pool.tag, new Queue<GameObject>());
+            poolDictionary = new Dictionary<PlayerType, Queue<GameObject>>();
+            foreach (Pool pool in pools)
+            {
+                poolDictionary.Add(pool.tag, new Queue<GameObject>());
+            }
         }
-    }
-    public void CreateObject(string tag,Vector2 position, Quaternion rotation)
-    {
-        if (poolDictionary.ContainsKey(tag))
+        public void CreateObject(PlayerType tag, Vector2 position, Quaternion rotation)
         {
-            GameObject prefab = poolDictionary[tag].Dequeue();
-            GameObject obj = GameObject.Instantiate(prefab, position, rotation);
-            // do some staff with object
+            if (poolDictionary.ContainsKey(tag))
+            {
+                GameObject prefab = poolDictionary[tag].Dequeue();
+                GameObject obj = GameObject.Instantiate(prefab, position, rotation);
+                // do some staff with object
+            }
         }
-    }
 
-    public void Pull(string tag, Vector2 position, Quaternion rotation)
-    {
-        if (poolDictionary.ContainsKey(tag))
+        public void Pull(PlayerType tag, Vector2 position, Quaternion rotation)
         {
-            GameObject obj = poolDictionary[tag].Dequeue();
-            // do some staff with object (set position or etc)
+            if (poolDictionary.ContainsKey(tag))
+            {
+                GameObject obj = poolDictionary[tag].Dequeue();
+                // do some staff with object (set position or etc)
+            }
         }
-    }
-    public void Push(string tag,GameObject obj)
-    {
-        obj.SetActive(false);
-        if (poolDictionary.ContainsKey(tag))
-            poolDictionary[tag].Enqueue(obj);
-    }
+        public void Push(PlayerType tag, GameObject obj)
+        {
+            obj.SetActive(false);
+            if (poolDictionary.ContainsKey(tag))
+                poolDictionary[tag].Enqueue(obj);
+        }
 
-    [System.Serializable]
-    public class Pool
-    {
-        public string tag;
-        public GameObject prefab;
-        public int size;
+        public IPlayerView GetView<IPlayerView>(Enum _enum, Vector2 position, Quaternion rotation, Transform parent)
+        {
+            GameObject prefab = _provider.GetPrefab(PlayerType.Warrior);
+            GameObject instance = GameObject.Instantiate(prefab, position, rotation, parent);
+            IPlayerView view = instance.GetComponent<IPlayerView>();
+            return view;
+        }
+
+        [Serializable]
+        public class Pool
+        {
+            public PlayerType tag;
+            public GameObject prefab;
+            public int size;
+        }
     }
 }
