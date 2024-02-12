@@ -1,3 +1,4 @@
+using Enemy;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,20 +13,20 @@ namespace Gameplay
     }
     public interface IGameplayService
     {
-        public List<ICharacterController> Players { get; }
-        public List<ICharacterController> Enemies { get; }
+        public List<IPlayerController> Players { get; }
+        public List<IEnemyController> Enemies { get; }
         void Init(TypeOfScenario type);
     }
     public class GameplayService : IGameplayService
     {
-        public List<ICharacterController> Players { get; }
-        public List<ICharacterController> Enemies { get; }
+        public List<IPlayerController> Players { get; }
+        public List<IEnemyController> Enemies { get; }
         public Scenario ScenarioType;
 
         public GameplayService()
         {
-            Players = new List<ICharacterController>();
-            Enemies = new List<ICharacterController>();
+            Players = new List<IPlayerController>();
+            Enemies = new List<IEnemyController>();
         }
 
 

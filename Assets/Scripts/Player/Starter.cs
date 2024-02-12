@@ -10,12 +10,12 @@ namespace Player
 {
     public class Starter : MonoBehaviour
     {
-        private ICharacterController _controller;
+        private IPlayerController _controller;
         private IGameplayService _gameplayService;
-        private ICharacterController _enemyController = new EnemyController();
+        private IEnemyController _enemyController = new EnemyController();
 
         [Inject]
-        public void Construct(ICharacterController controller, IGameplayService service)
+        public void Construct(IPlayerController controller, IGameplayService service)
         {
             _controller = controller;
             _controller.IsActive = true;

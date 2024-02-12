@@ -15,6 +15,10 @@ namespace Prefab
     {
         GameObject GetPrefab<TEnum>(TEnum prefabType) where TEnum : System.Enum;
     }
+    public interface IPrefabByTypeProvider
+    {
+        TType GetPrefab<TType>(TType prefabType) where TType : System.Type;
+    }
     [CreateAssetMenu]
     public class PrefabHolder : ScriptableObject, IPrefabByEnumProvider
     {
@@ -38,5 +42,18 @@ namespace Prefab
             }
             throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
         }
+        /*
+         public TType GetPrefab<TType>(TType prefabType) where TType : System.Type;
+        {
+            for (int i = 0;i < prefabs.Count;i++)
+            {
+                if (prefabs[i].Value.Equals(prefabType))
+                {
+                    return prefabs[i].Value;
+                }
+            }
+            throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
+        }
+        */
     }
 }

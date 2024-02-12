@@ -4,6 +4,7 @@ using UnityEngine;
 using Player;
 using System;
 using Prefab;
+using Zenject;
 
 namespace Pool
 {
@@ -13,11 +14,11 @@ namespace Pool
         public IPlayerView GetView<IPlayerView>(Enum _enum,Vector2 position,Quaternion rotation, Transform parent);
     }
 
-    public  class ObjectPooler : MonoBehaviour,IPooler
+    public  class ObjectPooler : IPooler
     {
         private List<Pool> pools;
         public Dictionary<PlayerType, Queue<GameObject>> poolDictionary;
-
+        [Inject]
         private IPrefabByEnumProvider _provider;
 
         public void Init()

@@ -1,4 +1,5 @@
 using Gameplay;
+using Pool;
 using Prefab;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +14,11 @@ namespace Player
         public bool IsActive { get; set; }
     }
 
-    public class PlayerController : ICharacterController
+    public interface IPlayerController : ICharacterController
+    {
+
+    }
+    public class PlayerController : IPlayerController
     {
         private PlayerView _playerView;
         private PlayerModel _playerModel;
@@ -21,7 +26,7 @@ namespace Player
         public static event OnSwitchState OnSwitch;
 
         [Inject]
-        private IPrefabByEnumProvider _provider;
+        private IPooler _pooler;
         public bool IsActive { get; set; }
 
         public virtual void Init()
