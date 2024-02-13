@@ -2,52 +2,55 @@
 using UnityEngine.EventSystems;
 using System;
 
-namespace SlingShot
+namespace SlingShotLogic
 {
     public interface ISlingShot
     {
         public void Init();
         public event Action<Vector2, float> OnShoot;
     }
-    public class SlingShotController : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
+
+    public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
     {
         public event Action<Vector2, float> OnShoot;
+
+        [SerializeField] GameObject _cursor;
+        [SerializeField] GameObject _touchZone;
 
         private Vector2 _direction;
         private Vector2 _startPoint;
         private Vector2 _endPoint;
         private Vector2 _touchPositionInWorld;
 
-        private GameObject _touchZone;
-        private GameObject _cursor;
-
         private Collider2D _touchZoneCollider;
 
         private float _dragDistance;
 
-        private bool _isDragging = false;
+        private bool _isDragging = false;//DELETE WHEN STATE SYSTEM WILL READY//
         public void Init()
         {
             gameObject.SetActive(true);
-            _cursor = transform.Find("TouchZone/Cursor").gameObject;
-            _touchZone = transform.Find("TouchZone").gameObject;
+
             _touchZoneCollider = _touchZone.GetComponent<Collider2D>();
             _startPoint = transform.position;
             _cursor.transform.position = _startPoint;
-            if(!_isDragging) StartCoroutine(DeactivateAfterDelay(0.3f));
+
+            if(!_isDragging) StartCoroutine(DeactivateAfterDelay(0.3f)); ///!!!!///
         }
 
+        /////////////////////////////DELETE WHEN STATE SYSTEM WILL READY///////////////////////////////////
         private System.Collections.IEnumerator DeactivateAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
             gameObject.SetActive(false);
         }
+        /////////////////////////////DELETE WHEN STATE SYSTEM WILL READY///////////////////////////////////
 
         public void OnDrag(PointerEventData eventData)
         {
+            _isDragging = true;
             _touchPositionInWorld = Camera.main.ScreenToWorldPoint(eventData.position);
             StopAllCoroutines();
-            _isDragging = true;
 
             if (_touchZoneCollider.bounds.Contains(_touchPositionInWorld))
             {
@@ -70,7 +73,7 @@ namespace SlingShot
             if (IsInDeadZone(_touchPositionInWorld))
             {
                 gameObject.SetActive(false);
-
+                
             } else
             {
                 _dragDistance = Vector2.Distance(_startPoint, _endPoint);

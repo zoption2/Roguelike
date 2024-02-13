@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89e765048b298084fa7cb0ca3328cea4, type: 3}
   m_Name: Prefab Holder
   m_EditorClassIdentifier: 
-  prefab1: {fileID: 0}
+  prefab1: {fileID: 3435460262379840820, guid: 6ab1340c9eda7244cb365e266a784ef1, type: 3}

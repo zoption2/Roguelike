@@ -42,5 +42,10 @@ namespace Player
             }
                 
         }
+
+        public void ActivateSlingShot()
+        {
+            //Maybe code will be here
+        }
     }
 }
