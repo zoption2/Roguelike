@@ -27,7 +27,7 @@ namespace Gameplay
         public DefaultScenario(IGameplayService fullService)
         {
             _gameplayService = fullService;
-            Debug.Log("This is the default scenario, so it starts wit player turn");
+            Debug.Log("This is the default scenario, so it starts with player turn");
         }
         public override void Init()
         {

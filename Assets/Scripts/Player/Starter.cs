@@ -5,17 +5,22 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 using Zenject;
+using Prefab;
 
 namespace Player
 {
     public class Starter : MonoBehaviour
     {
-        private ICharacterController _controller;
+        private IPlayerController _controller;
         private IGameplayService _gameplayService;
-        private ICharacterController _enemyController = new EnemyController();
+        private IEnemyController _enemyController = new EnemyController();
+        [SerializeField]
+        private Transform _playerTransform;
+        [SerializeField]
+        private Transform _enemyTransform;
 
         [Inject]
-        public void Construct(ICharacterController controller, IGameplayService service)
+        public void Construct(IPlayerController controller, IGameplayService service)
         {
             _controller = controller;
             _controller.IsActive = true;
@@ -24,7 +29,7 @@ namespace Player
 
         public void Start()
         {
-            _controller.Init();
+            _controller.Init(_playerTransform, PlayerType.Warrior);
             _enemyController.Init();
             _gameplayService.Players.Add(_controller);
             _gameplayService.Enemies.Add(_enemyController);

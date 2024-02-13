@@ -4,7 +4,11 @@ using UnityEngine;
 
 namespace Enemy
 {
-    public class EnemyController : ICharacterController
+    public interface IEnemyController : ICharacterController
+    {
+
+    }
+    public class EnemyController : IEnemyController
     {
         private EnemyView _enemyView;
         private EnemyModel _enemyModel;
@@ -31,9 +35,7 @@ namespace Enemy
             {
                 Debug.Log("Enemy was clicked");
                 OnSwitch?.Invoke();
-                //Switch state
             }
-
         }
     }
 }
