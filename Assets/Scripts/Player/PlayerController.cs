@@ -1,6 +1,7 @@
 using Gameplay;
 using Pool;
 using Prefab;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,17 +17,17 @@ namespace Player
 
     public interface IPlayerController : ICharacterController
     {
-
+        public void Init(Transform point, PlayerType type);
     }
     public class PlayerController : IPlayerController
     {
-        private PlayerView _playerView;
+        private IPlayerView _playerView;
         private PlayerModel _playerModel;
         public delegate void OnSwitchState();
         public static event OnSwitchState OnSwitch;
 
         [Inject]
-        private IPooler _pooler;
+        private ObjectPooler<IPlayerView,PlayerType> _playerPooler;
         public bool IsActive { get; set; }
 
         public virtual void Init()
@@ -35,11 +36,12 @@ namespace Player
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
         }
-        public  void  Init(PlayerView playerView, PlayerModel playerModel)
+        public  void  Init(Transform point, PlayerType type)
         {
-            _playerView = playerView;
+            _playerPooler.Init();
+            _playerView = _playerPooler.GetElementAndSpawnIfWasntSpawned<IPlayerView>(type ,point.position,point.rotation,point.parent);
             _playerView.Initialize(this);
-            _playerModel = playerModel;
+            _playerModel = new PlayerModel();
         }
         public void OnClick()
         {

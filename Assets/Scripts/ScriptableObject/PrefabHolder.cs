@@ -17,43 +17,44 @@ namespace Prefab
     }
     public interface IPrefabByTypeProvider
     {
-        TType GetPrefab<TType>(TType prefabType) where TType : System.Type;
+        GameObject GetPrefab<TType>(TType prefabType) where TType : System.Type;
     }
     [CreateAssetMenu]
-    public class PrefabHolder : ScriptableObject, IPrefabByEnumProvider
+    public abstract class PrefabHolder<T> : ScriptableObject where T : Enum
     {
         [Serializable]
-        public class Mapper
+        public class Mapper 
         {
-            public PlayerType Player_Type;
+            public T Key;
             public GameObject Value;
         }
 
-        public List<Mapper> prefabs;
+        [SerializeField]
+        protected List<Mapper> _prefabs;
 
-        public GameObject GetPrefab<TEnum>(TEnum prefabType) where TEnum : Enum
-        {
-            for (int i = 0;i < prefabs.Count;i++)
+        //public GameObject GetPrefab<TEnum>(TEnum prefabType) where TEnum : Enum
+        //{
+        //    for (int i = 0;i < _prefabs.Count;i++)
+        //    {
+        //        if (_prefabs[i].PlayerType.Equals(prefabType))
+        //        {
+        //            return _prefabs[i].Value;
+        //        }
+        //    }
+        //    throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
+        //}
+        
+         public GameObject GetPrefab<T>(T prefabType)
+         {
+            for (int i = 0;i < _prefabs.Count;i++)
             {
-                if (prefabs[i].Player_Type.Equals(prefabType))
+                if (_prefabs[i].Key.Equals(prefabType))
                 {
-                    return prefabs[i].Value;
+                    return _prefabs[i].Value;
                 }
             }
             throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
-        }
-        /*
-         public TType GetPrefab<TType>(TType prefabType) where TType : System.Type;
-        {
-            for (int i = 0;i < prefabs.Count;i++)
-            {
-                if (prefabs[i].Value.Equals(prefabType))
-                {
-                    return prefabs[i].Value;
-                }
-            }
-            throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
-        }
-        */
+         }
+        
     }
 }
