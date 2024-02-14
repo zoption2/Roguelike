@@ -8,12 +8,6 @@ using Zenject;
 
 namespace Pool
 {
-    public interface IPooler<T>
-    {
-        public void Init();
-        public IPlayerView GetView<IPlayerView>(Type _enum,Vector2 position,Quaternion rotation, Transform parent);
-    }
-
     public abstract  class ObjectPooler<T, TEnum> where TEnum : Enum
     {
         protected List<Pool<TEnum>> _pools;
