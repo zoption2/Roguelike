@@ -1,55 +1,73 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Player;
+using System;
+using Prefab;
+using Zenject;
 
-public interface IPooler
+namespace Pool
 {
-    public void Init();
-}
-
-public class ObjectPooler : MonoBehaviour,  IPooler
-{
-    public List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionary;
-
-    public void Init()
+    ////DELETE///
+    public interface IPooler<T>
     {
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
-        foreach (Pool pool in pools)
+        public void Init();
+        public IPlayerView GetView<IPlayerView>(Type _enum,Vector2 position,Quaternion rotation, Transform parent);
+    }
+    ////DELETE///
+
+    public abstract  class ObjectPooler<T, TEnum> where TEnum : Enum
+    {
+        protected List<Pool<TEnum>> _pools;
+        protected Dictionary<TEnum, Queue<GameObject>> _poolDictionary;
+        // construct
+        public void Init()
         {
-            poolDictionary.Add(pool.tag, new Queue<GameObject>());
+            _poolDictionary = new Dictionary<TEnum, Queue<GameObject>>();
+            //foreach (Pool<TEnum> pool in _pools)
+            //{
+            //    _poolDictionary.Add(pool.Tag, new Queue<GameObject>());
+            //}
         }
-    }
-    public void CreateObject(string tag,Vector2 position, Quaternion rotation)
-    {
-        if (poolDictionary.ContainsKey(tag))
+        public void CreateObject(TEnum tag, Vector2 position, Quaternion rotation)
         {
-            GameObject prefab = poolDictionary[tag].Dequeue();
-            GameObject obj = GameObject.Instantiate(prefab, position, rotation);
-            // do some staff with object
+            if (_poolDictionary.ContainsKey(tag))
+            {
+                GameObject prefab = _poolDictionary[tag].Dequeue();
+                GameObject obj = GameObject.Instantiate(prefab, position, rotation);
+                // do some staff with object
+            }
         }
-    }
 
-    public void Pull(string tag, Vector2 position, Quaternion rotation)
-    {
-        if (poolDictionary.ContainsKey(tag))
+        public void Pull(TEnum tag, Vector2 position, Quaternion rotation)
         {
-            GameObject obj = poolDictionary[tag].Dequeue();
-            // do some staff with object (set position or etc)
+            if (_poolDictionary.ContainsKey(tag))
+            {
+                GameObject obj = _poolDictionary[tag].Dequeue();
+                // do some staff with object (set position or etc)
+            }
         }
-    }
-    public void Push(string tag,GameObject obj)
-    {
-        obj.SetActive(false);
-        if (poolDictionary.ContainsKey(tag))
-            poolDictionary[tag].Enqueue(obj);
-    }
+        public void Push(TEnum tag, GameObject obj)
+        {
+            obj.SetActive(false);
+            if (_poolDictionary.ContainsKey(tag))
+                _poolDictionary[tag].Enqueue(obj);
+        }
 
-    [System.Serializable]
-    public class Pool
-    {
-        public string tag;
-        public List<GameObject> prefabs;
-        public int size;
+        public abstract T GetElementAndSpawnIfWasntSpawned<T>(TEnum _tag, Vector2 position, Quaternion rotation);
+        //{
+        //    GameObject prefab = _provider.GetPrefab(_tag);
+        //    // Check
+        //    GameObject instance = GameObject.Instantiate(prefab, position, rotation, parent);
+        //    IPlayerView view = instance.GetComponent<IPlayerView>();
+        //    return view;
+        //}
+
+        [Serializable]
+        public class Pool<TEnum> where TEnum : Enum
+        {
+            public TEnum Tag;
+            public GameObject Prefab;
+        }
     }
 }

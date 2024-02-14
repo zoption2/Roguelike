@@ -1,32 +1,31 @@
-using Player;
 using Prefab;
-using System;
+using SlingShotLogic;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
-namespace Pool {
-    public class PlayerPooler : ObjectPooler<IPlayerView,PlayerType>
+namespace Pool
+{
+    public class SlingShotPooler : ObjectPooler<ISlingShot, PlayerType>//Change it
     {
-        private PlayerPrefabHolder _provider;
-        public PlayerPooler(PlayerPrefabHolder provider)
+        private SlingShotPrefabHolder _provider;
+        public SlingShotPooler(SlingShotPrefabHolder provider)
         {
             _provider = provider;
         }
-        public override IPlayerView GetElementAndSpawnIfWasntSpawned<IPlayerView>(PlayerType _tag, Vector2 position, Quaternion rotation)
+        public override ISlingShot GetElementAndSpawnIfWasntSpawned<ISlingShot>(PlayerType _tag, Vector2 position, Quaternion rotation)
         {
             GameObject instance;
-            IPlayerView view;
+            ISlingShot view;
             if (_poolDictionary.ContainsKey(_tag))
             {
                 instance = _poolDictionary[_tag].Dequeue();
-                view = instance.GetComponent<IPlayerView>();
+                view = instance.GetComponent<ISlingShot>();
                 return view;
             }
             GameObject prefab = _provider.GetPrefab(_tag);
             instance = GameObject.Instantiate(prefab, position, rotation);
-            view = instance.GetComponent<IPlayerView>();
+            view = instance.GetComponent<ISlingShot>();
             return view;
         }
     }

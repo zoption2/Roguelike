@@ -13,13 +13,14 @@ using Zenject;
 
 namespace Player
 {
-    public interface IPlayer
+    public interface IPlayerView
     {
-        public void Launch(Vector2 _direction, float _force);
+        public void Initialize(PlayerController playerController);
     }
-    public class PlayerView : MonoBehaviour, IPlayer, IPointerDownHandler
+    public class PlayerView : MonoBehaviour, IPlayerView, IPointerDownHandler
     {
         private PlayerController _playerController;
+        private Transform _transform;
 
         private Rigidbody2D _rigidbody;
         private Vector2 _position;
@@ -42,13 +43,17 @@ namespace Player
         {
             _rigidbody = GetComponent<Rigidbody2D>();
 
-            _prefabProvider = FindObjectOfType<PrefabProviderByType>();
+            //_prefabProvider = FindObjectOfType<PrefabProviderByType>();
 
-            _slingShotControllerPrefab = _prefabProvider.GetPrefab<SlingShot>();
+            //_slingShotControllerPrefab = _prefabProvider.GetPrefab<SlingShot>();
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            _transform = transform;
+            DragInputChanger(eventData);
+            _playerController.OnClick(_transform, Prefab.PlayerType.Warrior);
+            /*
             _position = transform.position;
 
             if (slingShotController == null)
@@ -84,6 +89,7 @@ namespace Player
                 }
 
             }
+            */
         }
         public void Launch(Vector2 direction, float dragDistance)
         {

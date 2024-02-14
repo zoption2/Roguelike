@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89e765048b298084fa7cb0ca3328cea4, type: 3}
-  m_Name: Prefab Holder
+  m_Script: {fileID: 11500000, guid: 48935f7534f580a41a32302d54e6100e, type: 3}
+  m_Name: Player Prefab Holder
   m_EditorClassIdentifier: 
-  prefab1: {fileID: 3435460262379840820, guid: 6ab1340c9eda7244cb365e266a784ef1, type: 3}
+  _prefabs:
+  - Value: {fileID: 5019426081544581403, guid: 907169bc81a90f34f8a33d0280a3a76d, type: 3}

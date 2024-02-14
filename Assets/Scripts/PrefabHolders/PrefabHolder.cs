@@ -11,6 +11,11 @@ namespace Prefab
         Wizard,
         Archer
     }
+
+    public enum SlingShotType
+    {
+        //Maybe here will be different types of slingshots
+    }
     public interface IPrefabByEnumProvider
     {
         GameObject GetPrefab<TEnum>(TEnum prefabType) where TEnum : System.Enum;
