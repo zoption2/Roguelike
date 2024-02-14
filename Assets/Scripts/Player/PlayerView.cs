@@ -1,6 +1,5 @@
-﻿using Assets.Scripts.PrefabProvider;
-using Enemy;
-using SlingShotLogic;
+﻿using Enemy;
+using Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Windows;
-using Zenject;
 
 namespace Player
 {
@@ -17,52 +14,38 @@ namespace Player
     {
         public void Initialize(PlayerController playerController);
     }
-    public class PlayerView : MonoBehaviour, IPlayerView, IPointerDownHandler
+    public class PlayerView : MonoBehaviour, IPointerDownHandler,IPlayerView, IMyPoolable
     {
         private PlayerController _playerController;
-        private Transform _transform;
-
-        private Rigidbody2D _rigidbody;
-        private Vector2 _position;
-        private float _maxPower = 10f;
-        private bool isLaunchSubscribed = false;
-        private PrefabProviderByType _prefabProvider;
-        private GameObject _slingShotControllerPrefab;
-
-        public Action onTouchStart;
-
-        GameObject slingShotControllerObject;
-        SlingShot slingShotController;
 
         public void Initialize(PlayerController playerController)
         {
             _playerController = playerController;
         }
 
-        private void Start()
+        public void Lauch(float power, Vector2 direction)
         {
-            _rigidbody = GetComponent<Rigidbody2D>();
+            Debug.Log("Nothing happened yet");
+        }
+
+        public void OnCreate()
+        {
+            
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            _transform = transform;
-            DragInputChanger(eventData);
-            _playerController.OnClick(_transform, Prefab.SlingShotType.Melee);
-        }
-        public void Launch(Vector2 direction, float dragDistance)
-        {
-            Vector2 forceVector = direction * dragDistance * _maxPower;
-            _rigidbody.AddForce(forceVector, ForceMode2D.Impulse);
-            slingShotController.OnShoot -= Launch;
-            isLaunchSubscribed = false;
+            _playerController.OnClick();
         }
 
-        private void DragInputChanger(PointerEventData eventData)
+        public void OnPull()
         {
-            DragInputModule.dragFocusObject = slingShotControllerObject;
-            eventData.pointerDrag = slingShotControllerObject;
-            eventData.dragging = true;
+            
+        }
+
+        public void OnRelease()
+        {
+            
         }
     }
 }

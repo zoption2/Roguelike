@@ -18,14 +18,7 @@ namespace Prefab
         Distance,
         Magic,
     }
-    public interface IPrefabByEnumProvider
-    {
-        GameObject GetPrefab<TEnum>(TEnum prefabType) where TEnum : System.Enum;
-    }
-    public interface IPrefabByTypeProvider
-    {
-        GameObject GetPrefab<TType>(TType prefabType) where TType : System.Type;
-    }
+    
     [CreateAssetMenu]
     public abstract class PrefabHolder<T> : ScriptableObject where T : Enum
     {
@@ -38,18 +31,6 @@ namespace Prefab
 
         [SerializeField]
         protected List<Mapper> _prefabs;
-
-        //public GameObject GetPrefab<TEnum>(TEnum prefabType) where TEnum : Enum
-        //{
-        //    for (int i = 0;i < _prefabs.Count;i++)
-        //    {
-        //        if (_prefabs[i].PlayerType.Equals(prefabType))
-        //        {
-        //            return _prefabs[i].Value;
-        //        }
-        //    }
-        //    throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
-        //}
         
          public GameObject GetPrefab<T>(T prefabType)
          {
