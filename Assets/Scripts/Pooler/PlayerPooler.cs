@@ -7,27 +7,17 @@ using UnityEngine;
 using Zenject;
 
 namespace Pool {
-    public class PlayerPooler : ObjectPooler<IPlayerView,PlayerType>
+    public class PlayerPooler : ObjectPooler<PlayerType>
     {
         private PlayerPrefabHolder _provider;
         public PlayerPooler(PlayerPrefabHolder provider)
         {
             _provider = provider;
         }
-        public override IPlayerView GetElementAndSpawnIfWasntSpawned<IPlayerView>(PlayerType _tag, Vector2 position, Quaternion rotation, Transform parent)
+
+        protected override GameObject GetPrefab(PlayerType tag)
         {
-            GameObject instance;
-            IPlayerView view;
-            if (_poolDictionary.ContainsKey(_tag))
-            {
-                instance = _poolDictionary[_tag].Dequeue();
-                view = instance.GetComponent<IPlayerView>();
-                return view;
-            }
-            GameObject prefab = _provider.GetPrefab(_tag);
-            instance = GameObject.Instantiate(prefab, position, rotation, parent);
-            view = instance.GetComponent<IPlayerView>();
-            return view;
+            return _provider.GetPrefab(tag);
         }
     }
 }

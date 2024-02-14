@@ -27,7 +27,7 @@ namespace Player
         public static event OnSwitchState OnSwitch;
 
         [Inject]
-        private ObjectPooler<IPlayerView,PlayerType> _playerPooler;
+        private ObjectPooler<PlayerType> _playerPooler;
         public bool IsActive { get; set; }
 
         public virtual void Init()
@@ -39,7 +39,8 @@ namespace Player
         public  void  Init(Transform point, PlayerType type)
         {
             _playerPooler.Init();
-            _playerView = _playerPooler.GetElementAndSpawnIfWasntSpawned<IPlayerView>(type ,point.position,point.rotation,point.parent);
+             var poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+            _playerView = poolable.gameObject.GetComponent<PlayerView>();
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
         }

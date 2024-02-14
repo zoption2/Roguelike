@@ -13,7 +13,7 @@ public class ContextInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.Bind<IPlayerController>().To<PlayerController>().AsSingle();
-        Container.Bind<ObjectPooler<IPlayerView,PlayerType>>().To<PlayerPooler>().AsSingle();
+        Container.Bind<ObjectPooler<PlayerType>>().To<PlayerPooler>().AsSingle();
         Container.Bind<PlayerPrefabHolder>().FromInstance(_prefabHolder).AsSingle();
         Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();
     }

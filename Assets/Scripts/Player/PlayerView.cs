@@ -1,4 +1,5 @@
 ﻿using Enemy;
+using Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Player
     {
         public void Initialize(PlayerController playerController);
     }
-    public class PlayerView : MonoBehaviour, IPointerDownHandler,IPlayerView
+    public class PlayerView : MonoBehaviour, IPointerDownHandler,IPlayerView, IMyPoolable
     {
         private PlayerController _playerController;
 
@@ -27,9 +28,24 @@ namespace Player
             Debug.Log("Nothing happened yet");
         }
 
+        public void OnCreate()
+        {
+            
+        }
+
         public void OnPointerDown(PointerEventData eventData)
         {
             _playerController.OnClick();
+        }
+
+        public void OnPull()
+        {
+            
+        }
+
+        public void OnRelease()
+        {
+            
         }
     }
 }
