@@ -1,18 +1,19 @@
+using Pool;
+using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlingshotPooler : MonoBehaviour
+public class SlingshotPooler : ObjectPooler<SlingShotType>
 {
-    // Start is called before the first frame update
-    void Start()
+    private SlingShotPrefabHolder _provider;
+    public SlingshotPooler(SlingShotPrefabHolder provider)
     {
-        
+        _provider = provider;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override GameObject GetPrefab(SlingShotType tag)
     {
-        
+        return _provider.GetPrefab(tag);
     }
 }

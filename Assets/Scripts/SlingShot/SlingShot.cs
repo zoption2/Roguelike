@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
+using Pool;
+using Prefab;
+using Zenject;
 
 namespace SlingShotLogic
 {
@@ -10,7 +13,7 @@ namespace SlingShotLogic
         public event Action<Vector2, float> OnShoot;
     }
 
-    public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
+    public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler, IMyPoolable
     {
         public event Action<Vector2, float> OnShoot;
 
@@ -27,11 +30,16 @@ namespace SlingShotLogic
         private float _dragDistance;
 
         private bool _isDragging = false;//DELETE WHEN STATE SYSTEM WILL READY//
+
+        [Inject]
+        private ObjectPooler<SlingShotType> _slingShotPooler;
         public void Init()
         {
-            gameObject.SetActive(true);
+            //gameObject.SetActive(true);
+            //_slingShotPooler.Init();
+            
 
-            _touchZoneCollider = _touchZone.GetComponent<Collider2D>();
+            //_touchZoneCollider = _touchZone.GetComponent<Collider2D>();
             _startPoint = transform.position;
             _cursor.transform.position = _startPoint;
 
@@ -42,7 +50,8 @@ namespace SlingShotLogic
         private System.Collections.IEnumerator DeactivateAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
-            gameObject.SetActive(false);
+            _slingShotPooler.Push(SlingShotType.Melee, this);
+            //gameObject.SetActive(false);
         }
         /////////////////////////////DELETE WHEN STATE SYSTEM WILL READY///////////////////////////////////
 
@@ -72,13 +81,15 @@ namespace SlingShotLogic
 
             if (IsInDeadZone(_touchPositionInWorld))
             {
-                gameObject.SetActive(false);
+                _slingShotPooler.Push(SlingShotType.Melee, this);
+                //gameObject.SetActive(false);
                 
             } else
             {
                 _dragDistance = Vector2.Distance(_startPoint, _endPoint);
                 OnShoot?.Invoke(_direction, _dragDistance);
-                gameObject.SetActive(false);
+                _slingShotPooler.Push(SlingShotType.Melee, this);
+                //gameObject.SetActive(false);
             }
             
         }
@@ -89,5 +100,21 @@ namespace SlingShotLogic
             return Vector2.Distance(position, _touchZoneCollider.bounds.center) < innerRadius;
         }
 
+        public void OnCreate()
+        {
+            _touchZoneCollider = _touchZone.GetComponent<Collider2D>();
+            Debug.Log("SlingShot got touchZone collider");
+        }
+
+        public void OnPull()
+        {
+            Debug.Log("OnPull");
+        }
+
+        public void OnRelease()
+        {
+            Debug.Log("OnRelease");
+
+        }
     }
 }

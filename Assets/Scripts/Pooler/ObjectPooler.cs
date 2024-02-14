@@ -47,7 +47,7 @@ namespace Pool
                 //obj.SetActive(true);
             }
             var selectedQueue = _poolDictionary[tag];
-            if(selectedQueue.Count > 0)
+            if (selectedQueue.Count > 0)
             {
                 IMyPoolable resultObject = _poolDictionary[tag].Dequeue();
                 resultObject.gameObject.transform.position = position;
@@ -60,7 +60,17 @@ namespace Pool
             else
             {
                 var prefab = GetPrefab(tag);
-                GameObject spawnedInstance = GameObject.Instantiate(prefab,position,rotation,parent);
+
+                GameObject spawnedInstance = null;
+
+                if (this is SlingshotPooler)
+                {
+                    spawnedInstance = ProjectContext.Instance.Container.InstantiatePrefab(prefab, position, rotation, parent);
+                }
+                else if (this is PlayerPooler)
+                {
+                    spawnedInstance = GameObject.Instantiate(prefab, position, rotation, parent);
+                }
                 IMyPoolable result = spawnedInstance.gameObject.GetComponent<IMyPoolable>();
                 result.gameObject.transform.position = position;
                 result.gameObject.transform.rotation = rotation;
