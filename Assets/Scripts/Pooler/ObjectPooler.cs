@@ -8,11 +8,13 @@ using Zenject;
 
 namespace Pool
 {
+    ////DELETE///
     public interface IPooler<T>
     {
         public void Init();
         public IPlayerView GetView<IPlayerView>(Type _enum,Vector2 position,Quaternion rotation, Transform parent);
     }
+    ////DELETE///
 
     public abstract  class ObjectPooler<T, TEnum> where TEnum : Enum
     {
@@ -52,7 +54,7 @@ namespace Pool
                 _poolDictionary[tag].Enqueue(obj);
         }
 
-        public abstract T GetElementAndSpawnIfWasntSpawned<T>(TEnum _tag, Vector2 position, Quaternion rotation, Transform parent);
+        public abstract T GetElementAndSpawnIfWasntSpawned<T>(TEnum _tag, Vector2 position, Quaternion rotation);
         //{
         //    GameObject prefab = _provider.GetPrefab(_tag);
         //    // Check
