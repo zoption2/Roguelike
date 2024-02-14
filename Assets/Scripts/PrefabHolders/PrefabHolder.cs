@@ -9,12 +9,14 @@ namespace Prefab
     {
         Warrior,
         Wizard,
-        Archer
+        Archer,
     }
 
     public enum SlingShotType
     {
-        //Maybe here will be different types of slingshots
+        Melee,
+        Distance,
+        Magic,
     }
     public interface IPrefabByEnumProvider
     {

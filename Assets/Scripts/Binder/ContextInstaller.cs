@@ -18,7 +18,7 @@ public class ContextInstaller : MonoInstaller
     {
         Container.Bind<IPlayerController>().To<PlayerController>().AsSingle();
         Container.Bind<ObjectPooler<IPlayerView,PlayerType>>().To<PlayerPooler>().AsSingle();
-        Container.Bind<ObjectPooler<ISlingShot, PlayerType>>().To<SlingShotPooler>().AsSingle();
+        Container.Bind<ObjectPooler<ISlingShot, SlingShotType>>().To<SlingShotPooler>().AsSingle();
         Container.Bind<PlayerPrefabHolder>().FromInstance(_playerPrefabHolder).AsSingle();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();

@@ -39,7 +39,7 @@ namespace Player
         private ObjectPooler<IPlayerView,PlayerType> _playerPooler;
 
         [Inject]
-        private ObjectPooler<ISlingShot, PlayerType> _slingShotPooler;
+        private ObjectPooler<ISlingShot, SlingShotType> _slingShotPooler;
         public bool IsActive { get; set; }
 
         public virtual void Init()
@@ -56,7 +56,7 @@ namespace Player
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
         }
-        public void OnClick(Transform transform, PlayerType type)//slingshot type
+        public void OnClick(Transform transform, SlingShotType type)//slingshot type
         {
             if (IsActive)
             {    

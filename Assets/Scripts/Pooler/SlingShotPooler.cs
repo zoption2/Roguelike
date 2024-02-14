@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Pool
 {
-    public class SlingShotPooler : ObjectPooler<ISlingShot, PlayerType>//Change it
+    public class SlingShotPooler : ObjectPooler<ISlingShot, SlingShotType>
     {
         private SlingShotPrefabHolder _provider;
         public SlingShotPooler(SlingShotPrefabHolder provider)
         {
             _provider = provider;
         }
-        public override ISlingShot GetElementAndSpawnIfWasntSpawned<ISlingShot>(PlayerType _tag, Vector2 position, Quaternion rotation)
+        public override ISlingShot GetElementAndSpawnIfWasntSpawned<ISlingShot>(SlingShotType _tag, Vector2 position, Quaternion rotation)
         {
             GameObject instance;
             ISlingShot view;

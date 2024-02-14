@@ -42,54 +42,13 @@ namespace Player
         private void Start()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-
-            //_prefabProvider = FindObjectOfType<PrefabProviderByType>();
-
-            //_slingShotControllerPrefab = _prefabProvider.GetPrefab<SlingShot>();
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
             _transform = transform;
             DragInputChanger(eventData);
-            _playerController.OnClick(_transform, Prefab.PlayerType.Warrior);
-            /*
-            _position = transform.position;
-
-            if (slingShotController == null)
-            {
-                slingShotControllerObject = Instantiate(_slingShotControllerPrefab, _position, Quaternion.identity);
-                slingShotController = slingShotControllerObject.GetComponent<SlingShot>();
-
-                slingShotController.Init();
-
-                DragInputChanger(eventData);
-
-                if (!isLaunchSubscribed)
-                {
-                    slingShotController.OnShoot += Launch;
-                    isLaunchSubscribed = true;
-                }
-
-            }
-            else
-            {
-                slingShotController.transform.position = _position;
-
-                if (_rigidbody.velocity.magnitude != 0f) return;// !!!!!!!DELETE WHAN STATE WILL WORK!!!!!!!!!
-
-                slingShotController.Init();
-
-                DragInputChanger(eventData);
-
-                if (!isLaunchSubscribed)
-                {
-                    slingShotController.OnShoot += Launch;
-                    isLaunchSubscribed = true;
-                }
-
-            }
-            */
+            _playerController.OnClick(_transform, Prefab.SlingShotType.Melee);
         }
         public void Launch(Vector2 direction, float dragDistance)
         {
