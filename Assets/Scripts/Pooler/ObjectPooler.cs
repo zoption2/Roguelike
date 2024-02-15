@@ -41,10 +41,6 @@ namespace Pool
             if (!_poolDictionary.ContainsKey(tag))
             {
                 _poolDictionary.Add(tag, new Queue<IMyPoolable>());
-                //GameObject obj = _poolDictionary[tag].Dequeue();
-                //obj.transform.position = position;
-                //obj.transform.rotation = rotation;
-                //obj.SetActive(true);
             }
             var selectedQueue = _poolDictionary[tag];
             if (selectedQueue.Count > 0)

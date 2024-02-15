@@ -4,12 +4,15 @@ using System;
 using Pool;
 using Prefab;
 using Zenject;
+using UnityEditor.Networking.PlayerConnection;
+using Player;
+using UnityEngine.UIElements;
 
 namespace SlingShotLogic
 {
     public interface ISlingShot
     {
-        public void Init();
+        public void Init(Vector2 _initPosition);
         public event Action<Vector2, float> OnShoot;
     }
 
@@ -29,31 +32,25 @@ namespace SlingShotLogic
 
         private float _dragDistance;
 
-        private bool _isDragging = false;//DELETE WHEN STATE SYSTEM WILL READY//
+        private bool _isDragging = false; //ITS FOR COROUTINE
 
         [Inject]
         private ObjectPooler<SlingShotType> _slingShotPooler;
-        public void Init()
-        {
-            //gameObject.SetActive(true);
-            //_slingShotPooler.Init();
-            
-
-            //_touchZoneCollider = _touchZone.GetComponent<Collider2D>();
-            _startPoint = transform.position;
+        public void Init(Vector2 _initPosition)
+        {  
+            _startPoint = _initPosition;
             _cursor.transform.position = _startPoint;
-
             if(!_isDragging) StartCoroutine(DeactivateAfterDelay(0.3f)); ///!!!!///
         }
 
-        /////////////////////////////DELETE WHEN STATE SYSTEM WILL READY///////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
         private System.Collections.IEnumerator DeactivateAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
             _slingShotPooler.Push(SlingShotType.Melee, this);
             //gameObject.SetActive(false);
         }
-        /////////////////////////////DELETE WHEN STATE SYSTEM WILL READY///////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
 
         public void OnDrag(PointerEventData eventData)
         {
@@ -82,28 +79,25 @@ namespace SlingShotLogic
             if (IsInDeadZone(_touchPositionInWorld))
             {
                 _slingShotPooler.Push(SlingShotType.Melee, this);
-                //gameObject.SetActive(false);
-                
             } else
             {
                 _dragDistance = Vector2.Distance(_startPoint, _endPoint);
                 OnShoot?.Invoke(_direction, _dragDistance);
                 _slingShotPooler.Push(SlingShotType.Melee, this);
-                //gameObject.SetActive(false);
+
+                PlayerController.OnSwitch.Invoke();
             }
-            
         }
 
         private bool IsInDeadZone(Vector2 position)
         {
-            float innerRadius = _touchZoneCollider.bounds.size.x / 2f * 0.2f;
+            float innerRadius = _touchZoneCollider.bounds.size.x / 3f * 0.3f;
             return Vector2.Distance(position, _touchZoneCollider.bounds.center) < innerRadius;
         }
 
         public void OnCreate()
         {
             _touchZoneCollider = _touchZone.GetComponent<Collider2D>();
-            Debug.Log("SlingShot got touchZone collider");
         }
 
         public void OnPull()
@@ -114,7 +108,7 @@ namespace SlingShotLogic
         public void OnRelease()
         {
             Debug.Log("OnRelease");
-
         }
+
     }
 }

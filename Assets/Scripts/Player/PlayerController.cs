@@ -24,6 +24,8 @@ namespace Player
     }
     public class PlayerController : IPlayerController
     {
+        Transform _poolableTransform;
+
         private IPlayerView _playerView;
         private PlayerModel _playerModel;
 
@@ -35,8 +37,10 @@ namespace Player
 
         private float _maxPower = 10f;
 
+        private bool _isLaunchWasSubscibed;
+
         public delegate void OnSwitchState();
-        public static event OnSwitchState OnSwitch;
+        public static OnSwitchState OnSwitch;
 
         [Inject]
         private ObjectPooler<PlayerType> _playerPooler;
@@ -55,9 +59,13 @@ namespace Player
         {
             _playerPooler.Init();
             _slingShotPooler.Init();
-            var poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
-            _playerView = poolable.gameObject.GetComponent<PlayerView>();
-            _playerViewRigidbody = poolable.gameObject.GetComponentInChildren<Rigidbody2D>(); 
+            var _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+            _playerView = _poolable.gameObject.GetComponent<PlayerView>();
+
+            var _poolableObj = _poolable.gameObject.transform.GetChild(0).gameObject;
+            _poolableTransform = _poolableObj.GetComponent<Transform>(); 
+
+            _playerViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>(); 
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
         }
@@ -65,10 +73,12 @@ namespace Player
         {
             if (IsActive)
             {
-                var slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+                Vector2 _initPosition = _poolableTransform.position;
+                var slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(type, _initPosition, point.rotation, point.parent);
                 _slingShot = slingShotPoolable.gameObject.GetComponent<SlingShot>();
 
-                _slingShot.Init();
+                _slingShot.Init(_initPosition);
+
 
                 if(_slingShotObject == null)
                 {
@@ -78,9 +88,13 @@ namespace Player
                 DragInputModule.dragFocusObject = _slingShotObject;
                 eventData.pointerDrag = _slingShotObject;
                 eventData.dragging = true;
+
+                if (!_isLaunchWasSubscibed)
+                {
+                    _slingShot.OnShoot += Launch;
+                    _isLaunchWasSubscibed = true;
+                }
             }
-            //MAKE SUBSCRIBE CHECK!
-            _slingShot.OnShoot += Launch;
         }
 
         public void Launch(Vector2 direction, float dragDistance)
@@ -89,6 +103,7 @@ namespace Player
 
             _playerViewRigidbody.AddForce(forceVector, ForceMode2D.Impulse);
             _slingShot.OnShoot -= Launch;
+            _isLaunchWasSubscibed = false;
         }
     }
 }
