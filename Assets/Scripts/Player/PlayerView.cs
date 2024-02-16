@@ -14,13 +14,9 @@ namespace Player
     public interface IPlayerView
     {
         public void Initialize(PlayerController playerController);
-
-        public event Action<PointerEventData> OnDragChange;
     }
     public class PlayerView : MonoBehaviour, IPointerDownHandler,IPlayerView, IMyPoolable
     {
-        public event Action<PointerEventData> OnDragChange;
-
         private PlayerController _playerController;
 
         private Transform _transform;

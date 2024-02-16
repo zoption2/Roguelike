@@ -32,8 +32,8 @@ namespace Prefab
         [SerializeField]
         protected List<Mapper> _prefabs;
         
-         public GameObject GetPrefab<T>(T prefabType)
-         {
+         public GameObject GetPrefab<P>(P prefabType) //P is the same as T
+        {
             for (int i = 0;i < _prefabs.Count;i++)
             {
                 if (_prefabs[i].Key.Equals(prefabType))

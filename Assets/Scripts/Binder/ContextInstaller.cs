@@ -15,11 +15,13 @@ public class ContextInstaller : MonoInstaller
     private SlingShotPrefabHolder _slingShotPrefabHolder;
     public override void InstallBindings()
     {
-        Container.Bind<IPlayerController>().To<PlayerController>().AsSingle();
+        Container.Bind<IPlayerController>().To<PlayerController>().AsTransient();
         Container.Bind<ObjectPooler<PlayerType>>().To<PlayerPooler>().AsSingle();
-        Container.Bind<ObjectPooler<SlingShotType>>().To<SlingshotPooler>().AsSingle().NonLazy();
+        Container.Bind<ObjectPooler<SlingShotType>>().To<SlingshotPooler>().AsSingle();
         Container.Bind<PlayerPrefabHolder>().FromInstance(_playerPrefabHolder).AsSingle();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();
+
+        Container.Bind<IPlayerFactory>().To<PlayerFactory>().AsSingle();
     }
 }

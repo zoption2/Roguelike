@@ -1,4 +1,5 @@
 using Gameplay;
+using Player;
 using Pool;
 using Prefab;
 using SlingShotLogic;
@@ -6,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
@@ -20,7 +22,7 @@ namespace Player
 
     public interface IPlayerController : ICharacterController
     {
-        public void Init(Transform point, PlayerType type);
+        public void Init(Transform point, PlayerType type, PlayerModel model);
     }
     public class PlayerController : IPlayerController
     {
@@ -35,7 +37,7 @@ namespace Player
 
         private GameObject _slingShotObject;
 
-        private float _maxPower = 10f;
+        private float _maxPower = 50f;
 
         private bool _isLaunchWasSubscibed;
 
@@ -55,7 +57,7 @@ namespace Player
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
         }
-        public  void  Init(Transform point, PlayerType type)
+        public  void  Init(Transform point, PlayerType type, PlayerModel model)
         {
             _playerPooler.Init();
             _slingShotPooler.Init();
@@ -67,8 +69,9 @@ namespace Player
 
             _playerViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>(); 
             _playerView.Initialize(this);
-            _playerModel = new PlayerModel();
+            _playerModel = model;
         }
+
         public void OnClick(Transform point, SlingShotType type, PointerEventData eventData)
         {
             if (IsActive)
@@ -104,6 +107,7 @@ namespace Player
             _playerViewRigidbody.AddForce(forceVector, ForceMode2D.Impulse);
             _slingShot.OnShoot -= Launch;
             _isLaunchWasSubscibed = false;
+            
         }
     }
 }
