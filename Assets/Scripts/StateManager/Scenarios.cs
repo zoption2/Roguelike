@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Player;
 using Enemy;
+using Prefab;
+using Zenject;
 
 namespace Gameplay
 {
@@ -21,8 +23,9 @@ namespace Gameplay
 
     public class DefaultScenario : Scenario
     {
-        public EnemyTurnState _enemyTurnState;
-        public PlayerTurnState _playerTurnState;
+        private EnemyTurnState _enemyTurnState;
+        private PlayerTurnState _playerTurnState;
+        private InitLevelState _initLevelState;
 
         public DefaultScenario(IGameplayService fullService)
         {
@@ -33,7 +36,12 @@ namespace Gameplay
         {
             _enemyTurnState = new EnemyTurnState(this, _gameplayService);
             _playerTurnState = new PlayerTurnState(this, _gameplayService);
-            _currentState = _playerTurnState;
+            _initLevelState = new InitLevelState(this, _gameplayService);
+
+            _currentState = _initLevelState;
+            _initLevelState.OnEnter();
+            SwitchToPlayer();
+
             PlayerController.OnSwitch += SwitchToEnemy;
             EnemyController.OnSwitch += SwitchToPlayer;
         }
@@ -49,6 +57,7 @@ namespace Gameplay
     public abstract class Scenario
     {
         protected IState _currentState;
+
         public IGameplayService _gameplayService;
 
         public IState GetCurrentState()

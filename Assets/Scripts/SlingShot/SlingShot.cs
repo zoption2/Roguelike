@@ -58,7 +58,7 @@ namespace SlingShotLogic
             _touchPositionInWorld = Camera.main.ScreenToWorldPoint(eventData.position);
             StopAllCoroutines();
 
-            if (_touchZoneCollider.bounds.Contains(_touchPositionInWorld))
+            if (Vector2.Distance(_touchZoneCollider.bounds.center, _touchPositionInWorld) <= _touchZoneCollider.bounds.size.x / 2)
             {
                 _cursor.transform.position = _touchPositionInWorld;
                 _endPoint = _cursor.transform.position;
@@ -71,6 +71,7 @@ namespace SlingShotLogic
                 _endPoint = clampedPosition;
                 _direction = _startPoint - _endPoint;
             }
+
         }
         public void OnEndDrag(PointerEventData eventData)
         {
@@ -84,8 +85,6 @@ namespace SlingShotLogic
                 _dragDistance = Vector2.Distance(_startPoint, _endPoint);
                 OnShoot?.Invoke(_direction, _dragDistance);
                 _slingShotPooler.Push(SlingShotType.Melee, this);
-
-                PlayerController.OnSwitch.Invoke();
             }
         }
 

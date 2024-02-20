@@ -11,27 +11,29 @@ namespace Player
 {
     public class Starter : MonoBehaviour
     {
-        private IPlayerController _controller;
         private IGameplayService _gameplayService;
         private IEnemyController _enemyController = new EnemyController();
+
+        private IPlayerFactory _playerFactory;
+
         [SerializeField]
         private Transform _playerTransform;
         [SerializeField]
         private Transform _enemyTransform;
 
         [Inject]
-        public void Construct(IPlayerController controller, IGameplayService service)
+        public void Construct(IGameplayService service, IPlayerFactory factory)
         {
-            _controller = controller;
-            _controller.IsActive = true;
+            _playerFactory = factory;
             _gameplayService = service;
         }
 
         public void Start()
         {
-            _controller.Init(_playerTransform, PlayerType.Warrior);
+            //_playerFactory.CreatePlayer(_playerTransform, PlayerType.Warrior, new PlayerModel());
+            _gameplayService.PlayerSpawnPoints.Add(_playerTransform);
+
             _enemyController.Init();
-            _gameplayService.Players.Add(_controller);
             _gameplayService.Enemies.Add(_enemyController);
             _gameplayService.Init(TypeOfScenario.Default);
         }

@@ -1,4 +1,5 @@
 using Player;
+using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -72,4 +73,37 @@ namespace Gameplay
             Debug.Log("Exited enemy turn state");
         }
     }
+
+    public class InitLevelState : IState
+    {
+        public Scenario _scenario { get; }
+
+        public IGameplayService _gameplayService { get; }
+
+        public InitLevelState(Scenario scenario, IGameplayService fullService)
+        {
+            _scenario = scenario;
+            _gameplayService = fullService;
+        }
+
+        public void OnEnter()
+        {
+            Debug.Log("Entering init state");
+            OnCreate();
+        }
+
+        public void OnCreate()
+        {
+            foreach (Transform spawnPoint in _gameplayService.PlayerSpawnPoints)
+            {
+                _gameplayService._playerFactory.CreatePlayer(spawnPoint, PlayerType.Warrior, new PlayerModel());
+            }
+        }
+
+        public void OnExit()
+        {
+            Debug.Log("Exited init state");
+        }
+    }
+
 }
