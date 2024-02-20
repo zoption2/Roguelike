@@ -67,7 +67,7 @@ namespace Player
         {
             _playerView = GameObject.Find("Player").GetComponent<PlayerView>();
             _playerView.Initialize(this);
-            _playerModel = new PlayerModel();
+            //_playerModel = new PlayerModel();
         }
 
         public void OnClick(Transform point, SlingShotType type, PointerEventData eventData)

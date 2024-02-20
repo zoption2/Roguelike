@@ -22,5 +22,11 @@ namespace Player
             }
             return stats;
         }
+
+        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, SavedCharacterModelHolder savedModelHolder)
+        {
+            _defaultModelHolder = defaultModelHolder;
+            _savedModelHolder = savedModelHolder;
+        }
     }
 }

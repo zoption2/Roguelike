@@ -76,5 +76,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefabHolder: {fileID: 11400000, guid: bdd5ed943bde14b4aab3af82e015873c, type: 2}
   _slingShotPrefabHolder: {fileID: 11400000, guid: 1566e0d83db1b9349b5de653bb0fd311, type: 2}
-  _defaultPlayerModelHolder: {fileID: 11400000, guid: 8922fb595f6c13e4d8f0e5f57fa8adba, type: 2}
+  _defaultPlayerModelHolder: {fileID: 11400000, guid: e2a381b6cfab7fb4a99cc0e1fd35cbe8, type: 2}
   _savedCharacterModelHolder: {fileID: 11400000, guid: 48b72eec63874a849b8bba843794291b, type: 2}

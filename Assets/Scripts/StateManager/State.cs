@@ -3,6 +3,7 @@ using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 namespace Gameplay
 {
     public interface IState
@@ -80,6 +81,9 @@ namespace Gameplay
 
         public IGameplayService _gameplayService { get; }
 
+        [Inject]
+        private IStatsProvider _statsProvider;
+
         public InitLevelState(Scenario scenario, IGameplayService fullService)
         {
             _scenario = scenario;
@@ -96,7 +100,7 @@ namespace Gameplay
         {
             foreach (Transform spawnPoint in _gameplayService.PlayerSpawnPoints)
             {
-                _gameplayService._playerFactory.CreatePlayer(spawnPoint, PlayerType.Warrior, new PlayerModel());
+                _gameplayService._playerFactory.CreatePlayer(spawnPoint, PlayerType.Warrior, new PlayerModel(1,PlayerType.Warrior, _statsProvider.GetStats(PlayerType.Warrior)));
             }
         }
 

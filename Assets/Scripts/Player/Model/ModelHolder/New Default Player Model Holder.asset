@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: Default Player Model Holder
+  m_Name: New Default Player Model Holder
   m_EditorClassIdentifier: Assembly-CSharp:Player:DefaultPlayerModelHolder
   _models:
-  - {fileID: 11400000, guid: dec398bc24feaeb4183184c65d431197, type: 2}
+  - {fileID: 11400000, guid: 7f9efaf8570aca54f8d67fef1625c9f3, type: 2}
