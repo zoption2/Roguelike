@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp:Player:DefaultPlayerModelHolder
   _models:
   - Key: 0
-    Health: 0
-    Damage: 0
-    Speed: 0
+    Health: 10
+    Damage: 2
+    Speed: 5
