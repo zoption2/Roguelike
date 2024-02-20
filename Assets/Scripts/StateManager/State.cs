@@ -72,4 +72,30 @@ namespace Gameplay
             Debug.Log("Exited enemy turn state");
         }
     }
+
+    public class InitState : IState
+    {
+        public Scenario _scenario { get; }
+
+        public IGameplayService _gameplayService { get; }
+
+        public InitState(Scenario scenario, IGameplayService fullService)
+        {
+            _scenario = scenario;
+            _gameplayService = fullService;
+        }
+
+        public void OnEnter()
+        {
+            Debug.Log("Entering init state");
+            //_playerFactory?
+            throw new System.NotImplementedException();
+        }
+
+        public void OnExit()
+        {
+            Debug.Log("Exited init state");
+        }
+    }
+
 }

@@ -30,7 +30,8 @@ namespace Player
 
         public void Start()
         {
-            _playerFactory.CreatePlayer(_playerTransform, PlayerType.Warrior, new PlayerModel());
+            //_playerFactory.CreatePlayer(_playerTransform, PlayerType.Warrior, new PlayerModel());
+            _gameplayService.PlayerSpawnPoints.Add(_playerTransform);
 
             _enemyController.Init();
             _gameplayService.Enemies.Add(_enemyController);

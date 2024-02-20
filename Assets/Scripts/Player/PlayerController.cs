@@ -16,13 +16,16 @@ namespace Player
 {
     public interface ICharacterController
     {
+        
         public void Init();
         public bool IsActive { get; set; }
+        
     }
 
     public interface IPlayerController : ICharacterController
     {
-        public void Init(Transform point, PlayerType type, PlayerModel model);
+        public void Init(Transform poolableTransform, Rigidbody2D playerViewRigidbody, PlayerModel playerModel);
+        //public void Init(Transform point, PlayerType type, PlayerModel model);
     }
     public class PlayerController : IPlayerController
     {
@@ -44,20 +47,45 @@ namespace Player
         public delegate void OnSwitchState();
         public static OnSwitchState OnSwitch;
 
-        [Inject]
         private ObjectPooler<PlayerType> _playerPooler;
 
         [Inject]
         private ObjectPooler<SlingShotType> _slingShotPooler;
         public bool IsActive { get; set; }
 
+        /*
+        public PlayerController(
+        Transform poolableTransform,
+        Rigidbody2D playerViewRigidbody,
+        PlayerModel playerModel,
+        ObjectPooler<SlingShotType> slingShotPooler)
+        {
+            _poolableTransform = poolableTransform;
+            _playerViewRigidbody = playerViewRigidbody;
+            _playerModel = playerModel;
+            _slingShotPooler = slingShotPooler;
+        }
+        */
+        public void Init(
+        Transform poolableTransform,
+        Rigidbody2D playerViewRigidbody,
+        PlayerModel playerModel)
+        {
+            _poolableTransform = poolableTransform;
+            _playerViewRigidbody = playerViewRigidbody;
+            _playerModel = playerModel;
+            _slingShotPooler.Init();
+        }
+
+        
         public virtual void Init()
         {
             _playerView = GameObject.Find("Player").GetComponent<PlayerView>();
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
         }
-        public  void  Init(Transform point, PlayerType type, PlayerModel model)
+        /*
+        public void Init(Transform point, PlayerType type, PlayerModel model)
         {
             _playerPooler.Init();
             _slingShotPooler.Init();
@@ -71,6 +99,7 @@ namespace Player
             _playerView.Initialize(this);
             _playerModel = model;
         }
+        */
 
         public void OnClick(Transform point, SlingShotType type, PointerEventData eventData)
         {

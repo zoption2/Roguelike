@@ -3,6 +3,7 @@ using Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay
 {
@@ -21,6 +22,8 @@ namespace Gameplay
     }
     public class GameplayService : IGameplayService
     {
+        [Inject]
+        private IPlayerFactory _playerFactory;
         public List<IPlayerController> Players { get; }
         public List<IEnemyController> Enemies { get; }
         public List<Transform> PlayerSpawnPoints { get; }
@@ -38,8 +41,9 @@ namespace Gameplay
 
         public void Init(TypeOfScenario type)
         {
+            Debug.Log("Hello!&!&!&");
             ScenarioType = ScenarioFactory.ReturnScenario(type,this);
-            ScenarioType.Init();
+            ScenarioType.Init(_playerFactory);
             //ScenarioType._fullService = this;
         }
     }
