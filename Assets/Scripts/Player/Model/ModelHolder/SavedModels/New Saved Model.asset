@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: New Saved Model
   m_EditorClassIdentifier: Assembly-CSharp:Player:SavedModel
-  ID: 2
-  Health: 10
-  Damage: 5
-  Speed: 6
+  ID: 1
+  Health: 20
+  Damage: 3
+  Speed: 5

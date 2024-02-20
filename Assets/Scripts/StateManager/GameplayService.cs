@@ -20,6 +20,7 @@ namespace Gameplay
         void Init(TypeOfScenario type);
 
         public IPlayerFactory _playerFactory { get; }
+        public IStatsProvider _statsProvider { get; }
     }
     public class GameplayService : IGameplayService
     {
@@ -30,6 +31,9 @@ namespace Gameplay
 
         [Inject]
         public IPlayerFactory _playerFactory { get; }
+
+        [Inject]
+        public IStatsProvider _statsProvider { get; }
 
         public Scenario ScenarioType;
 

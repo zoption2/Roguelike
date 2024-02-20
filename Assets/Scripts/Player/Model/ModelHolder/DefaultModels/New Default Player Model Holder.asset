@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: New Default Player Model Holder
   m_EditorClassIdentifier: Assembly-CSharp:Player:DefaultPlayerModelHolder
   _models:
-  - {fileID: 11400000, guid: 7f9efaf8570aca54f8d67fef1625c9f3, type: 2}
+  - {fileID: 0}

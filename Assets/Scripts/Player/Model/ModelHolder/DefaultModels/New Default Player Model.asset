@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp:Player:DefaultPlayerModel
   Type: 0
   Health: 10
-  Damage: 3
-  Speed: 4
+  Damage: 1
+  Speed: 5

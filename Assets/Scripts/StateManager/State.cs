@@ -81,9 +81,6 @@ namespace Gameplay
 
         public IGameplayService _gameplayService { get; }
 
-        [Inject]
-        private IStatsProvider _statsProvider;
-
         public InitLevelState(Scenario scenario, IGameplayService fullService)
         {
             _scenario = scenario;
@@ -98,10 +95,17 @@ namespace Gameplay
 
         public void OnCreate()
         {
+
+            int _id = 1;
+            PlayerType _type = PlayerType.Warrior;
+            Stats _stats = _gameplayService._statsProvider.GetStats(_type, _id);
+
             foreach (Transform spawnPoint in _gameplayService.PlayerSpawnPoints)
             {
-                _gameplayService._playerFactory.CreatePlayer(spawnPoint, PlayerType.Warrior, new PlayerModel(1,PlayerType.Warrior, _statsProvider.GetStats(PlayerType.Warrior)));
+                _gameplayService._playerFactory.CreatePlayer(spawnPoint, _type, new PlayerModel(_id ,_type, _stats));
             }
+
+            Debug.Log(_stats.Health);
         }
 
         public void OnExit()

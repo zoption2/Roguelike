@@ -28,5 +28,6 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<PlayerPrefabHolder>().FromInstance(_playerPrefabHolder).AsSingle();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();
+        Container.Bind<IPlayerFactory>().To<PlayerFactory>().AsSingle();
     }
 }
