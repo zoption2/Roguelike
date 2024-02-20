@@ -19,15 +19,19 @@ namespace Gameplay
         public List<Transform> PlayerSpawnPoints { get; }
         public List<Transform> EnemySpawnPoints { get; }
         void Init(TypeOfScenario type);
+
+        public IPlayerFactory _playerFactory { get; }
     }
     public class GameplayService : IGameplayService
     {
-        [Inject]
-        private IPlayerFactory _playerFactory;
         public List<IPlayerController> Players { get; }
         public List<IEnemyController> Enemies { get; }
         public List<Transform> PlayerSpawnPoints { get; }
         public List<Transform> EnemySpawnPoints { get; }
+
+        [Inject]
+        public IPlayerFactory _playerFactory { get; }
+
         public Scenario ScenarioType;
 
         public GameplayService()
@@ -41,9 +45,8 @@ namespace Gameplay
 
         public void Init(TypeOfScenario type)
         {
-            Debug.Log("Hello!&!&!&");
             ScenarioType = ScenarioFactory.ReturnScenario(type,this);
-            ScenarioType.Init(_playerFactory);
+            ScenarioType.Init();
             //ScenarioType._fullService = this;
         }
     }

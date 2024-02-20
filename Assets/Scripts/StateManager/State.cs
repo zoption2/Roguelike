@@ -1,4 +1,5 @@
 using Player;
+using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -73,13 +74,13 @@ namespace Gameplay
         }
     }
 
-    public class InitState : IState
+    public class InitLevelState : IState
     {
         public Scenario _scenario { get; }
 
         public IGameplayService _gameplayService { get; }
 
-        public InitState(Scenario scenario, IGameplayService fullService)
+        public InitLevelState(Scenario scenario, IGameplayService fullService)
         {
             _scenario = scenario;
             _gameplayService = fullService;
@@ -88,8 +89,15 @@ namespace Gameplay
         public void OnEnter()
         {
             Debug.Log("Entering init state");
-            //_playerFactory?
-            throw new System.NotImplementedException();
+            OnCreate();
+        }
+
+        public void OnCreate()
+        {
+            foreach (Transform spawnPoint in _gameplayService.PlayerSpawnPoints)
+            {
+                _gameplayService._playerFactory.CreatePlayer(spawnPoint, PlayerType.Warrior, new PlayerModel());
+            }
         }
 
         public void OnExit()

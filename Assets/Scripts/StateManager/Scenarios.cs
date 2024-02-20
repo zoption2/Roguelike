@@ -10,7 +10,7 @@ namespace Gameplay
 {
     public class BossScenario : Scenario
     {
-        public override void Init(IPlayerFactory playerFactory = null)
+        public override void Init()
         {
             //Init some stuff
         }
@@ -23,32 +23,24 @@ namespace Gameplay
 
     public class DefaultScenario : Scenario
     {
-        public EnemyTurnState _enemyTurnState;
-        public PlayerTurnState _playerTurnState;
-
-        //[Inject]
-        //private IPlayerFactory _playerFactory;
+        private EnemyTurnState _enemyTurnState;
+        private PlayerTurnState _playerTurnState;
+        private InitLevelState _initLevelState;
 
         public DefaultScenario(IGameplayService fullService)
         {
             _gameplayService = fullService;
             Debug.Log("This is the default scenario, so it starts with player turn");
         }
-        public override void Init(IPlayerFactory playerFactory)
+        public override void Init()
         {
-            //initState
             _enemyTurnState = new EnemyTurnState(this, _gameplayService);
             _playerTurnState = new PlayerTurnState(this, _gameplayService);
-            _currentState = _playerTurnState;//initState
+            _initLevelState = new InitLevelState(this, _gameplayService);
 
-            //Transform position = _gameplayService.PlayerSpawnPoints[0];
-
-            foreach (Transform spawnPoint in _gameplayService.PlayerSpawnPoints)
-            {
-                playerFactory.CreatePlayer(spawnPoint, PlayerType.Warrior, new PlayerModel());
-            }
-
-            //_playerFactory.CreatePlayer(position, PlayerType.Warrior, new PlayerModel());
+            _currentState = _initLevelState;
+            _initLevelState.OnEnter();
+            SwitchToPlayer();
 
             PlayerController.OnSwitch += SwitchToEnemy;
             EnemyController.OnSwitch += SwitchToPlayer;
@@ -76,7 +68,7 @@ namespace Gameplay
         {
             
         }
-        public abstract void Init(IPlayerFactory playerFactory = null);
+        public abstract void Init();
 
         public void SwitchState(IState state)
         {

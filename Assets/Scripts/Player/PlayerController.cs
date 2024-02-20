@@ -47,25 +47,10 @@ namespace Player
         public delegate void OnSwitchState();
         public static OnSwitchState OnSwitch;
 
-        private ObjectPooler<PlayerType> _playerPooler;
-
         [Inject]
         private ObjectPooler<SlingShotType> _slingShotPooler;
         public bool IsActive { get; set; }
 
-        /*
-        public PlayerController(
-        Transform poolableTransform,
-        Rigidbody2D playerViewRigidbody,
-        PlayerModel playerModel,
-        ObjectPooler<SlingShotType> slingShotPooler)
-        {
-            _poolableTransform = poolableTransform;
-            _playerViewRigidbody = playerViewRigidbody;
-            _playerModel = playerModel;
-            _slingShotPooler = slingShotPooler;
-        }
-        */
         public void Init(
         Transform poolableTransform,
         Rigidbody2D playerViewRigidbody,
@@ -84,22 +69,6 @@ namespace Player
             _playerView.Initialize(this);
             _playerModel = new PlayerModel();
         }
-        /*
-        public void Init(Transform point, PlayerType type, PlayerModel model)
-        {
-            _playerPooler.Init();
-            _slingShotPooler.Init();
-            var _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
-            _playerView = _poolable.gameObject.GetComponent<PlayerView>();
-
-            var _poolableObj = _poolable.gameObject.transform.GetChild(0).gameObject;
-            _poolableTransform = _poolableObj.GetComponent<Transform>(); 
-
-            _playerViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>(); 
-            _playerView.Initialize(this);
-            _playerModel = model;
-        }
-        */
 
         public void OnClick(Transform point, SlingShotType type, PointerEventData eventData)
         {
@@ -136,7 +105,7 @@ namespace Player
             _playerViewRigidbody.AddForce(forceVector, ForceMode2D.Impulse);
             _slingShot.OnShoot -= Launch;
             _isLaunchWasSubscibed = false;
-            
+            OnSwitch.Invoke();
         }
     }
 }

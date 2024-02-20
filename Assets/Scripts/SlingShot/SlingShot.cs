@@ -70,7 +70,6 @@ namespace SlingShotLogic
                 _cursor.transform.position = clampedPosition;
                 _endPoint = clampedPosition;
                 _direction = _startPoint - _endPoint;
-                Debug.Log(clampedPosition);
             }
 
         }
@@ -86,8 +85,6 @@ namespace SlingShotLogic
                 _dragDistance = Vector2.Distance(_startPoint, _endPoint);
                 OnShoot?.Invoke(_direction, _dragDistance);
                 _slingShotPooler.Push(SlingShotType.Melee, this);
-
-                PlayerController.OnSwitch.Invoke();
             }
         }
 
