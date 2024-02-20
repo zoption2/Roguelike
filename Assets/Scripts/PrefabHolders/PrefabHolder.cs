@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,7 +18,6 @@ namespace Prefab
         Magic,
     }
     
-    [CreateAssetMenu]
     public abstract class PrefabHolder<T> : ScriptableObject where T : Enum
     {
         [Serializable]
@@ -32,7 +30,7 @@ namespace Prefab
         [SerializeField]
         protected List<Mapper> _prefabs;
         
-         public GameObject GetPrefab<T>(T prefabType)
+         public GameObject GetPrefab(T prefabType)
          {
             for (int i = 0;i < _prefabs.Count;i++)
             {

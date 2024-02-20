@@ -1,21 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
+
+using Prefab;
+using System;
 using UnityEngine;
 
 namespace Player
 {
-    public class PlayerModel
+    public interface ICharacterModel
     {
-        private float _power;
+        int ID { get;}
+    }
 
-        private float GetPower()
-        {
-            return _power;
-        }
+    [System.Serializable]
+    public class PlayerModel: ICharacterModel
+    {
+        private int _id;
+        public int ID { get { return _id; } }
 
-        private void SetPower(float power)
+        private PlayerType _type;
+        public PlayerType Type { get { return _type; } }
+        private ReactiveInt Damage, Health, Speed;
+        public PlayerModel(int id,PlayerType type,Stats stats)
         {
-            _power = power;
+            _id = id;
+            _type = type;
+            Damage = new ReactiveInt(stats.Damage);
+            Health = new ReactiveInt(stats.Health);
+            Speed = new ReactiveInt(stats.Speed);
         }
     }
 }
