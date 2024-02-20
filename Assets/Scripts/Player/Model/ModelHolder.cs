@@ -12,21 +12,14 @@ namespace Player
     }
     public abstract class DefaultCharacterModelHolder<T> : ScriptableObject where T : Enum
     {
-        [Serializable]
-        public class CleanModelMapper
-        {
-            public T Key;
-            public int Health, Damage, Speed;
-        }
-
         [SerializeField]
-        protected List<CleanModelMapper> _models;
+        protected List<DefaultModel<T>> _models;
 
         public Stats GetDefaultStats(T modelType)
         {
             for (int i = 0; i < _models.Count; i++)
             {
-                if (_models[i].Key.Equals(modelType))
+                if (_models[i].Type.Equals(modelType))
                 {
                     Stats stats = new Stats(_models[i].Speed, _models[i].Health, _models[i].Damage);
                     return stats;
@@ -45,23 +38,17 @@ namespace Player
     [CreateAssetMenu]
     public class SavedCharacterModelHolder : ScriptableObject, ISavedCharacterModelHolder 
     {
-        [Serializable]
-        public class SavedModelMapper
-        {
-            public int ID;
-            public int Health,Damage,Speed;
-        }
-
         [SerializeField]
-        protected List<SavedModelMapper> _models;
+        protected List<SavedModel> _models;
 
         public Stats GetSavedStats(int receivedID)
         {
             for (int i = 0; i < _models.Count; i++)
             {
-                if (_models[i].ID.Equals(receivedID))
+                var model = _models[i];
+                if (model.ID.Equals(receivedID))
                 {
-                    Stats stats = new Stats(_models[i].Speed, _models[i].Health, _models[i].Damage);
+                    Stats stats = new Stats(model.Speed, model.Health, model.Damage);
                     return stats;
                 }
             }
@@ -69,4 +56,20 @@ namespace Player
             return null;
         }
     }
+
+    [CreateAssetMenu]
+    public class SavedModel : ScriptableObject
+    {
+        public int ID;
+        public int Health, Damage, Speed;
+    }
+
+    public class DefaultModel<T> : ScriptableObject where T : Enum
+    {
+        public T Type;
+        public int Health, Damage, Speed;
+    }
+
+    [CreateAssetMenu]
+    public class DefaultPlayerModel : DefaultModel<PlayerType> { }
 }

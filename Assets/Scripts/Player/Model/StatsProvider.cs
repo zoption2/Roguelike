@@ -3,11 +3,16 @@ using UnityEngine;
 
 namespace Player
 {
-    public class ModelSearcher
+
+    public interface IStatsProvider
+    {
+        public Stats GetStats(PlayerType playerType, int id = -1);
+    }
+    public class StatsProvider : IStatsProvider
     {
         private DefaultPlayerModelHolder _defaultModelHolder;
         private SavedCharacterModelHolder _savedModelHolder;
-        public Stats GetStats(int id, PlayerType playerType)
+        public Stats GetStats(PlayerType playerType, int id = -1)
         {
             Stats stats;
             stats = _savedModelHolder.GetSavedStats(id);

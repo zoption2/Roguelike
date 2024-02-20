@@ -18,14 +18,16 @@ namespace Player
 
         private PlayerType _type;
         public PlayerType Type { get { return _type; } }
-        private ReactiveInt Damage, Health, Speed;
+        private ReactiveInt _damage;
+        private ReactiveInt _health;
+        private ReactiveInt _speed;
         public PlayerModel(int id,PlayerType type,Stats stats)
         {
             _id = id;
             _type = type;
-            Damage = new ReactiveInt(stats.Damage);
-            Health = new ReactiveInt(stats.Health);
-            Speed = new ReactiveInt(stats.Speed);
+            _damage = new ReactiveInt(stats.Damage);
+            _health = new ReactiveInt(stats.Health);
+            _speed = new ReactiveInt(stats.Speed);
         }
     }
 }

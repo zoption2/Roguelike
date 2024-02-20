@@ -19,6 +19,7 @@ public class ContextInstaller : MonoInstaller
     private SavedCharacterModelHolder _savedCharacterModelHolder;
     public override void InstallBindings()
     {
+        Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
         Container.Bind<DefaultPlayerModelHolder>().FromInstance(_defaultPlayerModelHolder).AsSingle();
         Container.Bind<SavedCharacterModelHolder>().FromInstance(_savedCharacterModelHolder).AsSingle();
         Container.Bind<IPlayerController>().To<PlayerController>().AsSingle();
