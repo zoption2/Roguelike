@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: New Saved Character Model Holder
   m_EditorClassIdentifier: Assembly-CSharp:Player:SavedCharacterModelHolder
   _models:
-  - ID: 0
-    DS: 0
-    Health: 0
-    Damage: 0
-    Speed: 0
+  - ID: 1
+    Health: 15
+    Damage: 3
+    Speed: 5
