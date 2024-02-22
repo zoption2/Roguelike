@@ -10,7 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: New Default Player Model Holder
-  m_EditorClassIdentifier: Assembly-CSharp:Player:DefaultPlayerModelHolder
-  _models:
-  - {fileID: 0}
+  m_Name: Default1
+  m_EditorClassIdentifier: Assembly-CSharp:Player:DefaultPlayerModel
+  Type: 0
+  Health: 10
+  Damage: 3
+  Speed: 4
