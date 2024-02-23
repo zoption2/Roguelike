@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Holder
   m_EditorClassIdentifier: Assembly-CSharp:Player:SavedCharacterModelHolder
   _models:
-  - {fileID: 11400000, guid: dcf704819a18c2844a81e3e171f50f6f, type: 2}
+  - {fileID: 11400000, guid: 27741bb1eb3fd6e4f9b5fa6402cc2927, type: 2}
