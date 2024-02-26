@@ -16,8 +16,6 @@ namespace Player
 {
     public interface ICharacterController
     {
-        
-        public void Init();
         public bool IsActive { get; set; }
         public event OnSwitchState OnSwitch;
 
@@ -62,14 +60,6 @@ namespace Player
             _playerViewRigidbody = playerViewRigidbody;
             _playerModel = playerModel;
             _slingShotPooler.Init();
-        }
-
-        
-        public virtual void Init()
-        {
-            _playerView = GameObject.Find("Player").GetComponent<PlayerView>();
-            _playerView.Initialize(this);
-            //_playerModel = new PlayerModel();
         }
 
         public void OnClick(Transform point, SlingShotType type, PointerEventData eventData)

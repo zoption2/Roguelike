@@ -1,16 +1,18 @@
 using Enemy;
 using Gameplay;
 using Player;
+using CharactersStats;
 using Pool;
 using Prefab;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using Zenject;
 
 public interface IPlayerFactory
 {
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model);
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, int id = 0);
 }
 public class PlayerFactory : IPlayerFactory
 {
@@ -28,16 +30,21 @@ public class PlayerFactory : IPlayerFactory
     {
         _controller = controller;
         _gameplayService = service;
-        _controller.IsActive = true;
         _playerPooler = playerPooler;
     }
 
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model)
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, int id = 0)
     {
         Transform _poolableTransform;
         Rigidbody2D _playerViewRigidbody;
+        PlayerModel _playerModel;
+        Stats _stats;
 
         _playerPooler.Init();
+
+        _stats = _gameplayService._statsProvider.GetPlayerStats(type, id);
+
+        _playerModel = new PlayerModel(id, type, _stats);
 
         var _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         _playerView = _poolable.gameObject.GetComponent<PlayerView>();
@@ -49,9 +56,11 @@ public class PlayerFactory : IPlayerFactory
 
         _playerView.Initialize((PlayerController)_controller);
 
-        _controller.Init(_poolableTransform, _playerViewRigidbody, model);
+        _controller.Init(_poolableTransform, _playerViewRigidbody, _playerModel);
 
         _gameplayService.Players.Add(_controller);
+
+        Debug.Log($"Player with id {id} was created. They have {_stats.Health} hp and spawned on {point.position}");
 
         return _controller;
     }

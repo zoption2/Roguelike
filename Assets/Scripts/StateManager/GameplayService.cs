@@ -1,4 +1,5 @@
 using Enemy;
+using CharactersStats;
 using Player;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace Gameplay
         void Init(TypeOfScenario type);
 
         public IPlayerFactory _playerFactory { get; }
+        public IEnemyFactory _enemyFactory { get; }
         public IStatsProvider _statsProvider { get; }
     }
     public class GameplayService : IGameplayService
@@ -31,6 +33,9 @@ namespace Gameplay
 
         [Inject]
         public IPlayerFactory _playerFactory { get; }
+
+        [Inject]
+        public IEnemyFactory _enemyFactory { get; }
 
         [Inject]
         public IStatsProvider _statsProvider { get; }

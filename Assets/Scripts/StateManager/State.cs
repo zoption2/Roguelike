@@ -101,17 +101,16 @@ namespace Gameplay
 
         public void OnCreate()
         {
-
-            int _id = 1;
-            PlayerType _type = PlayerType.Warrior;
-            Stats _stats = _gameplayService._statsProvider.GetStats(_type, _id);
-
+            // TODO: create a correct logic for player (and enemies) generation
             foreach (Transform spawnPoint in _gameplayService.PlayerSpawnPoints)
             {
-                _gameplayService._playerFactory.CreatePlayer(spawnPoint, _type, new PlayerModel(_id ,_type, _stats));
+                _gameplayService._playerFactory.CreatePlayer(spawnPoint, PlayerType.Warrior, 1);
             }
 
-            Debug.Log(_stats.Health);
+            foreach (Transform spawnPoint in _gameplayService.EnemySpawnPoints)
+            {
+                _gameplayService._enemyFactory.CreateEnemy(spawnPoint, EnemyType.Barbarian);
+            }
         }
 
         public void OnExit()

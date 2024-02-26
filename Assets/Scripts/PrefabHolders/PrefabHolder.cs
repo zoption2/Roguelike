@@ -4,11 +4,19 @@ using UnityEngine;
 
 namespace Prefab
 {
-    public enum PlayerType
+
+    public enum PlayerType 
     {
         Warrior,
         Wizard,
         Archer,
+    }
+
+    public enum EnemyType 
+    {
+        Barbarian,
+        Thrower,
+        Summoner,
     }
 
     public enum SlingShotType

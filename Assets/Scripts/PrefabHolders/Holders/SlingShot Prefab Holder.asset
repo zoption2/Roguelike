@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c23a4782142a3cd4e81e30694001dab5, type: 3}
-  m_Name: New Sling Shot Prefab Holder
+  m_Name: SlingShot Prefab Holder
   m_EditorClassIdentifier: 
   _prefabs:
   - Key: 0

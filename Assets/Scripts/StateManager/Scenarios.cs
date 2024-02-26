@@ -20,6 +20,11 @@ namespace Gameplay
             
         }
 
+        public override void FillTheQueue(Dictionary<TypeOfState, IState> dictionary)
+        {
+
+        }
+
         public BossScenario(IGameplayService fullService)
         {
             _gameplayService = fullService;
@@ -40,6 +45,7 @@ namespace Gameplay
             _queueOfStates.Enqueue(_stateSet[TypeOfState.Init]);
             _queueOfStates.Enqueue(_stateSet[TypeOfState.PlayerTurn]);
             _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
+            //FillTheQueue(_stateSet);
 
             _currentState = _queueOfStates.Dequeue();
             _currentState.OnEnter();
@@ -49,6 +55,14 @@ namespace Gameplay
         {
             _queueOfStates.Enqueue(_stateSet[TypeOfState.PlayerTurn]);
             _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
+        }
+
+        public override void FillTheQueue(Dictionary<TypeOfState, IState> dictionary)
+        {
+            foreach (var state in dictionary)
+            {
+                _queueOfStates.Enqueue(state.Value);
+            }
         }
     }
     public abstract class Scenario
@@ -70,7 +84,7 @@ namespace Gameplay
         }
         public abstract void Init();
 
-
+        public abstract void FillTheQueue(Dictionary<TypeOfState, IState> dictionary);
         public void OnStateEnd(/*no index needed because you can take only first element from queue*/)
         {
            //take next state from queue

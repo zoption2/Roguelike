@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Player Prefab Holder
   m_EditorClassIdentifier: 
   _prefabs:
-  - Value: {fileID: 5019426081544581403, guid: 907169bc81a90f34f8a33d0280a3a76d, type: 3}
+  - Key: 0
+    Value: {fileID: 5019426081544581403, guid: 907169bc81a90f34f8a33d0280a3a76d, type: 3}

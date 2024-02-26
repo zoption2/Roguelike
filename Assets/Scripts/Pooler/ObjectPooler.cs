@@ -62,11 +62,11 @@ namespace Pool
                 if (this is SlingshotPooler)
                 {
                     spawnedInstance = ProjectContext.Instance.Container.InstantiatePrefab(prefab, position, rotation, parent);
-                }
-                else if (this is PlayerPooler)
+                } else
                 {
                     spawnedInstance = GameObject.Instantiate(prefab, position, rotation, parent);
                 }
+
                 IMyPoolable result = spawnedInstance.gameObject.GetComponent<IMyPoolable>();
                 result.gameObject.transform.position = position;
                 result.gameObject.transform.rotation = rotation;

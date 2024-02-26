@@ -1,19 +1,34 @@
-﻿using Player;
+﻿using CharactersStats;
+using Prefab;
+using System;
+using UnityEngine;
 
 namespace Enemy
 {
-    public class EnemyModel
+    public interface ICharacterModel
     {
-        private float _power;
+        int ID { get; }
+    }
 
-        private float GetPower()
-        {
-            return _power;
-        }
+    [System.Serializable]
+    public class EnemyModel : ICharacterModel
+    {
+        private int _id;
+        public int ID { get { return _id; } }
 
-        private void SetPower(float power)
+        private EnemyType _type;
+        public EnemyType Type { get { return _type; } }
+        private ReactiveInt _damage;
+        private ReactiveInt _health;
+        private ReactiveInt _speed;
+        public EnemyModel(int id, EnemyType type, Stats stats)
         {
-            _power = power;
+            _id = id;
+            _type = type;
+            _damage = new ReactiveInt(stats.Damage);
+            _health = new ReactiveInt(stats.Health);
+            _speed = new ReactiveInt(stats.Speed);
         }
     }
 }
+
