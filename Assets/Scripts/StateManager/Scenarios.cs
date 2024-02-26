@@ -15,6 +15,11 @@ namespace Gameplay
             //Init some stuff
         }
 
+        public override void RenewQueue()
+        {
+            
+        }
+
         public BossScenario(IGameplayService fullService)
         {
             _gameplayService = fullService;
@@ -23,43 +28,38 @@ namespace Gameplay
 
     public class DefaultScenario : Scenario
     {
-        private EnemyTurnState _enemyTurnState;
-        private PlayerTurnState _playerTurnState;
-        private InitLevelState _initLevelState;
-
         public DefaultScenario(IGameplayService fullService)
         {
             _gameplayService = fullService;
-            Debug.Log("This is the default scenario, so it starts with player turn");
+            Debug.Log("This is the default scenario");
+            _queueOfStates = new Queue<IState>();
+            _stateSet = StateData.GetStateSet(this,_gameplayService);
         }
         public override void Init()
         {
-            _enemyTurnState = new EnemyTurnState(this, _gameplayService);
-            _playerTurnState = new PlayerTurnState(this, _gameplayService);
-            _initLevelState = new InitLevelState(this, _gameplayService);
+            _queueOfStates.Enqueue(_stateSet[TypeOfState.Init]);
+            _queueOfStates.Enqueue(_stateSet[TypeOfState.PlayerTurn]);
+            _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
 
-            _currentState = _initLevelState;
-            _initLevelState.OnEnter();
-            SwitchToPlayer();
+            _currentState = _queueOfStates.Dequeue();
+            _currentState.OnEnter();
+        }
 
-            PlayerController.OnSwitch += SwitchToEnemy;
-            EnemyController.OnSwitch += SwitchToPlayer;
-        }
-        public void SwitchToEnemy()
+        public override void RenewQueue()
         {
-            SwitchState(_enemyTurnState);
-        }
-        public void SwitchToPlayer()
-        {
-            SwitchState(_playerTurnState);
+            _queueOfStates.Enqueue(_stateSet[TypeOfState.PlayerTurn]);
+            _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
         }
     }
     public abstract class Scenario
     {
         protected IState _currentState;
+        protected Queue<IState> _queueOfStates;
+        protected Dictionary<TypeOfState, IState> _stateSet;
 
         public IGameplayService _gameplayService;
 
+        public abstract void RenewQueue();
         public IState GetCurrentState()
         {
             return _currentState;
@@ -70,6 +70,21 @@ namespace Gameplay
         }
         public abstract void Init();
 
+
+        public void OnStateEnd(/*no index needed because you can take only first element from queue*/)
+        {
+           //take next state from queue
+           IState state = _queueOfStates.Dequeue();
+           //switch current state to the taken from queue
+           SwitchState(state);
+           //if there is no more states(or other reasons)
+            if (_queueOfStates.Count == 0)
+            {
+                // renew queue with new states
+                RenewQueue();
+            }
+           
+        }
         public void SwitchState(IState state)
         {
             if (_currentState != state)

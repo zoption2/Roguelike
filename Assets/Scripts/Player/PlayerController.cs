@@ -19,7 +19,8 @@ namespace Player
         
         public void Init();
         public bool IsActive { get; set; }
-        
+        public event OnSwitchState OnSwitch;
+
     }
 
     public interface IPlayerController : ICharacterController
@@ -27,6 +28,8 @@ namespace Player
         public void Init(Transform poolableTransform, Rigidbody2D playerViewRigidbody, PlayerModel playerModel);
         //public void Init(Transform point, PlayerType type, PlayerModel model);
     }
+
+    public delegate void OnSwitchState();
     public class PlayerController : IPlayerController
     {
         Transform _poolableTransform;
@@ -44,8 +47,7 @@ namespace Player
 
         private bool _isLaunchWasSubscibed;
 
-        public delegate void OnSwitchState();
-        public static OnSwitchState OnSwitch;
+        public event OnSwitchState OnSwitch;
 
         [Inject]
         private ObjectPooler<SlingShotType> _slingShotPooler;

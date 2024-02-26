@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: Holder
-  m_EditorClassIdentifier: Assembly-CSharp:Player:SavedCharacterModelHolder
+  m_Script: {fileID: 11500000, guid: 3ca5cde9e47912f4287efaa1fc9179cd, type: 3}
+  m_Name: SaveHolder
+  m_EditorClassIdentifier: 
   _models:
-  - {fileID: 11400000, guid: 27741bb1eb3fd6e4f9b5fa6402cc2927, type: 2}
+  - {fileID: 11400000, guid: c3cb7cdff4fc93641bf634e0afb76fd0, type: 2}

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+
 namespace Gameplay
 {
     public interface IState
@@ -21,7 +22,7 @@ namespace Gameplay
 
         public IGameplayService _gameplayService { get; }
 
-        public PlayerTurnState(Scenario scenario, IGameplayService fullService)
+        public PlayerTurnState( Scenario scenario, IGameplayService fullService)
         {
             _scenario = scenario;
             _gameplayService = fullService;
@@ -32,6 +33,7 @@ namespace Gameplay
             for (int i = 0; i < _gameplayService.Players.Count; i++)
             {
                 _gameplayService.Players[i].IsActive = true;
+                _gameplayService.Players[i].OnSwitch += _scenario.OnStateEnd;
             }
             Debug.Log("Entered player turn state");
         }
@@ -41,6 +43,7 @@ namespace Gameplay
             for (int i = 0; i < _gameplayService.Players.Count; i++)
             {
                 _gameplayService.Players[i].IsActive = false;
+                _gameplayService.Players[i].OnSwitch -= _scenario.OnStateEnd;
             }
             Debug.Log("Exited player turn state");
         }
@@ -61,6 +64,7 @@ namespace Gameplay
             for(int i=0; i <_gameplayService.Enemies.Count;i++ )
             {
                 _gameplayService.Enemies[i].IsActive = true;
+                _gameplayService.Enemies[i].OnSwitch += _scenario.OnStateEnd;
             }
             Debug.Log("Entered enemy turn state");
         }
@@ -70,6 +74,7 @@ namespace Gameplay
             for (int i = 0; i < _gameplayService.Enemies.Count; i++)
             {
                 _gameplayService.Enemies[i].IsActive = false;
+                _gameplayService.Enemies[i].OnSwitch -= _scenario.OnStateEnd;
             }
             Debug.Log("Exited enemy turn state");
         }
@@ -91,6 +96,7 @@ namespace Gameplay
         {
             Debug.Log("Entering init state");
             OnCreate();
+            _scenario.OnStateEnd();
         }
 
         public void OnCreate()

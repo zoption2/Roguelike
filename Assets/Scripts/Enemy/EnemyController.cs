@@ -12,8 +12,7 @@ namespace Enemy
     {
         private EnemyView _enemyView;
         private EnemyModel _enemyModel;
-        public delegate void OnSwitchState();
-        public static event OnSwitchState OnSwitch;
+        public event OnSwitchState OnSwitch;
         public bool IsActive { get; set; }
 
         //TODO: add methods.
