@@ -10,9 +10,15 @@ namespace Gameplay
 {
     public class BossScenario : Scenario
     {
+        private MySceneContext _testSceneContext;
         public override void Init()
         {
             //Init some stuff
+        }
+
+        public override void Init(ISceneContextMarker sceneContext)
+        {
+            _testSceneContext = (MySceneContext)sceneContext;
         }
 
         public override void RenewQueue()
@@ -33,6 +39,7 @@ namespace Gameplay
 
     public class DefaultScenario : Scenario
     {
+        private MySceneContext _testSceneContext;
         public DefaultScenario(IGameplayService fullService)
         {
             _gameplayService = fullService;
@@ -49,6 +56,11 @@ namespace Gameplay
 
             _currentState = _queueOfStates.Dequeue();
             _currentState.OnEnter();
+        }
+
+        public override void Init(ISceneContextMarker sceneContext)
+        {
+            _testSceneContext = (MySceneContext)sceneContext;
         }
 
         public override void RenewQueue()
@@ -83,6 +95,7 @@ namespace Gameplay
             
         }
         public abstract void Init();
+        public abstract void Init(ISceneContextMarker sceneContext);
 
         public abstract void FillTheQueue(Dictionary<TypeOfState, IState> dictionary);
         public void OnStateEnd(/*no index needed because you can take only first element from queue*/)

@@ -1,15 +1,10 @@
 using Enemy;
 using Gameplay;
-using Player;
 using Pool;
 using Prefab;
 using CharactersStats;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using Zenject;
-using Zenject.SpaceFighter;
 
 public interface IEnemyFactory
 {
@@ -17,53 +12,59 @@ public interface IEnemyFactory
 }
 public class EnemyFactory : IEnemyFactory
 {
-    private IEnemyController _controller;
     private IGameplayService _gameplayService;
-    private IEnemyView _enemyView;
+    private DiContainer _container;
     private ObjectPooler<EnemyType> _enemyPooler;
 
     [Inject]
     public void Construct(
-        IEnemyController controller,
+        DiContainer container,
         IGameplayService service,
-        ObjectPooler<EnemyType> enemyPooler
-        )
+        ObjectPooler<EnemyType> enemyPooler)
     {
-        //_controller = controller;
+        _container = container;
         _gameplayService = service;
         _enemyPooler = enemyPooler;
+        _enemyPooler.Init();
     }
 
     public IEnemyController CreateEnemy(Transform point, EnemyType type, int id = 0)
     {
-        Transform _poolableTransform;
-        Rigidbody2D _enemyViewRigidbody;
-        EnemyModel _enemyModel;
-        Stats _stats;
-        _controller = new EnemyController();    
-        _enemyPooler.Init();
+        IEnemyController controller;
+        IEnemyView enemyView;
+        Transform poolableTransform;
+        Rigidbody2D enemyViewRigidbody;
+        EnemyModel enemyModel;
+        Stats stats;
 
-        _stats = _gameplayService._statsProvider.GetEnemyStats(type, id);
+        controller = GetNewController();  
 
-        _enemyModel = new EnemyModel(id, type, _stats);
+        stats = _gameplayService._statsProvider.GetEnemyStats(type, id);
 
-        var _poolable = _enemyPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
-        _enemyView = _poolable.gameObject.GetComponent<MyEnemyView>();
+        enemyModel = new EnemyModel(id, type, stats);
 
-        var _poolableObj = _poolable.gameObject.transform.GetChild(0).gameObject;
-        _poolableTransform = _poolableObj.transform;
+        IMyPoolable _poolable = _enemyPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+        enemyView = _poolable.gameObject.GetComponent<MyEnemyView>();
 
-        _enemyViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
+        GameObject _poolableObj = _poolable.gameObject.transform.GetChild(0).gameObject;
+        poolableTransform = _poolableObj.transform;
 
-        _enemyView.Initialize((EnemyController)_controller);
+        enemyViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
 
-        _controller.Init(_poolableTransform, _enemyViewRigidbody, _enemyModel);
+        enemyView.Initialize((EnemyController)controller);
 
-        _gameplayService.Enemies.Add(_controller);
+        controller.Init(poolableTransform, enemyViewRigidbody, enemyModel);
 
-        Debug.Log($"Enemy of type {type} was created. They have {_stats.Health} hp and spawned on {point.position}");
+        _gameplayService.Enemies.Add(controller);
 
-        return _controller;
+        Debug.Log($"Enemy of type {type} was created. They have {stats.Health} hp and spawned on {point.position}");
+
+        return controller;
+    }
+
+    private IEnemyController GetNewController()
+    {
+        return _container.Resolve<IEnemyController>();
     }
 }
 

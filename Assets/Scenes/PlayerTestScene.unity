@@ -511,6 +511,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1124163139}
   - component: {fileID: 1124163138}
+  - component: {fileID: 1124163140}
   m_Layer: 0
   m_Name: Game Session
   m_TagString: Untagged
@@ -530,11 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7298ca75de50c744aa9389f27a0614bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerTransform:
-  - {fileID: 1928456086}
-  _enemyTransform:
-  - {fileID: 1352285908}
-  - {fileID: 223147642}
+  _sceneContext: {fileID: 1124163140}
 --- !u!4 &1124163139
 Transform:
   m_ObjectHideFlags: 0
@@ -550,6 +547,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1124163140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124163137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8128be3daf682c44986f51a7444a69b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <PlayersSpawnPoints>k__BackingField:
+  - {fileID: 1928456086}
+  <EnemiesSpawnPoints>k__BackingField:
+  - {fileID: 1352285908}
+  - {fileID: 223147642}
 --- !u!1 &1135265095
 GameObject:
   m_ObjectHideFlags: 0

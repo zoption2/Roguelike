@@ -1,3 +1,4 @@
+using Enemy;
 using Player;
 using Prefab;
 using System.Collections;
@@ -7,6 +8,23 @@ using Zenject;
 
 namespace Gameplay
 {
+
+    public class DefaultScenarioContext : ISceneContextMarker
+    {
+        public List<IPlayerController> Players { get; }
+        public List<IEnemyController> Enemies { get; }
+        public List<Transform> PlayerSpawnPoints { get; }
+        public List<Transform> EnemySpawnPoints { get; }
+
+        public void CompleteState()
+        {
+
+        }
+
+
+    }
+
+
     public interface IState
     {
         Scenario _scenario { get; }
@@ -14,6 +32,16 @@ namespace Gameplay
         IGameplayService _gameplayService { get; }
         public void OnEnter();
         public void OnExit();
+    }
+
+    public interface IEnemyCreateState : IState
+    {
+        public void OnEnemyCreate();
+    }
+
+    public interface IPlayerCreateState : IState
+    {
+        public void OnPlayerCreate();
     }
 
     public class PlayerTurnState : IState
