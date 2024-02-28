@@ -41,6 +41,5 @@ namespace Prefab
             }
             throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
          }
-        
     }
 }

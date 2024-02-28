@@ -2,6 +2,7 @@ using Player;
 using Prefab;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using Zenject;
 
@@ -9,72 +10,71 @@ namespace Gameplay
 {
     public interface IState
     {
-        Scenario _scenario { get; }
+        IScenario _scenario { get; }
 
-        IGameplayService _gameplayService { get; }
         public void OnEnter();
         public void OnExit();
     }
 
     public class PlayerTurnState : IState
     {
-        public Scenario _scenario { get; }
+        public IScenario _scenario { get; }
 
-        public IGameplayService _gameplayService { get; }
+        public ICharacterScenarioContext _characters { get; }
 
-        public PlayerTurnState( Scenario scenario, IGameplayService fullService)
+        public PlayerTurnState( IScenario scenario, ICharacterScenarioContext context)
         {
             _scenario = scenario;
-            _gameplayService = fullService;
+            _characters = context;
         }
 
         public void OnEnter()
         {
-            for (int i = 0; i < _gameplayService.Players.Count; i++)
+            for (int i = 0; i < _characters.Players.Count; i++)
             {
-                _gameplayService.Players[i].IsActive = true;
-                _gameplayService.Players[i].OnSwitch += _scenario.OnStateEnd;
+                _characters.Players[i].IsActive = true;
+                _characters.Players[i].OnSwitch += _scenario.OnStateEnd;
             }
             Debug.Log("Entered player turn state");
         }
 
         public void OnExit()
         {
-            for (int i = 0; i < _gameplayService.Players.Count; i++)
+            for (int i = 0; i < _characters.Players.Count; i++)
             {
-                _gameplayService.Players[i].IsActive = false;
-                _gameplayService.Players[i].OnSwitch -= _scenario.OnStateEnd;
+                _characters.Players[i].IsActive = false;
+                _characters.Players[i].OnSwitch -= _scenario.OnStateEnd;
             }
             Debug.Log("Exited player turn state");
         }
     }
     public class EnemyTurnState : IState
     {
-        public Scenario _scenario { get; }
+        public IScenario _scenario { get; }
         
-        public IGameplayService _gameplayService { get; }
+        public ICharacterScenarioContext _characters { get; }
 
-        public EnemyTurnState(Scenario scenario, IGameplayService fullService)
+        public EnemyTurnState(IScenario scenario, ICharacterScenarioContext context)
         {
             _scenario = scenario;
-            _gameplayService = fullService;
+            _characters = context;
         }
         public void OnEnter()
         {
-            for(int i=0; i <_gameplayService.Enemies.Count;i++ )
+            for(int i=0; i <_characters.Enemies.Count;i++ )
             {
-                _gameplayService.Enemies[i].IsActive = true;
-                _gameplayService.Enemies[i].OnSwitch += _scenario.OnStateEnd;
+                _characters.Enemies[i].IsActive = true;
+                _characters.Enemies[i].OnSwitch += _scenario.OnStateEnd;
             }
             Debug.Log("Entered enemy turn state");
         }
 
         public void OnExit()
         {
-            for (int i = 0; i < _gameplayService.Enemies.Count; i++)
+            for (int i = 0; i < _characters.Enemies.Count; i++)
             {
-                _gameplayService.Enemies[i].IsActive = false;
-                _gameplayService.Enemies[i].OnSwitch -= _scenario.OnStateEnd;
+                _characters.Enemies[i].IsActive = false;
+                _characters.Enemies[i].OnSwitch -= _scenario.OnStateEnd;
             }
             Debug.Log("Exited enemy turn state");
         }
@@ -82,14 +82,14 @@ namespace Gameplay
 
     public class InitLevelState : IState
     {
-        public Scenario _scenario { get; }
+        public IScenario _scenario { get; }
 
-        public IGameplayService _gameplayService { get; }
+        public ICharacterScenarioContext _characters { get; }
 
-        public InitLevelState(Scenario scenario, IGameplayService fullService)
+        public InitLevelState(IScenario scenario, ICharacterScenarioContext context)
         {
             _scenario = scenario;
-            _gameplayService = fullService;
+            _characters = context;
         }
 
         public void OnEnter()
@@ -104,11 +104,11 @@ namespace Gameplay
 
             int _id = 1;
             PlayerType _type = PlayerType.Warrior;
-            Stats _stats = _gameplayService._statsProvider.GetStats(_type, _id);
-
-            foreach (Transform spawnPoint in _gameplayService.PlayerSpawnPoints)
+            Stats _stats = _scenario._gameplayService._statsProvider.GetStats(_type, _id);
+            Debug.Log("Number of player spawn points ");
+            foreach (Transform spawnPoint in _characters.PlayerSpawnPoints)
             {
-                _gameplayService._playerFactory.CreatePlayer(spawnPoint, _type, new PlayerModel(_id ,_type, _stats));
+                _scenario._gameplayService._playerFactory.CreatePlayer(spawnPoint, _type, new PlayerModel(_id ,_type, _stats),_characters);
             }
 
             Debug.Log(_stats.Health);

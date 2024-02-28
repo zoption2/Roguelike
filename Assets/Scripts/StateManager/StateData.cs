@@ -12,7 +12,8 @@ namespace Gameplay
     }
     public class StateData
     {
-        public static Dictionary<TypeOfState, IState> GetStateSet(Scenario scenarioInstance, IGameplayService gameplayService)
+        // how to change this method so it would work when scenario will have generics
+        public static Dictionary<TypeOfState, IState> GetStateSet(IScenario scenarioInstance, ICharacterScenarioContext gameplayService)
         {
             Dictionary<TypeOfState, IState> stateSet = new Dictionary<TypeOfState, IState>();
             Debug.Log(scenarioInstance.GetType());

@@ -10,7 +10,7 @@ using Zenject;
 
 public interface IPlayerFactory
 {
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model);
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model, ICharacterScenarioContext characters);
 }
 public class PlayerFactory : IPlayerFactory
 {
@@ -32,7 +32,7 @@ public class PlayerFactory : IPlayerFactory
         _playerPooler = playerPooler;
     }
 
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model)
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model, ICharacterScenarioContext characters)
     {
         Transform _poolableTransform;
         Rigidbody2D _playerViewRigidbody;
@@ -51,7 +51,8 @@ public class PlayerFactory : IPlayerFactory
 
         _controller.Init(_poolableTransform, _playerViewRigidbody, model);
 
-        _gameplayService.Players.Add(_controller);
+        characters.Players.Add(_controller);
+        //_gameplayService.Players.Add(_controller);
 
         return _controller;
     }

@@ -8,11 +8,11 @@ using Zenject;
 
 namespace Gameplay
 {
-    public class BossScenario : Scenario
+    public class BossScenario : Scenario<DefaultScenarioContext>
     {
         public override void Init()
         {
-            //Init some stuff
+           
         }
 
         public override void RenewQueue()
@@ -20,20 +20,21 @@ namespace Gameplay
             
         }
 
-        public BossScenario(IGameplayService fullService)
+        public BossScenario(IGameplayService fullService, IScenarioContext scenarioContext)
         {
             _gameplayService = fullService;
         }
     }
 
-    public class DefaultScenario : Scenario
+    public class DefaultScenario : Scenario<DefaultScenarioContext>
     {
-        public DefaultScenario(IGameplayService fullService)
+        public DefaultScenario(IGameplayService fullService, IScenarioContext scenarioContext)
         {
             _gameplayService = fullService;
             Debug.Log("This is the default scenario");
             _queueOfStates = new Queue<IState>();
-            _stateSet = StateData.GetStateSet(this,_gameplayService);
+            SetScenarioContext(scenarioContext);
+            _stateSet = StateData.GetStateSet(this,_scenarioContext);
         }
         public override void Init()
         {
@@ -51,36 +52,46 @@ namespace Gameplay
             _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
         }
     }
-    public abstract class Scenario
+
+    public interface IScenario
+    {
+        object GetScenarioContext();
+        public void OnStateEnd();
+        public void Init();
+        public IGameplayService _gameplayService { get; set; }
+    }
+    public abstract class Scenario<T> : IScenario where T: IScenarioContext
     {
         protected IState _currentState;
         protected Queue<IState> _queueOfStates;
         protected Dictionary<TypeOfState, IState> _stateSet;
+        protected T _scenarioContext;
 
-        public IGameplayService _gameplayService;
+        public IGameplayService _gameplayService { get; set; }
+
 
         public abstract void RenewQueue();
+
+        public object GetScenarioContext()
+        {
+            return _scenarioContext;
+        }
+        public void SetScenarioContext(IScenarioContext context)
+        {
+            _scenarioContext = (T)context;
+        }
         public IState GetCurrentState()
         {
             return _currentState;
         }
-        public Scenario()
-        {
-            
-        }
         public abstract void Init();
 
-
-        public void OnStateEnd(/*no index needed because you can take only first element from queue*/)
+        public void OnStateEnd()
         {
-           //take next state from queue
            IState state = _queueOfStates.Dequeue();
-           //switch current state to the taken from queue
            SwitchState(state);
-           //if there is no more states(or other reasons)
             if (_queueOfStates.Count == 0)
             {
-                // renew queue with new states
                 RenewQueue();
             }
            

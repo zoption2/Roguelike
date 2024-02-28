@@ -13,21 +13,12 @@ namespace Gameplay
     }
     public interface IGameplayService
     {
-        public List<IPlayerController> Players { get; }
-        public List<IEnemyController> Enemies { get; }
-        public List<Transform> PlayerSpawnPoints { get; }
-        public List<Transform> EnemySpawnPoints { get; }
-        void Init(TypeOfScenario type);
-
+        void Init(TypeOfScenario type, IScenarioContext context);
         public IPlayerFactory _playerFactory { get; }
         public IStatsProvider _statsProvider { get; }
     }
     public class GameplayService : IGameplayService
     {
-        public List<IPlayerController> Players { get; }
-        public List<IEnemyController> Enemies { get; }
-        public List<Transform> PlayerSpawnPoints { get; }
-        public List<Transform> EnemySpawnPoints { get; }
 
         [Inject]
         public IPlayerFactory _playerFactory { get; }
@@ -35,37 +26,35 @@ namespace Gameplay
         [Inject]
         public IStatsProvider _statsProvider { get; }
 
-        public Scenario ScenarioType;
+        public IScenario ScenarioType;
+
 
         public GameplayService()
         {
-            Players = new List<IPlayerController>();
-            Enemies = new List<IEnemyController>();
-            PlayerSpawnPoints = new List<Transform>();
-            EnemySpawnPoints = new List<Transform>();
+            
         }
 
 
-        public void Init(TypeOfScenario type)
+        public void Init(TypeOfScenario type, IScenarioContext context)
         {
-            ScenarioType = ScenarioFactory.ReturnScenario(type,this);
+            ScenarioType = ScenarioFactory.ReturnScenario(type,this,context);
             ScenarioType.Init();
-            //ScenarioType._fullService = this;
         }
     }
 
     public class ScenarioFactory
     {
-        public static Scenario ReturnScenario(TypeOfScenario type,IGameplayService fullService)
+        // how to change this method so it would work when scenario will have generics
+        public static IScenario ReturnScenario(TypeOfScenario type,IGameplayService fullService,IScenarioContext context)
         {
-            Scenario scenario=null;
+            IScenario scenario=null;
             switch (type)
             {
                 case TypeOfScenario.Default:
-                    scenario = new DefaultScenario(fullService);
+                    scenario = new DefaultScenario(fullService, context);
                     break;
                 case TypeOfScenario.Boss:
-                    scenario = new BossScenario(fullService);
+                    scenario = new BossScenario(fullService, context);
                     break;
             }
             return scenario;

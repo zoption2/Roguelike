@@ -15,6 +15,8 @@ namespace Player
         private IEnemyController _enemyController = new EnemyController();
 
         private IPlayerFactory _playerFactory;
+        [SerializeField]
+        private DefaultScenarioContext _scenarioContext = new DefaultScenarioContext();
 
         [SerializeField]
         private Transform _playerTransform;
@@ -31,11 +33,14 @@ namespace Player
         public void Start()
         {
             //_playerFactory.CreatePlayer(_playerTransform, PlayerType.Warrior, new PlayerModel());
-            _gameplayService.PlayerSpawnPoints.Add(_playerTransform);
+            //_gameplayService.PlayerSpawnPoints.Add(_playerTransform);
 
             _enemyController.Init();
-            _gameplayService.Enemies.Add(_enemyController);
-            _gameplayService.Init(TypeOfScenario.Default);
+            Debug.Log(_enemyController == null);
+            Debug.Log(_scenarioContext == null);
+            Debug.Log(_scenarioContext.Enemies == null);
+            _scenarioContext.Enemies.Add(_enemyController);
+            _gameplayService.Init(TypeOfScenario.Default,_scenarioContext);
         }
     }
 }
