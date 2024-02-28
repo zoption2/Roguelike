@@ -20,6 +20,8 @@ public class ContextInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
+        Container.Bind<IScenarioFactory>().To<ScenarioFactory>().AsSingle();
+        Container.Bind<IPlayerFactory>().To<PlayerFactory>().AsSingle();
         Container.Bind<DefaultPlayerModelHolder>().FromInstance(_defaultPlayerModelHolder).AsSingle();
         Container.Bind<SavedCharacterModelHolder>().FromInstance(_savedCharacterModelHolder).AsSingle();
         Container.Bind<IPlayerController>().To<PlayerController>().AsSingle();
@@ -28,6 +30,6 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<PlayerPrefabHolder>().FromInstance(_playerPrefabHolder).AsSingle();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();
-        Container.Bind<IPlayerFactory>().To<PlayerFactory>().AsSingle();
+        
     }
 }

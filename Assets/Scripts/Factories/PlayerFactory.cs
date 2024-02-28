@@ -15,19 +15,16 @@ public interface IPlayerFactory
 public class PlayerFactory : IPlayerFactory
 {
     private IPlayerController _controller;
-    private IGameplayService _gameplayService;
     private IPlayerView _playerView;
     private ObjectPooler<PlayerType> _playerPooler;
 
     [Inject]
     public void Construct(
         IPlayerController controller,
-        IGameplayService service,
         ObjectPooler<PlayerType> playerPooler
         )
     {
         _controller = controller;
-        _gameplayService = service;
         _controller.IsActive = true;
         _playerPooler = playerPooler;
     }

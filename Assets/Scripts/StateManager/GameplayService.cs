@@ -20,38 +20,42 @@ namespace Gameplay
     public class GameplayService : IGameplayService
     {
 
-        [Inject]
         public IPlayerFactory _playerFactory { get; }
 
-        [Inject]
         public IStatsProvider _statsProvider { get; }
+
+        public IScenarioFactory _scenarioFactory { get; }
 
         public IScenario ScenarioType;
 
-
-        public GameplayService()
+        public GameplayService(IStatsProvider statsProvider,IScenarioFactory scenarioFactory,IPlayerFactory playerFactory)
         {
-            
-        }
-
+            _scenarioFactory = scenarioFactory;
+            _playerFactory = playerFactory;
+            _statsProvider = statsProvider;
+        }  
 
         public void Init(TypeOfScenario type, IScenarioContext context)
         {
-            ScenarioType = ScenarioFactory.ReturnScenario(type,this,context);
+            ScenarioType = _scenarioFactory.ReturnScenario(type,this,context);
             ScenarioType.Init();
         }
     }
 
-    public class ScenarioFactory
+    public interface IScenarioFactory
     {
-        // how to change this method so it would work when scenario will have generics
-        public static IScenario ReturnScenario(TypeOfScenario type,IGameplayService fullService,IScenarioContext context)
+        public IScenario ReturnScenario(TypeOfScenario type, IGameplayService fullService, IScenarioContext context);
+    }
+
+    public class ScenarioFactory : IScenarioFactory
+    {
+        public  IScenario ReturnScenario(TypeOfScenario type,IGameplayService fullService,IScenarioContext context)
         {
             IScenario scenario=null;
             switch (type)
             {
                 case TypeOfScenario.Default:
-                    scenario = new DefaultScenario(fullService, context);
+                    scenario = new DefaultScenario(fullService, context);// DIContainer.Reslove<DefaultScenario>
                     break;
                 case TypeOfScenario.Boss:
                     scenario = new BossScenario(fullService, context);

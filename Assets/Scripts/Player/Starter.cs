@@ -16,7 +16,7 @@ namespace Player
 
         private IPlayerFactory _playerFactory;
         [SerializeField]
-        private DefaultScenarioContext _scenarioContext = new DefaultScenarioContext();
+        private DefaultScenarioContext _scenarioContext;
 
         [SerializeField]
         private Transform _playerTransform;
