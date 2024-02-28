@@ -36,9 +36,6 @@ namespace Player
             //_gameplayService.PlayerSpawnPoints.Add(_playerTransform);
 
             _enemyController.Init();
-            Debug.Log(_enemyController == null);
-            Debug.Log(_scenarioContext == null);
-            Debug.Log(_scenarioContext.Enemies == null);
             _scenarioContext.Enemies.Add(_enemyController);
             _gameplayService.Init(TypeOfScenario.Default,_scenarioContext);
         }
