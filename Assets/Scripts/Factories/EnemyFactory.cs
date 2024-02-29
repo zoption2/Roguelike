@@ -55,8 +55,6 @@ public class EnemyFactory : IEnemyFactory
 
         controller.Init(poolableTransform, enemyViewRigidbody, enemyModel);
 
-        characters.Enemies.Add(controller);
-
         Debug.Log($"Enemy of type {type} was created. They have {stats.Health} hp and spawned on {point.position}");
 
         return controller;

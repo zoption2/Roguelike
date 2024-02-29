@@ -4,12 +4,37 @@ using UnityEngine;
 
 namespace Prefab
 {
+    public enum CharacterType
+    {
+        none = 0,
+        Warrior = 1,
+        Wizard = 2,
+        Archer = 3,
+        Monster1 = 100,
+        Monster2 = 101,
+        Monster3 = 102,
+    }
+
+    public enum MonsterType
+    {
+        Monster1 = 100,
+        Monster2 = 101,
+        Monster3 = 102,
+    }
+
+    public class DODOD
+    {
+        void dod(MonsterType monster)
+        {
+            CharacterType type = (CharacterType)monster;
+        }
+    }
 
     public enum PlayerType 
     {
-        Warrior,
-        Wizard,
-        Archer,
+        Warrior = 1 ,
+        Wizard = 2,
+        Archer = 3,
     }
 
     public enum EnemyType 

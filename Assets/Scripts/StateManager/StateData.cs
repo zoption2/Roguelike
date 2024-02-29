@@ -19,9 +19,9 @@ namespace Gameplay
     }
     public class StateData : IStateData
     {
-        IPlayerFactory _playerFactory;
-        IEnemyFactory _enemyFactory;
-        IStatsProvider _statsProvider;
+        private IPlayerFactory _playerFactory;
+        private IEnemyFactory _enemyFactory;
+        private IStatsProvider _statsProvider;
 
         [Inject]
         public void Construct(IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider)

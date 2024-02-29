@@ -12,9 +12,9 @@ public interface IPlayerFactory
 }
 public class PlayerFactory : IPlayerFactory
 {
-    IStatsProvider _statsProvider;
-    DiContainer _container;
-    ObjectPooler<PlayerType> _playerPooler;
+    private IStatsProvider _statsProvider;
+    private DiContainer _container;
+    private ObjectPooler<PlayerType> _playerPooler;
 
     [Inject]
     public void Construct(
@@ -55,9 +55,7 @@ public class PlayerFactory : IPlayerFactory
 
         controller.Init(poolableTransform, playerViewRigidbody, playerModel);
 
-        characters.Players.Add(controller);
-
-        Debug.Log($"Player with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
+        Debug.Log($"Player {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
 
         return controller;
     }

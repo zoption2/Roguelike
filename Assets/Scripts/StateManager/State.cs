@@ -1,4 +1,5 @@
 using CharactersStats;
+using Enemy;
 using Player;
 using Prefab;
 using System.Collections;
@@ -116,30 +117,24 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-
             int id = 1;
-            PlayerType type = PlayerType.Warrior;
             
-            Stats stats = _statsProvider.GetPlayerStats(type, id);
-            foreach (Transform spawnPoint in _characters.PlayerSpawnPoints)
+            foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
             {
-                _playerFactory.CreatePlayer(spawnPoint, type, _characters, id);
+                IPlayerController newPlayer = _playerFactory.CreatePlayer(player.spawnPoint, player.playerType, _characters, id);
+                _characters.Players.Add(newPlayer);
+
             }
 
-            Debug.Log(stats.Health);
         }
 
         public void OnEnemyCreate()
         {
-            EnemyType type = EnemyType.Barbarian;
-
-            Stats stats = _statsProvider.GetEnemyStats(type);
-            foreach (Transform spawnPoint in _characters.EnemySpawnPoints)
+            foreach (EnemySpawnPointWithType enemy in _characters.EnemySpawnPoints)
             {
-                _enemyFactory.CreateEnemy(spawnPoint, type, _characters);
+                IEnemyController newEnemy = _enemyFactory.CreateEnemy(enemy.spawnPoint, enemy.enemyType, _characters);
+                _characters.Enemies.Add(newEnemy);
             }
-
-            Debug.Log(stats.Health);
         }
 
         public void OnExit()
