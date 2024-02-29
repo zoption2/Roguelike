@@ -20,7 +20,7 @@ namespace Gameplay
         public List<IEnemyController> Enemies { get; }
         public List<Transform> PlayerSpawnPoints { get; }
         public List<Transform> EnemySpawnPoints { get; }
-        void Init(TypeOfScenario type);
+        //void Init(TypeOfScenario type);
         void Init(TypeOfScenario type, ISceneContextMarker sceneContext);
 
         public IPlayerFactory _playerFactory { get; }
@@ -43,7 +43,7 @@ namespace Gameplay
         [Inject]
         public IStatsProvider _statsProvider { get; }
 
-        public Scenario ScenarioType;
+        public BaseScenario<MySceneContext> ScenarioType;
 
         public GameplayService()
         {
@@ -54,12 +54,12 @@ namespace Gameplay
         }
 
 
-        public void Init(TypeOfScenario type)
-        {
-            ScenarioType = ScenarioFactory.GetScenario(type, this);
-            ScenarioType.Init();
-            //ScenarioType._fullService = this;
-        }
+        //public void Init(TypeOfScenario type)
+        //{
+        //    ScenarioType = ScenarioFactory.GetScenario(type, this);
+        //    ScenarioType.Init();
+        //    //ScenarioType._fullService = this;
+        //}
 
         public void Init(TypeOfScenario type, ISceneContextMarker sceneContext)
         {
@@ -71,18 +71,18 @@ namespace Gameplay
 
     public class ScenarioFactory
     {
-        public static Scenario GetScenario(TypeOfScenario type, IGameplayService fullService)
+        public static BaseScenario<MySceneContext> GetScenario(TypeOfScenario type, IGameplayService fullService)
         {
-            Scenario scenario = null;
+            BaseScenario<MySceneContext> scenario = null;
             switch (type)
             {
                 case TypeOfScenario.Default:
-                    scenario = new DefaultScenario(fullService);
+                    scenario = new TestScenario();
                     //Resolve
                     break;
-                case TypeOfScenario.Boss:
-                    scenario = new BossScenario(fullService);
-                    break;
+                //case TypeOfScenario.Boss:
+                //    scenario = new BossScenario(fullService);
+                //    break;
             }
             return scenario;
         }
@@ -103,7 +103,7 @@ namespace Gameplay
     //    void GrowTree(Action callback = null);
     //}
 
-    //public class DefaultScenarioContext1 : ISceneContextMarker, IForest
+    //public class DefaultScenarioContext : ISceneContextMarker, IForest
     //{
     //    [field: SerializeField] public List<IPlayerController> Players { get; private set; }
     //    [field: SerializeField] public List<IEnemyController> Enemies { get; private set; }

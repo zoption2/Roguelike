@@ -27,7 +27,7 @@ namespace Gameplay
 
     public interface IState
     {
-        Scenario _scenario { get; }
+        BaseScenario<ISceneContextMarker> _scenario { get; }
 
         IGameplayService _gameplayService { get; }
         public void OnEnter();
@@ -46,11 +46,11 @@ namespace Gameplay
 
     public class PlayerTurnState : IState
     {
-        public Scenario _scenario { get; }
+        public BaseScenario<ISceneContextMarker> _scenario { get; }
 
         public IGameplayService _gameplayService { get; }
 
-        public PlayerTurnState( Scenario scenario, IGameplayService fullService)
+        public PlayerTurnState( BaseScenario<ISceneContextMarker> scenario, IGameplayService fullService)
         {
             _scenario = scenario;
             _gameplayService = fullService;
@@ -78,11 +78,11 @@ namespace Gameplay
     }
     public class EnemyTurnState : IState
     {
-        public Scenario _scenario { get; }
+        public BaseScenario<ISceneContextMarker> _scenario { get; }
         
         public IGameplayService _gameplayService { get; }
 
-        public EnemyTurnState(Scenario scenario, IGameplayService fullService)
+        public EnemyTurnState(BaseScenario<ISceneContextMarker>  scenario, IGameplayService fullService)
         {
             _scenario = scenario;
             _gameplayService = fullService;
@@ -110,11 +110,11 @@ namespace Gameplay
 
     public class InitLevelState : IState
     {
-        public Scenario _scenario { get; }
+        public BaseScenario<ISceneContextMarker> _scenario { get; }
 
         public IGameplayService _gameplayService { get; }
 
-        public InitLevelState(Scenario scenario, IGameplayService fullService)
+        public InitLevelState(BaseScenario<ISceneContextMarker> scenario, IGameplayService fullService)
         {
             _scenario = scenario;
             _gameplayService = fullService;

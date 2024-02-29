@@ -12,17 +12,17 @@ namespace Gameplay
     }
     public class StateData
     {
-        public static Dictionary<TypeOfState, IState> GetStateSet(Scenario scenarioInstance, IGameplayService gameplayService)
+        public static Dictionary<TypeOfState, IState> GetStateSet<T>(BaseScenario<T> scenarioInstance) where T : ISceneContextMarker
         {
             Dictionary<TypeOfState, IState> stateSet = new Dictionary<TypeOfState, IState>();
             Debug.Log(scenarioInstance.GetType());
             switch (scenarioInstance)
             {
-                case DefaultScenario:
-                    stateSet.Add(TypeOfState.Init, new InitLevelState(scenarioInstance, gameplayService));
-                    stateSet.Add(TypeOfState.PlayerTurn, new PlayerTurnState(scenarioInstance, gameplayService));
-                    stateSet.Add(TypeOfState.EnemyTurn, new EnemyTurnState(scenarioInstance, gameplayService));
-                    break;
+                case TestScenario:
+                    stateSet.Add(TypeOfState.Init, new InitLevelState(scenarioInstance));
+                    stateSet.Add(TypeOfState.PlayerTurn, new PlayerTurnState(scenarioInstance));
+                    stateSet.Add(TypeOfState.EnemyTurn, new EnemyTurnState(scenarioInstance));
+                    break;               
             }
             return stateSet;
         }
