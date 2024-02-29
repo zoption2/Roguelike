@@ -8,27 +8,27 @@ using Zenject;
 
 public interface IEnemyFactory
 {
-    public IEnemyController CreateEnemy(Transform point, EnemyType type, int id = 0);
+    public IEnemyController CreateEnemy(Transform point, EnemyType type, ICharacterScenarioContext characters, int id = 0);
 }
 public class EnemyFactory : IEnemyFactory
 {
-    private IGameplayService _gameplayService;
+    private IStatsProvider _statsProvider;
     private DiContainer _container;
     private ObjectPooler<EnemyType> _enemyPooler;
 
     [Inject]
     public void Construct(
         DiContainer container,
-        IGameplayService service,
+        IStatsProvider statsProvider,
         ObjectPooler<EnemyType> enemyPooler)
     {
         _container = container;
-        _gameplayService = service;
+        _statsProvider = statsProvider;
         _enemyPooler = enemyPooler;
         _enemyPooler.Init();
     }
 
-    public IEnemyController CreateEnemy(Transform point, EnemyType type, int id = 0)
+    public IEnemyController CreateEnemy(Transform point, EnemyType type, ICharacterScenarioContext characters, int id = 0)
     {
         IEnemyController controller;
         IEnemyView enemyView;
@@ -37,9 +37,9 @@ public class EnemyFactory : IEnemyFactory
         EnemyModel enemyModel;
         Stats stats;
 
-        controller = GetNewController();  
+        controller = GetNewController();
 
-        stats = _gameplayService._statsProvider.GetEnemyStats(type, id);
+        stats = _statsProvider.GetEnemyStats(type, id);
 
         enemyModel = new EnemyModel(id, type, stats);
 
@@ -55,7 +55,7 @@ public class EnemyFactory : IEnemyFactory
 
         controller.Init(poolableTransform, enemyViewRigidbody, enemyModel);
 
-        _gameplayService.Enemies.Add(controller);
+        characters.Enemies.Add(controller);
 
         Debug.Log($"Enemy of type {type} was created. They have {stats.Health} hp and spawned on {point.position}");
 

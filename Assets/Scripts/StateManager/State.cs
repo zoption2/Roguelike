@@ -1,3 +1,4 @@
+using CharactersStats;
 using Player;
 using Prefab;
 using System.Collections;
@@ -86,32 +87,59 @@ namespace Gameplay
 
         public ICharacterScenarioContext _characters { get; }
 
-        public InitLevelState(IScenario scenario, ICharacterScenarioContext context)
+        IStatsProvider _statsProvider;
+
+        IPlayerFactory _playerFactory;
+
+        IEnemyFactory _enemyFactory;
+
+        public InitLevelState(IScenario scenario,
+            ICharacterScenarioContext context,
+            IStatsProvider provider,
+            IPlayerFactory playerFactory,
+            IEnemyFactory enemyFactory)
         {
             _scenario = scenario;
             _characters = context;
+            _statsProvider  = provider;
+            _playerFactory = playerFactory;
+            _enemyFactory = enemyFactory;
         }
 
         public void OnEnter()
         {
             Debug.Log("Entering init state");
-            OnCreate();
+            OnPlayerCreate();
+            OnEnemyCreate();
             _scenario.OnStateEnd();
         }
 
-        public void OnCreate()
+        public void OnPlayerCreate()
         {
 
-            int _id = 1;
-            PlayerType _type = PlayerType.Warrior;
-            Stats _stats = _scenario._gameplayService._statsProvider.GetStats(_type, _id);
-            Debug.Log("Number of player spawn points ");
+            int id = 1;
+            PlayerType type = PlayerType.Warrior;
+            
+            Stats stats = _statsProvider.GetPlayerStats(type, id);
             foreach (Transform spawnPoint in _characters.PlayerSpawnPoints)
             {
-                _scenario._gameplayService._playerFactory.CreatePlayer(spawnPoint, _type, new PlayerModel(_id ,_type, _stats),_characters);
+                _playerFactory.CreatePlayer(spawnPoint, type, _characters, id);
             }
 
-            Debug.Log(_stats.Health);
+            Debug.Log(stats.Health);
+        }
+
+        public void OnEnemyCreate()
+        {
+            EnemyType type = EnemyType.Barbarian;
+
+            Stats stats = _statsProvider.GetEnemyStats(type);
+            foreach (Transform spawnPoint in _characters.EnemySpawnPoints)
+            {
+                _enemyFactory.CreateEnemy(spawnPoint, type, _characters);
+            }
+
+            Debug.Log(stats.Health);
         }
 
         public void OnExit()

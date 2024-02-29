@@ -1,58 +1,69 @@
-using Enemy;
 using Gameplay;
 using Player;
+using CharactersStats;
 using Pool;
 using Prefab;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 public interface IPlayerFactory
 {
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model, ICharacterScenarioContext characters);
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, ICharacterScenarioContext characters, int id = 0);
 }
 public class PlayerFactory : IPlayerFactory
 {
-    private IPlayerController _controller;
-    private IPlayerView _playerView;
-    private ObjectPooler<PlayerType> _playerPooler;
+    IStatsProvider _statsProvider;
+    DiContainer _container;
+    ObjectPooler<PlayerType> _playerPooler;
 
     [Inject]
     public void Construct(
-        IPlayerController controller,
-        ObjectPooler<PlayerType> playerPooler
-        )
+        DiContainer container,
+        IStatsProvider statsProvider,
+        ObjectPooler<PlayerType> playerPooler)
     {
-        _controller = controller;
-        _controller.IsActive = true;
+        _container = container;
+        _statsProvider = statsProvider;
         _playerPooler = playerPooler;
+        _playerPooler.Init();
     }
 
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, PlayerModel model, ICharacterScenarioContext characters)
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, ICharacterScenarioContext characters, int id = 0)
     {
-        Transform _poolableTransform;
-        Rigidbody2D _playerViewRigidbody;
+        IPlayerView playerView;
+        IPlayerController controller;
+        Transform poolableTransform;
+        Rigidbody2D playerViewRigidbody;
+        PlayerModel playerModel;
+        Stats stats;
 
-        _playerPooler.Init();
+        controller = GetNewController();
 
-        var _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
-        _playerView = _poolable.gameObject.GetComponent<PlayerView>();
+        stats = _statsProvider.GetPlayerStats(type, id);
 
-        var _poolableObj = _poolable.gameObject.transform.GetChild(0).gameObject;
-        _poolableTransform = _poolableObj.transform;
+        playerModel = new PlayerModel(id, type, stats);
 
-        _playerViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
+        IMyPoolable _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+        playerView = _poolable.gameObject.GetComponent<PlayerView>();
 
-        _playerView.Initialize((PlayerController)_controller);
+        GameObject _poolableObj = _poolable.gameObject.transform.GetChild(0).gameObject;
+        poolableTransform = _poolableObj.transform;
 
-        _controller.Init(_poolableTransform, _playerViewRigidbody, model);
+        playerViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
 
-        characters.Players.Add(_controller);
-        //_gameplayService.Players.Add(_controller);
+        playerView.Initialize((PlayerController)controller);
 
-        return _controller;
+        controller.Init(poolableTransform, playerViewRigidbody, playerModel);
+
+        characters.Players.Add(controller);
+
+        Debug.Log($"Player with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
+
+        return controller;
+    }
+
+    private IPlayerController GetNewController()
+    {
+        return _container.Resolve<IPlayerController>();
     }
 }
-
-

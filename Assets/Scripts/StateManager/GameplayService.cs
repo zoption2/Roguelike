@@ -1,3 +1,4 @@
+using CharactersStats;
 using Enemy;
 using Player;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace Gameplay
         public void Init(TypeOfScenario type, IScenarioContext context)
         {
             ScenarioType = _scenarioFactory.ReturnScenario(type,this,context);
-            ScenarioType.Init();
+            ScenarioType.Init(context);
         }
     }
 
@@ -49,13 +50,17 @@ namespace Gameplay
 
     public class ScenarioFactory : IScenarioFactory
     {
+        [Inject]
+        public DiContainer _diContainer;
         public  IScenario ReturnScenario(TypeOfScenario type,IGameplayService fullService,IScenarioContext context)
         {
             IScenario scenario=null;
             switch (type)
             {
                 case TypeOfScenario.Default:
-                    scenario = new DefaultScenario(fullService, context);// DIContainer.Reslove<DefaultScenario>
+                    //_container.Resolve<IPlayerController>();
+                    scenario = _diContainer.Resolve<IDefaultScenario>();
+                    //scenario = new DefaultScenario(fullService, context);// DIContainer.Reslove<DefaultScenario>
                     break;
                 case TypeOfScenario.Boss:
                     scenario = new BossScenario(fullService, context);

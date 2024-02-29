@@ -10,14 +10,14 @@ namespace Gameplay
 {
     public class BossScenario : Scenario<DefaultScenarioContext>
     {
-        public override void Init()
+        public override void Init(IScenarioContext context)
         {
-           
+
         }
 
         public override void RenewQueue()
         {
-            
+
         }
 
         public BossScenario(IGameplayService fullService, IScenarioContext scenarioContext)
@@ -26,18 +26,20 @@ namespace Gameplay
         }
     }
 
-    public class DefaultScenario : Scenario<DefaultScenarioContext>
+    public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenario
     {
-        public DefaultScenario(IGameplayService fullService, IScenarioContext scenarioContext)
+        private IStateData _stateData;
+        public DefaultScenario(IGameplayService fullService, IStateData stateData)
         {
             _gameplayService = fullService;
             Debug.Log("This is the default scenario");
             _queueOfStates = new Queue<IState>();
-            SetScenarioContext(scenarioContext);
-            _stateSet = StateData.GetStateSet(this,_scenarioContext);
+            _stateData = stateData;
         }
-        public override void Init()
+        public override void Init(IScenarioContext context)
         {
+            SetScenarioContext(context);
+            _stateSet = _stateData.GetStateSet(this, _scenarioContext);
             _queueOfStates.Enqueue(_stateSet[TypeOfState.Init]);
             _queueOfStates.Enqueue(_stateSet[TypeOfState.PlayerTurn]);
             _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
@@ -57,10 +59,16 @@ namespace Gameplay
     {
         object GetScenarioContext();
         public void OnStateEnd();
-        public void Init();
+        public void Init(IScenarioContext context);
         public IGameplayService _gameplayService { get; set; }
     }
-    public abstract class Scenario<T> : IScenario where T: IScenarioContext
+
+    public interface IDefaultScenario : IScenario
+    {
+
+    }
+
+    public abstract class Scenario<T> : IScenario where T : IScenarioContext
     {
         protected IState _currentState;
         protected Queue<IState> _queueOfStates;
@@ -84,17 +92,17 @@ namespace Gameplay
         {
             return _currentState;
         }
-        public abstract void Init();
+        public abstract void Init(IScenarioContext context);
 
         public void OnStateEnd()
         {
-           IState state = _queueOfStates.Dequeue();
-           SwitchState(state);
+            IState state = _queueOfStates.Dequeue();
+            SwitchState(state);
             if (_queueOfStates.Count == 0)
             {
                 RenewQueue();
             }
-           
+
         }
         public void SwitchState(IState state)
         {
