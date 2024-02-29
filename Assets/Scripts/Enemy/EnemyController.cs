@@ -1,33 +1,47 @@
 ﻿using Player;
+using Prefab;
+using CharactersStats;
 using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 
 namespace Enemy
 {
+    public interface ICharacterController
+    {
+        public bool IsActive { get; set; }
+        public event OnSwitchState OnSwitch;
+
+    }
+
     public interface IEnemyController : ICharacterController
     {
-
+        public void Init(Transform poolableTransform, Rigidbody2D playerViewRigidbody, EnemyModel enemyModel);
+        //public void Init(Transform point, PlayerType type, PlayerModel model);
     }
     public class EnemyController : IEnemyController
     {
-        private EnemyView _enemyView;
+        Transform _poolableTransform;
+        private MyEnemyView _enemyView;
         private EnemyModel _enemyModel;
+        private Rigidbody2D _enemyViewRigidbody;
         public event OnSwitchState OnSwitch;
         public bool IsActive { get; set; }
 
-        //TODO: add methods.
-        public virtual void Init()
+        public void Init(Transform poolableTransform, Rigidbody2D enemyViewRigidbody, EnemyModel enemyModel)
         {
-            _enemyView = GameObject.Find("Enemy").GetComponent<EnemyView>();
-            _enemyView.Initialize(this);
-            _enemyModel = new EnemyModel();
-        }
-        public void Init(EnemyView enemyView, EnemyModel enemyModel)
-        {
-            _enemyView = enemyView;
-            _enemyView.Initialize(this);
             _enemyModel = enemyModel;
+            _poolableTransform = poolableTransform;
+            _enemyViewRigidbody = enemyViewRigidbody;
         }
+
+        //TODO: add methods.
+
+        //public void Init(EnemyView enemyView, DefaultEnemyModel enemyModel)
+        //{
+        //    _enemyView = enemyView;
+        //    _enemyView.Initialize(this);
+        //    _enemyModel = enemyModel;
+        //}
         public void OnClick()
         {
             if (IsActive)

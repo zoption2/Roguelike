@@ -1,4 +1,5 @@
 using Player;
+using Pool;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,11 @@ using UnityEngine.EventSystems;
 
 namespace Enemy
 {
-    public class EnemyView : MonoBehaviour,IPointerDownHandler
+    public interface IEnemyView
+    {
+        public void Initialize(EnemyController enemyController);
+    }
+    public class MyEnemyView : MonoBehaviour, IEnemyView, IMyPoolable ,IPointerDownHandler
     {
         private EnemyController _enemyController;
 
@@ -20,9 +25,24 @@ namespace Enemy
             Debug.Log("Nothing happened yet");
         }
 
+        public void OnCreate()
+        {
+
+        }
+
         public void OnPointerDown(PointerEventData eventData)
         {
             _enemyController.OnClick();
+        }
+
+        public void OnPull()
+        {
+
+        }
+
+        public void OnRelease()
+        {
+
         }
     }
 }

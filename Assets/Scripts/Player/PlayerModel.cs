@@ -1,4 +1,4 @@
-
+using CharactersStats;
 using Prefab;
 using System;
 using UnityEngine;

@@ -5,13 +5,13 @@ using Prefab;
 using CharactersStats;
 
 
-namespace Player
+namespace Enemy
 {
-    public interface ISavedCharacterModelHolder
+    public interface IEnemyModelHolder
     {
-        Stats GetSavedStats(int receivedID);
+        Stats GetDefaultStats(int receivedID);
     }
-    public abstract class DefaultCharacterModelHolder<T> : ScriptableObject where T : Enum
+    public abstract class EnemyModelHolder<T> : ScriptableObject where T : Enum
     {
         [SerializeField]
         protected List<DefaultModel<T>> _models;

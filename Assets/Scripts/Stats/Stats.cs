@@ -1,7 +1,7 @@
-
+using Player;
 using System;
 
-namespace Player
+namespace CharactersStats
 {
     [Serializable]
     public class Stats
