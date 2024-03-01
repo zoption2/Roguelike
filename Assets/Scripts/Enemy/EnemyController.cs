@@ -1,54 +1,44 @@
 ﻿using Player;
-using Prefab;
-using CharactersStats;
-using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using System;
 
 namespace Enemy
 {
-    public interface ICharacterController
-    {
-        public bool IsActive { get; set; }
-        public event OnSwitchState OnSwitch;
-
-    }
 
     public interface IEnemyController : ICharacterController
     {
-        public void Init(Transform poolableTransform, Rigidbody2D playerViewRigidbody, EnemyModel enemyModel);
-        //public void Init(Transform point, PlayerType type, PlayerModel model);
+        public void OnClick(Transform point, PointerEventData eventData);
     }
-    public class EnemyController : IEnemyController
+    public class EnemyController : IEnemyController, IDisposable
     {
         Transform _poolableTransform;
-        private MyEnemyView _enemyView;
-        private EnemyModel _enemyModel;
+        private CharacterView _enemyView;
+        private CharacterModel _enemyModel;
         private Rigidbody2D _enemyViewRigidbody;
         public event OnSwitchState OnSwitch;
         public bool IsActive { get; set; }
 
-        public void Init(Transform poolableTransform, Rigidbody2D enemyViewRigidbody, EnemyModel enemyModel)
+        public void Init(Transform poolableTransform, Rigidbody2D rigidbody, CharacterModel enemyModel, CharacterView characterView)
         {
             _enemyModel = enemyModel;
             _poolableTransform = poolableTransform;
-            _enemyViewRigidbody = enemyViewRigidbody;
+            _enemyViewRigidbody = rigidbody;
+            _enemyView = characterView;
+            _enemyView.ON_CLICK += OnClick;
         }
-
-        //TODO: add methods.
-
-        //public void Init(EnemyView enemyView, DefaultEnemyModel enemyModel)
-        //{
-        //    _enemyView = enemyView;
-        //    _enemyView.Initialize(this);
-        //    _enemyModel = enemyModel;
-        //}
-        public void OnClick()
+        public void OnClick(Transform point, PointerEventData eventData)
         {
             if (IsActive)
             {
                 Debug.Log("Enemy was clicked");
                 OnSwitch?.Invoke();
             }
+        }
+
+        public void Dispose()
+        {
+            _enemyView.ON_CLICK -= OnClick;
         }
     }
 }

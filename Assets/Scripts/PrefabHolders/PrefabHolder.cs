@@ -1,6 +1,9 @@
+using Player;
+using Pool;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Prefab
 {
@@ -10,9 +13,9 @@ namespace Prefab
         Warrior = 1,
         Wizard = 2,
         Archer = 3,
-        Monster1 = 100,
-        Monster2 = 101,
-        Monster3 = 102,
+        Barbarian = 100,
+        Thrower = 101,
+        Summoner = 102,
     }
 
     public enum MonsterType
@@ -22,13 +25,30 @@ namespace Prefab
         Monster3 = 102,
     }
 
-    public class DODOD
-    {
-        void dod(MonsterType monster)
-        {
-            CharacterType type = (CharacterType)monster;
-        }
-    }
+    //public abstract class AstractCharacter<TControl, TCharacterType> where TCharacterType : Enum
+    //{
+    //    protected ObjectPooler<TCharacterType> _pooler;
+    //    public abstract TControl GetCharacter(TCharacterType characterType);
+    //}
+
+    //public class PlayerCharacter : AstractCharacter<IPlayerController, PlayerType>
+    //{
+    //    private readonly DiContainer _diContainer;
+    //    private PlayerType _playerType;
+
+    //    public PlayerCharacter(DiContainer diContainer , ObjectPooler<PlayerType> pooler)
+    //    {
+    //        _diContainer = diContainer;
+    //        _pooler = pooler;
+    //    }
+
+    //    public override IPlayerController GetCharacter(PlayerType characterType)
+    //    {
+    //        IPlayerController controller = _diContainer.Resolve<IPlayerController>();
+    //        IPlayerView view = _pooler.Pull<IPlayerView>(characterType);
+    //        PlayerModel model = new PlayerModel()
+    //    }
+    //}
 
     public enum PlayerType 
     {
@@ -39,9 +59,9 @@ namespace Prefab
 
     public enum EnemyType 
     {
-        Barbarian,
-        Thrower,
-        Summoner,
+        Barbarian = 100,
+        Thrower = 101,
+        Summoner = 102,
     }
 
     public enum SlingShotType

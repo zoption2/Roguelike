@@ -1,68 +1,94 @@
-﻿//using Gameplay;
-//using Player;
-//using Enemy;
-//using CharactersStats;
-//using Pool;
-//using Prefab;
-//using UnityEngine;
-//using Zenject;
+﻿using System;
+using CharactersStats;
+using Enemy;
+using Gameplay;
+using Player;
+using Pool;
+using Prefab;
+using UnityEditor.U2D.Aseprite;
+using UnityEngine;
+using Zenject;
 
-//public interface ICharacterFactory<T>
-//{
-//    public T CreatePlayer(Transform point, CharacterType type, ICharacterScenarioContext characters, int id = 0);
-//}
-//public class CharacterFactory<T> : ICharacterFactory<T> 
-//{
-//    private IStatsProvider _statsProvider;
-//    private DiContainer _container;
-//    private ObjectPooler<CharacterType> _pooler;
+public interface ICharacterController
+{
+    public bool IsActive { get; set; }
+    public event OnSwitchState OnSwitch;
+    public void Init(Transform poolableTransform, Rigidbody2D rigidbody, CharacterModel model, CharacterView playerView);
 
-//    [Inject]
-//    public void Construct(
-//        DiContainer container,
-//        IStatsProvider statsProvider,
-//        ObjectPooler<CharacterType> pooler)
-//    {
-//        _container = container;
-//        _statsProvider = statsProvider;
-//        _pooler = pooler;
-//        _pooler.Init();
-//    }
+}
 
-//    public T CreateCharacter(Transform point, CharacterType type, ICharacterScenarioContext characters, int id = 0)
-//    {
-//        IPlayerView playerView;
-//        ICharacterController controller;
-//        Transform poolableTransform;
-//        Rigidbody2D playerViewRigidbody;
-//        PlayerModel playerModel;
-//        Stats stats;
+public interface ICharacterFactory<TController, TEnum>
+    where TController : ICharacterController
+    where TEnum : Enum
+{
+    TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0);
+}
 
-//        controller = GetNewController();
+public class CharacterFactory<TController, TEnum> : ICharacterFactory<TController, TEnum>
+    where TController : ICharacterController
+    where TEnum : Enum
+{
+    private IStatsProvider _statsProvider;
+    private DiContainer _container;
+    private ObjectPooler<TEnum> _pooler;
 
-//        stats = _statsProvider.GetPlayerStats(type, id);
+    [Inject]
+    public CharacterFactory(
+        DiContainer container,
+        IStatsProvider statsProvider,
+        ObjectPooler<TEnum> pooler)
+    {
+        _container = container;
+        _statsProvider = statsProvider;
+        _pooler = pooler;
+        _pooler.Init();
+    }
 
-//        playerModel = new PlayerModel(id, type, stats);
+    public TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0)
+    {
+        CharacterView characterView;
+        TController controller;
+        Transform poolableTransform;
+        Rigidbody2D characterRigidbody;
+        CharacterModel characterModel;
+        Stats stats;
 
-//        IMyPoolable _poolable = _pooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
-//        playerView = _poolable.gameObject.GetComponent<PlayerView>();
+        controller = GetNewController();
 
-//        GameObject _poolableObj = _poolable.gameObject.transform.GetChild(0).gameObject;
-//        poolableTransform = _poolableObj.transform;
+        if (typeof(TEnum) == typeof(PlayerType))
+        {
+            PlayerType playerType = (PlayerType)(object)type;
+            stats = _statsProvider.GetCharacterStats(playerType, id);
+        } else if (typeof(TEnum) == typeof(EnemyType))
+        {
+            EnemyType enemyType = (EnemyType)(object)type;
+            stats = _statsProvider.GetCharacterStats(enemyType, id);
+        } else
+        {
+            stats = null;
+            Debug.Log("Problem in factory with stats");
+        }
 
-//        playerViewRigidbody = _poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
 
-//        playerView.Initialize((PlayerController)controller);
+        characterModel = new CharacterModel(id, type, stats);
 
-//        controller.Init(poolableTransform, playerViewRigidbody, playerModel);
+        IMyPoolable poolable = _pooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+        characterView = poolable.gameObject.GetComponent<CharacterView>();
 
-//        Debug.Log($"Player {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
+        GameObject poolableObject = poolable.gameObject.transform.GetChild(0).gameObject;
+        poolableTransform = poolableObject.transform;
 
-//        return controller;
-//    }
+        characterRigidbody = poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
 
-//    private T GetNewController()
-//    {
-//        return _container.Resolve<T>();
-//    }
-//}
+        controller.Init(poolableTransform, characterRigidbody, characterModel, characterView);
+
+        Debug.Log($"Character of type {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
+
+        return controller;
+    }
+
+    private TController GetNewController()
+    {
+        return _container.Resolve<TController>();
+    }
+}

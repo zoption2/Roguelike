@@ -14,26 +14,19 @@ using Zenject;
 
 namespace Player
 {
-    public interface ICharacterController
-    {
-        public bool IsActive { get; set; }
-        public event OnSwitchState OnSwitch;
-
-    }
 
     public interface IPlayerController : ICharacterController
     {
-        public void Init(Transform poolableTransform, Rigidbody2D playerViewRigidbody, PlayerModel playerModel);
-        //public void Init(Transform point, PlayerType type, PlayerModel model);
+        public void OnClick(Transform point, PointerEventData eventData);
     }
 
     public delegate void OnSwitchState();
-    public class PlayerController : IPlayerController
+    public class PlayerController : IPlayerController, IDisposable
     {
         Transform _poolableTransform;
 
-        private IPlayerView _playerView;
-        private PlayerModel _playerModel;
+        private ICharacterView _playerView;
+        private CharacterModel _playerModel;
 
         private Rigidbody2D _playerViewRigidbody;
 
@@ -54,20 +47,23 @@ namespace Player
         public void Init(
         Transform poolableTransform,
         Rigidbody2D playerViewRigidbody,
-        PlayerModel playerModel)
+        CharacterModel playerModel,
+        CharacterView playerView)
         {
             _poolableTransform = poolableTransform;
             _playerViewRigidbody = playerViewRigidbody;
             _playerModel = playerModel;
+            _playerView = playerView;
+            _playerView.ON_CLICK += OnClick;
             _slingShotPooler.Init();
         }
 
-        public void OnClick(Transform point, SlingShotType type, PointerEventData eventData)
+        public void OnClick(Transform point, PointerEventData eventData)
         {
             if (IsActive)
             {
                 Vector2 _initPosition = _poolableTransform.position;
-                var slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(type, _initPosition, point.rotation, point.parent);
+                var slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(SlingShotType.Melee, _initPosition, point.rotation, point.parent);
                 _slingShot = slingShotPoolable.gameObject.GetComponent<SlingShot>();
 
                 _slingShot.Init(_initPosition);
@@ -98,6 +94,12 @@ namespace Player
             _slingShot.OnShoot -= Launch;
             _isLaunchWasSubscibed = false;
             OnSwitch.Invoke();
+
+        }
+
+        public void Dispose()
+        {
+            _playerView.ON_CLICK -= OnClick;
         }
     }
 }

@@ -1,22 +1,28 @@
 using Prefab;
 using Player;
 using Enemy;
+using System;
 
 namespace CharactersStats
 {
 
     public interface IStatsProvider
     {
-        public Stats GetPlayerStats(PlayerType playerType, int id = -1);
-        public Stats GetEnemyStats(EnemyType enemyType, int id = -1);
+        public Stats GetCharacterStats(PlayerType playerType, int id = -1);
+        public Stats GetCharacterStats(EnemyType enemyType, int id = -1);
+
     }
+
     public class StatsProvider : IStatsProvider
     {
         private DefaultPlayerModelHolder _defaultModelHolder;
         private SavedCharacterModelHolder _savedModelHolder;
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
-        public Stats GetPlayerStats(PlayerType playerType, int id = -1)
+
+
+
+        public Stats GetCharacterStats(PlayerType playerType, int id = -1)
         {
             Stats stats;
             stats = _savedModelHolder.GetSavedStats(id);
@@ -27,14 +33,16 @@ namespace CharactersStats
             return stats;
         }
 
-        public Stats GetEnemyStats(EnemyType enemyType, int id = -1)
+        public Stats GetCharacterStats(EnemyType enemyType, int id = -1)
         {
             Stats stats;
 
             stats = _defaultEnemyModelHolder.GetDefaultStats(enemyType);
-            
+
             return stats;
         }
+
+
 
         public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, SavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
         {

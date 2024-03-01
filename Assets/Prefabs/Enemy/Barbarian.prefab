@@ -157,7 +157,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2197586612021283736}
-  - component: {fileID: 8047538779865882096}
+  - component: {fileID: -1318683797779309191}
   m_Layer: 0
   m_Name: Barbarian
   m_TagString: Untagged
@@ -181,7 +181,7 @@ Transform:
   - {fileID: 2739655349412714155}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8047538779865882096
+--- !u!114 &-1318683797779309191
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,6 +190,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3270697473743781080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f0cf1abc67484d42add3b7ecb3d7962, type: 3}
+  m_Script: {fileID: 11500000, guid: d9c23d56eca6b2f458cde324ab603f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
