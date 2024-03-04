@@ -1,9 +1,6 @@
-using Player;
-using Pool;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 namespace Prefab
 {
@@ -18,41 +15,10 @@ namespace Prefab
         Summoner = 102,
     }
 
-    public enum MonsterType
-    {
-        Monster1 = 100,
-        Monster2 = 101,
-        Monster3 = 102,
-    }
-
-    //public abstract class AstractCharacter<TControl, TCharacterType> where TCharacterType : Enum
-    //{
-    //    protected ObjectPooler<TCharacterType> _pooler;
-    //    public abstract TControl GetCharacter(TCharacterType characterType);
-    //}
-
-    //public class PlayerCharacter : AstractCharacter<IPlayerController, PlayerType>
-    //{
-    //    private readonly DiContainer _diContainer;
-    //    private PlayerType _playerType;
-
-    //    public PlayerCharacter(DiContainer diContainer , ObjectPooler<PlayerType> pooler)
-    //    {
-    //        _diContainer = diContainer;
-    //        _pooler = pooler;
-    //    }
-
-    //    public override IPlayerController GetCharacter(PlayerType characterType)
-    //    {
-    //        IPlayerController controller = _diContainer.Resolve<IPlayerController>();
-    //        IPlayerView view = _pooler.Pull<IPlayerView>(characterType);
-    //        PlayerModel model = new PlayerModel()
-    //    }
-    //}
-
     public enum PlayerType 
     {
-        Warrior = 1 ,
+        none = 0,
+        Warrior = 1,
         Wizard = 2,
         Archer = 3,
     }
@@ -66,9 +32,10 @@ namespace Prefab
 
     public enum SlingShotType
     {
-        Melee,
-        Distance,
-        Magic,
+        none = 0,
+        Melee = 1,
+        Distance = 2,
+        Magic = 3,
     }
     
     public abstract class PrefabHolder<T> : ScriptableObject where T : Enum

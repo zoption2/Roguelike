@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Player;
-using Enemy;
-using Prefab;
-using Zenject;
+
 
 namespace Gameplay
 {
@@ -32,7 +28,7 @@ namespace Gameplay
         public DefaultScenario(IGameplayService fullService, IStateData stateData)
         {
             _gameplayService = fullService;
-            Debug.Log("This is the default scenario");
+            //Debug.Log("This is the default scenario");
             _queueOfStates = new Queue<IState>();
             _stateData = stateData;
         }

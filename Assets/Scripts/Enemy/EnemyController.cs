@@ -31,7 +31,7 @@ namespace Enemy
         {
             if (IsActive)
             {
-                Debug.Log("Enemy was clicked");
+                //Debug.Log("Enemy was clicked");
                 OnSwitch?.Invoke();
             }
         }

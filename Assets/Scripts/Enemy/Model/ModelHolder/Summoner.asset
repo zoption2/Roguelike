@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e99f54c751c4fc949bfb35c401ded36f, type: 3}
   m_Name: Summoner
   m_EditorClassIdentifier: 
-  Type: 2
+  Type: 102
   Health: 5
   Damage: 1
   Speed: 5

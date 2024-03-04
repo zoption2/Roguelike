@@ -674,7 +674,7 @@ GameObject:
   - component: {fileID: 1124163140}
   - component: {fileID: 1124163141}
   m_Layer: 0
-  m_Name: Testing
+  m_Name: LevelSetings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -709,14 +709,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PlayerSpawnPoints>k__BackingField:
   - spawnPoint: {fileID: 1928456086}
-    playerType: 0
+    playerType: 2
   <EnemySpawnPoints>k__BackingField:
   - spawnPoint: {fileID: 939256469}
-    enemyType: 0
+    enemyType: 100
   - spawnPoint: {fileID: 564959993}
-    enemyType: 1
+    enemyType: 101
   - spawnPoint: {fileID: 417337404}
-    enemyType: 2
+    enemyType: 102
 --- !u!114 &1124163141
 MonoBehaviour:
   m_ObjectHideFlags: 0

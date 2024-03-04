@@ -1,11 +1,7 @@
-using Gameplay;
-using Player;
 using Pool;
 using Prefab;
 using SlingShotLogic;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -18,12 +14,14 @@ namespace Player
     public interface IPlayerController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
+        public void OnBeginDrag(PointerEventData eventData);
     }
 
     public delegate void OnSwitchState();
     public class PlayerController : IPlayerController, IDisposable
     {
         Transform _poolableTransform;
+        Transform _pointerPosition;
 
         private ICharacterView _playerView;
         private CharacterModel _playerModel;
@@ -31,6 +29,7 @@ namespace Player
         private Rigidbody2D _playerViewRigidbody;
 
         private SlingShot _slingShot;
+        private SlingShotType _slingShotType;
 
         private GameObject _slingShotObject;
 
@@ -55,21 +54,32 @@ namespace Player
             _playerModel = playerModel;
             _playerView = playerView;
             _playerView.ON_CLICK += OnClick;
+            _playerView.ON_BEGINDRAG += OnBeginDrag;
+            _slingShotType = (SlingShotType)_playerModel.GetModelType();
             _slingShotPooler.Init();
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
+        {       
+            if (IsActive)
+            {
+                _pointerPosition = point;
+                Debug.Log($"I`m {_playerModel.GetModelType()}! \n Wanna push me?");
+            }
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
         {
             if (IsActive)
             {
                 Vector2 _initPosition = _poolableTransform.position;
-                var slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(SlingShotType.Melee, _initPosition, point.rotation, point.parent);
+                IMyPoolable slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(_slingShotType, _initPosition, _pointerPosition.rotation, _pointerPosition.parent);
                 _slingShot = slingShotPoolable.gameObject.GetComponent<SlingShot>();
 
-                _slingShot.Init(_initPosition);
+                _slingShot.Init(_initPosition, _slingShotType);
 
 
-                if(_slingShotObject == null)
+                if (_slingShotObject == null)
                 {
                     _slingShotObject = slingShotPoolable.gameObject;
                 }
@@ -100,6 +110,7 @@ namespace Player
         public void Dispose()
         {
             _playerView.ON_CLICK -= OnClick;
+            _playerView.ON_BEGINDRAG -= OnBeginDrag;
         }
     }
 }

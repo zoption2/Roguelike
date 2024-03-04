@@ -35,7 +35,7 @@ namespace Gameplay
         {
 
             Dictionary<TypeOfState, IState> stateSet = new Dictionary<TypeOfState, IState>();
-            Debug.Log(scenarioInstance.GetType());
+            //Debug.Log(scenarioInstance.GetType());
             switch (scenarioInstance)
             {
                 case DefaultScenario:

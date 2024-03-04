@@ -27,4 +27,6 @@ public abstract class CharacterModelBase : ICharacterModel
         _speed = new ReactiveInt(stats.Speed);
         _type = type;
     }
+
+    public Enum GetModelType() { return _type; }
 }

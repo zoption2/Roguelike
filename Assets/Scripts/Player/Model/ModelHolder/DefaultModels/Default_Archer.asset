@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e99f54c751c4fc949bfb35c401ded36f, type: 3}
-  m_Name: Thrower
+  m_Script: {fileID: 11500000, guid: 81d4cf611c169a74196d56b545354c2a, type: 3}
+  m_Name: Default_Archer
   m_EditorClassIdentifier: 
-  Type: 101
-  Health: 1
-  Damage: 10
-  Speed: 10
+  Type: 3
+  Health: 10
+  Damage: 4
+  Speed: 5

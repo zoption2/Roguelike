@@ -1,12 +1,7 @@
 using CharactersStats;
 using Enemy;
 using Player;
-using Prefab;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay
 {
@@ -47,7 +42,7 @@ namespace Gameplay
                 _characters.Players[i].IsActive = false;
                 _characters.Players[i].OnSwitch -= _scenario.OnStateEnd;
             }
-            Debug.Log("Exited player turn state");
+            //Debug.Log("Exited player turn state");
         }
     }
     public class EnemyTurnState : IState
@@ -78,7 +73,7 @@ namespace Gameplay
                 _characters.Enemies[i].IsActive = false;
                 _characters.Enemies[i].OnSwitch -= _scenario.OnStateEnd;
             }
-            Debug.Log("Exited enemy turn state");
+            //Debug.Log("Exited enemy turn state");
         }
     }
 
@@ -109,7 +104,7 @@ namespace Gameplay
 
         public void OnEnter()
         {
-            Debug.Log("Entering init state");
+            //Debug.Log("Entering init state");
             OnPlayerCreate();
             OnEnemyCreate();
             _scenario.OnStateEnd();
@@ -139,7 +134,7 @@ namespace Gameplay
 
         public void OnExit()
         {
-            Debug.Log("Exited init state");
+            //Debug.Log("Exited init state");
         }
     }
 

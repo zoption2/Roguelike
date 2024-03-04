@@ -4,15 +4,12 @@ using System;
 using Pool;
 using Prefab;
 using Zenject;
-using UnityEditor.Networking.PlayerConnection;
-using Player;
-using UnityEngine.UIElements;
 
 namespace SlingShotLogic
 {
     public interface ISlingShot
     {
-        public void Init(Vector2 _initPosition);
+        public void Init(Vector2 _initPosition, SlingShotType type);
         public event Action<Vector2, float> OnShoot;
     }
 
@@ -27,30 +24,22 @@ namespace SlingShotLogic
         private Vector2 _startPoint;
         private Vector2 _endPoint;
         private Vector2 _touchPositionInWorld;
+        private SlingShotType _type;
 
         private Collider2D _touchZoneCollider;
 
         private float _dragDistance;
 
-        private bool _isDragging = false; //ITS FOR COROUTINE
+        public bool _isDragging = false; //ITS FOR COROUTINE
 
         [Inject]
         private ObjectPooler<SlingShotType> _slingShotPooler;
-        public void Init(Vector2 _initPosition)
+        public void Init(Vector2 _initPosition, SlingShotType type)
         {  
+            _type = type;
             _startPoint = _initPosition;
             _cursor.transform.position = _startPoint;
-            if(!_isDragging) StartCoroutine(DeactivateAfterDelay(0.3f)); ///!!!!///
         }
-
-        /////////////////////////////////////////////////////////////////////////////////////////////
-        private System.Collections.IEnumerator DeactivateAfterDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            _slingShotPooler.Push(SlingShotType.Melee, this);
-            //gameObject.SetActive(false);
-        }
-        /////////////////////////////////////////////////////////////////////////////////////////////
 
         public void OnDrag(PointerEventData eventData)
         {
@@ -63,6 +52,9 @@ namespace SlingShotLogic
                 _cursor.transform.position = _touchPositionInWorld;
                 _endPoint = _cursor.transform.position;
                 _direction = _startPoint - _endPoint;
+                //Debug.Log("Direction: " + _direction);
+                //Debug.Log("Start: " + _startPoint);
+                //Debug.Log("End: " + _endPoint);
             }
             else
             {
@@ -75,17 +67,20 @@ namespace SlingShotLogic
         }
         public void OnEndDrag(PointerEventData eventData)
         {
-            _isDragging = false;
-
-            if (IsInDeadZone(_touchPositionInWorld))
+            if(_isDragging )
             {
-                _slingShotPooler.Push(SlingShotType.Melee, this);
-            } else
-            {
-                _dragDistance = Vector2.Distance(_startPoint, _endPoint);
-                OnShoot?.Invoke(_direction, _dragDistance);
-                _slingShotPooler.Push(SlingShotType.Melee, this);
+                if (IsInDeadZone(_touchPositionInWorld))
+                {
+                    _slingShotPooler.Push(_type, this);
+                }
+                else
+                {
+                    _dragDistance = Vector2.Distance(_startPoint, _endPoint);
+                    OnShoot?.Invoke(_direction, _dragDistance);
+                    _slingShotPooler.Push(_type, this);
+                }
             }
+            _isDragging = false;
         }
 
         private bool IsInDeadZone(Vector2 position)
@@ -101,12 +96,12 @@ namespace SlingShotLogic
 
         public void OnPull()
         {
-            Debug.Log("OnPull");
+            //Debug.Log("OnPull");
         }
 
         public void OnRelease()
         {
-            Debug.Log("OnRelease");
+            //Debug.Log("OnRelease");
         }
 
     }

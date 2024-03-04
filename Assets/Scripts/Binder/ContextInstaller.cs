@@ -6,6 +6,7 @@ using Pool;
 using Prefab;
 using CharactersStats;
 using Enemy;
+using SlingShotLogic;
 public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
@@ -39,6 +40,7 @@ public class ContextInstaller : MonoInstaller
         BindModelHolders();
 
         BindControllers();
+
     }
 
     #region BindMethods

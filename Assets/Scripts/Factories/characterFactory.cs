@@ -66,7 +66,7 @@ public class CharacterFactory<TController, TEnum> : ICharacterFactory<TControlle
         } else
         {
             stats = null;
-            Debug.Log("Problem in factory with stats");
+            Debug.LogWarning("Problem in factory with stats");
         }
 
 
@@ -82,7 +82,7 @@ public class CharacterFactory<TController, TEnum> : ICharacterFactory<TControlle
 
         controller.Init(poolableTransform, characterRigidbody, characterModel, characterView);
 
-        Debug.Log($"Character of type {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
+        //Debug.Log($"Character of type {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
 
         return controller;
     }
