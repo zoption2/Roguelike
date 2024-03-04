@@ -7,6 +7,7 @@ using UnityEngine;
 using Zenject;
 
 namespace Pool {
+
     public class PlayerPooler : ObjectPooler<PlayerType>
     {
         private PlayerPrefabHolder _provider;

@@ -2,6 +2,7 @@ using Pool;
 using Prefab;
 using SlingShotLogic;
 using System;
+using System.Collections;
 using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -20,16 +21,16 @@ namespace Player
     public delegate void OnSwitchState();
     public class PlayerController : IPlayerController, IDisposable
     {
-        Transform _poolableTransform;
-        Transform _pointerPosition;
+        private Transform _poolableTransform;
+        private Transform _pointerPosition;
 
         private ICharacterView _playerView;
         private CharacterModel _playerModel;
+        private PlayerType _type;
 
         private Rigidbody2D _playerViewRigidbody;
 
         private SlingShot _slingShot;
-        private SlingShotType _slingShotType;
 
         private GameObject _slingShotObject;
 
@@ -37,10 +38,12 @@ namespace Player
 
         private bool _isLaunchWasSubscibed;
 
+        private bool _isMooving;
+
         public event OnSwitchState OnSwitch;
 
         [Inject]
-        private ObjectPooler<SlingShotType> _slingShotPooler;
+        private SlingshotPooler _slingShotPooler;
         public bool IsActive { get; set; }
 
         public void Init(
@@ -53,9 +56,9 @@ namespace Player
             _playerViewRigidbody = playerViewRigidbody;
             _playerModel = playerModel;
             _playerView = playerView;
+            _type = (PlayerType)_playerModel.GetModelType();
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
-            _slingShotType = (SlingShotType)_playerModel.GetModelType();
             _slingShotPooler.Init();
         }
 
@@ -73,10 +76,10 @@ namespace Player
             if (IsActive)
             {
                 Vector2 _initPosition = _poolableTransform.position;
-                IMyPoolable slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(_slingShotType, _initPosition, _pointerPosition.rotation, _pointerPosition.parent);
+                IMyPoolable slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(_type, _initPosition, _pointerPosition.rotation, _pointerPosition.parent);
                 _slingShot = slingShotPoolable.gameObject.GetComponent<SlingShot>();
 
-                _slingShot.Init(_initPosition, _slingShotType);
+                _slingShot.Init(_initPosition, _type);
 
 
                 if (_slingShotObject == null)
@@ -98,12 +101,14 @@ namespace Player
 
         public void Launch(Vector2 direction, float dragDistance)
         {
+            _isMooving = false;
             Vector2 forceVector = direction * dragDistance * _maxPower;
 
             _playerViewRigidbody.AddForce(forceVector, ForceMode2D.Impulse);
             _slingShot.OnShoot -= Launch;
             _isLaunchWasSubscibed = false;
-            OnSwitch.Invoke();
+
+            _playerView.StartCheckSwitchConditionCoroutine(_playerView.CheckSwitchCondition(OnSwitch, _playerViewRigidbody));
 
         }
 
@@ -113,4 +118,6 @@ namespace Player
             _playerView.ON_BEGINDRAG -= OnBeginDrag;
         }
     }
+
+
 }

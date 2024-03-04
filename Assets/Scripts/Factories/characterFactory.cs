@@ -5,7 +5,6 @@ using Gameplay;
 using Player;
 using Pool;
 using Prefab;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using Zenject;
 
@@ -24,24 +23,20 @@ public interface ICharacterFactory<TController, TEnum>
     TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0);
 }
 
-public class CharacterFactory<TController, TEnum> : ICharacterFactory<TController, TEnum>
+public abstract class CharacterFactory<TController, TEnum> : ICharacterFactory<TController, TEnum>
     where TController : ICharacterController
     where TEnum : Enum
 {
-    private IStatsProvider _statsProvider;
+    protected IStatsProvider _statsProvider;
     private DiContainer _container;
-    private ObjectPooler<TEnum> _pooler;
+    protected abstract ObjectPooler<TEnum> _pooler { get; }
 
-    [Inject]
     public CharacterFactory(
         DiContainer container,
-        IStatsProvider statsProvider,
-        ObjectPooler<TEnum> pooler)
+        IStatsProvider statsProvider)
     {
         _container = container;
         _statsProvider = statsProvider;
-        _pooler = pooler;
-        _pooler.Init();
     }
 
     public TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0)
@@ -55,20 +50,7 @@ public class CharacterFactory<TController, TEnum> : ICharacterFactory<TControlle
 
         controller = GetNewController();
 
-        if (typeof(TEnum) == typeof(PlayerType))
-        {
-            PlayerType playerType = (PlayerType)(object)type;
-            stats = _statsProvider.GetCharacterStats(playerType, id);
-        } else if (typeof(TEnum) == typeof(EnemyType))
-        {
-            EnemyType enemyType = (EnemyType)(object)type;
-            stats = _statsProvider.GetCharacterStats(enemyType, id);
-        } else
-        {
-            stats = null;
-            Debug.LogWarning("Problem in factory with stats");
-        }
-
+        stats = GetStats(type, id);
 
         characterModel = new CharacterModel(id, type, stats);
 
@@ -86,6 +68,8 @@ public class CharacterFactory<TController, TEnum> : ICharacterFactory<TControlle
 
         return controller;
     }
+
+    protected abstract Stats GetStats(TEnum playerType, int id);
 
     private TController GetNewController()
     {

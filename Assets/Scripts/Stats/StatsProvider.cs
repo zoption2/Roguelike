@@ -2,6 +2,7 @@ using Prefab;
 using Player;
 using Enemy;
 using System;
+using UnityEditor;
 
 namespace CharactersStats
 {
@@ -11,6 +12,7 @@ namespace CharactersStats
         public Stats GetCharacterStats(PlayerType playerType, int id = -1);
         public Stats GetCharacterStats(EnemyType enemyType, int id = -1);
 
+
     }
 
     public class StatsProvider : IStatsProvider
@@ -19,8 +21,6 @@ namespace CharactersStats
         private SavedCharacterModelHolder _savedModelHolder;
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
-
-
 
         public Stats GetCharacterStats(PlayerType playerType, int id = -1)
         {

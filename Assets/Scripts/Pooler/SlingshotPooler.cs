@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlingshotPooler : ObjectPooler<SlingShotType>
+public class SlingshotPooler : ObjectPooler<PlayerType>
 {
     private SlingShotPrefabHolder _provider;
     public SlingshotPooler(SlingShotPrefabHolder provider)
@@ -12,7 +12,7 @@ public class SlingshotPooler : ObjectPooler<SlingShotType>
         _provider = provider;
     }
 
-    protected override GameObject GetPrefab(SlingShotType tag)
+    protected override GameObject GetPrefab(PlayerType tag)
     {
         return _provider.GetPrefab(tag);
     }

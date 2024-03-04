@@ -30,13 +30,13 @@ namespace Prefab
         Summoner = 102,
     }
 
-    public enum SlingShotType
-    {
-        none = 0,
-        Melee = 1,
-        Distance = 2,
-        Magic = 3,
-    }
+    //public enum SlingShotType
+    //{
+    //    none = 0,
+    //    Melee = 1,
+    //    Distance = 2,
+    //    Magic = 3,
+    //}
     
     public abstract class PrefabHolder<T> : ScriptableObject where T : Enum
     {

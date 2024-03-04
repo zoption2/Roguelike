@@ -709,7 +709,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PlayerSpawnPoints>k__BackingField:
   - spawnPoint: {fileID: 1928456086}
-    playerType: 2
+    playerType: 3
   <EnemySpawnPoints>k__BackingField:
   - spawnPoint: {fileID: 939256469}
     enemyType: 100

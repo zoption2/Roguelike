@@ -9,7 +9,7 @@ namespace SlingShotLogic
 {
     public interface ISlingShot
     {
-        public void Init(Vector2 _initPosition, SlingShotType type);
+        public void Init(Vector2 _initPosition, PlayerType type);
         public event Action<Vector2, float> OnShoot;
     }
 
@@ -24,17 +24,17 @@ namespace SlingShotLogic
         private Vector2 _startPoint;
         private Vector2 _endPoint;
         private Vector2 _touchPositionInWorld;
-        private SlingShotType _type;
+        private PlayerType _type;
 
         private Collider2D _touchZoneCollider;
 
         private float _dragDistance;
 
-        public bool _isDragging = false; //ITS FOR COROUTINE
+        public bool _isDragging = false;
 
         [Inject]
-        private ObjectPooler<SlingShotType> _slingShotPooler;
-        public void Init(Vector2 _initPosition, SlingShotType type)
+        private SlingshotPooler _slingShotPooler;
+        public void Init(Vector2 _initPosition, PlayerType type)
         {  
             _type = type;
             _startPoint = _initPosition;

@@ -1,5 +1,7 @@
+using Player;
 using Pool;
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -7,6 +9,8 @@ public interface ICharacterView
 {
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
+    void StartCheckSwitchConditionCoroutine(IEnumerator routine);
+    IEnumerator CheckSwitchCondition(OnSwitchState OnSwitch, Rigidbody2D rb);
 }
 
 public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler, ICharacterView, IMyPoolable
@@ -30,9 +34,18 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("hELLO&&!&!&!&");
         _transform = transform;
         ON_BEGINDRAG?.Invoke(eventData);
+    }
+
+    public IEnumerator CheckSwitchCondition(OnSwitchState OnSwitch, Rigidbody2D rb)
+    {
+        do
+        {
+            yield return null;
+        } while (rb.velocity.magnitude > 0.1f);
+
+        OnSwitch.Invoke();
     }
 
     public void OnPull()
@@ -42,6 +55,11 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     public void OnRelease()
     {
+    }
+
+    public void StartCheckSwitchConditionCoroutine(IEnumerator routine)
+    {
+        StartCoroutine(routine);
     }
 }
 

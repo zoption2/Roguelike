@@ -57,9 +57,9 @@ public class ContextInstaller : MonoInstaller
     }
     public void BindPoolers()
     {
-        Container.Bind<ObjectPooler<PlayerType>>().To<PlayerPooler>().AsSingle();
-        Container.Bind<ObjectPooler<EnemyType>>().To<EnemyPooler>().AsSingle();
-        Container.Bind<ObjectPooler<SlingShotType>>().To<SlingshotPooler>().AsSingle().NonLazy();
+        Container.Bind<PlayerPooler>().To<PlayerPooler>().AsSingle();
+        Container.Bind<EnemyPooler>().To<EnemyPooler>().AsSingle();
+        Container.Bind<SlingshotPooler>().To<SlingshotPooler>().AsSingle();
     }
 
     public void BindFactories()
