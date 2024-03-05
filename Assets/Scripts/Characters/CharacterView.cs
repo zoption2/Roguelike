@@ -2,15 +2,19 @@ using Player;
 using Pool;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public interface ICharacterView
 {
+    public void Init(CharacterModel model, Rigidbody2D rb);
+
+    bool IsMoving { get; set; }
+
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
-    void StartCheckSwitchConditionCoroutine(IEnumerator routine);
-    IEnumerator CheckSwitchCondition(OnSwitchState OnSwitch, Rigidbody2D rb);
 }
 
 public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler, ICharacterView, IMyPoolable
@@ -18,6 +22,26 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
     private Transform _transform;
+    private CharacterModel _characterModel;
+    private float _currentVelocity;
+    private Rigidbody2D _rigidbody;
+
+    public bool IsMoving { get; set; }
+
+    public void Init(CharacterModel model, Rigidbody2D rb)
+    {
+        _characterModel = model;
+        _rigidbody = rb;
+    }
+
+    private void FixedUpdate()
+    {
+        if(IsMoving)
+        {
+            _characterModel.Velocity.Value = _rigidbody.velocity.magnitude;
+        }
+        
+    }
 
     public void OnCreate()
     {
@@ -38,16 +62,6 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         ON_BEGINDRAG?.Invoke(eventData);
     }
 
-    public IEnumerator CheckSwitchCondition(OnSwitchState OnSwitch, Rigidbody2D rb)
-    {
-        do
-        {
-            yield return null;
-        } while (rb.velocity.magnitude > 0.1f);
-
-        OnSwitch.Invoke();
-    }
-
     public void OnPull()
     {
 
@@ -55,11 +69,6 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     public void OnRelease()
     {
-    }
-
-    public void StartCheckSwitchConditionCoroutine(IEnumerator routine)
-    {
-        StartCoroutine(routine);
     }
 }
 

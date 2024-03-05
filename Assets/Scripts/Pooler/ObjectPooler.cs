@@ -12,6 +12,7 @@ namespace Pool
     public interface IMyPoolable 
     {
        GameObject gameObject { get; }
+       Transform transform { get; }
        void OnCreate();
        void OnPull();
        void OnRelease();

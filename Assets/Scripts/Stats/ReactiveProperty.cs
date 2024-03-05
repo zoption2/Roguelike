@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace CharactersStats
 {
-    public class ReactiveProperty<T>
+    public class ReactiveProperty<T> : IDisposable
     {
-        public event Action<T> On_Value_Changed;
+        private event Action<T> ON_VALUE_CHANGED;
         protected T value;
         public T Value
         {
@@ -19,7 +19,8 @@ namespace CharactersStats
             {
                 if (!Equals(value, this.value))
                 {
-                    value = this.value;
+                    this.value = value;
+                    ON_VALUE_CHANGED?.Invoke(value);
                 }
             }
         }
@@ -36,12 +37,18 @@ namespace CharactersStats
 
         public void Subscribe(Action<T> action)
         {
-            On_Value_Changed += action;
+            ON_VALUE_CHANGED += action;
         }
 
         public void Unsubscribe(Action<T> action)
         {
-            On_Value_Changed -= action;
+            ON_VALUE_CHANGED -= action;
+        }
+
+        public void Dispose()
+        {
+            ON_VALUE_CHANGED = null;
+            GC.SuppressFinalize(this);
         }
     }
 
@@ -56,6 +63,35 @@ namespace CharactersStats
         {
             this.value= value;
         }
+    }
+
+    public class ReactiveFloat : ReactiveProperty<float>
+    {
+        public ReactiveFloat()
+        {
+
+        }
+
+        public ReactiveFloat(float value)
+        {
+            this.value = value;
+        }
+    }
+
+    public static class ReactivePropertyExtensions
+    {
+        public static ReactiveProperty<T> ToDisposableList<T>(this ReactiveProperty<T> property, List<IDisposable> collection)
+        {
+            if (collection is null)
+            {
+                collection = new List<IDisposable>(1);
+            }
+
+            collection.Add(property);
+
+            return property;
+        }
+
     }
 
 }

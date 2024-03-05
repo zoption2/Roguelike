@@ -11,7 +11,7 @@ using Zenject;
 public interface ICharacterController
 {
     public bool IsActive { get; set; }
-    public event OnSwitchState OnSwitch;
+    public event OnEndTurn OnEndTurn;
     public void Init(Transform poolableTransform, Rigidbody2D rigidbody, CharacterModel model, CharacterView playerView);
 
 }
@@ -68,6 +68,8 @@ public abstract class CharacterFactory<TController, TEnum> : ICharacterFactory<T
 
         return controller;
     }
+
+
 
     protected abstract Stats GetStats(TEnum playerType, int id);
 

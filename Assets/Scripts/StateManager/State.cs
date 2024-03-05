@@ -30,7 +30,7 @@ namespace Gameplay
             for (int i = 0; i < _characters.Players.Count; i++)
             {
                 _characters.Players[i].IsActive = true;
-                _characters.Players[i].OnSwitch += _scenario.OnStateEnd;
+                _characters.Players[i].OnEndTurn += _scenario.OnStateEnd;
             }
             Debug.Log("Entered player turn state");
         }
@@ -40,7 +40,7 @@ namespace Gameplay
             for (int i = 0; i < _characters.Players.Count; i++)
             {
                 _characters.Players[i].IsActive = false;
-                _characters.Players[i].OnSwitch -= _scenario.OnStateEnd;
+                _characters.Players[i].OnEndTurn -= _scenario.OnStateEnd;
             }
             //Debug.Log("Exited player turn state");
         }
@@ -61,7 +61,7 @@ namespace Gameplay
             for(int i=0; i <_characters.Enemies.Count;i++ )
             {
                 _characters.Enemies[i].IsActive = true;
-                _characters.Enemies[i].OnSwitch += _scenario.OnStateEnd;
+                _characters.Enemies[i].OnEndTurn += _scenario.OnStateEnd;
             }
             Debug.Log("Entered enemy turn state");
         }
@@ -71,7 +71,7 @@ namespace Gameplay
             for (int i = 0; i < _characters.Enemies.Count; i++)
             {
                 _characters.Enemies[i].IsActive = false;
-                _characters.Enemies[i].OnSwitch -= _scenario.OnStateEnd;
+                _characters.Enemies[i].OnEndTurn -= _scenario.OnStateEnd;
             }
             //Debug.Log("Exited enemy turn state");
         }

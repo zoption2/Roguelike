@@ -1,10 +1,10 @@
+using CharactersStats;
 using Pool;
 using Prefab;
 using SlingShotLogic;
 using System;
 using System.Collections;
-using System.Drawing;
-using Unity.VisualScripting;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
@@ -18,7 +18,7 @@ namespace Player
         public void OnBeginDrag(PointerEventData eventData);
     }
 
-    public delegate void OnSwitchState();
+    public delegate void OnEndTurn();
     public class PlayerController : IPlayerController, IDisposable
     {
         private Transform _poolableTransform;
@@ -27,6 +27,7 @@ namespace Player
         private ICharacterView _playerView;
         private CharacterModel _playerModel;
         private PlayerType _type;
+        private SlingshotPooler _slingShotPooler;
 
         private Rigidbody2D _playerViewRigidbody;
 
@@ -38,13 +39,18 @@ namespace Player
 
         private bool _isLaunchWasSubscibed;
 
-        private bool _isMooving;
+        private List<IDisposable> _disposables;
 
-        public event OnSwitchState OnSwitch;
+        public event OnEndTurn OnEndTurn;
+
+        public bool IsActive { get; set; }
 
         [Inject]
-        private SlingshotPooler _slingShotPooler;
-        public bool IsActive { get; set; }
+        public void Construct(
+            SlingshotPooler slingShotPooler)
+        {
+            _slingShotPooler = slingShotPooler;
+        }
 
         public void Init(
         Transform poolableTransform,
@@ -56,7 +62,11 @@ namespace Player
             _playerViewRigidbody = playerViewRigidbody;
             _playerModel = playerModel;
             _playerView = playerView;
-            _type = (PlayerType)_playerModel.GetModelType();
+            _playerView.Init(_playerModel, _playerViewRigidbody);
+            _playerModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
+            ////////////////////////////////////////////////
+            _type = _playerModel.GetModelType<PlayerType>();
+            ////////////////////////////////////////////////
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
@@ -67,13 +77,13 @@ namespace Player
             if (IsActive)
             {
                 _pointerPosition = point;
-                Debug.Log($"I`m {_playerModel.GetModelType()}! \n Wanna push me?");
+                Debug.Log($"I`m {_playerModel.GetModelType<PlayerType>()}! \n Wanna push me?");
             }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (IsActive)
+            if (IsActive && !_playerView.IsMoving)
             {
                 Vector2 _initPosition = _poolableTransform.position;
                 IMyPoolable slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(_type, _initPosition, _pointerPosition.rotation, _pointerPosition.parent);
@@ -101,15 +111,21 @@ namespace Player
 
         public void Launch(Vector2 direction, float dragDistance)
         {
-            _isMooving = false;
+            _playerView.IsMoving = true;
             Vector2 forceVector = direction * dragDistance * _maxPower;
 
             _playerViewRigidbody.AddForce(forceVector, ForceMode2D.Impulse);
             _slingShot.OnShoot -= Launch;
             _isLaunchWasSubscibed = false;
+        }
 
-            _playerView.StartCheckSwitchConditionCoroutine(_playerView.CheckSwitchCondition(OnSwitch, _playerViewRigidbody));
-
+        public void EndTurn(float velocity)
+        {
+            if (velocity < 0.1f)
+            {
+                OnEndTurn?.Invoke();
+                _playerView.IsMoving = false;
+            }
         }
 
         public void Dispose()

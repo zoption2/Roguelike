@@ -9,6 +9,6 @@ namespace Player
     public class SavedModel : ScriptableObject
     {
         public int ID;
-        public int Health, Damage, Speed;
+        public int Health, Damage, Speed, Velocity;
     }
 }

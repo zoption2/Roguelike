@@ -18,6 +18,11 @@ public abstract class CharacterModelBase : ICharacterModel
     protected ReactiveInt _damage;
     protected ReactiveInt _health;
     protected ReactiveInt _speed;
+    protected ReactiveFloat _velocity;
+    public ReactiveFloat Velocity {
+        get { return _velocity; }
+        set { _velocity = value; }
+    }
 
     public CharacterModelBase(int id, Enum type, Stats stats)
     {
@@ -25,8 +30,9 @@ public abstract class CharacterModelBase : ICharacterModel
         _damage = new ReactiveInt(stats.Damage);
         _health = new ReactiveInt(stats.Health);
         _speed = new ReactiveInt(stats.Speed);
+        _velocity = new ReactiveFloat(stats.Velocity);
         _type = type;
     }
 
-    public Enum GetModelType() { return _type; }
+    public TEnum GetModelType<TEnum>() where TEnum:Enum { return (TEnum)_type; }
 }

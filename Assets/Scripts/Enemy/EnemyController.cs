@@ -16,7 +16,7 @@ namespace Enemy
         private CharacterView _enemyView;
         private CharacterModel _enemyModel;
         private Rigidbody2D _enemyViewRigidbody;
-        public event OnSwitchState OnSwitch;
+        public event OnEndTurn OnEndTurn;
         public bool IsActive { get; set; }
 
         public void Init(Transform poolableTransform, Rigidbody2D rigidbody, CharacterModel enemyModel, CharacterView characterView)
@@ -32,7 +32,7 @@ namespace Enemy
             if (IsActive)
             {
                 //Debug.Log("Enemy was clicked");
-                OnSwitch?.Invoke();
+                OnEndTurn?.Invoke();
             }
         }
 

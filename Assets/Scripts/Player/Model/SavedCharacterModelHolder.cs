@@ -19,7 +19,7 @@ namespace Player
                 var model = _models[i];
                 if (model.ID.Equals(receivedID))
                 {
-                    Stats stats = new Stats(model.Speed, model.Health, model.Damage);
+                    Stats stats = new Stats(model.Speed, model.Health, model.Damage, model.Velocity);
                     return stats;
                 }
             }
