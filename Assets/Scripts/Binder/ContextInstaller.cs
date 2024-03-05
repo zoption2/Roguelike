@@ -85,8 +85,8 @@ public class ContextInstaller : MonoInstaller
 
     public void BindControllers()
     {
-        Container.Bind<IPlayerController>().To<PlayerController>().AsSingle();
-        Container.Bind<IEnemyController>().To<EnemyController>().AsSingle();
+        Container.Bind<IPlayerController>().To<PlayerController>().AsTransient();
+        Container.Bind<IEnemyController>().To<EnemyController>().AsTransient();
     }
     #endregion
 }

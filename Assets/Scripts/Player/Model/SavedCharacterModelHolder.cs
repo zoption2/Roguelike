@@ -6,12 +6,22 @@ using UnityEngine;
 
 namespace Player
 {
+    public interface ISavedCharacterModelHolder
+    {
+        Stats GetSavedStats(int receivedID);
+
+        void AddModel(SavedModel savedModel);
+    }
+
     [CreateAssetMenu]
     public class SavedCharacterModelHolder : ScriptableObject, ISavedCharacterModelHolder
     {
         [SerializeField]
         protected List<SavedModel> _models;
-
+        public void AddModel(SavedModel savedModel)
+        {
+            _models.Add(savedModel);
+        }
         public Stats GetSavedStats(int receivedID)
         {
             for (int i = 0; i < _models.Count; i++)

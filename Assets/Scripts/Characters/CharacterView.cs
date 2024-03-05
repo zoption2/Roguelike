@@ -45,7 +45,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
             yield return null;
         } while (rb.velocity.magnitude > 0.1f);
 
-        OnSwitch.Invoke();
+        OnSwitch?.Invoke();
     }
 
     public void OnPull()
