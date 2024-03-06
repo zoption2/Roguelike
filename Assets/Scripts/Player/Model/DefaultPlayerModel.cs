@@ -16,6 +16,7 @@ namespace Player
     public class DefaultModel<T> : ScriptableObject where T : Enum
     {
         public T Type;
-        public int Health, Damage, Speed, Velocity;
+        public int Health, Damage, Speed;
+        public float LaunchPower;
     }
 }

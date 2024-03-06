@@ -7,14 +7,14 @@ using Zenject;
 
 namespace SlingShotLogic
 {
-    public interface ISlingShot
+    public interface ISlingShot : IMyPoolable
     {
         public void Init(Vector2 _initPosition, PlayerType type);
         public event Action<Vector2, float> OnShoot;
         public event Action<Vector2> OnDirectionChange;
     }
 
-    public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler, IMyPoolable
+    public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
     {
         public event Action<Vector2, float> OnShoot;
         public event Action<Vector2> OnDirectionChange;

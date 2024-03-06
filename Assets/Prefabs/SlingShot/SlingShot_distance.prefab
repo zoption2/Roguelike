@@ -112,7 +112,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4563989996429159640}
   - {fileID: 3329507016916036049}
@@ -132,6 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cursor: {fileID: 126997725013160961}
   _touchZone: {fileID: 5921892961040282607}
+  _isDragging: 0
 --- !u!1 &5921892961040282607
 GameObject:
   m_ObjectHideFlags: 0

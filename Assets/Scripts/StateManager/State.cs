@@ -112,7 +112,7 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-            int id = 1;
+            int id = 0;
             
             foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
             {
