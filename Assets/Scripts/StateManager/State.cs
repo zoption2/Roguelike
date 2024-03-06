@@ -116,7 +116,7 @@ namespace Gameplay
             
             foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
             {
-                IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, player.playerType, _characters, id);
+                IPlayerController newPlayer = _playerFactory.CreatePlayer(player.spawnPoint, player.playerType, _characters, id);
                 _characters.Players.Add(newPlayer);
 
             }
@@ -127,7 +127,7 @@ namespace Gameplay
         {
             foreach (EnemySpawnPointWithType enemy in _characters.EnemySpawnPoints)
             {
-                IEnemyController newEnemy = _enemyFactory.CreateCharacter(enemy.spawnPoint, enemy.enemyType, _characters);
+                IEnemyController newEnemy = _enemyFactory.CreateEnemy(enemy.spawnPoint, enemy.enemyType, _characters);
                 _characters.Enemies.Add(newEnemy);
             }
         }

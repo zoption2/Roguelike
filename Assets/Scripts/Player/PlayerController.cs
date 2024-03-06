@@ -16,16 +16,17 @@ namespace Player
     {
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
+        public void Init(PlayerModel model, CharacterView playerView);
     }
 
     public delegate void OnEndTurn();
     public class PlayerController : IPlayerController, IDisposable
     {
-        private Transform _poolableTransform;
         private Transform _pointerPosition;
+        private Vector2 _initPosition;
 
         private ICharacterView _playerView;
-        private CharacterModel _playerModel;
+        private PlayerModel _playerModel;
         private PlayerType _type;
         private SlingshotPooler _slingShotPooler;
 
@@ -38,6 +39,8 @@ namespace Player
         private float _maxPower = 50f;
 
         private bool _isLaunchWasSubscibed;
+
+        private bool _isChangeDirectionSubscibed;
 
         private List<IDisposable> _disposables;
 
@@ -53,23 +56,18 @@ namespace Player
         }
 
         public void Init(
-        Transform poolableTransform,
-        Rigidbody2D playerViewRigidbody,
-        CharacterModel playerModel,
+        PlayerModel playerModel,
         CharacterView playerView)
         {
-            _poolableTransform = poolableTransform;
-            _playerViewRigidbody = playerViewRigidbody;
             _playerModel = playerModel;
             _playerView = playerView;
-            _playerView.Init(_playerModel, _playerViewRigidbody);
+            _playerView.Init(_playerModel);
             _playerModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
-            ////////////////////////////////////////////////
-            _type = _playerModel.GetModelType<PlayerType>();
-            ////////////////////////////////////////////////
+            _type = _playerModel.GetModelType();
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
+            _playerViewRigidbody = _playerView.CharacterViewObject.GetComponent<Rigidbody2D>();
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
@@ -77,7 +75,7 @@ namespace Player
             if (IsActive)
             {
                 _pointerPosition = point;
-                Debug.Log($"I`m {_playerModel.GetModelType<PlayerType>()}! \n Wanna push me?");
+                Debug.Log($"I`m {_type}! \n Wanna push me?");
             }
         }
 
@@ -85,11 +83,18 @@ namespace Player
         {
             if (IsActive && !_playerView.IsMoving)
             {
-                Vector2 _initPosition = _poolableTransform.position;
+                _initPosition = _playerView.CharacterViewObject.GetComponent<Transform>().position;
+
                 IMyPoolable slingShotPoolable = _slingShotPooler.Pull<IMyPoolable>(_type, _initPosition, _pointerPosition.rotation, _pointerPosition.parent);
                 _slingShot = slingShotPoolable.gameObject.GetComponent<SlingShot>();
 
                 _slingShot.Init(_initPosition, _type);
+
+                if (!_isChangeDirectionSubscibed)
+                {
+                    _slingShot.OnDirectionChange += ChangeDirection;
+                    _isChangeDirectionSubscibed = true;
+                }
 
 
                 if (_slingShotObject == null)
@@ -108,6 +113,13 @@ namespace Player
                 }
             }
         }
+
+        public void ChangeDirection(Vector2 direction)
+        {
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            _playerViewRigidbody.transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        }
+
 
         public void Launch(Vector2 direction, float dragDistance)
         {
@@ -132,6 +144,9 @@ namespace Player
         {
             _playerView.ON_CLICK -= OnClick;
             _playerView.ON_BEGINDRAG -= OnBeginDrag;
+
+            _slingShot.OnDirectionChange -= ChangeDirection;
+            _isChangeDirectionSubscibed = true;
         }
     }
 

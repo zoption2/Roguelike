@@ -193,3 +193,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c23d56eca6b2f458cde324ab603f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _characterViewObject: {fileID: 1668366777869914569}

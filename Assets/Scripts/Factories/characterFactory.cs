@@ -12,69 +12,68 @@ public interface ICharacterController
 {
     public bool IsActive { get; set; }
     public event OnEndTurn OnEndTurn;
-    public void Init(Transform poolableTransform, Rigidbody2D rigidbody, CharacterModel model, CharacterView playerView);
 
 }
 
-public interface ICharacterFactory<TController, TEnum>
-    where TController : ICharacterController
-    where TEnum : Enum
-{
-    TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0);
-}
+//public interface ICharacterFactory<TController, TEnum>
+//    where TController : ICharacterController
+//    where TEnum : Enum
+//{
+//    TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0);
+//}
 
-public abstract class CharacterFactory<TController, TEnum> : ICharacterFactory<TController, TEnum>
-    where TController : ICharacterController
-    where TEnum : Enum
-{
-    protected IStatsProvider _statsProvider;
-    private DiContainer _container;
-    protected abstract ObjectPooler<TEnum> _pooler { get; }
+//public abstract class CharacterFactory<TController, TEnum> : ICharacterFactory<TController, TEnum>
+//    where TController : ICharacterController
+//    where TEnum : Enum
+//{
+//    protected IStatsProvider _statsProvider;
+//    private DiContainer _container;
+//    protected abstract ObjectPooler<TEnum> _pooler { get; }
 
-    public CharacterFactory(
-        DiContainer container,
-        IStatsProvider statsProvider)
-    {
-        _container = container;
-        _statsProvider = statsProvider;
-    }
+//    public CharacterFactory(
+//        DiContainer container,
+//        IStatsProvider statsProvider)
+//    {
+//        _container = container;
+//        _statsProvider = statsProvider;
+//    }
 
-    public TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0)
-    {
-        CharacterView characterView;
-        TController controller;
-        Transform poolableTransform;
-        Rigidbody2D characterRigidbody;
-        CharacterModel characterModel;
-        Stats stats;
+//    public TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0)
+//    {
+//        CharacterView characterView;
+//        TController controller;
+//        Transform poolableTransform;
+//        Rigidbody2D characterRigidbody;
+//        CharacterModel characterModel;
+//        Stats stats;
 
-        controller = GetNewController();
+//        controller = GetNewController();
 
-        stats = GetStats(type, id);
+//        stats = GetStats(type, id);
 
-        characterModel = new CharacterModel(id, type, stats);
+//        characterModel = new CharacterModel(id, type, stats);
 
-        IMyPoolable poolable = _pooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
-        characterView = poolable.gameObject.GetComponent<CharacterView>();
+//        IMyPoolable poolable = _pooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+//        characterView = poolable.gameObject.GetComponent<CharacterView>();
 
-        GameObject poolableObject = poolable.gameObject.transform.GetChild(0).gameObject;
-        poolableTransform = poolableObject.transform;
+//        GameObject poolableObject = poolable.gameObject.transform.GetChild(0).gameObject;
+//        poolableTransform = poolableObject.transform;
 
-        characterRigidbody = poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
+//        characterRigidbody = poolable.gameObject.GetComponentInChildren<Rigidbody2D>();
 
-        controller.Init(poolableTransform, characterRigidbody, characterModel, characterView);
+//        controller.Init(poolableTransform, characterRigidbody, characterModel, characterView);
 
-        //Debug.Log($"Character of type {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
+//        //Debug.Log($"Character of type {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
 
-        return controller;
-    }
+//        return controller;
+//    }
 
 
 
-    protected abstract Stats GetStats(TEnum playerType, int id);
+//    protected abstract Stats GetStats(TEnum playerType, int id);
 
-    private TController GetNewController()
-    {
-        return _container.Resolve<TController>();
-    }
-}
+//    private TController GetNewController()
+//    {
+//        return _container.Resolve<TController>();
+//    }
+//}

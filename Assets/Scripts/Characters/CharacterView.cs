@@ -1,44 +1,54 @@
+using Enemy;
 using Player;
 using Pool;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public interface ICharacterView
 {
-    public void Init(CharacterModel model, Rigidbody2D rb);
-
+    public void Init(PlayerModel model);
+    public void Init(EnemyModel model);
     bool IsMoving { get; set; }
-
+    GameObject CharacterViewObject { get; }
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
 }
 
 public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler, ICharacterView, IMyPoolable
 {
+    [SerializeField]
+    GameObject _characterViewObject;
+    public GameObject CharacterViewObject => _characterViewObject;
+    public bool IsMoving { get; set; }
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
-    private Transform _transform;
-    private CharacterModel _characterModel;
-    private float _currentVelocity;
     private Rigidbody2D _rigidbody;
+    private Transform _transform;
+    private PlayerModel _playerModel;
+    private EnemyModel _enemyModel;
 
-    public bool IsMoving { get; set; }
-
-    public void Init(CharacterModel model, Rigidbody2D rb)
+    private void Start()
     {
-        _characterModel = model;
-        _rigidbody = rb;
+        _rigidbody = _characterViewObject.GetComponent<Rigidbody2D>();
     }
+
+    public void Init(PlayerModel model)
+    {
+        _playerModel = model;
+    }
+
+    public void Init(EnemyModel model)
+    {
+        _enemyModel = model;
+    }
+
 
     private void FixedUpdate()
     {
         if(IsMoving)
         {
-            _characterModel.Velocity.Value = _rigidbody.velocity.magnitude;
+            _playerModel.Velocity.Value = _rigidbody.velocity.magnitude;
         }
         
     }

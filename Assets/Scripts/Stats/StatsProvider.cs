@@ -9,8 +9,8 @@ namespace CharactersStats
 
     public interface IStatsProvider
     {
-        public Stats GetCharacterStats(PlayerType playerType, int id = -1);
-        public Stats GetCharacterStats(EnemyType enemyType, int id = -1);
+        public Stats GetPlayerStats(PlayerType playerType, int id = -1);
+        public Stats GetEnemyStats(EnemyType enemyType, int id = -1);
 
 
     }
@@ -22,7 +22,7 @@ namespace CharactersStats
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
-        public Stats GetCharacterStats(PlayerType playerType, int id = -1)
+        public Stats GetPlayerStats(PlayerType playerType, int id = -1)
         {
             Stats stats;
             stats = _savedModelHolder.GetSavedStats(id);
@@ -33,7 +33,7 @@ namespace CharactersStats
             return stats;
         }
 
-        public Stats GetCharacterStats(EnemyType enemyType, int id = -1)
+        public Stats GetEnemyStats(EnemyType enemyType, int id = -1)
         {
             Stats stats;
 

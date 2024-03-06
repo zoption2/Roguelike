@@ -11,11 +11,13 @@ namespace SlingShotLogic
     {
         public void Init(Vector2 _initPosition, PlayerType type);
         public event Action<Vector2, float> OnShoot;
+        public event Action<Vector2> OnDirectionChange;
     }
 
     public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler, IMyPoolable
     {
         public event Action<Vector2, float> OnShoot;
+        public event Action<Vector2> OnDirectionChange;
 
         [SerializeField] GameObject _cursor;
         [SerializeField] GameObject _touchZone;
@@ -45,13 +47,13 @@ namespace SlingShotLogic
         {
             _isDragging = true;
             _touchPositionInWorld = Camera.main.ScreenToWorldPoint(eventData.position);
-            StopAllCoroutines();
 
             if (Vector2.Distance(_touchZoneCollider.bounds.center, _touchPositionInWorld) <= _touchZoneCollider.bounds.size.x / 2)
             {
                 _cursor.transform.position = _touchPositionInWorld;
                 _endPoint = _cursor.transform.position;
                 _direction = _startPoint - _endPoint;
+                OnDirectionChange?.Invoke(_direction);
                 //Debug.Log("Direction: " + _direction);
                 //Debug.Log("Start: " + _startPoint);
                 //Debug.Log("End: " + _endPoint);
@@ -62,8 +64,9 @@ namespace SlingShotLogic
                 _cursor.transform.position = clampedPosition;
                 _endPoint = clampedPosition;
                 _direction = _startPoint - _endPoint;
+                OnDirectionChange?.Invoke(_direction);
             }
-
+            
         }
         public void OnEndDrag(PointerEventData eventData)
         {

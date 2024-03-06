@@ -22,7 +22,7 @@ namespace Player
             {
                 if (_models[i].Type.Equals(modelType))
                 {
-                    Stats stats = new Stats(_models[i].Speed, _models[i].Health, _models[i].Damage, _models[i].Velocity);
+                    Stats stats = new Stats(_models[i].Speed, _models[i].Health, _models[i].Damage);
                     return stats;
                 }
             }

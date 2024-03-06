@@ -147,7 +147,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!1 &5019426081544581403
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,3 +193,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c23d56eca6b2f458cde324ab603f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _characterViewObject: {fileID: 4978161362473513706}
