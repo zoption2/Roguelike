@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using System.IO;
+using UnityEditor;
 
 namespace UI
 {
@@ -16,26 +17,42 @@ namespace UI
     }
     public class CharacterPanel : MonoBehaviour, ICharacterPanel
     {
-        [field: SerializeField] public SavedModel IDModel { get; private set; }
+        private const string LAST_ID= "LastID";
+        private readonly string _path = Application.dataPath + "/Saves/";
+        public SavedModel IDModel { get; private set; }
         [field: SerializeField] public PlayerType PlayerType { get; set; }
         private Toggle _toggle;
         private IStatsProvider _statsProvider;
-        private SavedCharacterModelHolder _savedCharacterModelHolder;
         private bool _isEnabled;
+        private SimpleSaveSystem _saveSystem;
 
         [Inject]
-        public void Construct(IStatsProvider statsProvider,
-            SavedCharacterModelHolder savedCharacterModelHolder)
+        public void Construct(IStatsProvider statsProvider)
         {
-            _savedCharacterModelHolder = savedCharacterModelHolder;
             _statsProvider = statsProvider;
         }
 
         void Start()
         {
+            _saveSystem = SimpleSaveSystem.GetInstance();
             _toggle = GetComponent<Toggle>();
             _toggle.onValueChanged.AddListener(ChangeBool);
+            Init();
         }
+
+        public void Init()
+        {
+            if (!Directory.Exists(_path))
+            {
+                Directory.CreateDirectory(_path);
+            }
+            InitModel();
+        }
+        public void InitModel()
+        {
+            IDModel = _saveSystem.Load(PlayerType);
+        }
+        
         public void ChangeBool(bool toggleValue)
         {
             _isEnabled = toggleValue;
@@ -48,21 +65,18 @@ namespace UI
         private void CreateSavedModel()
         {
             Stats stats = _statsProvider.GetCharacterStats(PlayerType);
-            SavedModel savedModel = ScriptableObject.CreateInstance<SavedModel>();
-            savedModel.Speed = stats.Speed;
-            savedModel.Health = stats.Health;
-            savedModel.Damage = stats.Damage;
-            savedModel.ID = GenerateID();
+            int id = GenerateID();
+            SavedModel savedModel = new SavedModel(stats,id,PlayerType);
             IDModel = savedModel;
-            DataTransfer.IdCollection.Add(savedModel.ID);
-            //_savedCharacterModelHolder.AddModel(savedModel);
-            //File.WriteAllText(Application.dataPath + "/Saves/Save.txt", "tasty testing test");
+            //DataTransfer.IdCollection.Add(savedModel.ID);
+            _saveSystem.NewSave(savedModel);
         }
 
         private int GenerateID()
         {
-            int id = Random.Range(1, 1000);
-            return id;
+            int lastID = PlayerPrefs.GetInt(LAST_ID, 1);
+            PlayerPrefs.SetInt(LAST_ID, ++lastID);
+            return lastID;
         }
     }
 }

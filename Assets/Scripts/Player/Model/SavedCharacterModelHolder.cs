@@ -10,17 +10,16 @@ namespace Player
     {
         Stats GetSavedStats(int receivedID);
 
-        void AddModel(SavedModel savedModel);
+        void Init();
+
     }
 
-    [CreateAssetMenu]
-    public class SavedCharacterModelHolder : ScriptableObject, ISavedCharacterModelHolder
+    public class SavedCharacterModelHolder :  ISavedCharacterModelHolder
     {
-        [SerializeField]
-        protected List<SavedModel> _models;
-        public void AddModel(SavedModel savedModel)
+        protected List<SavedModel> _models = new List<SavedModel>();
+        public void Init()
         {
-            _models.Add(savedModel);
+
         }
         public Stats GetSavedStats(int receivedID)
         {

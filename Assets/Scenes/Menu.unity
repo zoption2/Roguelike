@@ -963,6 +963,10 @@ PrefabInstance:
       propertyPath: <PlayerType>k__BackingField
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6932229301099257337, guid: b78d1ce987d769346913f96c52bd0a6b, type: 3}
+      propertyPath: <CharacterType>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1087,6 +1091,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6932229301099257337, guid: b78d1ce987d769346913f96c52bd0a6b, type: 3}
       propertyPath: <PlayerType>k__BackingField
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6932229301099257337, guid: b78d1ce987d769346913f96c52bd0a6b, type: 3}
+      propertyPath: <CharacterType>k__BackingField
       value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []

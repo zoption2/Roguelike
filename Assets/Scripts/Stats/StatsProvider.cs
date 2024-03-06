@@ -18,7 +18,7 @@ namespace CharactersStats
     public class StatsProvider : IStatsProvider
     {
         private DefaultPlayerModelHolder _defaultModelHolder;
-        private SavedCharacterModelHolder _savedModelHolder;
+        private ISavedCharacterModelHolder _savedModelHolder;
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
@@ -44,7 +44,7 @@ namespace CharactersStats
 
 
 
-        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, SavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
+        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, ISavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
         {
             _defaultModelHolder = defaultModelHolder;
             _savedModelHolder = savedModelHolder;

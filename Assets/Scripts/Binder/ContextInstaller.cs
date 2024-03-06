@@ -80,7 +80,7 @@ public class ContextInstaller : MonoInstaller
     {
         Container.Bind<DefaultPlayerModelHolder>().FromInstance(_defaultPlayerModelHolder).AsSingle();
         Container.Bind<DefaultEnemyModelHolder>().FromInstance(_defaultEnemyModelHolder).AsSingle();
-        Container.Bind<SavedCharacterModelHolder>().FromInstance(_savedCharacterModelHolder).AsSingle();
+        Container.Bind<ISavedCharacterModelHolder>().To<SavedCharacterModelHolder>().AsSingle();
     }
 
     public void BindControllers()
