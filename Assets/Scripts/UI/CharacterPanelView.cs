@@ -11,43 +11,25 @@ using UnityEditor;
 
 namespace UI
 {
-    public interface ICharacterPanel
+    public interface ICharacterPanelView
     {
-        public SavedModel IDModel { get;}
+        public void Init(IPanelClickChange panelValue);
+        public PlayerType PlayerType { get; set; }
     }
-    public class CharacterPanelView : MonoBehaviour, ICharacterPanel
+    
+    public class CharacterPanelView : MonoBehaviour, ICharacterPanelView
     {
         
         public SavedModel IDModel { get; private set; }
         [field: SerializeField] public PlayerType PlayerType { get; set; }
         private Toggle _toggle;
-       
-        private bool _isEnabled;
-        private ModelSaveSystem _saveSystem;
+        private IPanelClickChange _valueChange;
 
-
-        void Start()
+        public void Init(IPanelClickChange panelValue)
         {
-            _saveSystem = ModelSaveSystem.GetInstance();
             _toggle = GetComponent<Toggle>();
-            _toggle.onValueChanged.AddListener(ChangeBool);
-            Init();
+            _valueChange = panelValue;
+            _toggle.onValueChanged.AddListener(_valueChange.ChangeBool);
         }
-
-        public void Init()
-        {
-            IDModel = _saveSystem.Load(PlayerType);
-        }
-        
-        public void ChangeBool(bool toggleValue)
-        {
-            _isEnabled = toggleValue;
-            if(_isEnabled)
-            {
-                //DataTransfer.IdCollection.Add(savedModel.ID);
-            }
-        }
-
-        
     }
 }
