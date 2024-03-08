@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c3bc955dc449841a31563f7a0e8db9, type: 3}
+  m_Name: CharacterPanels
+  m_EditorClassIdentifier: 
+  _prefabs:
+  - Key: 1
+    Value: {fileID: 4814394147961967121, guid: b78d1ce987d769346913f96c52bd0a6b, type: 3}

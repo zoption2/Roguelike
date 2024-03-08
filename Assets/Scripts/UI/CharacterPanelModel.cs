@@ -18,10 +18,6 @@ namespace UI
         public PlayerType PlayerCharacterType { get; set; }
         private ModelSaveSystem _saveSystem;
 
-        public CharacterPanelModel(PlayerType playerType)
-        {
-            PlayerCharacterType = playerType;
-        }
         public void Init(PlayerType playerType)
         {
             PlayerCharacterType = playerType;

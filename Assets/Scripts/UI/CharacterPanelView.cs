@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using Zenject;
 using System.IO;
 using UnityEditor;
+using Pool;
 
 namespace UI
 {
@@ -17,7 +18,7 @@ namespace UI
         public PlayerType PlayerType { get; set; }
     }
     
-    public class CharacterPanelView : MonoBehaviour, ICharacterPanelView
+    public class CharacterPanelView : MonoBehaviour, ICharacterPanelView, IMyPoolable
     {
         
         public SavedModel IDModel { get; private set; }
@@ -30,6 +31,21 @@ namespace UI
             _toggle = GetComponent<Toggle>();
             _valueChange = panelValue;
             _toggle.onValueChanged.AddListener(_valueChange.ChangeBool);
+        }
+
+        public void OnCreate()
+        {
+            
+        }
+
+        public void OnPull()
+        {
+            
+        }
+
+        public void OnRelease()
+        {
+            
         }
     }
 }

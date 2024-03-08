@@ -31,7 +31,16 @@ public class ModelSaveSystem
         }
     }
 
-    public void Init()
+    public List<PlayerType> GetAvailablePlayersTypes()
+    {
+        List<PlayerType> list = new List<PlayerType>();
+        foreach(KeyValuePair<int, SavedModel> model in _saves)
+        {
+            list.Add(model.Value.Type);
+        }
+        return list;
+    }
+    private void Init()
     {
         _saves = new Dictionary<int, SavedModel>();
         CheckForFileAndDirectories();
