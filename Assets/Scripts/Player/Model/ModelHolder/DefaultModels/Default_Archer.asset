@@ -16,4 +16,4 @@ MonoBehaviour:
   Health: 10
   Damage: 4
   Speed: 5
-  LaunchPower: 100
+  LaunchPower: 15

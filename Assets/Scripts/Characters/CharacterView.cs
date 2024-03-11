@@ -27,7 +27,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     private PlayerModel _playerModel;
     private EnemyModel _enemyModel;
-    private Rigidbody2D _rigidbody;
+    private Rigidbody _rigidbody;
     public void Init(PlayerModel model)
     {
         _playerModel = model;
@@ -40,7 +40,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     private void Start()
     {
-        _rigidbody = gameObject.GetComponentInChildren<Rigidbody2D>();
+        _rigidbody = gameObject.GetComponentInChildren<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -62,7 +62,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public void AddImpulse(Vector2 forceVector)
     {
         IsMoving = true;
-        _rigidbody.AddForce(forceVector, ForceMode2D.Impulse);
+        _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
     }
 
     public void OnCreate()

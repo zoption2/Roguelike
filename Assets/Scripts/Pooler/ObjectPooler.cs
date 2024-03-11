@@ -21,7 +21,7 @@ namespace Pool
     public interface IPool<TEnum> where TEnum : Enum 
     {
         public void Init();
-        public T Pull<T>(TEnum tag, Vector2 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
+        public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         public void Push(TEnum tag, IMyPoolable obj);
     }
 
@@ -37,7 +37,7 @@ namespace Pool
         }
         
 
-        public T Pull<T>(TEnum tag, Vector2 position, Quaternion rotation, Transform parent) where T : IMyPoolable
+        public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
         {
             if (!_poolDictionary.ContainsKey(tag))
             {

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using Zenject.Asteroids;
 
 namespace Player
 {
@@ -63,7 +64,9 @@ namespace Player
             {
                 PlayerType type = _playerModel.GetModelType();
 
-                _slingShot = _slingShotPooler.Pull<ISlingShot>(type, _SlingShotInitPosition.position, _SlingShotInitPosition.rotation, _SlingShotInitPosition.parent);
+                Vector3 fixedInitPosition = new Vector3(_SlingShotInitPosition.position.x, _SlingShotInitPosition.position.y, _SlingShotInitPosition.position.z - 1f);
+
+                _slingShot = _slingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.identity, _SlingShotInitPosition.parent);
 
                 _slingShot.Init(_SlingShotInitPosition.position, type);
 
@@ -79,10 +82,10 @@ namespace Player
             }
         }
 
-        public void Launch(Vector2 direction, float dragDistance)
+        public void Launch(Vector2 direction)
         {
             float launchPower = _playerModel.GetStats().LaunchPower;
-            Vector2 forceVector = direction * dragDistance * launchPower;
+            Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
             _slingShot.OnShoot -= Launch;
         }
