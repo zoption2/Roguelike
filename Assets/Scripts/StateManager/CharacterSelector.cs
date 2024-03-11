@@ -40,8 +40,6 @@ namespace UI
                 DataTransfer.TypeCollection.Add(controller.GetModelType());
                 DataTransfer.IdCollection.Add(controller.GetModelID());
             }
-            else
-                Debug.LogWarning("You can't select more characters than required!");
         }
 
         public bool HasRequiredNumberOfPlayers()
