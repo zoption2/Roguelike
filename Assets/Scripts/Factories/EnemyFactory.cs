@@ -19,9 +19,9 @@ public class EnemyFactory : CharacterFactory<IEnemyController, EnemyType>, IEnem
         _concretePooler = enemyPooler;
         _concretePooler.Init();
     }
-    protected override Stats GetStats(EnemyType enemyType, int id)
+    protected override Stats GetStats(EnemyType enemyType, int id=0)
     {
-        return _statsProvider.GetCharacterStats(enemyType, id);
+        return _statsProvider.GetCharacterStats(enemyType);
     }
 }
 

@@ -1,6 +1,7 @@
 using CharactersStats;
 using Enemy;
 using Player;
+using Prefab;
 using UnityEngine;
 
 namespace Gameplay
@@ -112,13 +113,20 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-            int id = 1;
-            
-            foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
+            //int id = 1;
+            //foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
+            //{
+            //    IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, player.playerType);
+            //    _characters.Players.Add(newPlayer);
+            //}
+            PlayerSpawnPointWithType player;
+            PlayerType playerType;
+            for (int i=0;i< _characters.PlayerSpawnPoints.Count; i++)
             {
-                IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, player.playerType, _characters, id);
+                player = _characters.PlayerSpawnPoints[i];
+                playerType = DataTransfer.TypeCollection[i];
+                IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, playerType);
                 _characters.Players.Add(newPlayer);
-
             }
 
         }
@@ -127,7 +135,7 @@ namespace Gameplay
         {
             foreach (EnemySpawnPointWithType enemy in _characters.EnemySpawnPoints)
             {
-                IEnemyController newEnemy = _enemyFactory.CreateCharacter(enemy.spawnPoint, enemy.enemyType, _characters);
+                IEnemyController newEnemy = _enemyFactory.CreateCharacter(enemy.spawnPoint, enemy.enemyType);
                 _characters.Enemies.Add(newEnemy);
             }
         }

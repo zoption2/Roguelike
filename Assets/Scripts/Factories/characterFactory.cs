@@ -20,7 +20,7 @@ public interface ICharacterFactory<TController, TEnum>
     where TController : ICharacterController
     where TEnum : Enum
 {
-    TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0);
+    TController CreateCharacter(Transform point, TEnum type, int id = 0);
 }
 
 public abstract class CharacterFactory<TController, TEnum> : ICharacterFactory<TController, TEnum>
@@ -39,7 +39,7 @@ public abstract class CharacterFactory<TController, TEnum> : ICharacterFactory<T
         _statsProvider = statsProvider;
     }
 
-    public TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0)
+    public TController CreateCharacter(Transform point, TEnum type, int id = 0)
     {
         CharacterView characterView;
         TController controller;

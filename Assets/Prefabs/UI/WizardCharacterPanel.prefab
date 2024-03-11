@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6932229301099257337}
   - component: {fileID: 3520858990687936656}
   m_Layer: 5
-  m_Name: CharacterPanel
+  m_Name: WizardCharacterPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.35318956, g: 0.8490566, b: 0.30758274, a: 1}
+  m_Color: {r: 0.1490196, g: 0.16290717, b: 0.85882354, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

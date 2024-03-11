@@ -1,4 +1,5 @@
 using Player;
+using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UI;
@@ -16,6 +17,9 @@ namespace UI
     public interface ICharacterPanelController
     {
         public void Init(ICharacterPanelView panelView, ICharacterPanelModel panelModel);
+        public PlayerType GetModelType();
+        public int GetModelID();
+        public void RevertInteract();
         public bool _isEnabled { get; set; }
     }
     public class CharacterPanelController : IPanelClickChange, ICharacterPanelController
@@ -45,6 +49,15 @@ namespace UI
         {
             SavedModel model = _panelModel.IDModel;
             return model.ID;
+        }
+
+        public void RevertInteract()
+        {
+            _panelView.RevertInteractibility();
+        }
+        public PlayerType GetModelType()
+        {
+            return _panelModel.PlayerCharacterType;
         }
 
         public void Init(ICharacterPanelView panelView, ICharacterPanelModel panelModel)

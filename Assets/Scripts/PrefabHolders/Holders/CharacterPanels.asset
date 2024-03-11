@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: CharacterPanels
   m_EditorClassIdentifier: 
   _prefabs:
-  - Key: 1
+  - Key: 3
     Value: {fileID: 4814394147961967121, guid: b78d1ce987d769346913f96c52bd0a6b, type: 3}
+  - Key: 1
+    Value: {fileID: 4814394147961967121, guid: 2cd1b8a5de9a8f946b0fe09747641cb4, type: 3}
+  - Key: 2
+    Value: {fileID: 4814394147961967121, guid: 0250c5d72af5edb45ae0f1a40ba0bef1, type: 3}

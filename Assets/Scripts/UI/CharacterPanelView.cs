@@ -14,6 +14,7 @@ namespace UI
 {
     public interface ICharacterPanelView
     {
+        public void RevertInteractibility();
         public void Init(IPanelClickChange panelValue);
         public PlayerType PlayerType { get; set; }
     }
@@ -33,6 +34,10 @@ namespace UI
             _toggle.onValueChanged.AddListener(_valueChange.ChangeBool);
         }
 
+        public void RevertInteractibility()
+        {
+            _toggle.interactable = !_toggle.interactable;
+        }
         public void OnCreate()
         {
             
