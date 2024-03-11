@@ -1,7 +1,9 @@
 using Enemy;
+using Obstacles;
 using Player;
 using Pool;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -64,6 +66,16 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         IsMoving = true;
         _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
     }
+    
+
+    //private void OnTriggerEnter(Collider collider)
+    //{
+    //    if (collider.gameObject.TryGetComponent(out IObstacle obstacle))
+    //    {
+    //        obstacle.ProcessCollision(_rigidbody);
+    //        Debug.Log("Collision processed");
+    //    }
+    //}
 
     public void OnCreate()
     {
