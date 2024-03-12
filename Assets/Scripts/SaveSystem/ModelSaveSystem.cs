@@ -10,7 +10,7 @@ public class ModelSaveSystem
 {
     private static ModelSaveSystem instance = new ModelSaveSystem();
     private readonly string _path = Application.dataPath + "/Saves/";
-    private static Dictionary<int,SavedModel> _saves;
+    private static Dictionary<PlayerType,SavedPlayerModel> _saves;
     private ModelSaveSystem() 
     {
         Init();
@@ -19,14 +19,14 @@ public class ModelSaveSystem
     private void FillSavesDictionary()
     {
         SavedModelCollection modelList = new SavedModelCollection();
-        modelList.List = new List<SavedModel>();
+        modelList.List = new List<SavedPlayerModel>();
         string existingSave = File.ReadAllText(_path + "/Save.json");
         modelList = JsonUtility.FromJson<SavedModelCollection>(existingSave);
         if(modelList != null )
         {
-            foreach (SavedModel model in modelList.List)
+            foreach (SavedPlayerModel model in modelList.List)
             {
-                _saves.Add(model.ID, model);
+                _saves.Add(model.Type, model);
             }
         }
     }
@@ -34,7 +34,7 @@ public class ModelSaveSystem
     public List<PlayerType> GetAvailablePlayersTypes()
     {
         List<PlayerType> list = new List<PlayerType>();
-        foreach(KeyValuePair<int, SavedModel> model in _saves)
+        foreach(KeyValuePair<PlayerType, SavedPlayerModel> model in _saves)
         {
             list.Add(model.Value.Type);
         }
@@ -42,7 +42,7 @@ public class ModelSaveSystem
     }
     private void Init()
     {
-        _saves = new Dictionary<int, SavedModel>();
+        _saves = new Dictionary<PlayerType, SavedPlayerModel>();
         CheckForFileAndDirectories();
         FillSavesDictionary();
     }
@@ -61,7 +61,7 @@ public class ModelSaveSystem
     private void RewriteFile()
     {
         SavedModelCollection modelList = new SavedModelCollection();
-        foreach (KeyValuePair<int, SavedModel> model in _saves)
+        foreach (KeyValuePair<PlayerType, SavedPlayerModel> model in _saves)
         {
             modelList.List.Add(model.Value);
         }
@@ -69,16 +69,16 @@ public class ModelSaveSystem
         File.WriteAllText(_path + "/Save.json", newJsonSave);
     }
 
-    public void Save(SavedModel savedModel)
+    public void Save(SavedPlayerModel savedModel)
     {
-        if (_saves.ContainsKey(savedModel.ID))
+        if (_saves.ContainsKey(savedModel.Type))
         {
-            _saves[savedModel.ID] = savedModel;
+            _saves[savedModel.Type] = savedModel;
             RewriteFile();
         }
         else
         {
-            _saves.Add(savedModel.ID, savedModel);
+            _saves.Add(savedModel.Type, savedModel);
             RewriteFile();
         }
     }
@@ -87,21 +87,22 @@ public class ModelSaveSystem
         return instance;
     }
     
-    public SavedModel Load(PlayerType playerType, int id = -1)
+    public SavedPlayerModel Load(PlayerType playerType, int id = -1)
     {
-        SavedModel model = FindModelByID(id);
-        if (model == null)
-        {
-            model = FindModelByType(playerType);
-        }
+        //SavedPlayerModel model = FindModelByID(id);
+        //if (model == null)
+        //{
+        //    model = FindModelByType(playerType);
+        //}
+        SavedPlayerModel model = FindModelByType(playerType);
         return model;
     }
 
-    private SavedModel FindModelByType(PlayerType type)
+    private SavedPlayerModel FindModelByType(PlayerType type)
     {
         SavedModelCollection collection = new SavedModelCollection();
-        List<SavedModel> list = collection.List;
-        foreach (KeyValuePair<int, SavedModel> model in _saves)
+        List<SavedPlayerModel> list = collection.List;
+        foreach (KeyValuePair<PlayerType, SavedPlayerModel> model in _saves)
         {
             list.Add(model.Value);
         }
@@ -113,10 +114,10 @@ public class ModelSaveSystem
         return null;
     }
 
-    private SavedModel FindModelByID(int id)
-    {
-        if (_saves.ContainsKey(id))
-            return _saves[id];
-        return null;
-    }
+    //private SavedPlayerModel FindModelByID(int id)
+    //{
+    //    if (_saves.ContainsKey(id))
+    //        return _saves[id];
+    //    return null;
+    //}
 }

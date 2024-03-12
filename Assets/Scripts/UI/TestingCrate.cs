@@ -32,12 +32,12 @@ public class TestingCrate : MonoBehaviour
 
     private void CreateSavedModel()
     {
-        SavedModel load = _saveSystem.Load(PlayerType);
+        SavedPlayerModel load = _saveSystem.Load(PlayerType);
         if (load==null)
         {
-            Stats stats = _statsProvider.GetCharacterStats(PlayerType);
+            Stats stats = _statsProvider.GetPlayerStats(PlayerType);
             int id = GenerateID();
-            SavedModel savedModel = new SavedModel(stats, id, PlayerType);
+            SavedPlayerModel savedModel = new SavedPlayerModel(stats, PlayerType, id);
             _saveSystem.Save(savedModel);
             _characterSelector.AddPanel(PlayerType);
             Destroy(gameObject);

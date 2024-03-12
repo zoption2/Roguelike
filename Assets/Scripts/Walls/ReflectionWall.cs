@@ -11,7 +11,7 @@ namespace Obstacles
         {
             var velocity = rigidbody.velocity;
             rigidbody.velocity = Vector3.zero;
-            var modifiedVelocity = velocity * -1;
+            var modifiedVelocity = velocity * -2;
             rigidbody.velocity = Vector3.zero;
             rigidbody.AddForce(modifiedVelocity, ForceMode.VelocityChange);
         }

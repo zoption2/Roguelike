@@ -4,29 +4,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 namespace Player
 {
     [Serializable]
-    public class SavedModel
+    public class SavedPlayerModel : CharacterModelBase
     {
-        public int ID;
         public PlayerType Type;
-        public int Health, Damage, Speed;
+        //public PlayerType Type { get { return _type; } }
 
-        public SavedModel(Stats stats,int id,PlayerType playerType)
+        public int Health, Damage, Speed;
+        public float LaunchPower;
+
+        public SavedPlayerModel(Stats stats, PlayerType playerType, int id) : base(stats, id)
         {
-            ID = id;
+            Type = playerType;
             Health = stats.Health;
             Damage = stats.Damage;
             Speed = stats.Speed;
-            Type = playerType;
+            LaunchPower = stats.LaunchPower;
         }
     }   
 
     public class SavedModelCollection
     {
-        public List<SavedModel> List = new List<SavedModel>();
+        public List<SavedPlayerModel> List = new List<SavedPlayerModel>();
     }
 }

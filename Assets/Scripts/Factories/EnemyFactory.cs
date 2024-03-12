@@ -64,7 +64,7 @@ using Enemy;
 
 public interface IEnemyFactory
 {
-    public IEnemyController CreateEnemy(Transform point, EnemyType type, ICharacterScenarioContext characters, int id = 0);
+    public IEnemyController CreateEnemy(Transform point, EnemyType type, int id = 0);
 }
 public class EnemyFactory : IEnemyFactory
 {
@@ -84,7 +84,7 @@ public class EnemyFactory : IEnemyFactory
         _enemyPooler.Init();
     }
 
-    public IEnemyController CreateEnemy(Transform point, EnemyType type, ICharacterScenarioContext characters, int id = 0)
+    public IEnemyController CreateEnemy(Transform point, EnemyType type, int id = 0)
     {
         CharacterView enemyView;
         IEnemyController controller;
@@ -95,7 +95,7 @@ public class EnemyFactory : IEnemyFactory
 
         stats = _statsProvider.GetEnemyStats(type, id);
 
-        enemyModel = new EnemyModel(id, type, stats);
+        enemyModel = new EnemyModel(stats, type, id);
 
         IMyPoolable _poolable = _enemyPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         enemyView = _poolable.gameObject.GetComponent<CharacterView>();
