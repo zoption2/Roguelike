@@ -45,6 +45,28 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         _rigidbody = gameObject.GetComponentInChildren<Rigidbody>();
     }
 
+    private void Update()
+    {
+        if (IsMoving)
+        {
+            Vector3 velocity = _rigidbody.velocity;
+
+            float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+            Debug.Log("Angle: " + angle);
+
+            _viewTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
+
+            //if (velocity.magnitude > 0f)
+            //{
+            //    float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+            //    Debug.Log("Angle: " + angle); 
+
+            //    _viewTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
+            //}
+        }
+    }
+
+
     private void FixedUpdate()
     {
         if(IsMoving)
