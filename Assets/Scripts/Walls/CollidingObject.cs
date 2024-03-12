@@ -24,14 +24,4 @@ public class CollidingObject : MonoBehaviour
 
 
     }
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    Debug.Log("!!!!!");
-    //    if (collision.gameObject.TryGetComponent(out IObstacle obstacle))
-    //    {
-    //        Debug.Log("!!");
-    //        obstacle.ProcessCollision(_rigidbody);
-    //        Debug.Log("Collision processed");
-    //    }
-    //}
 }
