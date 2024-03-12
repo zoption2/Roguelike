@@ -547,7 +547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rectTransform: {fileID: 269320088}
-  _requiredPlayers: 1
+  _requiredPlayers: 2
 --- !u!1 &1328834978
 GameObject:
   m_ObjectHideFlags: 0
