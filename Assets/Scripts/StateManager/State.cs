@@ -1,6 +1,7 @@
 using CharactersStats;
 using Enemy;
 using Player;
+using Prefab;
 using UnityEngine;
 
 namespace Gameplay
@@ -30,7 +31,7 @@ namespace Gameplay
             for (int i = 0; i < _characters.Players.Count; i++)
             {
                 _characters.Players[i].IsActive = true;
-                _characters.Players[i].OnEndTurn += _scenario.OnStateEnd;
+                _characters.Players[i].OnSwitch += _scenario.OnStateEnd;
             }
             Debug.Log("Entered player turn state");
         }
@@ -40,7 +41,7 @@ namespace Gameplay
             for (int i = 0; i < _characters.Players.Count; i++)
             {
                 _characters.Players[i].IsActive = false;
-                _characters.Players[i].OnEndTurn -= _scenario.OnStateEnd;
+                _characters.Players[i].OnSwitch -= _scenario.OnStateEnd;
             }
             //Debug.Log("Exited player turn state");
         }
@@ -61,7 +62,7 @@ namespace Gameplay
             for(int i=0; i <_characters.Enemies.Count;i++ )
             {
                 _characters.Enemies[i].IsActive = true;
-                _characters.Enemies[i].OnEndTurn += _scenario.OnStateEnd;
+                _characters.Enemies[i].OnSwitch += _scenario.OnStateEnd;
             }
             Debug.Log("Entered enemy turn state");
         }
@@ -71,7 +72,7 @@ namespace Gameplay
             for (int i = 0; i < _characters.Enemies.Count; i++)
             {
                 _characters.Enemies[i].IsActive = false;
-                _characters.Enemies[i].OnEndTurn -= _scenario.OnStateEnd;
+                _characters.Enemies[i].OnSwitch -= _scenario.OnStateEnd;
             }
             //Debug.Log("Exited enemy turn state");
         }
@@ -112,13 +113,20 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-            int id = 0;
-            
-            foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
+            //int id = 1;
+            //foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
+            //{
+            //    IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, player.playerType);
+            //    _characters.Players.Add(newPlayer);
+            //}
+            PlayerSpawnPointWithType player;
+            PlayerType playerType;
+            for (int i=0;i< _characters.PlayerSpawnPoints.Count; i++)
             {
-                IPlayerController newPlayer = _playerFactory.CreatePlayer(player.spawnPoint, player.playerType, _characters, id);
+                player = _characters.PlayerSpawnPoints[i];
+                playerType = DataTransfer.TypeCollection[i];
+                IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, playerType);
                 _characters.Players.Add(newPlayer);
-
             }
 
         }
@@ -127,7 +135,7 @@ namespace Gameplay
         {
             foreach (EnemySpawnPointWithType enemy in _characters.EnemySpawnPoints)
             {
-                IEnemyController newEnemy = _enemyFactory.CreateEnemy(enemy.spawnPoint, enemy.enemyType, _characters);
+                IEnemyController newEnemy = _enemyFactory.CreateCharacter(enemy.spawnPoint, enemy.enemyType);
                 _characters.Enemies.Add(newEnemy);
             }
         }

@@ -58,9 +58,7 @@ namespace Gameplay
             switch (type)
             {
                 case TypeOfScenario.Default:
-                    //_container.Resolve<IPlayerController>();
                     scenario = _diContainer.Resolve<IDefaultScenario>();
-                    //scenario = new DefaultScenario(fullService, context);// DIContainer.Reslove<DefaultScenario>
                     break;
                 case TypeOfScenario.Boss:
                     scenario = new BossScenario(fullService, context);

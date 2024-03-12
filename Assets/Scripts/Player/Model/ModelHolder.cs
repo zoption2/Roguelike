@@ -7,10 +7,6 @@ using CharactersStats;
 
 namespace Player
 {
-    public interface ISavedCharacterModelHolder
-    {
-        Stats GetSavedStats(int receivedID);
-    }
     public abstract class DefaultCharacterModelHolder<T> : ScriptableObject where T : Enum
     {
         [SerializeField]
