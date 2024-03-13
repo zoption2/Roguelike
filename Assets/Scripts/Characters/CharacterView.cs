@@ -47,33 +47,24 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     private void Update()
     {
-        if (IsMoving)
+        Vector3 velocity = _rigidbody.velocity;
+        float rotationSpeed = velocity.magnitude;
+
+        if (velocity.magnitude > 0.5f)
         {
-            Vector3 velocity = _rigidbody.velocity;
-
             float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-            Debug.Log("Angle: " + angle);
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
 
-            _viewTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
-
-            //if (velocity.magnitude > 0f)
-            //{
-            //    float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-            //    Debug.Log("Angle: " + angle); 
-
-            //    _viewTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
-            //}
+            _viewTransform.rotation = Quaternion.Slerp(_viewTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
-
 
     private void FixedUpdate()
     {
         if(IsMoving)
         {
             _playerModel.Velocity.Value = _rigidbody.velocity.magnitude;
-        }
-        
+        } 
     }
 
     public void ChangeDirection(Vector2 direction)
