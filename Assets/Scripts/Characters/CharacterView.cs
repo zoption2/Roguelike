@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 
 public interface ICharacterView
 {
-    public void Init(SavedPlayerModel model);
+    public void Init(PlayerModel model);
     public void Init(EnemyModel model);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
@@ -27,10 +27,10 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
 
-    private SavedPlayerModel _playerModel;
+    private PlayerModel _playerModel;
     private EnemyModel _enemyModel;
     private Rigidbody _rigidbody;
-    public void Init(SavedPlayerModel model)
+    public void Init(PlayerModel model)
     {
         _playerModel = model;
     }
@@ -50,7 +50,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         Vector3 velocity = _rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
 
-        if (velocity.magnitude > 0.5f)
+        if (velocity.magnitude > 0.5f && IsMoving)
         {
             float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
@@ -79,16 +79,6 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         IsMoving = true;
         _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
     }
-    
-
-    //private void OnTriggerEnter(Collider collider)
-    //{
-    //    if (collider.gameObject.TryGetComponent(out IObstacle obstacle))
-    //    {
-    //        obstacle.ProcessCollision(_rigidbody);
-    //        Debug.Log("Collision processed");
-    //    }
-    //}
 
     public void OnCreate()
     {

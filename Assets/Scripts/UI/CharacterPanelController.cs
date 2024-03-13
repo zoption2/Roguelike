@@ -47,7 +47,7 @@ namespace UI
 
         public int GetModelID()
         {
-            SavedPlayerModel model = _panelModel.IDModel;
+            PlayerModel model = _panelModel.IDModel;
             return model.ID;
         }
 

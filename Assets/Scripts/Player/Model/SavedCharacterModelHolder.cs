@@ -17,7 +17,7 @@ namespace Player
 
     public class SavedCharacterModelHolder :  ISavedCharacterModelHolder
     {
-        protected List<SavedPlayerModel> _models = new List<SavedPlayerModel>();
+        protected List<PlayerModel> _models = new List<PlayerModel>();
         private ModelSaveSystem _modelSaveSystem= ModelSaveSystem.GetInstance();
         public void Init()
         {
@@ -36,7 +36,7 @@ namespace Player
             //}
             //return null
             Stats stats;
-            SavedPlayerModel model=_modelSaveSystem.Load(type);
+            PlayerModel model=_modelSaveSystem.Load(type);
             if(model != null)
             {
                 stats = new Stats(model.Speed, model.Health, model.Damage, model.LaunchPower);

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace Player
 {
     [Serializable]
-    public class SavedPlayerModel : CharacterModelBase
+    public class PlayerModel : CharacterModelBase
     {
         public PlayerType Type;
         //public PlayerType Type { get { return _type; } }
@@ -18,7 +18,7 @@ namespace Player
         public int Health, Damage, Speed;
         public float LaunchPower;
 
-        public SavedPlayerModel(Stats stats, PlayerType playerType, int id) : base(stats, id)
+        public PlayerModel(Stats stats, PlayerType playerType, int id) : base(stats, id)
         {
             Type = playerType;
             Health = stats.Health;
@@ -30,6 +30,6 @@ namespace Player
 
     public class SavedModelCollection
     {
-        public List<SavedPlayerModel> List = new List<SavedPlayerModel>();
+        public List<PlayerModel> List = new List<PlayerModel>();
     }
 }

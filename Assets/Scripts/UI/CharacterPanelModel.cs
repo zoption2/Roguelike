@@ -8,13 +8,13 @@ namespace UI
 {
     public interface ICharacterPanelModel
     {
-        public SavedPlayerModel IDModel { get; }
+        public PlayerModel IDModel { get; }
         public PlayerType PlayerCharacterType { get; set; }
         public void Init(PlayerType playerType);
     }
     public class CharacterPanelModel : ICharacterPanelModel
     {
-        public SavedPlayerModel IDModel { get; private set; }
+        public PlayerModel IDModel { get; private set; }
         public PlayerType PlayerCharacterType { get; set; }
         private ModelSaveSystem _saveSystem;
 

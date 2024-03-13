@@ -1,31 +1,3 @@
-//using CharactersStats;
-//using Player;
-//using Pool;
-//using Prefab;
-//using Zenject;
-
-//public interface IPlayerFactory : ICharacterFactory<IPlayerController, PlayerType> { }
-//public class PlayerFactory : CharacterFactory<IPlayerController, PlayerType>, IPlayerFactory
-//{
-//    private PlayerPooler _concretePooler;
-//    protected override ObjectPooler<PlayerType> _pooler { get => _concretePooler; }
-
-//    public PlayerFactory(
-//        DiContainer container,
-//        IStatsProvider statsProvider,
-//        PlayerPooler playerPooler)
-//        : base(container, statsProvider)
-//    {
-//        _concretePooler = playerPooler;
-//        _concretePooler.Init();
-//    }
-
-//    protected override Stats GetStats(PlayerType playerType, int id)
-//    {
-//        return _statsProvider.GetCharacterStats(playerType, id);
-//    }
-//}
-
 using Gameplay;
 using Player;
 using CharactersStats;
@@ -33,6 +5,7 @@ using Pool;
 using Prefab;
 using UnityEngine;
 using Zenject;
+using Enemy;
 
 public interface IPlayerFactory
 {
@@ -60,14 +33,14 @@ public class PlayerFactory : IPlayerFactory
     {
         CharacterView playerView;
         IPlayerController controller;
-        SavedPlayerModel playerModel;
+        PlayerModel playerModel;
         Stats stats;
 
         controller = GetNewController();
 
         stats = _statsProvider.GetPlayerStats(type, id);
 
-        playerModel = new SavedPlayerModel(stats, type, id);
+        playerModel = new PlayerModel(stats, type, id);
 
         IMyPoolable _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         playerView = _poolable.gameObject.GetComponent<CharacterView>();
@@ -83,4 +56,32 @@ public class PlayerFactory : IPlayerFactory
     {
         return _container.Resolve<IPlayerController>();
     }
+
+    //public abstract class Factory<TController, TType, TModel>
+    //{
+    //    protected readonly IStatsProvider _statsProvider;
+    //    public abstract TController GetCharacter(TType type);
+    //    protected abstract TModel GetNewModel();
+
+    //}
+
+    //public class PlayersFactory : Factory<IPlayerController, PlayerType, PlayerModel>
+    //{
+    //    public override IPlayerController GetCharacter(PlayerType type)
+    //    {
+    //        throw new System.NotImplementedException();
+    //        var stats = _statsProvider.GetPlayerStats(type);
+    //        var model = new PlayerModel(stats, type, 0);
+    //    }
+
+    //    protected override PlayerModel GetNewModel()
+    //    {
+
+    //    }
+    //}
+
+    //public class EnemiesFactory : Factory<IEnemyController, EnemyType, EnemyModel>
+    //{
+
+    //}
 }
