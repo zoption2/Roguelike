@@ -180,7 +180,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Create Player
+  m_text: Magic crate
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -547,7 +547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rectTransform: {fileID: 269320088}
-  _requiredPlayers: 1
+  _requiredPlayers: 2
 --- !u!1 &1328834978
 GameObject:
   m_ObjectHideFlags: 0
@@ -1005,7 +1005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9a937e51e596f54080fcfc3bf0aed08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <PlayerType>k__BackingField: 1
+  <PlayerType>k__BackingField: 3
 --- !u!114 &1494481632
 MonoBehaviour:
   m_ObjectHideFlags: 0
