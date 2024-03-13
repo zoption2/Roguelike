@@ -3,6 +3,7 @@ using Player;
 using Enemy;
 using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace CharactersStats
 {
@@ -18,18 +19,21 @@ namespace CharactersStats
     public class StatsProvider : IStatsProvider
     {
         private DefaultPlayerModelHolder _defaultModelHolder;
-        private SavedCharacterModelHolder _savedModelHolder;
+        private ISavedCharacterModelHolder _savedModelHolder;
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
         public Stats GetPlayerStats(PlayerType playerType, int id = -1)
         {
             Stats stats;
-            stats = _savedModelHolder.GetSavedStats(id);
+            stats = _savedModelHolder.GetSavedStats(playerType);
+            Debug.LogWarning(" Not Found Save: " + (stats == null));
             if (stats == null)
             {
                 stats = _defaultModelHolder.GetDefaultStats(playerType);
+                Debug.LogWarning("Took default" + stats.Health);
             }
+
             return stats;
         }
 
@@ -44,7 +48,7 @@ namespace CharactersStats
 
 
 
-        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, SavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
+        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, ISavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
         {
             _defaultModelHolder = defaultModelHolder;
             _savedModelHolder = savedModelHolder;

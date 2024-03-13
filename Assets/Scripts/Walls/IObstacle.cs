@@ -6,7 +6,7 @@ namespace Obstacles
 {
     public interface IObstacle
     {
-        public void ProcessCollision(Rigidbody rigidbody);
+        public void ProcessCollision(Rigidbody rigidbody, Vector3 velocity);
     }
 }
 

@@ -21,7 +21,7 @@ public abstract class CharacterModelBase : ICharacterModel
     protected ReactiveFloat _launchPower;
     private Stats _stats;
 
-    public CharacterModelBase(int id, Stats stats)
+    public CharacterModelBase(Stats stats, int id = -1)
     {
         _id = id;
         _damage = new ReactiveInt(stats.Damage);

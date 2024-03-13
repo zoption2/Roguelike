@@ -36,7 +36,7 @@ using Zenject;
 
 public interface IPlayerFactory
 {
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, ICharacterScenarioContext characters, int id = 0);
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, int id = -1);
 }
 public class PlayerFactory : IPlayerFactory
 {
@@ -56,18 +56,18 @@ public class PlayerFactory : IPlayerFactory
         _playerPooler.Init();
     }
 
-    public IPlayerController CreatePlayer(Transform point, PlayerType type, ICharacterScenarioContext characters, int id = 0)
+    public IPlayerController CreatePlayer(Transform point, PlayerType type, int id = -1)
     {
         CharacterView playerView;
         IPlayerController controller;
-        PlayerModel playerModel;
+        SavedPlayerModel playerModel;
         Stats stats;
 
         controller = GetNewController();
 
         stats = _statsProvider.GetPlayerStats(type, id);
 
-        playerModel = new PlayerModel(id, type, stats);
+        playerModel = new SavedPlayerModel(stats, type, id);
 
         IMyPoolable _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         playerView = _poolable.gameObject.GetComponent<CharacterView>();

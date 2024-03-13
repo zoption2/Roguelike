@@ -6,7 +6,7 @@ namespace Obstacles
 {
     public class StickyWall : MonoBehaviour, IObstacle
     {
-        public void ProcessCollision(Rigidbody rigidbody)
+        public void ProcessCollision(Rigidbody rigidbody, Vector3 velocity)
         {
             rigidbody.velocity = Vector3.zero;
         }
