@@ -18,7 +18,7 @@ namespace Player
         public int Health, Damage, Speed;
         public float LaunchPower;
 
-        public SavedPlayerModel(Stats stats, PlayerType playerType, int id) : base(stats, id)
+        public SavedPlayerModel(Stats stats, PlayerType playerType) : base(stats)
         {
             Type = playerType;
             Health = stats.Health;

@@ -5,12 +5,10 @@ using UnityEngine;
 
 public interface ICharacterModel
 {
-    int ID { get; }
+    
 }
 public abstract class CharacterModelBase : ICharacterModel
 {
-    private int _id;
-    public int ID { get { return _id; } }
 
     private ReactiveFloat _velocity;
     public ReactiveFloat Velocity { get { return _velocity; } }
@@ -21,9 +19,8 @@ public abstract class CharacterModelBase : ICharacterModel
     protected ReactiveFloat _launchPower;
     private Stats _stats;
 
-    public CharacterModelBase(Stats stats, int id = -1)
+    public CharacterModelBase(Stats stats)
     {
-        _id = id;
         _damage = new ReactiveInt(stats.Damage);
         _health = new ReactiveInt(stats.Health);
         _speed = new ReactiveInt(stats.Speed);

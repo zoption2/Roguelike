@@ -65,9 +65,9 @@ public class PlayerFactory : IPlayerFactory
 
         controller = GetNewController();
 
-        stats = _statsProvider.GetPlayerStats(type, id);
+        stats = _statsProvider.GetPlayerStats(type);
 
-        playerModel = new SavedPlayerModel(stats, type, id);
+        playerModel = new SavedPlayerModel(stats, type);
 
         IMyPoolable _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         playerView = _poolable.gameObject.GetComponent<CharacterView>();

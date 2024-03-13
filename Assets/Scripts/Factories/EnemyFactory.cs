@@ -19,9 +19,9 @@
 //        _concretePooler = enemyPooler;
 //        _concretePooler.Init();
 //    }
-//    protected override Stats GetStats(EnemyType enemyType, int id)
+//    protected override Stats GetStats(EnemyType enemyType)
 //    {
-//        return _statsProvider.GetCharacterStats(enemyType, id);
+//        return _statsProvider.GetCharacterStats(enemyType);
 //    }
 //}
 
@@ -64,7 +64,7 @@ using Enemy;
 
 public interface IEnemyFactory
 {
-    public IEnemyController CreateEnemy(Transform point, EnemyType type, int id = 0);
+    public IEnemyController CreateEnemy(Transform point, EnemyType type);
 }
 public class EnemyFactory : IEnemyFactory
 {
@@ -84,7 +84,7 @@ public class EnemyFactory : IEnemyFactory
         _enemyPooler.Init();
     }
 
-    public IEnemyController CreateEnemy(Transform point, EnemyType type, int id = 0)
+    public IEnemyController CreateEnemy(Transform point, EnemyType type)
     {
         CharacterView enemyView;
         IEnemyController controller;
@@ -93,16 +93,16 @@ public class EnemyFactory : IEnemyFactory
 
         controller = GetNewController();
 
-        stats = _statsProvider.GetEnemyStats(type, id);
+        stats = _statsProvider.GetEnemyStats(type);
 
-        enemyModel = new EnemyModel(stats, type, id);
+        enemyModel = new EnemyModel(stats, type);
 
         IMyPoolable _poolable = _enemyPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         enemyView = _poolable.gameObject.GetComponent<CharacterView>();
 
         controller.Init(enemyModel, enemyView);
 
-        Debug.Log($"Player {type} with id {id} was created. They have {stats.Health} hp and spawned on {point.position}");
+        Debug.Log($"Player {type} was created. They have {stats.Health} hp and spawned on {point.position}");
 
         return controller;
     }

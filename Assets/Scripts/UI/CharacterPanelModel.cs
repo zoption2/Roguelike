@@ -8,13 +8,13 @@ namespace UI
 {
     public interface ICharacterPanelModel
     {
-        public SavedPlayerModel IDModel { get; }
+        public SavedPlayerModel Model { get; }
         public PlayerType PlayerCharacterType { get; set; }
         public void Init(PlayerType playerType);
     }
     public class CharacterPanelModel : ICharacterPanelModel
     {
-        public SavedPlayerModel IDModel { get; private set; }
+        public SavedPlayerModel Model { get; private set; }
         public PlayerType PlayerCharacterType { get; set; }
         private ModelSaveSystem _saveSystem;
 
@@ -22,7 +22,7 @@ namespace UI
         {
             PlayerCharacterType = playerType;
             _saveSystem = ModelSaveSystem.GetInstance();
-            IDModel = _saveSystem.Load(PlayerCharacterType);
+            Model = _saveSystem.Load(PlayerCharacterType);
         }
     }
 }

@@ -38,7 +38,7 @@ public interface ICharacterController
 //        _statsProvider = statsProvider;
 //    }
 
-//    public TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters, int id = 0)
+//    public TController CreateCharacter(Transform point, TEnum type, ICharacterScenarioContext characters)
 //    {
 //        CharacterView characterView;
 //        TController controller;

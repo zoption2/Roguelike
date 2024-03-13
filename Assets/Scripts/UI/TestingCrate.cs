@@ -36,18 +36,10 @@ public class TestingCrate : MonoBehaviour
         if (load==null)
         {
             Stats stats = _statsProvider.GetPlayerStats(PlayerType);
-            int id = GenerateID();
-            SavedPlayerModel savedModel = new SavedPlayerModel(stats, PlayerType, id);
+            SavedPlayerModel savedModel = new SavedPlayerModel(stats, PlayerType);
             _saveSystem.Save(savedModel);
             _characterSelector.AddPanel(PlayerType);
             Destroy(gameObject);
         }
-    }
-
-    private int GenerateID()
-    {
-        int lastID = PlayerPrefs.GetInt(LAST_ID, 1);
-        PlayerPrefs.SetInt(LAST_ID, ++lastID);
-        return lastID;
     }
 }

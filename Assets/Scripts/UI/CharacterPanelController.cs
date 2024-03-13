@@ -18,7 +18,6 @@ namespace UI
     {
         public void Init(ICharacterPanelView panelView, ICharacterPanelModel panelModel);
         public PlayerType GetModelType();
-        public int GetModelID();
         public void RevertInteract();
         public bool _isEnabled { get; set; }
     }
@@ -43,12 +42,6 @@ namespace UI
             {
                 _characterSelector.UnSelectPanel(this);
             }
-        }
-
-        public int GetModelID()
-        {
-            SavedPlayerModel model = _panelModel.IDModel;
-            return model.ID;
         }
 
         public void RevertInteract()

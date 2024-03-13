@@ -12,7 +12,7 @@ namespace Enemy
     {
         private EnemyType _type;
         public EnemyType Type { get { return _type; } }
-        public EnemyModel(Stats stats, EnemyType type, int id) : base(stats)
+        public EnemyModel(Stats stats, EnemyType type) : base(stats)
         {
             _type = type;
         }

@@ -10,6 +10,7 @@ public class ModelSaveSystem
 {
     private static ModelSaveSystem instance = new ModelSaveSystem();
     private readonly string _path = Application.dataPath + "/Saves/";
+    private readonly string _saveName = "/Save.json";
     private static Dictionary<PlayerType,SavedPlayerModel> _saves;
     private ModelSaveSystem() 
     {
@@ -20,7 +21,7 @@ public class ModelSaveSystem
     {
         SavedModelCollection modelList = new SavedModelCollection();
         modelList.List = new List<SavedPlayerModel>();
-        string existingSave = File.ReadAllText(_path + "/Save.json");
+        string existingSave = File.ReadAllText(_path + _saveName);
         modelList = JsonUtility.FromJson<SavedModelCollection>(existingSave);
         if(modelList != null )
         {
@@ -53,9 +54,9 @@ public class ModelSaveSystem
         {
             Directory.CreateDirectory(_path);
         }
-        if (!File.Exists(_path + "/Save.json"))
+        if (!File.Exists(_path + _saveName))
         {
-            File.Create(_path + "/Save.json").Close();
+            File.Create(_path + _saveName).Close();
         }
     }
     private void RewriteFile()
@@ -66,7 +67,7 @@ public class ModelSaveSystem
             modelList.List.Add(model.Value);
         }
         string newJsonSave = JsonUtility.ToJson(modelList);
-        File.WriteAllText(_path + "/Save.json", newJsonSave);
+        File.WriteAllText(_path + _saveName, newJsonSave);
     }
 
     public void Save(SavedPlayerModel savedModel)
@@ -87,13 +88,8 @@ public class ModelSaveSystem
         return instance;
     }
     
-    public SavedPlayerModel Load(PlayerType playerType, int id = -1)
+    public SavedPlayerModel Load(PlayerType playerType)
     {
-        //SavedPlayerModel model = FindModelByID(id);
-        //if (model == null)
-        //{
-        //    model = FindModelByType(playerType);
-        //}
         SavedPlayerModel model = FindModelByType(playerType);
         return model;
     }
@@ -113,11 +109,4 @@ public class ModelSaveSystem
         }
         return null;
     }
-
-    //private SavedPlayerModel FindModelByID(int id)
-    //{
-    //    if (_saves.ContainsKey(id))
-    //        return _saves[id];
-    //    return null;
-    //}
 }

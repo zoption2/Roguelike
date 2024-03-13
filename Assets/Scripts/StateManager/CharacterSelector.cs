@@ -38,7 +38,6 @@ namespace UI
                 if (_selectedPanels.Count == _requiredPlayers)
                     MakeUnselectedRevertInteract();
                 DataTransfer.TypeCollection.Add(controller.GetModelType());
-                DataTransfer.IdCollection.Add(controller.GetModelID());
             }
         }
 
@@ -60,7 +59,6 @@ namespace UI
                 MakeUnselectedRevertInteract();
             _unSelectedPanels.Add(controller);
             DataTransfer.TypeCollection.Remove(controller.GetModelType());
-            DataTransfer.IdCollection.Remove(controller.GetModelID());
         }
 
         public void Init(int requiredPlayersNumber,RectTransform rectTransform)
