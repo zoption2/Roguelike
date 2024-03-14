@@ -88,7 +88,7 @@ namespace Player
 
         public void EndTurn(float velocity)
         {
-            if (velocity < 0.1f)
+            if (velocity < 0.2f)
             {
                 OnEndTurn?.Invoke();
                 _playerView.IsMoving = false;

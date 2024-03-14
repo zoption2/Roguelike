@@ -7,7 +7,7 @@ namespace Gameplay
 {
     public class DataTransfer
     {
-        public static List<CharacterType> TypeCollection = new List<CharacterType>();
+        public static List<CharacterType> TypeCollection = new();
 
         public static void ClearCollections()
         {

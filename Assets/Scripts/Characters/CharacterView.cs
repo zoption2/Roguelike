@@ -57,6 +57,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
             _viewTransform.rotation = Quaternion.Slerp(_viewTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
+
     }
 
     private void FixedUpdate()
@@ -64,6 +65,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         if (IsMoving)
         {
             _playerModel.Velocity.Value = _rigidbody.velocity.magnitude;
+            Debug.LogWarning(_playerModel.Velocity.Value);
 
         }
     }
@@ -77,8 +79,8 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     public void AddImpulse(Vector2 forceVector)
     {
-        IsMoving = true;
         _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        IsMoving = true;
     }
     
 
