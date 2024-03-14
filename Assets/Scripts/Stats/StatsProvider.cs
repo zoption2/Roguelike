@@ -4,6 +4,7 @@ using Enemy;
 using System;
 using UnityEditor;
 using UnityEngine;
+using SaveSystem;
 
 namespace CharactersStats
 {
@@ -13,27 +14,23 @@ namespace CharactersStats
         public Stats GetPlayerStats(PlayerType playerType);
         public Stats GetEnemyStats(EnemyType enemyType);
 
-
     }
 
     public class StatsProvider : IStatsProvider
     {
         private DefaultPlayerModelHolder _defaultModelHolder;
-        private ISavedCharacterModelHolder _savedModelHolder;
+        private IDataService _dataService;
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
         public Stats GetPlayerStats(PlayerType playerType)
         {
             Stats stats;
-            stats = _savedModelHolder.GetSavedStats(playerType);
-            Debug.LogWarning(" Not Found Save: " + (stats == null));
+            stats = _dataService.PlayerStats.GetStats(playerType);
             if (stats == null)
             {
                 stats = _defaultModelHolder.GetDefaultStats(playerType);
-                Debug.LogWarning("Took default" + stats.Health);
             }
-
             return stats;
         }
 
@@ -48,10 +45,10 @@ namespace CharactersStats
 
 
 
-        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, ISavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
+        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, IDataService dataService, DefaultEnemyModelHolder defaultEnemyModelHolder)
         {
             _defaultModelHolder = defaultModelHolder;
-            _savedModelHolder = savedModelHolder;
+            _dataService = dataService;
             _defaultEnemyModelHolder = defaultEnemyModelHolder;
         }
     }

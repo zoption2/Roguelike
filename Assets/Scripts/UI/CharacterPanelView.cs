@@ -22,7 +22,7 @@ namespace UI
     public class CharacterPanelView : MonoBehaviour, ICharacterPanelView, IMyPoolable
     {
         
-        public SavedPlayerModel Model { get; private set; }
+        public PlayerModel Model { get; private set; }
         [field: SerializeField] public PlayerType PlayerType { get; set; }
         private Toggle _toggle;
         private IPanelClickChange _valueChange;

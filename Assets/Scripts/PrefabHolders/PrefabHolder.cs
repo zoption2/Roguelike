@@ -14,7 +14,7 @@ namespace Prefab
         Thrower = 101,
         Summoner = 102,
     }
-
+    
     public enum PlayerType 
     {
         none = 0,

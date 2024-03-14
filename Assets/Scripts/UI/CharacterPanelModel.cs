@@ -3,26 +3,33 @@ using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SaveSystem;
+using CharactersStats;
 
 namespace UI
 {
     public interface ICharacterPanelModel
     {
-        public SavedPlayerModel Model { get; }
+        public PlayerModel Model { get; }
         public PlayerType PlayerCharacterType { get; set; }
         public void Init(PlayerType playerType);
     }
     public class CharacterPanelModel : ICharacterPanelModel
     {
-        public SavedPlayerModel Model { get; private set; }
+        public PlayerModel Model { get; private set; }
         public PlayerType PlayerCharacterType { get; set; }
-        private ModelSaveSystem _saveSystem;
+        private IDataService _dataService;
 
+        public CharacterPanelModel(IDataService dataService)
+        {
+
+            _dataService = dataService;
+        }
         public void Init(PlayerType playerType)
         {
             PlayerCharacterType = playerType;
-            _saveSystem = ModelSaveSystem.GetInstance();
-            Model = _saveSystem.Load(PlayerCharacterType);
+            Stats stats = _dataService.PlayerStats.GetStats(playerType);
+            Model = new PlayerModel(stats,playerType);
         }
     }
 }

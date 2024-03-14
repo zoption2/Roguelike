@@ -17,7 +17,7 @@ namespace Player
     {
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
-        public void Init(SavedPlayerModel model, ICharacterView playerView);
+        public void Init(PlayerModel model, ICharacterView playerView);
     }
 
     public delegate void OnEndTurn();
@@ -26,7 +26,7 @@ namespace Player
         public event OnEndTurn OnEndTurn;
 
         private ICharacterView _playerView;
-        private SavedPlayerModel _playerModel;
+        private PlayerModel _playerModel;
         private SlingshotPooler _slingShotPooler;
         private ISlingShot _slingShot;
         private List<IDisposable> _disposables;
@@ -41,7 +41,7 @@ namespace Player
         }
 
         public void Init(
-        SavedPlayerModel playerModel,
+        PlayerModel playerModel,
         ICharacterView playerView)
         {
             _playerModel = playerModel;

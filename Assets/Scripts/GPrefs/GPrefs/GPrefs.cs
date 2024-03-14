@@ -11,7 +11,7 @@ public static class GPrefs  {
     #region Delete
 
     public static void DeleteAll ()
-	{       
+	{
         if (File.Exists(dataPath))
             File.Delete(dataPath);      
 	}

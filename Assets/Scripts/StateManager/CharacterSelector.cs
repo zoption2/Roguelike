@@ -3,6 +3,7 @@ using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SaveSystem;
 
 namespace UI
 {
@@ -21,12 +22,13 @@ namespace UI
         private List<ICharacterPanelController> _unSelectedPanels = new List<ICharacterPanelController>();
         private List<ICharacterPanelController> _selectedPanels= new List<ICharacterPanelController>();
         private ICharacterPanelFactory _characterPanelFactory;
-        private ModelSaveSystem _modelSaveSystem;
+        private IDataService _dataService;
         private int _requiredPlayers;
         public RectTransform RectTrans { get; set; }
-        public CharacterSelector(ICharacterPanelFactory characterPanelFactory)
+        public CharacterSelector(ICharacterPanelFactory characterPanelFactory, IDataService dataService)
         {
             _characterPanelFactory = characterPanelFactory;
+            _dataService = dataService;
         }
 
         public void SelectPanel(ICharacterPanelController controller)
@@ -66,19 +68,23 @@ namespace UI
             DataTransfer.ClearCollections();
             RectTrans = rectTransform;
             _requiredPlayers = requiredPlayersNumber;
-            _modelSaveSystem = ModelSaveSystem.GetInstance();
             List<PlayerType> availablePlayers = new List<PlayerType>();
-            availablePlayers = _modelSaveSystem.GetAvailablePlayersTypes();
-            foreach (PlayerType playerType in availablePlayers)
+            availablePlayers = _dataService.PlayerStats.GetAvailablePlayers();
+            if(availablePlayers !=null)
             {
-                AddPanel(playerType);
+                foreach (PlayerType playerType in availablePlayers)
+                {
+                    AddPanel(playerType);
+                }
+                _unSelectedPanels = _availablePanels;
             }
-            _unSelectedPanels = _availablePanels;
+            
         }
         public void AddPanel(PlayerType playerType)
         {
             ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(playerType, RectTrans);
             _availablePanels.Add(controller);
+            _unSelectedPanels.Add(controller);
         }
     }
 }

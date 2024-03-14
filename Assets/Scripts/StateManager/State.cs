@@ -43,7 +43,6 @@ namespace Gameplay
                 _characters.Players[i].IsActive = false;
                 _characters.Players[i].OnEndTurn -= _scenario.OnStateEnd;
             }
-            //Debug.Log("Exited player turn state");
         }
     }
     public class EnemyTurnState : IState
@@ -74,7 +73,6 @@ namespace Gameplay
                 _characters.Enemies[i].IsActive = false;
                 _characters.Enemies[i].OnEndTurn -= _scenario.OnStateEnd;
             }
-            //Debug.Log("Exited enemy turn state");
         }
     }
 
@@ -105,7 +103,6 @@ namespace Gameplay
 
         public void OnEnter()
         {
-            //Debug.Log("Entering init state");
             OnPlayerCreate();
             OnEnemyCreate();
             _scenario.OnStateEnd();
@@ -113,12 +110,6 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-            //int id = 1;
-            //foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
-            //{
-            //    IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, player.playerType);
-            //    _characters.Players.Add(newPlayer);
-            //}
             PlayerSpawnPointWithType player;
             PlayerType playerType;
             for (int i=0;i< _characters.PlayerSpawnPoints.Count; i++)

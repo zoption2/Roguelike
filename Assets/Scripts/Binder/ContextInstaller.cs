@@ -8,6 +8,7 @@ using CharactersStats;
 using Enemy;
 using SlingShotLogic;
 using UI;
+using SaveSystem;
 public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
@@ -23,8 +24,6 @@ public class ContextInstaller : MonoInstaller
     private SlingShotPrefabHolder _slingShotPrefabHolder;
     [SerializeField]
     private DefaultPlayerModelHolder _defaultPlayerModelHolder;
-    [SerializeField]
-    private SavedCharacterModelHolder _savedCharacterModelHolder;
     [SerializeField]
     private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
@@ -54,6 +53,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IStateData>().To<StateData>().AsSingle();
         Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
         Container.Bind<ICharacterSelector>().To<CharacterSelector>().AsSingle();
+        Container.Bind<IDataService>().To<DataService>().AsSingle(); 
     }
 
     public void BindScenarios()
@@ -88,7 +88,6 @@ public class ContextInstaller : MonoInstaller
     {
         Container.Bind<DefaultPlayerModelHolder>().FromInstance(_defaultPlayerModelHolder).AsSingle();
         Container.Bind<DefaultEnemyModelHolder>().FromInstance(_defaultEnemyModelHolder).AsSingle();
-        Container.Bind<ISavedCharacterModelHolder>().To<SavedCharacterModelHolder>().AsSingle();
         Container.Bind<ICharacterPanelModel>().To<CharacterPanelModel>().AsTransient();
     }
 
