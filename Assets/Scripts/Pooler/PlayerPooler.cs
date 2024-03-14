@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Pool {
 
-    public class PlayerPooler : ObjectPooler<PlayerType>
+    public class PlayerPooler : ObjectPooler<CharacterType>
     {
         private PlayerPrefabHolder _provider;
         public PlayerPooler(PlayerPrefabHolder provider)
@@ -16,7 +16,7 @@ namespace Pool {
             _provider = provider;
         }
 
-        protected override GameObject GetPrefab(PlayerType tag)
+        protected override GameObject GetPrefab(CharacterType tag)
         {
             return _provider.GetPrefab(tag);
         }

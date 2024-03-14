@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 
 public interface ICharacterView
 {
-    public void Init(SavedPlayerModel model);
+    public void Init(CharacterModel model);
     public void Init(EnemyModel model);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
@@ -27,10 +27,10 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
 
-    private SavedPlayerModel _playerModel;
+    private CharacterModel _playerModel;
     private EnemyModel _enemyModel;
     private Rigidbody _rigidbody;
-    public void Init(SavedPlayerModel model)
+    public void Init(CharacterModel model)
     {
         _playerModel = model;
     }
@@ -61,10 +61,11 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     private void FixedUpdate()
     {
-        if(IsMoving)
+        if (IsMoving)
         {
             _playerModel.Velocity.Value = _rigidbody.velocity.magnitude;
-        } 
+
+        }
     }
 
     public void ChangeDirection(Vector2 direction)

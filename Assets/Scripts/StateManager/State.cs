@@ -90,6 +90,7 @@ namespace Gameplay
 
         IEnemyFactory _enemyFactory;
 
+
         public InitLevelState(IScenario scenario,
             ICharacterScenarioContext context,
             IStatsProvider provider,
@@ -113,14 +114,8 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-            //int id = 1;
-            //foreach (PlayerSpawnPointWithType player in _characters.PlayerSpawnPoints)
-            //{
-            //    IPlayerController newPlayer = _playerFactory.CreateCharacter(player.spawnPoint, player.playerType);
-            //    _characters.Players.Add(newPlayer);
-            //}
             PlayerSpawnPointWithType player;
-            PlayerType playerType;
+            CharacterType playerType;
             for (int i=0;i< _characters.PlayerSpawnPoints.Count; i++)
             {
                 player = _characters.PlayerSpawnPoints[i];
@@ -128,7 +123,6 @@ namespace Gameplay
                 IPlayerController newPlayer = _playerFactory.CreatePlayer(player.spawnPoint, playerType);
                 _characters.Players.Add(newPlayer);
             }
-
         }
 
         public void OnEnemyCreate()

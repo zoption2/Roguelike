@@ -11,14 +11,14 @@ namespace Gameplay
     public class PlayerSpawnPointWithType
     {
         public Transform spawnPoint;
-        public PlayerType playerType;
+        public CharacterType playerType;
     }
 
     [System.Serializable]
     public class EnemySpawnPointWithType
     {
         public Transform spawnPoint;
-        public EnemyType enemyType;
+        public CharacterType enemyType;
     }
     public interface ICharacterScenarioContext : IScenarioContext
     {

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Player
 {
     [CreateAssetMenu]
-    public class DefaultPlayerModel : DefaultModel<PlayerType>
+    public class DefaultPlayerModel : DefaultModel<CharacterType>
     {
 
     }

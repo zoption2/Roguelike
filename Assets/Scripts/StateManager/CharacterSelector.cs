@@ -8,7 +8,7 @@ namespace UI
 {
     public interface ICharacterSelector
     {
-        void AddPanel(PlayerType playerType);
+        void AddPanel(CharacterType characterType);
         public RectTransform RectTrans { get; set; }
         public void Init(int requiredPlayersNumber, RectTransform rectTransform);
         public void SelectPanel(ICharacterPanelController controller);
@@ -67,17 +67,17 @@ namespace UI
             RectTrans = rectTransform;
             _requiredPlayers = requiredPlayersNumber;
             _modelSaveSystem = ModelSaveSystem.GetInstance();
-            List<PlayerType> availablePlayers = new List<PlayerType>();
+            List<CharacterType> availablePlayers = new List<CharacterType>();
             availablePlayers = _modelSaveSystem.GetAvailablePlayersTypes();
-            foreach (PlayerType playerType in availablePlayers)
+            foreach (CharacterType characterType in availablePlayers)
             {
-                AddPanel(playerType);
+                AddPanel(characterType);
             }
             _unSelectedPanels = _availablePanels;
         }
-        public void AddPanel(PlayerType playerType)
+        public void AddPanel(CharacterType characterType)
         {
-            ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(playerType, RectTrans);
+            ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(characterType, RectTrans);
             _availablePanels.Add(controller);
         }
     }

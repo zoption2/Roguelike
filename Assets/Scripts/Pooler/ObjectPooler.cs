@@ -18,14 +18,14 @@ namespace Pool
        void OnRelease();
     }
 
-    public interface IPool<TEnum> where TEnum : Enum 
+    public interface IPool<TEnum> //where TEnum : Enum 
     {
         public void Init();
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         public void Push(TEnum tag, IMyPoolable obj);
     }
 
-    public abstract class ObjectPooler<TEnum> : IPool<TEnum> where TEnum : Enum
+    public abstract class ObjectPooler<TEnum> : IPool<TEnum> //where TEnum : Enum
     {
         protected Dictionary<TEnum, Queue<IMyPoolable>> _poolDictionary;
 

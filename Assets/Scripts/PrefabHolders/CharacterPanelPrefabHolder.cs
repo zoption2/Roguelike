@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Prefab {
 
     [CreateAssetMenu]
-    public class CharacterPanelPrefabHolder : PrefabHolder<PlayerType>
+    public class CharacterPanelPrefabHolder : PrefabHolder<CharacterType>
     {
         
     }

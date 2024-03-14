@@ -11,7 +11,7 @@ public class ModelSaveSystem
     private static ModelSaveSystem instance = new ModelSaveSystem();
     private readonly string _path = Application.dataPath + "/Saves/";
     private readonly string _saveName = "/Save.json";
-    private static Dictionary<PlayerType,SavedPlayerModel> _saves;
+    private static Dictionary<CharacterType,CharacterModel> _saves;
     private ModelSaveSystem() 
     {
         Init();
@@ -20,22 +20,22 @@ public class ModelSaveSystem
     private void FillSavesDictionary()
     {
         SavedModelCollection modelList = new SavedModelCollection();
-        modelList.List = new List<SavedPlayerModel>();
+        modelList.List = new List<CharacterModel>();
         string existingSave = File.ReadAllText(_path + _saveName);
         modelList = JsonUtility.FromJson<SavedModelCollection>(existingSave);
         if(modelList != null )
         {
-            foreach (SavedPlayerModel model in modelList.List)
+            foreach (CharacterModel model in modelList.List)
             {
                 _saves.Add(model.Type, model);
             }
         }
     }
 
-    public List<PlayerType> GetAvailablePlayersTypes()
+    public List<CharacterType> GetAvailablePlayersTypes()
     {
-        List<PlayerType> list = new List<PlayerType>();
-        foreach(KeyValuePair<PlayerType, SavedPlayerModel> model in _saves)
+        List<CharacterType> list = new List<CharacterType>();
+        foreach(KeyValuePair<CharacterType, CharacterModel> model in _saves)
         {
             list.Add(model.Value.Type);
         }
@@ -43,7 +43,7 @@ public class ModelSaveSystem
     }
     private void Init()
     {
-        _saves = new Dictionary<PlayerType, SavedPlayerModel>();
+        _saves = new Dictionary<CharacterType, CharacterModel>();
         CheckForFileAndDirectories();
         FillSavesDictionary();
     }
@@ -62,7 +62,7 @@ public class ModelSaveSystem
     private void RewriteFile()
     {
         SavedModelCollection modelList = new SavedModelCollection();
-        foreach (KeyValuePair<PlayerType, SavedPlayerModel> model in _saves)
+        foreach (KeyValuePair<CharacterType, CharacterModel> model in _saves)
         {
             modelList.List.Add(model.Value);
         }
@@ -70,7 +70,7 @@ public class ModelSaveSystem
         File.WriteAllText(_path + _saveName, newJsonSave);
     }
 
-    public void Save(SavedPlayerModel savedModel)
+    public void Save(CharacterModel savedModel)
     {
         if (_saves.ContainsKey(savedModel.Type))
         {
@@ -88,17 +88,17 @@ public class ModelSaveSystem
         return instance;
     }
     
-    public SavedPlayerModel Load(PlayerType playerType)
+    public CharacterModel Load(CharacterType playerType)
     {
-        SavedPlayerModel model = FindModelByType(playerType);
+        CharacterModel model = FindModelByType(playerType);
         return model;
     }
 
-    private SavedPlayerModel FindModelByType(PlayerType type)
+    private CharacterModel FindModelByType(CharacterType type)
     {
         SavedModelCollection collection = new SavedModelCollection();
-        List<SavedPlayerModel> list = collection.List;
-        foreach (KeyValuePair<PlayerType, SavedPlayerModel> model in _saves)
+        List<CharacterModel> list = collection.List;
+        foreach (KeyValuePair<CharacterType, CharacterModel> model in _saves)
         {
             list.Add(model.Value);
         }

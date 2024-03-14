@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Prefab
 {
     [CreateAssetMenu]
-    public class SlingShotPrefabHolder : PrefabHolder<PlayerType>
+    public class SlingShotPrefabHolder : PrefabHolder<CharacterType>
     {
 
     }

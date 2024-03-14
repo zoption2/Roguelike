@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Pool
 {
-    public class CharacterPanelPooler : ObjectPooler<PlayerType>
+    public class CharacterPanelPooler : ObjectPooler<CharacterType>
     {
         private CharacterPanelPrefabHolder _holder;
         public CharacterPanelPooler(CharacterPanelPrefabHolder provider)
@@ -13,7 +13,7 @@ namespace Pool
             _holder = provider;
         }
 
-        protected override GameObject GetPrefab(PlayerType tag)
+        protected override GameObject GetPrefab(CharacterType tag)
         {
             return _holder.GetPrefab(tag);
         }

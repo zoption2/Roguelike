@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Enemy
 {
     [CreateAssetMenu]
-    public class DefaultEnemyModelHolder : EnemyModelHolder<EnemyType>
+    public class DefaultEnemyModelHolder : EnemyModelHolder<CharacterType>
     {
 
     }

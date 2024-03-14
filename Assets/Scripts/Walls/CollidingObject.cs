@@ -34,9 +34,7 @@ public class CollidingObject : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out IObstacle obstacle))
         {
             Vector3 velocity = GetVelocity();
-            Debug.LogWarning(velocity);
             obstacle.ProcessCollision(_rigidbody, velocity);
-            Debug.Log("Collision processed");
         }
 
     }

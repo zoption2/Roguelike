@@ -74,6 +74,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IPlayerFactory>().To<PlayerFactory>().AsSingle();
         Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsSingle();
         Container.Bind<ICharacterPanelFactory>().To<CharacterPanelFactory>().AsSingle();
+
     }
 
     public void BindPrefabHolders()

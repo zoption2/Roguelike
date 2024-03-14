@@ -1,8 +1,5 @@
 using CharactersStats;
-using Player;
 using Prefab;
-using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +12,7 @@ public class TestingCrate : MonoBehaviour
     private ModelSaveSystem _saveSystem;
     private Button _crateButton;
     private ICharacterSelector _characterSelector;
-    [field: SerializeField] public PlayerType PlayerType { get; set; }
+    [field: SerializeField] public CharacterType PlayerType { get; set; }
     void Start()
     {
         _saveSystem = ModelSaveSystem.GetInstance();
@@ -32,11 +29,11 @@ public class TestingCrate : MonoBehaviour
 
     private void CreateSavedModel()
     {
-        SavedPlayerModel load = _saveSystem.Load(PlayerType);
+        CharacterModel load = _saveSystem.Load(PlayerType);
         if (load==null)
         {
             Stats stats = _statsProvider.GetPlayerStats(PlayerType);
-            SavedPlayerModel savedModel = new SavedPlayerModel(stats, PlayerType);
+            CharacterModel savedModel = new CharacterModel(stats, PlayerType);
             _saveSystem.Save(savedModel);
             _characterSelector.AddPanel(PlayerType);
             Destroy(gameObject);

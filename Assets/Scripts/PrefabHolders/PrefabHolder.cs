@@ -15,7 +15,7 @@ namespace Prefab
         Summoner = 102,
     }
 
-    public enum PlayerType 
+    public enum PlayerType
     {
         none = 0,
         Warrior = 1,
@@ -23,14 +23,14 @@ namespace Prefab
         Archer = 3,
     }
 
-    public enum EnemyType 
+    public enum EnemyType
     {
         Barbarian = 100,
         Thrower = 101,
         Summoner = 102,
     }
 
-    
+
     public abstract class PrefabHolder<T> : ScriptableObject where T : Enum
     {
         [Serializable]

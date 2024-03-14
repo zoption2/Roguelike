@@ -9,19 +9,18 @@ namespace Enemy
     public interface IEnemyController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
-        public void Init(EnemyModel model, CharacterView playerView);
     }
     public class EnemyController : IEnemyController, IDisposable
     {
         private CharacterView _enemyView;
-        private EnemyModel _enemyModel;
+        private CharacterModel _enemyModel;
         private Rigidbody2D _enemyViewRigidbody;
         public event OnEndTurn OnEndTurn;
         public bool IsActive { get; set; }
 
-        public void Init(EnemyModel enemyModel, CharacterView characterView)
+        public void Init(CharacterModel characterModel, CharacterView characterView)
         {
-            _enemyModel = enemyModel;
+            _enemyModel = characterModel;
             _enemyView = characterView;
             _enemyView.Init(_enemyModel);
             _enemyView.ON_CLICK += OnClick;

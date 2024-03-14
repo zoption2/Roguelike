@@ -1,19 +1,14 @@
 using Prefab;
 using Player;
 using Enemy;
-using System;
-using UnityEditor;
 using UnityEngine;
 
 namespace CharactersStats
 {
-
     public interface IStatsProvider
     {
-        public Stats GetPlayerStats(PlayerType playerType);
-        public Stats GetEnemyStats(EnemyType enemyType);
-
-
+        public Stats GetPlayerStats(CharacterType playerType);
+        public Stats GetEnemyStats(CharacterType enemyType);
     }
 
     public class StatsProvider : IStatsProvider
@@ -23,7 +18,7 @@ namespace CharactersStats
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
-        public Stats GetPlayerStats(PlayerType playerType)
+        public Stats GetPlayerStats(CharacterType playerType)
         {
             Stats stats;
             stats = _savedModelHolder.GetSavedStats(playerType);
@@ -37,7 +32,7 @@ namespace CharactersStats
             return stats;
         }
 
-        public Stats GetEnemyStats(EnemyType enemyType)
+        public Stats GetEnemyStats(CharacterType enemyType)
         {
             Stats stats;
 
@@ -45,8 +40,6 @@ namespace CharactersStats
 
             return stats;
         }
-
-
 
         public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, ISavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
         {

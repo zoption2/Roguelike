@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Enemy
 {
     [CreateAssetMenu]
-    public class DefaultEnemyModel : DefaultModel<EnemyType>
+    public class DefaultEnemyModel : DefaultModel<CharacterType>
     {
 
     }

@@ -16,14 +16,14 @@ namespace UI
     {
         public void RevertInteractibility();
         public void Init(IPanelClickChange panelValue);
-        public PlayerType PlayerType { get; set; }
+        public CharacterType CharacterType { get; set; }
     }
     
     public class CharacterPanelView : MonoBehaviour, ICharacterPanelView, IMyPoolable
     {
         
-        public SavedPlayerModel Model { get; private set; }
-        [field: SerializeField] public PlayerType PlayerType { get; set; }
+        public CharacterModel Model { get; private set; }
+        [field: SerializeField] public CharacterType CharacterType { get; set; }
         private Toggle _toggle;
         private IPanelClickChange _valueChange;
 

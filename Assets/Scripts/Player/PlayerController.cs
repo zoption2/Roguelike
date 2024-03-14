@@ -17,7 +17,6 @@ namespace Player
     {
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
-        public void Init(SavedPlayerModel model, ICharacterView playerView);
     }
 
     public delegate void OnEndTurn();
@@ -25,8 +24,8 @@ namespace Player
     {
         public event OnEndTurn OnEndTurn;
 
-        private ICharacterView _playerView;
-        private SavedPlayerModel _playerModel;
+        private CharacterView _playerView;
+        private CharacterModel _playerModel;
         private SlingshotPooler _slingShotPooler;
         private ISlingShot _slingShot;
         private List<IDisposable> _disposables;
@@ -41,8 +40,8 @@ namespace Player
         }
 
         public void Init(
-        SavedPlayerModel playerModel,
-        ICharacterView playerView)
+        CharacterModel playerModel,
+        CharacterView playerView)
         {
             _playerModel = playerModel;
             _playerView = playerView;
@@ -62,7 +61,7 @@ namespace Player
         {
             if (IsActive && !_playerView.IsMoving)
             {
-                PlayerType type = _playerModel.Type;
+                CharacterType type = _playerModel.Type;
 
                 Vector3 fixedInitPosition = new Vector3(_SlingShotInitPosition.position.x, _SlingShotInitPosition.position.y, _SlingShotInitPosition.position.z - 1f);
 
@@ -96,6 +95,7 @@ namespace Player
             {
                 OnEndTurn?.Invoke();
                 _playerView.IsMoving = false;
+
             }
         }
 

@@ -8,17 +8,17 @@ namespace UI
 {
     public interface ICharacterPanelModel
     {
-        public SavedPlayerModel Model { get; }
-        public PlayerType PlayerCharacterType { get; set; }
-        public void Init(PlayerType playerType);
+        public CharacterModel Model { get; }
+        public CharacterType PlayerCharacterType { get; set; }
+        public void Init(CharacterType playerType);
     }
     public class CharacterPanelModel : ICharacterPanelModel
     {
-        public SavedPlayerModel Model { get; private set; }
-        public PlayerType PlayerCharacterType { get; set; }
+        public CharacterModel Model { get; private set; }
+        public CharacterType PlayerCharacterType { get; set; }
         private ModelSaveSystem _saveSystem;
 
-        public void Init(PlayerType playerType)
+        public void Init(CharacterType playerType)
         {
             PlayerCharacterType = playerType;
             _saveSystem = ModelSaveSystem.GetInstance();

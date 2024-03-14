@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Prefab
 {
     [CreateAssetMenu]
-    public class EnemyPrefabHolder : PrefabHolder<EnemyType>
+    public class EnemyPrefabHolder : PrefabHolder<CharacterType>
     {
 
     }

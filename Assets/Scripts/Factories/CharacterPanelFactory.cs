@@ -9,7 +9,7 @@ namespace UI
 {
     public interface ICharacterPanelFactory
     {
-        ICharacterPanelController CreateCharacterPanel(PlayerType panelType, RectTransform transform);
+        ICharacterPanelController CreateCharacterPanel(CharacterType panelType, RectTransform transform);
         // you should also add a reference to the grid in which the panel should be added
     }
     public class CharacterPanelFactory : ICharacterPanelFactory
@@ -22,14 +22,14 @@ namespace UI
             _pooler = pooler;
             _pooler.Init();
         }
-        public ICharacterPanelController CreateCharacterPanel(PlayerType panelType,RectTransform transform)
+        public ICharacterPanelController CreateCharacterPanel(CharacterType panelType,RectTransform transform)
         {
             ICharacterPanelView panelView;
             ICharacterPanelModel panelModel;
             ICharacterPanelController controller;
             IMyPoolable myPoolable = _pooler.Pull<IMyPoolable>( panelType,new Vector2(0,0),Quaternion.identity,transform);
             panelView = myPoolable.gameObject.GetComponent<CharacterPanelView>();
-            panelView.PlayerType = panelType;
+            panelView.CharacterType = panelType;
             panelModel = _container.Resolve<ICharacterPanelModel>();
             controller = _container.Resolve<ICharacterPanelController>();
             controller.Init(panelView, panelModel);

@@ -9,7 +9,7 @@ namespace SlingShotLogic
 {
     public interface ISlingShot : IMyPoolable
     {
-        public void Init(Vector2 _initPosition, PlayerType type);
+        public void Init(Vector2 _initPosition, CharacterType type);
         public event Action<Vector2> OnShoot;
         public event Action<Vector2> OnDirectionChange;
     }
@@ -26,7 +26,7 @@ namespace SlingShotLogic
         private Vector2 _startPoint;
         private Vector2 _endPoint;
         private Vector3 _touchPositionInWorld;
-        private PlayerType _type;
+        private CharacterType _type;
 
         private SphereCollider _touchZoneCollider;
 
@@ -36,7 +36,7 @@ namespace SlingShotLogic
 
         [Inject]
         private SlingshotPooler _slingShotPooler;
-        public void Init(Vector2 _initPosition, PlayerType type)
+        public void Init(Vector2 _initPosition, CharacterType type)
         {  
             _type = type;
             _startPoint = _initPosition;

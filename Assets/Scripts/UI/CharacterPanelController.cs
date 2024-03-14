@@ -17,7 +17,7 @@ namespace UI
     public interface ICharacterPanelController
     {
         public void Init(ICharacterPanelView panelView, ICharacterPanelModel panelModel);
-        public PlayerType GetModelType();
+        public CharacterType GetModelType();
         public void RevertInteract();
         public bool _isEnabled { get; set; }
     }
@@ -48,7 +48,7 @@ namespace UI
         {
             _panelView.RevertInteractibility();
         }
-        public PlayerType GetModelType()
+        public CharacterType GetModelType()
         {
             return _panelModel.PlayerCharacterType;
         }
@@ -58,7 +58,7 @@ namespace UI
             _panelModel = panelModel;
             _panelView = panelView;
             _panelView.Init(this);
-            _panelModel.Init(_panelView.PlayerType);
+            _panelModel.Init(_panelView.CharacterType);
         }
     }
 }
