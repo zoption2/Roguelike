@@ -1,14 +1,11 @@
 using CharactersStats;
-using Pool;
 using Prefab;
 using SlingShotLogic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
-using Zenject.Asteroids;
 
 namespace Player
 {
