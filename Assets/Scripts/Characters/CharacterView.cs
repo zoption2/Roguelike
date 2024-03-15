@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 public interface ICharacterView
 {
     public void Init(CharacterModel model);
-    public void Init(EnemyModel model);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
     bool IsPlayerMoving { get; set; }
@@ -27,15 +26,11 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public bool IsPlayerMoving { get; set; }
 
     private CharacterModel _playerModel;
-    private EnemyModel _enemyModel;
+    private CharacterModel _enemyModel;
     private Rigidbody _rigidbody;
     public void Init(CharacterModel model)
     {
         _playerModel = model;
-    }
-
-    public void Init(EnemyModel model)
-    {
         _enemyModel = model;
     }
 

@@ -10,8 +10,8 @@ namespace CharactersStats
         private int _health;
         private int _damage;
         private float _launchPower;
-        public int Speed {get { return _speed;}} 
-        public int Health { get { return _health;}}
+        public int Speed { get { return _speed; }} 
+        public int Health { get { return _health;} set {_health = value;} }
         public int Damage { get { return _damage;}}
         public float LaunchPower { get { return _launchPower; } }
 
