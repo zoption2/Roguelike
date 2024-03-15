@@ -9,7 +9,6 @@ using Zenject;
 
 namespace Player
 {
-
     public interface IPlayerController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
@@ -21,13 +20,14 @@ namespace Player
     {
         public event OnEndTurn OnEndTurn;
 
+        public bool IsActive { get; set; }
+
         private CharacterView _playerView;
         private CharacterModel _playerModel;
         private SlingshotPooler _slingShotPooler;
         private ISlingShot _slingShot;
         private List<IDisposable> _disposables;
         private Transform _SlingShotInitPosition;
-        public bool IsActive { get; set; }
 
         [Inject]
         public void Construct(
@@ -56,7 +56,7 @@ namespace Player
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (IsActive && !_playerView.IsMoving)
+            if (IsActive && !_playerView.IsPlayerMoving)
             {
                 CharacterType type = _playerModel.Type;
 
@@ -88,11 +88,10 @@ namespace Player
 
         public void EndTurn(float velocity)
         {
-            if (velocity < 0.2f)
+            if (Mathf.Abs(velocity) < 0.2f && velocity != 0)
             {
                 OnEndTurn?.Invoke();
-                _playerView.IsMoving = false;
-
+                _playerView.IsPlayerMoving = false;
             }
         }
 
@@ -106,6 +105,4 @@ namespace Player
             _slingShot.OnShoot -= Launch;
         }
     }
-
-
 }

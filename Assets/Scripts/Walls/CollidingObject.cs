@@ -1,5 +1,4 @@
 using Obstacles;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,7 +20,6 @@ public class CollidingObject : MonoBehaviour
     {
         return _lastVelocities.Dequeue();
     }
-
 
     private void Start()
     {

@@ -11,7 +11,6 @@ public class SlingshotPooler : ObjectPooler<CharacterType>
     {
         _provider = provider;
     }
-
     protected override GameObject GetPrefab(CharacterType tag)
     {
         return _provider.GetPrefab(tag);

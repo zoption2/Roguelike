@@ -3,7 +3,6 @@ using Obstacles;
 using Player;
 using Pool;
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,7 +12,7 @@ public interface ICharacterView
     public void Init(EnemyModel model);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
-    bool IsMoving { get; set; }
+    bool IsPlayerMoving { get; set; }
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
@@ -25,7 +24,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public event Action<PointerEventData> ON_BEGINDRAG;
 
     [SerializeField] Transform _viewTransform;
-    public bool IsMoving { get; set; }
+    public bool IsPlayerMoving { get; set; }
 
     private CharacterModel _playerModel;
     private EnemyModel _enemyModel;
@@ -47,27 +46,27 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     private void Update()
     {
-        Vector3 velocity = _rigidbody.velocity;
-        float rotationSpeed = velocity.magnitude;
-
-        if (velocity.magnitude > 0.5f)
-        {
-            float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-
-            _viewTransform.rotation = Quaternion.Slerp(_viewTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
-
+        if (IsPlayerMoving) ViewRotation();
     }
 
     private void FixedUpdate()
     {
-        if (IsMoving)
+        if (IsPlayerMoving)
         {
             _playerModel.Velocity.Value = _rigidbody.velocity.magnitude;
-            Debug.LogWarning(_playerModel.Velocity.Value);
-
         }
+
+        if (IsPlayerMoving) ViewRotation();
+    }
+
+    private void ViewRotation()
+    {
+        Vector3 velocity = _rigidbody.velocity;
+        float rotationSpeed = velocity.magnitude;
+        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+
+        _viewTransform.rotation = Quaternion.Slerp(_viewTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void ChangeDirection(Vector2 direction)
@@ -76,23 +75,13 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         _viewTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
     }
 
-
     public void AddImpulse(Vector2 forceVector)
     {
         _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
-        IsMoving = true;
+        _rigidbody.velocity = _rigidbody.velocity.normalized;
+        IsPlayerMoving = true;
     }
     
-
-    //private void OnTriggerEnter(Collider collider)
-    //{
-    //    if (collider.gameObject.TryGetComponent(out IObstacle obstacle))
-    //    {
-    //        obstacle.ProcessCollision(_rigidbody);
-    //        Debug.Log("Collision processed");
-    //    }
-    //}
-
     public void OnCreate()
     {
         //Debug.LogWarning($"Hello from {this.name} view");
@@ -113,7 +102,6 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     public void OnPull()
     {
-
     }
 
     public void OnRelease()
