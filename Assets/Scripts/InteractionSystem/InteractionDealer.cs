@@ -33,7 +33,7 @@ namespace Interactions
         public void StartInteractionProcess(InteractionType type)
         {
             IInteraction interaction = _interactionFactory.Create(type, _damageDealerStatsCopy);
-            _interactions.Enqueue(interaction);
+            if(!_interactions.Contains(interaction)) _interactions.Enqueue(interaction);
             Debug.Log($"Selected interaction {type}. Objs in Queue: {_interactions.Count}");
         }
 

@@ -20,8 +20,7 @@ namespace Player
     public delegate void OnEndTurn();
     public class PlayerController : IPlayerController, IDisposable
     {
-        public event OnEndTurn OnEndTurn;
-
+        public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
         private CharacterView _playerView;
@@ -33,7 +32,6 @@ namespace Player
 
         private IInteractionDealer _interactionDealer;
         private Queue<IInteraction> _interactions;
-        private CollidingObject _collidingObject;
 
         [Inject]
         public void Construct(
@@ -55,7 +53,6 @@ namespace Player
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
-            _collidingObject = _playerView.GetComponentInChildren<CollidingObject>();
             _playerView.ON_COLLISION += ApplyInteractions;
 
         }
@@ -70,24 +67,29 @@ namespace Player
         {
             if (IsActive && !_playerView.IsPlayerMoving)
             {
-                CharacterType type = _playerModel.Type;
-
-                Vector3 fixedInitPosition = new Vector3(_SlingShotInitPosition.position.x, _SlingShotInitPosition.position.y, _SlingShotInitPosition.position.z - 1f);
-
-                _slingShot = _slingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.identity, _SlingShotInitPosition.parent);
-
-                _slingShot.Init(_SlingShotInitPosition.position, type);
-
-                _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
-                _slingShot.OnDirectionChange += _playerView.ChangeDirection;
-
-                _slingShot.OnShoot -= Launch;
-                _slingShot.OnShoot += Launch;
-
-                DragInputModule.dragFocusObject = _slingShot.gameObject;
-                eventData.pointerDrag = _slingShot.gameObject;
-                eventData.dragging = true;
+                UseSlingshot(eventData);
             }
+        }
+
+        private void UseSlingshot(PointerEventData eventData)
+        {
+            CharacterType type = _playerModel.Type;
+
+            Vector3 fixedInitPosition = new Vector3(_SlingShotInitPosition.position.x, _SlingShotInitPosition.position.y, _SlingShotInitPosition.position.z - 1f);
+
+            _slingShot = _slingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.identity, _SlingShotInitPosition.parent);
+
+            _slingShot.Init(_SlingShotInitPosition.position, type);
+
+            _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
+            _slingShot.OnDirectionChange += _playerView.ChangeDirection;
+
+            _slingShot.OnShoot -= Launch;
+            _slingShot.OnShoot += Launch;
+
+            DragInputModule.dragFocusObject = _slingShot.gameObject;
+            eventData.pointerDrag = _slingShot.gameObject;
+            eventData.dragging = true;
         }
 
         public void Launch(Vector2 direction)
@@ -96,31 +98,17 @@ namespace Player
             Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
 
-            ///////////////
-            _interactionDealer.StartInteractionProcess(InteractionType.BasicAttack);
+            ///////INTERACTION////////
+            _interactionDealer.StartInteractionProcess(InteractionType.Knight_HeavyAttack);
             _interactions = _interactionDealer.GetQueue();
+            //////////////////////////
 
             _slingShot.OnShoot -= Launch;
         }
 
-        //public void ProcessInteractions(Queue<IInteraction> queue)
-        //{
-        //    Stats _interationHandlerStatsCopy = _playerModel.GetStats();
-        //    foreach (var interaction in queue)
-        //    {
-        //        Debug.LogWarning($"HP before attack: {_playerModel.Health}");
-        //        interaction.Interacte(_interationHandlerStatsCopy);
-        //        Debug.LogWarning($"Attack type: {interaction.GetType()}, HP after attack: {_interationHandlerStatsCopy.Health}");
-        //        queue.Dequeue();
-        //    }
-        //}
-
         public void ApplyInteractions(IInteractible interactible)
         {
-            //Stats _interationHandlerStatsCopy = _playerModel.GetStats();
-            //Queue<IInteraction> interactions = _interactions;
             interactible.ProcessInteractions(_interactions);
-            
         }
 
 
@@ -128,8 +116,11 @@ namespace Player
         {
             if (Mathf.Abs(velocity) < 0.2f && velocity != 0)
             {
-                OnEndTurn?.Invoke();
+                ON_END_TURN?.Invoke();
                 _playerView.IsPlayerMoving = false;
+                /////////////////////////
+                _interactions.Clear();///
+                /////////////////////////
             }
         }
 
@@ -140,7 +131,6 @@ namespace Player
             _playerView.ON_COLLISION -= ApplyInteractions;
 
             _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
-
             _slingShot.OnShoot -= Launch;
         }
     }

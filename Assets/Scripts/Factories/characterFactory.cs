@@ -9,7 +9,7 @@ using Zenject;
 public interface ICharacterController
 {
     public bool IsActive { get; set; }
-    public event OnEndTurn OnEndTurn;
+    public event OnEndTurn ON_END_TURN;
     public void Init(CharacterModel model, CharacterView playerView);
 }
 

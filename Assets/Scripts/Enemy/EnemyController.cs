@@ -15,7 +15,7 @@ namespace Enemy
         private CharacterView _enemyView;
         private CharacterModel _enemyModel;
         private Rigidbody2D _enemyViewRigidbody;
-        public event OnEndTurn OnEndTurn;
+        public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
         public void Init(CharacterModel characterModel, CharacterView characterView)
@@ -30,7 +30,7 @@ namespace Enemy
             if (IsActive)
             {
                 //Debug.Log("Enemy was clicked");
-                OnEndTurn?.Invoke();
+                ON_END_TURN?.Invoke();
             }
         }
 
