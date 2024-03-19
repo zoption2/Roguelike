@@ -1,10 +1,21 @@
 using Enemy;
+using Interactions;
 using Obstacles;
 using Player;
 using Pool;
+using CharactersStats;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Prefab;
+
+public interface IInteractible
+{
+    void ProcessInteractions(Queue<IInteraction> queue);
+    IInteractible GetInterationProcessor(IInteractible interactible);
+}
+
 
 public interface ICharacterView
 {
@@ -15,23 +26,26 @@ public interface ICharacterView
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
+    event Action<IInteractible> ON_COLLISION;
+
 }
 
-public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler, ICharacterView, IMyPoolable
+public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler, ICharacterView, IMyPoolable, IInteractible
 {
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
+    public event Action<IInteractible> ON_COLLISION;
 
     [SerializeField] Transform _viewTransform;
     public bool IsPlayerMoving { get; set; }
 
-    private CharacterModel _playerModel;
+    private CharacterModel _model;
     private CharacterModel _enemyModel;
     private Rigidbody _rigidbody;
+    public Rigidbody Rigidbody { get { return _rigidbody; } }
     public void Init(CharacterModel model)
     {
-        _playerModel = model;
-        _enemyModel = model;
+        _model = model;
     }
 
     private void Start()
@@ -48,10 +62,15 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     {
         if (IsPlayerMoving)
         {
-            _playerModel.Velocity.Value = _rigidbody.velocity.magnitude;
+            _model.Velocity.Value = _rigidbody.velocity.magnitude;
         }
 
         if (IsPlayerMoving) ViewRotation();
+
+        if(_model.ReactiveHealth.Value <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void ViewRotation()
@@ -76,7 +95,28 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         _rigidbody.velocity = _rigidbody.velocity.normalized;
         IsPlayerMoving = true;
     }
-    
+
+    public IInteractible GetInterationProcessor(IInteractible interactible)
+    {
+        ON_COLLISION?.Invoke(interactible);
+        return interactible;
+    }
+
+    //////////////////////////////////////////////////
+    public void ProcessInteractions(Queue<IInteraction> queue)
+    {
+        Stats _interationHandlerStatsCopy = _model.GetStats();
+        foreach (IInteraction interaction in queue)
+        {
+            Debug.LogWarning($"HP before attack: {_model.Health}");
+            Stats statsAfterInteraction = interaction.Interacte(_interationHandlerStatsCopy);
+            _model.ReactiveHealth.Value = statsAfterInteraction.Health;
+            Debug.LogWarning($"Attack type: {interaction.GetType()}, HP after attack: {_interationHandlerStatsCopy.Health}");
+            queue.Dequeue();
+        }
+    }
+    //////////////////////////////////////////////////
+
     public void OnCreate()
     {
         //Debug.LogWarning($"Hello from {this.name} view");

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Thrower
   m_EditorClassIdentifier: 
   Type: 101
-  Health: 1
+  Health: 10
   Damage: 10
   Speed: 10
   LaunchPower: 50

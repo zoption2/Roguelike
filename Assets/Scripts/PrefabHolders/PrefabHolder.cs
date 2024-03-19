@@ -30,6 +30,14 @@ namespace Prefab
         Summoner = 102,
     }
 
+    public enum InteractionType
+    {
+        None = 0,
+        BasicAttack = 1,
+        Knight_HeavyAttack = 2,
+    }
+
+
 
     public abstract class PrefabHolder<T> : ScriptableObject where T : Enum
     {

@@ -8,7 +8,7 @@ public class CharacterModel : CharacterModelBase
 {
     public CharacterType Type;
 
-    public int Health, Damage, Speed;
+    public int Health, Damage, Speed; //Health, 
     public float LaunchPower;
 
     public CharacterModel(Stats stats, CharacterType type) : base(stats)

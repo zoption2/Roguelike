@@ -8,6 +8,7 @@ using CharactersStats;
 using Enemy;
 using SlingShotLogic;
 using UI;
+using Interactions;
 public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
@@ -44,6 +45,10 @@ public class ContextInstaller : MonoInstaller
         BindModelHolders();
 
         BindControllers();
+
+        Container.Bind<IInteractionDealer>().To<InteractionDealer>().AsTransient();
+        //Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
+        Container.Bind<IInteractionFactory>().To<InteractionFactory>().AsSingle();
 
     }
 

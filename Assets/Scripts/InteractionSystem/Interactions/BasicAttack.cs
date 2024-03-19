@@ -12,7 +12,9 @@ namespace Interactions
 
         public override Stats Interacte(Stats stats)
         {
+            Debug.LogWarning($"HP before attack: {stats.Health}");
             stats.Health -= _damage;
+            Debug.LogWarning($"HP after attack: {stats.Health}");
             return stats;
         }
     }

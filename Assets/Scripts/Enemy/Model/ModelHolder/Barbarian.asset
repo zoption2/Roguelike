@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Barbarian
   m_EditorClassIdentifier: 
   Type: 100
-  Health: 5
+  Health: 15
   Damage: 1
   Speed: 5
   LaunchPower: 50

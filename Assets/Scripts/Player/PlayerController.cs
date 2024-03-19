@@ -1,8 +1,10 @@
 using CharactersStats;
+using Interactions;
 using Prefab;
 using SlingShotLogic;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
@@ -29,11 +31,17 @@ namespace Player
         private List<IDisposable> _disposables;
         private Transform _SlingShotInitPosition;
 
+        private IInteractionDealer _interactionDealer;
+        private Queue<IInteraction> _interactions;
+        private CollidingObject _collidingObject;
+
         [Inject]
         public void Construct(
-            SlingshotPooler slingShotPooler)
+            SlingshotPooler slingShotPooler,
+            IInteractionDealer interactionDealer)
         {
             _slingShotPooler = slingShotPooler;
+            _interactionDealer = interactionDealer;
         }
 
         public void Init(
@@ -47,11 +55,15 @@ namespace Player
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
+            _collidingObject = _playerView.GetComponentInChildren<CollidingObject>();
+            _playerView.ON_COLLISION += ApplyInteractions;
+
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _SlingShotInitPosition = point;
+            _interactionDealer.Init(_playerModel.GetStats());
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -83,8 +95,34 @@ namespace Player
             float launchPower = _playerModel.GetStats().LaunchPower;
             Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
+
+            ///////////////
+            _interactionDealer.StartInteractionProcess(InteractionType.BasicAttack);
+            _interactions = _interactionDealer.GetQueue();
+
             _slingShot.OnShoot -= Launch;
         }
+
+        //public void ProcessInteractions(Queue<IInteraction> queue)
+        //{
+        //    Stats _interationHandlerStatsCopy = _playerModel.GetStats();
+        //    foreach (var interaction in queue)
+        //    {
+        //        Debug.LogWarning($"HP before attack: {_playerModel.Health}");
+        //        interaction.Interacte(_interationHandlerStatsCopy);
+        //        Debug.LogWarning($"Attack type: {interaction.GetType()}, HP after attack: {_interationHandlerStatsCopy.Health}");
+        //        queue.Dequeue();
+        //    }
+        //}
+
+        public void ApplyInteractions(IInteractible interactible)
+        {
+            //Stats _interationHandlerStatsCopy = _playerModel.GetStats();
+            //Queue<IInteraction> interactions = _interactions;
+            interactible.ProcessInteractions(_interactions);
+            
+        }
+
 
         public void EndTurn(float velocity)
         {
@@ -99,6 +137,7 @@ namespace Player
         {
             _playerView.ON_CLICK -= OnClick;
             _playerView.ON_BEGINDRAG -= OnBeginDrag;
+            _playerView.ON_COLLISION -= ApplyInteractions;
 
             _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
 

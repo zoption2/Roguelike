@@ -13,8 +13,11 @@ public abstract class CharacterModelBase : ICharacterModel
     private ReactiveFloat _velocity;
     public ReactiveFloat Velocity { get { return _velocity; } }
 
+    private ReactiveInt _health;
+    public ReactiveInt ReactiveHealth { get { return _health; } }
+
     protected ReactiveInt _damage;
-    protected ReactiveInt _health;
+    //protected ReactiveInt _health;
     protected ReactiveInt _speed;
     protected ReactiveFloat _launchPower;
     private Stats _stats;
