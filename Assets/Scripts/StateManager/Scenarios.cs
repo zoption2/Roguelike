@@ -65,21 +65,8 @@ namespace Gameplay
                 CookedMapper cookedMapper;
                 cookedMapper = ConvertToCookedMapper(mapper.Controller);
                 _turnsOrder.Add(cookedMapper);
-                Debug.Log("speed: " + mapper.Speed);
             }
         }
-
-        private void DebugControllerCheck()
-        {
-            for (int i = 0, n = _turnsOrder.Count; i < n-1; i++)
-            {
-                for (int j = i+1; j < n; j++)
-                {
-                    Debug.Log($"Controllers {i} and {j} are equal: " + (_turnsOrder[i].Controller == _turnsOrder[j].Controller));
-                }
-            }
-        }
-
 
         private CookedMapper ConvertToCookedMapper(ICharacterController characterController)
         {
@@ -100,7 +87,6 @@ namespace Gameplay
             if(_turnsOrder.Count == 0)
             {
                 GetSortedTurns();
-                //DebugControllerCheck();
             }
             foreach(CookedMapper mapper in _turnsOrder)
             {
@@ -158,7 +144,6 @@ namespace Gameplay
             }
             IState state = _queueOfStates.Dequeue();
             SwitchState(state);
-            Debug.Log("TurnChanged");
         }
         public void SwitchState(IState state)
         {

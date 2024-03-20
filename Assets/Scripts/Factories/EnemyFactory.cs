@@ -103,8 +103,6 @@ public class EnemyFactory : IEnemyFactory
 
         controller.Init(enemyModel, enemyView);
         
-
-        Debug.Log($"Player {type} was created. They have {stats.Health} hp and spawned on {point.position}");
         mapper.Controller = controller;
         DataTransfer.RawMappers.Add(mapper);
 
