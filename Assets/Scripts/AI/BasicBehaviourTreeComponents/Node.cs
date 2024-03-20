@@ -11,11 +11,12 @@ namespace BehaviourTree
         Success=1,
         Running=2
     }
-    public class Node
+    public abstract class Node
     {
         protected Node _parent;
         protected List<Node> _children;
         protected NodeState _state;
+        protected Blackboard _blackboard;
 
         public Node()
         {
@@ -30,12 +31,26 @@ namespace BehaviourTree
             }
         }
 
-        public virtual NodeState Evaluate() => NodeState.Failure;
+        public void SetBlackboard(Blackboard blackboard)
+        {
+            _blackboard = blackboard;
+        }
+        public abstract NodeState Evaluate();
 
         public void AttachChildNode(Node childNode)
         {
             childNode._parent = this;
             _children.Add(childNode);
+        }
+
+        public bool HasChildren()
+        {
+            return _children.Count > 0;
+        }
+
+        public List<Node> GetChildren()
+        {
+            return _children;
         }
     }
 }

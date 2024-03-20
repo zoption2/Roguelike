@@ -50,7 +50,7 @@ public class ContextInstaller : MonoInstaller
     public void BindServices()
     {
         Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();
-        Container.Bind<IStateData>().To<StateData>().AsSingle();
+        Container.Bind<IStateFactory>().To<StateData>().AsSingle();
         Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
         Container.Bind<ICharacterSelector>().To<CharacterSelector>().AsSingle();
         Container.Bind<IDataService>().To<DataService>().AsSingle(); 

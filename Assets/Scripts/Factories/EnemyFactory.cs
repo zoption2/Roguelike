@@ -90,10 +90,11 @@ public class EnemyFactory : IEnemyFactory
         IEnemyController controller;
         EnemyModel enemyModel;
         Stats stats;
-
+        RawMapper mapper = new RawMapper();
         controller = GetNewController();
 
         stats = _statsProvider.GetEnemyStats(type);
+        mapper.Speed= stats.Speed;
 
         enemyModel = new EnemyModel(stats, type);
 
@@ -101,8 +102,11 @@ public class EnemyFactory : IEnemyFactory
         enemyView = _poolable.gameObject.GetComponent<CharacterView>();
 
         controller.Init(enemyModel, enemyView);
+        
 
         Debug.Log($"Player {type} was created. They have {stats.Health} hp and spawned on {point.position}");
+        mapper.Controller = controller;
+        DataTransfer.RawMappers.Add(mapper);
 
         return controller;
     }

@@ -10,15 +10,19 @@ namespace Gameplay
     {
         IScenario _scenario { get; }
 
+        public void SetCharacter(ICharacterController controller);
         public void OnEnter();
         public void OnExit();
     }
+
 
     public class PlayerTurnState : IState
     {
         public IScenario _scenario { get; }
 
         public ICharacterScenarioContext _characters { get; }
+
+        private ICharacterController _characterController;
 
         public PlayerTurnState( IScenario scenario, ICharacterScenarioContext context)
         {
@@ -28,21 +32,20 @@ namespace Gameplay
 
         public void OnEnter()
         {
-            for (int i = 0; i < _characters.Players.Count; i++)
-            {
-                _characters.Players[i].IsActive = true;
-                _characters.Players[i].OnEndTurn += _scenario.OnStateEnd;
-            }
+            _characterController.IsActive = true;
+            _characterController.OnEndTurn += _scenario.OnStateEnd;
             Debug.Log("Entered player turn state");
         }
 
         public void OnExit()
         {
-            for (int i = 0; i < _characters.Players.Count; i++)
-            {
-                _characters.Players[i].IsActive = false;
-                _characters.Players[i].OnEndTurn -= _scenario.OnStateEnd;
-            }
+            _characterController.IsActive = false;
+            _characterController.OnEndTurn -= _scenario.OnStateEnd;
+        }
+
+        public void SetCharacter(ICharacterController controller)
+        {
+            _characterController = controller;
         }
     }
     public class EnemyTurnState : IState
@@ -51,6 +54,8 @@ namespace Gameplay
         
         public ICharacterScenarioContext _characters { get; }
 
+        private ICharacterController _characterController;
+
         public EnemyTurnState(IScenario scenario, ICharacterScenarioContext context)
         {
             _scenario = scenario;
@@ -58,21 +63,21 @@ namespace Gameplay
         }
         public void OnEnter()
         {
-            for(int i=0; i <_characters.Enemies.Count;i++ )
-            {
-                _characters.Enemies[i].IsActive = true;
-                _characters.Enemies[i].OnEndTurn += _scenario.OnStateEnd;
-            }
+            _characterController.IsActive = true;
+            _characterController.OnEndTurn += _scenario.OnStateEnd;
             Debug.Log("Entered enemy turn state");
         }
 
         public void OnExit()
         {
-            for (int i = 0; i < _characters.Enemies.Count; i++)
-            {
-                _characters.Enemies[i].IsActive = false;
-                _characters.Enemies[i].OnEndTurn -= _scenario.OnStateEnd;
-            }
+            _characterController.IsActive = false;
+            _characterController.OnEndTurn -= _scenario.OnStateEnd;
+            Debug.Log("Exited enemy turn state");
+        }
+
+        public void SetCharacter(ICharacterController controller)
+        {
+            _characterController = controller;
         }
     }
 
@@ -134,6 +139,11 @@ namespace Gameplay
         public void OnExit()
         {
             //Debug.Log("Exited init state");
+        }
+
+        public void SetCharacter(ICharacterController controller)
+        {
+
         }
     }
 

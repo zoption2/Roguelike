@@ -1,3 +1,4 @@
+using Enemy;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,30 +25,89 @@ namespace Gameplay
 
     public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenario
     {
-        private IStateData _stateData;
-        public DefaultScenario(IGameplayService fullService, IStateData stateData)
+        private List<CookedMapper> _turnsOrder;
+        public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory)
         {
-            _gameplayService = fullService;
-            //Debug.Log("This is the default scenario");
+            _gameplayService = gameplayService;
             _queueOfStates = new Queue<IState>();
-            _stateData = stateData;
+            _turnsOrder = new List<CookedMapper>();
+            _stateFactory = stateFactory;
         }
+        public void EraseCharacter(ICharacterController controller)
+        {
+            foreach (CookedMapper mapper in _turnsOrder)
+            {
+                if (mapper.Controller == controller)
+                {
+                    _turnsOrder.Remove(mapper);
+                    break;
+                }
+            }
+        }
+
+        
         public override void Init(IScenarioContext context)
         {
             SetScenarioContext(context);
-            _stateSet = _stateData.GetStateSet(this, _scenarioContext);
-            _queueOfStates.Enqueue(_stateSet[TypeOfState.Init]);
-            _queueOfStates.Enqueue(_stateSet[TypeOfState.PlayerTurn]);
-            _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
-
+            _stateFactory.Init(this, _scenarioContext);
+            IState state = _stateFactory.CreateState(TypeOfState.Init);
+            _queueOfStates.Enqueue(state);
             _currentState = _queueOfStates.Dequeue();
             _currentState.OnEnter();
         }
 
+        private void GetSortedTurns()
+        {
+            DataTransfer.RawMappers.Sort();
+            DataTransfer.RawMappers.Reverse();
+            foreach (RawMapper mapper in DataTransfer.RawMappers)
+            {
+                CookedMapper cookedMapper;
+                cookedMapper = ConvertToCookedMapper(mapper.Controller);
+                _turnsOrder.Add(cookedMapper);
+                Debug.Log("speed: " + mapper.Speed);
+            }
+        }
+
+        private void DebugControllerCheck()
+        {
+            for (int i = 0, n = _turnsOrder.Count; i < n-1; i++)
+            {
+                for (int j = i+1; j < n; j++)
+                {
+                    Debug.Log($"Controllers {i} and {j} are equal: " + (_turnsOrder[i].Controller == _turnsOrder[j].Controller));
+                }
+            }
+        }
+
+
+        private CookedMapper ConvertToCookedMapper(ICharacterController characterController)
+        {
+            CookedMapper cookedMapper = new CookedMapper();
+            cookedMapper.Controller = characterController;
+            if (cookedMapper.Controller is IEnemyController)
+            {
+                cookedMapper.State = TypeOfState.EnemyTurn;
+            }
+            else
+            {
+                cookedMapper.State = TypeOfState.PlayerTurn;
+            }
+            return cookedMapper;
+        }
         public override void RenewQueue()
         {
-            _queueOfStates.Enqueue(_stateSet[TypeOfState.PlayerTurn]);
-            _queueOfStates.Enqueue(_stateSet[TypeOfState.EnemyTurn]);
+            if(_turnsOrder.Count == 0)
+            {
+                GetSortedTurns();
+                //DebugControllerCheck();
+            }
+            foreach(CookedMapper mapper in _turnsOrder)
+            {
+                IState state = _stateFactory.CreateState(mapper.State);
+                state.SetCharacter(mapper.Controller);
+                _queueOfStates.Enqueue(state);
+            }
         }
     }
 
@@ -68,8 +128,8 @@ namespace Gameplay
     {
         protected IState _currentState;
         protected Queue<IState> _queueOfStates;
-        protected Dictionary<TypeOfState, IState> _stateSet;
         protected T _scenarioContext;
+        protected IStateFactory _stateFactory;
 
         public IGameplayService _gameplayService { get; set; }
 
@@ -92,13 +152,13 @@ namespace Gameplay
 
         public void OnStateEnd()
         {
-            IState state = _queueOfStates.Dequeue();
-            SwitchState(state);
             if (_queueOfStates.Count == 0)
             {
                 RenewQueue();
             }
-
+            IState state = _queueOfStates.Dequeue();
+            SwitchState(state);
+            Debug.Log("TurnChanged");
         }
         public void SwitchState(IState state)
         {
@@ -109,5 +169,10 @@ namespace Gameplay
                 _currentState.OnEnter();
             }
         }
+    }
+    public class CookedMapper
+    {
+        public ICharacterController Controller;
+        public TypeOfState State;
     }
 }

@@ -62,11 +62,11 @@ public class PlayerFactory : IPlayerFactory
         IPlayerController controller;
         PlayerModel playerModel;
         Stats stats;
-
+        RawMapper mapper = new RawMapper();
         controller = GetNewController();
 
         stats = _statsProvider.GetPlayerStats(type);
-
+        mapper.Speed = stats.Speed;
         playerModel = new PlayerModel(stats, type);
 
         IMyPoolable _poolable = _playerPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
@@ -75,6 +75,8 @@ public class PlayerFactory : IPlayerFactory
         controller.Init(playerModel, playerView);
 
         Debug.Log($"Player {type} with was created. They have {stats.Health} hp and spawned on {point.position}");
+        mapper.Controller = controller;
+        DataTransfer.RawMappers.Add(mapper);
 
         return controller;
     }
