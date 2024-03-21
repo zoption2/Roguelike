@@ -29,17 +29,20 @@ namespace Player
         private ISlingShot _slingShot;
         private List<IDisposable> _disposables;
         private Transform _SlingShotInitPosition;
+        private Stats _playerStats;
 
-        private IInteractionDealer _interactionDealer;
-        private Queue<IInteraction> _interactions;
+        private IEffector _effector;
+        private IInteractionProcessor _interactionProcessor;
 
         [Inject]
         public void Construct(
             SlingshotPooler slingShotPooler,
-            IInteractionDealer interactionDealer)
+            IInteractionProcessor interactionProcessor,
+            IEffector effector)
         {
             _slingShotPooler = slingShotPooler;
-            _interactionDealer = interactionDealer;
+            _interactionProcessor = interactionProcessor;
+            _effector = effector;
         }
 
         public void Init(
@@ -49,18 +52,18 @@ namespace Player
             _playerModel = playerModel;
             _playerView = playerView;
             _playerView.Init(_playerModel);
+            _playerStats = _playerModel.GetStats();
             _playerModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
             _playerView.ON_COLLISION += ApplyInteractions;
-
+            _playerView.ON_INTERACTION_FINISH += ApplyStats;
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _SlingShotInitPosition = point;
-            _interactionDealer.Init(_playerModel.GetStats());
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -94,13 +97,16 @@ namespace Player
 
         public void Launch(Vector2 direction)
         {
-            float launchPower = _playerModel.GetStats().LaunchPower;
+            float launchPower = _playerStats.LaunchPower;
             Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
 
+            _interactionProcessor.UseInteractionProcessor(_playerStats, _effector);
+            _interactionProcessor.GetInteraction(InteractionType.BasicAttack);
+
             ///////INTERACTION////////
-            _interactionDealer.StartInteractionProcess(InteractionType.Knight_HeavyAttack);
-            _interactions = _interactionDealer.GetQueue();
+            //_interactionDealer.StartInteractionProcess(InteractionType.Knight_HeavyAttack);
+            //_interactions = _interactionDealer.GetQueue();
             //////////////////////////
 
             _slingShot.OnShoot -= Launch;
@@ -108,7 +114,16 @@ namespace Player
 
         public void ApplyInteractions(IInteractible interactible)
         {
-            interactible.ProcessInteractions(_interactions);
+            _interactionProcessor.GetInteractionHandler(interactible);
+            _interactionProcessor.HandleInteraction();
+        }
+
+        public void ApplyStats(Stats updatetInteractionHandlerStats)
+        {
+            Debug.LogWarning($"Handler Stats before interaction. Healt: {_playerStats.Health}");
+            _playerModel.ReactiveHealth.Value = updatetInteractionHandlerStats.Health;
+            _playerStats.Health = _playerModel.ReactiveHealth.Value;
+            Debug.LogWarning($"Handler Stats after interaction. Healt: {_playerStats.Health}");
         }
 
 
@@ -119,7 +134,7 @@ namespace Player
                 ON_END_TURN?.Invoke();
                 _playerView.IsPlayerMoving = false;
                 /////////////////////////
-                _interactions.Clear();///
+                //_interactions.Clear();/
                 /////////////////////////
             }
         }
@@ -132,6 +147,7 @@ namespace Player
 
             _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
             _slingShot.OnShoot -= Launch;
+            _playerView.ON_INTERACTION_FINISH -= ApplyStats;
         }
     }
 }

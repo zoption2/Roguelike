@@ -12,8 +12,12 @@ using Prefab;
 
 public interface IInteractible
 {
-    void ProcessInteractions(Queue<IInteraction> queue);
-    IInteractible GetInterationProcessor(IInteractible interactible);
+    IInteractible GetInterationHandler(IInteractible interactible);
+    void GetStatsAfterInteraction(Stats updatetInteractionHandlerStats);
+
+    event Action<Stats> UPDATE_STATS;
+    event Action<IInteractible> ON_COLLISION;
+    event Action<Stats> ON_INTERACTION_FINISH;
 }
 
 
@@ -23,11 +27,11 @@ public interface ICharacterView
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
     bool IsPlayerMoving { get; set; }
+    //public bool IsActive { get; set; }
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
-    event Action<IInteractible> ON_COLLISION;
-
+    
 }
 
 public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler, ICharacterView, IMyPoolable, IInteractible
@@ -35,9 +39,12 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
     public event Action<IInteractible> ON_COLLISION;
+    public event Action<Stats> UPDATE_STATS;
+    public event Action<Stats> ON_INTERACTION_FINISH;
 
     [SerializeField] Transform _viewTransform;
     public bool IsPlayerMoving { get; set; }
+    //public bool IsActive { get; set; }
 
     private CharacterModel _model;
     private CharacterModel _enemyModel;
@@ -66,7 +73,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         }
 
         if (IsPlayerMoving) ViewRotation();
-
+        Debug.Log($"View {_model.Type} has {_model.Health} hp");
         if(_model.ReactiveHealth.Value <= 0)
         {
             Destroy(gameObject);
@@ -96,25 +103,34 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         IsPlayerMoving = true;
     }
 
-    public IInteractible GetInterationProcessor(IInteractible interactible)
+    public IInteractible GetInterationHandler(IInteractible interactible)
     {
-        ON_COLLISION?.Invoke(interactible);
-        return interactible;
+        //if (IsActive)
+        //{
+        //    ON_COLLISION?.Invoke(interactible);
+        //}
+        ON_COLLISION?.Invoke(interactible);////
+        return null;
+    }
+
+    public void GetStatsAfterInteraction(Stats updatetInteractionHandlerStats)
+    {
+        ON_INTERACTION_FINISH?.Invoke(updatetInteractionHandlerStats);
     }
 
     //////////////////////////////////////////////////
-    public void ProcessInteractions(Queue<IInteraction> queue)
-    {
-        Stats _interationHandlerStatsCopy = _model.GetStats();
-        foreach (IInteraction interaction in queue)
-        {
-            Debug.LogWarning($"HP before attack: {_model.Health}");
-            Stats statsAfterInteraction = interaction.Interacte(_interationHandlerStatsCopy);
-            _model.ReactiveHealth.Value = statsAfterInteraction.Health;
-            Debug.LogWarning($"Attack type: {interaction.GetType()}, HP after attack: {_interationHandlerStatsCopy.Health}");
-            queue.Dequeue();
-        }
-    }
+    //public void ProcessInteractions(Queue<IInteraction> queue)
+    //{
+    //    Stats _interationHandlerStatsCopy = _model.GetStats();
+    //    foreach (IInteraction interaction in queue)
+    //    {
+    //        Debug.LogWarning($"HP before attack: {_model.Health}");
+    //        Stats statsAfterInteraction = interaction.Interacte(_interationHandlerStatsCopy);
+    //        _model.ReactiveHealth.Value = statsAfterInteraction.Health;
+    //        Debug.LogWarning($"Attack type: {interaction.GetType()}, HP after attack: {_interationHandlerStatsCopy.Health}");
+    //        queue.Dequeue();
+    //    }
+    //}
     //////////////////////////////////////////////////
 
     public void OnCreate()

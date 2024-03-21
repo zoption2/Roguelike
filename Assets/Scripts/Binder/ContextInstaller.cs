@@ -50,6 +50,8 @@ public class ContextInstaller : MonoInstaller
         //Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
         Container.Bind<IInteractionFactory>().To<InteractionFactory>().AsSingle();
 
+        Container.Bind<IEffector>().To<Effector>().AsTransient();
+        Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
     }
 
     #region BindMethods
