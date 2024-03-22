@@ -13,10 +13,6 @@ using Zenject.SpaceFighter;
 
 namespace Player
 {
-    public interface IPlayerView : ICharacterView, IMyPoolable
-    {
-        void InitPlayer(IControllerInputs controllerInputs);
-    }
     public interface IPlayerController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
@@ -31,7 +27,7 @@ namespace Player
 
         private Queue<IInteraction> _interactions;
 
-        private IPlayerView _playerView;
+        private CharacterView _playerView;
         private CharacterModel _playerModel;
         private SlingshotPooler _slingShotPooler;
         private ISlingShot _slingShot;
@@ -64,7 +60,7 @@ namespace Player
             _playerModel = playerModel;
             _playerView = playerView;
             _pooler = characterPooler;
-            _playerView.InitPlayer(this);
+            _playerView.Init(this);
             _playerModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;

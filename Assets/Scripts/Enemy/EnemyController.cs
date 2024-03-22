@@ -10,10 +10,6 @@ using Pool;
 
 namespace Enemy
 {
-    public interface IEnemyView : ICharacterView, IMyPoolable
-    {
-        void InitEnemy(IControllerInputs controllerInputs);
-    }
 
     public interface IEnemyController : ICharacterController
     {
@@ -23,7 +19,7 @@ namespace Enemy
     {
         public event OnEndTurn ON_END_TURN;
 
-        private IEnemyView _enemyView;
+        private CharacterView _enemyView;
         private CharacterModel _enemyModel;
         private IEffector _effector;
         private CharacterPooler _pooler;
@@ -50,7 +46,7 @@ namespace Enemy
             _enemyModel = characterModel;
             _enemyView = characterView;
             _pooler = characterPooler;
-            _enemyView.InitEnemy(this);
+            _enemyView.Init(this);
             _enemyView.ON_CLICK += OnClick;
             _interactionProcessor.Init(_enemyModel, _effector);
         }

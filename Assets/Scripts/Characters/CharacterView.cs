@@ -19,6 +19,7 @@ public interface IInteractible
 
 public interface ICharacterView
 {
+    void Init(IControllerInputs controllerInputs);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
     bool IsPlayerMoving { get; set; }
@@ -34,8 +35,7 @@ public class CharacterView : MonoBehaviour,
     IBeginDragHandler,
     ICharacterView,
     IInteractible,
-    IEnemyView,
-    IPlayerView
+    IMyPoolable
 {
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
@@ -47,13 +47,7 @@ public class CharacterView : MonoBehaviour,
     public IControllerInputs ControllerInputs { get; set; } //private
     private Rigidbody _rigidbody;
     public Rigidbody Rigidbody { get { return _rigidbody; } }
-    public void InitPlayer(IControllerInputs controllerInputs)
-    {
-        ControllerInputs = controllerInputs;
-        _model = controllerInputs.GetCharacterModel();
-    }
-
-    public void InitEnemy(IControllerInputs controllerInputs)
+    public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
         _model = controllerInputs.GetCharacterModel();
