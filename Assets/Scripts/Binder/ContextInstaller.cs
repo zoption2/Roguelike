@@ -9,6 +9,7 @@ using Enemy;
 using SlingShotLogic;
 using UI;
 using SaveSystem;
+using BehaviourTree;
 public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
@@ -43,6 +44,8 @@ public class ContextInstaller : MonoInstaller
         BindModelHolders();
 
         BindControllers();
+
+        BindBehaviourTrees();
 
     }
 
@@ -96,6 +99,11 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IPlayerController>().To<PlayerController>().AsTransient();
         Container.Bind<IEnemyController>().To<EnemyController>().AsTransient();
         Container.Bind<ICharacterPanelController>().To<CharacterPanelController>().AsTransient();
+    }
+
+    public void BindBehaviourTrees()
+    {
+        Container.Bind<ITestingBehaviourTree>().To<TestingBehaviourTree>().AsTransient();
     }
     #endregion
 }

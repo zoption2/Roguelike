@@ -10,6 +10,7 @@ namespace BehaviourTree
         {
             // do some stuff
             // check if everything went okay
+            _characterController.Attack();
             _state = NodeState.Success;
             Debug.Log("Attack was successful") ;
             return _state;

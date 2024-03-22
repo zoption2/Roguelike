@@ -17,20 +17,27 @@ namespace BehaviourTree
         protected List<Node> _children;
         protected NodeState _state;
         protected Blackboard _blackboard;
+        protected ICharacterController _characterController;
 
         public Node()
         {
             _parent = null;
+            _children = new List<Node>();
         }
 
         public Node(List<Node> children)
         {
+            _children = new List<Node>();
             foreach (Node child in children)
             {
                 AttachChildNode(child);
             }
         }
 
+        public void SetCharacter(ICharacterController characterController)
+        {
+            _characterController = characterController;
+        }
         public void SetBlackboard(Blackboard blackboard)
         {
             _blackboard = blackboard;
@@ -39,8 +46,11 @@ namespace BehaviourTree
 
         public void AttachChildNode(Node childNode)
         {
-            childNode._parent = this;
-            _children.Add(childNode);
+            if (!_children.Contains(childNode))
+            {
+                childNode._parent = this;
+                _children.Add(childNode);
+            }
         }
 
         public bool HasChildren()

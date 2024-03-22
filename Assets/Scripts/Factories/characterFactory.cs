@@ -12,6 +12,11 @@ public interface ICharacterController
 {
     public bool IsActive { get; set; }
     public event OnEndTurn OnEndTurn;
+    public void Attack();
+    public void Move();
+    public void Tick();
+    public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
+    public Transform GetTransform();
 
 }
 

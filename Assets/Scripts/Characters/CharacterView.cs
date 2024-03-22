@@ -24,7 +24,8 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
 
-    [SerializeField] Transform _viewTransform;
+    [SerializeField] 
+    private Transform _viewTransform;
     public bool IsMoving { get; set; }
 
     private PlayerModel _playerModel;
@@ -61,10 +62,24 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     private void FixedUpdate()
     {
-        if(IsMoving)
+        if(IsMoving && _playerModel!=null)
         {
             _playerModel.Velocity.Value = _rigidbody.velocity.magnitude;
         } 
+        else if (IsMoving && _enemyModel != null)
+        {
+            _enemyModel.Velocity.Value = _rigidbody.velocity.magnitude;
+        }
+    }
+
+    private void ViewRotation()
+    {
+        Vector3 velocity = _rigidbody.velocity;
+        float rotationSpeed = velocity.magnitude;
+        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+
+        _viewTransform.rotation = Quaternion.Slerp(_viewTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void ChangeDirection(Vector2 direction)
@@ -77,7 +92,12 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public void AddImpulse(Vector2 forceVector)
     {
         IsMoving = true;
-        _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        if (_rigidbody != null)
+        {
+            _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+            _rigidbody.velocity = _rigidbody.velocity.normalized;
+        }
+            
     }
     
 
@@ -116,5 +136,11 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public void OnRelease()
     {
     }
+
+    public Transform GetTransform()
+    {
+        return _viewTransform;
+    }
+
 }
 

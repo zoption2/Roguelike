@@ -10,6 +10,7 @@ namespace BehaviourTree
         {
             // do some stuff
             // check if everything went okay
+            _characterController.Move();
             _state = NodeState.Success;
             Debug.Log("Movement was successful");
             return _state;

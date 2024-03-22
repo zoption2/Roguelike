@@ -1,4 +1,5 @@
 using CharactersStats;
+using Gameplay;
 using Pool;
 using Prefab;
 using SlingShotLogic;
@@ -9,6 +10,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using Zenject.Asteroids;
+using Zenject.SpaceFighter;
 
 namespace Player
 {
@@ -17,7 +19,7 @@ namespace Player
     {
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
-        public void Init(PlayerModel model, ICharacterView playerView);
+        public void Init(PlayerModel model, CharacterView playerView);
     }
 
     public delegate void OnEndTurn();
@@ -25,7 +27,8 @@ namespace Player
     {
         public event OnEndTurn OnEndTurn;
 
-        private ICharacterView _playerView;
+        private CharacterView _playerView;
+        private ICharacterScenarioContext _characterScenarioContext;
         private PlayerModel _playerModel;
         private SlingshotPooler _slingShotPooler;
         private ISlingShot _slingShot;
@@ -42,7 +45,7 @@ namespace Player
 
         public void Init(
         PlayerModel playerModel,
-        ICharacterView playerView)
+        CharacterView playerView)
         {
             _playerModel = playerModel;
             _playerView = playerView;
@@ -92,10 +95,10 @@ namespace Player
 
         public void EndTurn(float velocity)
         {
-            if (velocity < 0.1f)
+            if (Mathf.Abs(velocity) < 0.2f && velocity != 0)
             {
                 OnEndTurn?.Invoke();
-                _playerView.IsMoving = false;
+                _playerView.IsMoving = false;   
             }
         }
 
@@ -108,7 +111,31 @@ namespace Player
 
             _slingShot.OnShoot -= Launch;
         }
+
+        public void Attack()
+        {
+            Debug.Log("Enemy has attacked");
+        }
+
+        public void Move()
+        {
+            Debug.Log("Enemy has moved");
+        }
+
+        public void Tick()
+        {
+
+        }
+
+        public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
+        {
+            _characterScenarioContext = characterScenarioContext;
+        }
+
+        public Transform GetTransform()
+        {
+            return _playerView.GetTransform();
+        }
+
     }
-
-
 }

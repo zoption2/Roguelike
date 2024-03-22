@@ -66,6 +66,7 @@ namespace Gameplay
             _characterController.IsActive = true;
             _characterController.OnEndTurn += _scenario.OnStateEnd;
             Debug.Log("Entered enemy turn state");
+            _characterController.Tick();
         }
 
         public void OnExit()
@@ -122,6 +123,7 @@ namespace Gameplay
                 player = _characters.PlayerSpawnPoints[i];
                 playerType = DataTransfer.TypeCollection[i];
                 IPlayerController newPlayer = _playerFactory.CreatePlayer(player.spawnPoint, playerType);
+                newPlayer.SetCharacterContext(_characters);
                 _characters.Players.Add(newPlayer);
             }
 
@@ -132,6 +134,7 @@ namespace Gameplay
             foreach (EnemySpawnPointWithType enemy in _characters.EnemySpawnPoints)
             {
                 IEnemyController newEnemy = _enemyFactory.CreateEnemy(enemy.spawnPoint, enemy.enemyType);
+                newEnemy.SetCharacterContext(_characters);
                 _characters.Enemies.Add(newEnemy);
             }
         }
