@@ -9,13 +9,11 @@ public interface IEnemyFactory
 {
     public IEnemyController CreateEnemy(Transform point, CharacterType type);
 }
-public class EnemyFactory : CharacterFactory<IEnemyController, EnemyPooler>, IEnemyFactory
+public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 {
-    private EnemyPooler _pooler;
-    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, EnemyPooler pooler) : base(container, statsProvider, pooler)
+    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler) : base(container, statsProvider, pooler)
     {
-        _pooler = pooler;
-        _characterPooler.Init();
+        
     }
 
     protected override Stats GetStats(CharacterType type)
@@ -23,19 +21,8 @@ public class EnemyFactory : CharacterFactory<IEnemyController, EnemyPooler>, IEn
         return _statsProvider.GetEnemyStats(type);
     }
 
-    protected override EnemyPooler GetPooler()
-    {
-        return _pooler;
-    }
-
     public IEnemyController CreateEnemy(Transform point, CharacterType type)
     {
         return base.CreateCharacter(point, type);
     }
-
-    //public IEnemyController CreateCharacter(Transform point, EnemyType type)
-    //{
-    //    var characterType = (CharacterType)type;
-    //    return CreateCharacter(point, characterType);
-    //}
 }

@@ -5,63 +5,94 @@ using System;
 using Zenject;
 using CharactersStats;
 using Interactions;
+using System.Collections.Generic;
+using Pool;
 
 namespace Enemy
 {
+    public interface IEnemyView : ICharacterView, IMyPoolable
+    {
+        void InitEnemy(IControllerInputs controllerInputs);
+    }
 
     public interface IEnemyController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
     }
-    public class EnemyController : IEnemyController, IDisposable
+    public class EnemyController : IEnemyController, IControllerInputs, IDisposable
     {
-        private CharacterView _enemyView;
-        private CharacterModel _enemyModel;
-        private Rigidbody2D _enemyViewRigidbody;
-        private Stats _enemyStats;
         public event OnEndTurn ON_END_TURN;
 
-        IInteractionProcessor _interactionProcessor;
+        private IEnemyView _enemyView;
+        private CharacterModel _enemyModel;
+        private IEffector _effector;
+        private CharacterPooler _pooler;
+
+        private IInteractionProcessor _interactionProcessor;
+        private IInteractionDealer _interactionDealer;
         public bool IsActive { get; set; }
+        private Queue<IInteraction> _interactions;
 
         [Inject]
         public void Construct(
-            IInteractionProcessor interactionProcessor
+            IInteractionProcessor interactionProcessor,
+            IInteractionDealer interactionDealer,
+            IEffector effector
             )
         {
             _interactionProcessor = interactionProcessor;
+            _interactionDealer = interactionDealer;
+            _effector = effector;
         }
 
-        public void Init(CharacterModel characterModel, CharacterView characterView)
+        public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
         {
             _enemyModel = characterModel;
             _enemyView = characterView;
-            _enemyView.Init(_enemyModel);
-            _enemyStats = _enemyModel.GetStats();
+            _pooler = characterPooler;
+            _enemyView.InitEnemy(this);
             _enemyView.ON_CLICK += OnClick;
-            _enemyView.ON_INTERACTION_FINISH += ApplyStats;
+            _interactionProcessor.Init(_enemyModel, _effector);
         }
+
         public void OnClick(Transform point, PointerEventData eventData)
         {
             if (IsActive)
             {
-                //Debug.Log("Enemy was clicked");
                 ON_END_TURN?.Invoke();
+                Debug.Log(_enemyModel.Health);
+                DoInteractionConclusion();
+                Debug.Log(_enemyModel.Health);
             }
         }
 
-        public void ApplyStats(Stats updatetInteractionHandlerStats)
+        public Queue<IInteraction> GetInteractions()
         {
-            //Debug.LogWarning($"Handler Stats before interaction. Healt: {_enemyStats.Health}");
-            _enemyModel.ReactiveHealth.Value = updatetInteractionHandlerStats.Health;
-            _enemyStats.Health = _enemyModel.ReactiveHealth.Value;
-            //Debug.LogWarning($"Handler Stats after interaction. Healt: {_enemyStats.Health}");
+            return _interactions;
+        }
+
+        public void DoInteractionConclusion()
+        {
+            _enemyModel.Health = _enemyModel.ReactiveHealth.Value;
+            if (_enemyModel.Health <= 0)
+            {
+                _pooler.Push(_enemyModel.Type, _enemyView);
+            }
         }
 
         public void Dispose()
         {
             _enemyView.ON_CLICK -= OnClick;
-            _enemyView.ON_INTERACTION_FINISH -= ApplyStats;
+        }
+
+        public CharacterModel GetCharacterModel()
+        {
+            return _enemyModel;
+        }
+
+        public void ApplyInteractions(Queue<IInteraction> interactions)
+        {
+            _interactionProcessor.HandleInteraction(interactions);
         }
     }
 }

@@ -12,57 +12,56 @@ using Prefab;
 
 public interface IInteractible
 {
-    IInteractible GetInterationHandler(IInteractible interactible);
-    void GetStatsAfterInteraction(Stats updatetInteractionHandlerStats);
-
-    event Action<Stats> UPDATE_STATS;
-    event Action<IInteractible> ON_COLLISION;
-    event Action<Stats> ON_INTERACTION_FINISH;
+    void StartInteraction(IInteractible interactible);
+    IControllerInputs ControllerInputs { get; set; }
 }
 
 
 public interface ICharacterView
 {
-    public void Init(CharacterModel model);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
     bool IsPlayerMoving { get; set; }
-    //public bool IsActive { get; set; }
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
     
 }
 
-public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, IBeginDragHandler, ICharacterView, IMyPoolable, IInteractible
+public class CharacterView : MonoBehaviour,
+    IPointerDownHandler,
+    IDragHandler,
+    IBeginDragHandler,
+    ICharacterView,
+    IInteractible,
+    IEnemyView,
+    IPlayerView
 {
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
-    public event Action<IInteractible> ON_COLLISION;
-    public event Action<Stats> UPDATE_STATS;
-    public event Action<Stats> ON_INTERACTION_FINISH;
 
     [SerializeField] Transform _viewTransform;
     public bool IsPlayerMoving { get; set; }
-    //public bool IsActive { get; set; }
-
     private CharacterModel _model;
-    private CharacterModel _enemyModel;
+
+    public IControllerInputs ControllerInputs { get; set; } //private
     private Rigidbody _rigidbody;
     public Rigidbody Rigidbody { get { return _rigidbody; } }
-    public void Init(CharacterModel model)
+    public void InitPlayer(IControllerInputs controllerInputs)
     {
-        _model = model;
+        ControllerInputs = controllerInputs;
+        _model = controllerInputs.GetCharacterModel();
+    }
+
+    public void InitEnemy(IControllerInputs controllerInputs)
+    {
+        ControllerInputs = controllerInputs;
+        _model = controllerInputs.GetCharacterModel();
     }
 
     private void Start()
     {
         _rigidbody = gameObject.GetComponentInChildren<Rigidbody>();
-    }
-
-    private void Update()
-    {
-        if (IsPlayerMoving) ViewRotation();
     }
 
     private void FixedUpdate()
@@ -73,11 +72,7 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         }
 
         if (IsPlayerMoving) ViewRotation();
-        Debug.Log($"View {_model.Type} has {_model.Health} hp");
-        if(_model.ReactiveHealth.Value <= 0)
-        {
-            Destroy(gameObject);
-        }
+        //Debug.Log($"View {_model.Type} has {_model.Health} hp");
     }
 
     private void ViewRotation()
@@ -103,35 +98,10 @@ public class CharacterView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         IsPlayerMoving = true;
     }
 
-    public IInteractible GetInterationHandler(IInteractible interactible)
+    public void StartInteraction(IInteractible interactible)
     {
-        //if (IsActive)
-        //{
-        //    ON_COLLISION?.Invoke(interactible);
-        //}
-        ON_COLLISION?.Invoke(interactible);////
-        return null;
+        ControllerInputs.ApplyInteractions(interactible.ControllerInputs.GetInteractions());
     }
-
-    public void GetStatsAfterInteraction(Stats updatetInteractionHandlerStats)
-    {
-        ON_INTERACTION_FINISH?.Invoke(updatetInteractionHandlerStats);
-    }
-
-    //////////////////////////////////////////////////
-    //public void ProcessInteractions(Queue<IInteraction> queue)
-    //{
-    //    Stats _interationHandlerStatsCopy = _model.GetStats();
-    //    foreach (IInteraction interaction in queue)
-    //    {
-    //        Debug.LogWarning($"HP before attack: {_model.Health}");
-    //        Stats statsAfterInteraction = interaction.Interacte(_interationHandlerStatsCopy);
-    //        _model.ReactiveHealth.Value = statsAfterInteraction.Health;
-    //        Debug.LogWarning($"Attack type: {interaction.GetType()}, HP after attack: {_interationHandlerStatsCopy.Health}");
-    //        queue.Dequeue();
-    //    }
-    //}
-    //////////////////////////////////////////////////
 
     public void OnCreate()
     {

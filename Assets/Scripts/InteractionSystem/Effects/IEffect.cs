@@ -7,7 +7,7 @@ namespace Interactions
 {
     public interface IEffect
     {
-        Stats UseEffect();
+        CharacterModel UseEffect();
         int Duration { get; set; }
     }
 

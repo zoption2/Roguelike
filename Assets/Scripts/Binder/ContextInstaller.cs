@@ -13,22 +13,26 @@ public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
     [SerializeField]
-    private PlayerPrefabHolder _playerPrefabHolder;
-    [SerializeField]
-    private EnemyPrefabHolder _enemyPrefabHolder;
+    private CharacterPrefabHolder _characterPrefabHolder;
+
     [SerializeField]
     private CharacterPanelPrefabHolder characterPanelPrefabHolder;
+
     [SerializeField]
     private DefaultScenarioContext _defaultScenarioContext;
+
     [SerializeField]
     private SlingShotPrefabHolder _slingShotPrefabHolder;
+
     [SerializeField]
     private DefaultPlayerModelHolder _defaultPlayerModelHolder;
+
     [SerializeField]
     private SavedCharacterModelHolder _savedCharacterModelHolder;
+
     [SerializeField]
     private DefaultEnemyModelHolder _defaultEnemyModelHolder;
-
+    //
     #endregion
     public override void InstallBindings()
     {
@@ -47,7 +51,6 @@ public class ContextInstaller : MonoInstaller
         BindControllers();
 
         Container.Bind<IInteractionDealer>().To<InteractionDealer>().AsTransient();
-        //Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
         Container.Bind<IInteractionFactory>().To<InteractionFactory>().AsSingle();
 
         Container.Bind<IEffector>().To<Effector>().AsTransient();
@@ -69,8 +72,7 @@ public class ContextInstaller : MonoInstaller
     }
     public void BindPoolers()
     {
-        Container.Bind<PlayerPooler>().To<PlayerPooler>().AsSingle();
-        Container.Bind<EnemyPooler>().To<EnemyPooler>().AsSingle();
+        Container.Bind<CharacterPooler>().To<CharacterPooler>().AsSingle();
         Container.Bind<SlingshotPooler>().To<SlingshotPooler>().AsSingle();
         Container.Bind<CharacterPanelPooler>().To<CharacterPanelPooler>().AsSingle();
     }
@@ -86,8 +88,7 @@ public class ContextInstaller : MonoInstaller
 
     public void BindPrefabHolders()
     {
-        Container.Bind<PlayerPrefabHolder>().FromInstance(_playerPrefabHolder).AsSingle();
-        Container.Bind<EnemyPrefabHolder>().FromInstance(_enemyPrefabHolder).AsSingle();
+        Container.Bind<CharacterPrefabHolder>().FromInstance(_characterPrefabHolder).AsSingle();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<CharacterPanelPrefabHolder>().FromInstance(characterPanelPrefabHolder).AsSingle();
     }

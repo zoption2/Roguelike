@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7f8b1a405a9d240b52452c26345965, type: 3}
+  m_Name: Character Prefab Holder
+  m_EditorClassIdentifier: 
+  _prefabs:
+  - Key: 1
+    Value: {fileID: 5019426081544581403, guid: d80571712323925418ca71affd7b10f4, type: 3}
+  - Key: 2
+    Value: {fileID: 5019426081544581403, guid: b081e17cf262f3942b30e9ed3abb6d6c, type: 3}
+  - Key: 3
+    Value: {fileID: 5019426081544581403, guid: 1e7398ce14d37aa4db65c7fc2f5d2304, type: 3}
+  - Key: 100
+    Value: {fileID: 5019426081544581403, guid: 2e22512f9beb330419f1affd25bced1c, type: 3}
+  - Key: 101
+    Value: {fileID: 5019426081544581403, guid: c743a160aa6bc6e45a5af5811e893518, type: 3}
+  - Key: 102
+    Value: {fileID: 5019426081544581403, guid: c75638b12cfd6af47b5202913fd742b3, type: 3}

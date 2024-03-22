@@ -8,13 +8,13 @@ namespace Interactions
 {
     public class MoreDamage_Effect : EffectBase, IPreInteractionEffect
     {
-        public MoreDamage_Effect(Stats stats, int duration) : base(stats)
+        public MoreDamage_Effect(CharacterModel stats, int duration) : base(stats)
         {
             _stats = stats;
             Duration = duration;
         }
 
-        public override Stats UseEffect()
+        public override CharacterModel UseEffect() //CharacterModel stats
         {
             Duration--;
             _stats.Damage *= 2;

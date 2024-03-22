@@ -44,7 +44,7 @@ public class CollidingObject : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent(out IInteractible interactible))
         {
-            _characterView.GetInterationHandler(interactible);
+            _characterView.StartInteraction(interactible);
         }
 
     }

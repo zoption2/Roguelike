@@ -1,5 +1,6 @@
 using CharactersStats;
 using Prefab;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -7,48 +8,50 @@ namespace Interactions
 {
     public interface IInteractionProcessor
     {
-        void UseInteractionProcessor(Stats dealerStats, IEffector effector);
-        void HandleInteraction();
-        void GetInteractionHandler(IInteractible interactible);
-        void GetInteraction(InteractionType type);
+        void Init(CharacterModel dealerStats, IEffector effector);
+        void HandleInteraction(Queue<IInteraction> interactions);
+        //void GetInteractionHandler(IInteractible interactible);
+        //void GetInteraction(InteractionType type);
     }
 
     public class InteractionProcessor : IInteractionProcessor
     {
-        private Stats _interationHandlerStatsCopy;
-        private Stats _interationDealerStatsCopy;
+        private CharacterModel _interationHandlerStatsCopy;
+        private CharacterModel _interationDealerStatsCopy;
         private IEffector _effector;
-        private IInteractible _interactible;
-        private IInteraction _interaction;
 
         [Inject]
         private IInteractionFactory _interactionFactory;
 
-        public void UseInteractionProcessor(Stats stats, IEffector effector)
+        public void Init(CharacterModel stats, IEffector effector)
         {
-            _interaction = null;
-            _interationDealerStatsCopy = stats;
+            _interationHandlerStatsCopy = stats;
             _effector = effector;
         }
 
-        public void GetInteractionHandler(IInteractible interactible)
-        {
-            _interactible = interactible;
-        }
+        //public void GetInteractionHandler(IInteractible interactible)
+        //{
+        //    _interactible = interactible;
+        //}
 
-        public void GetInteraction(InteractionType type)
-        {
-            IInteraction interaction = _interactionFactory.Create(type, _interationDealerStatsCopy);
-            _interaction = interaction;
-        }
+        //public void GetInteraction(InteractionType type)
+        //{
+        //    IInteraction interaction = _interactionFactory.Create(type, _interationDealerStatsCopy);
+        //    _interaction = interaction;
+        //}
         
-        public void HandleInteraction() {
-
+        public void HandleInteraction(Queue<IInteraction> interactions)
+        {
             CheckPreAttackEffects();
-            _interaction.Interacte(_interationDealerStatsCopy);
+            if (interactions != null)
+            {
+                foreach (IInteraction interaction in interactions)
+                {
+                    interaction.Interacte(_interationHandlerStatsCopy); 
+                }
+            }
             CheckPostAttackEffects();
-
-            _interactible.GetStatsAfterInteraction(_interationHandlerStatsCopy);
+            //interactible.GetStatsAfterInteraction(_interationHandlerStatsCopy);
             Debug.LogWarning("Interaction was handled!");
         }
 

@@ -1,5 +1,6 @@
 using CharactersStats;
 using Interactions;
+using Pool;
 using Prefab;
 using SlingShotLogic;
 using System;
@@ -8,9 +9,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using Zenject.SpaceFighter;
 
 namespace Player
 {
+    public interface IPlayerView : ICharacterView, IMyPoolable
+    {
+        void InitPlayer(IControllerInputs controllerInputs);
+    }
     public interface IPlayerController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
@@ -18,47 +24,51 @@ namespace Player
     }
 
     public delegate void OnEndTurn();
-    public class PlayerController : IPlayerController, IDisposable
+    public class PlayerController : IPlayerController, IControllerInputs, IDisposable
     {
         public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
-        private CharacterView _playerView;
+        private Queue<IInteraction> _interactions;
+
+        private IPlayerView _playerView;
         private CharacterModel _playerModel;
         private SlingshotPooler _slingShotPooler;
         private ISlingShot _slingShot;
         private List<IDisposable> _disposables;
         private Transform _SlingShotInitPosition;
-        private Stats _playerStats;
+        private CharacterPooler _pooler;
 
         private IEffector _effector;
         private IInteractionProcessor _interactionProcessor;
+        private IInteractionDealer _interactionDealer;
 
         [Inject]
         public void Construct(
-            SlingshotPooler slingShotPooler,
+            SlingshotPooler slingShotPooler,      
             IInteractionProcessor interactionProcessor,
+            IInteractionDealer interactionDealer,
             IEffector effector)
         {
             _slingShotPooler = slingShotPooler;
             _interactionProcessor = interactionProcessor;
+            _interactionDealer = interactionDealer;
             _effector = effector;
         }
 
         public void Init(
         CharacterModel playerModel,
-        CharacterView playerView)
+        CharacterView playerView,
+        CharacterPooler characterPooler)
         {
             _playerModel = playerModel;
             _playerView = playerView;
-            _playerView.Init(_playerModel);
-            _playerStats = _playerModel.GetStats();
+            _pooler = characterPooler;
+            _playerView.InitPlayer(this);
             _playerModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
-            _playerView.ON_COLLISION += ApplyInteractions;
-            _playerView.ON_INTERACTION_FINISH += ApplyStats;
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
@@ -97,33 +107,39 @@ namespace Player
 
         public void Launch(Vector2 direction)
         {
-            float launchPower = _playerStats.LaunchPower;
+            float launchPower = _playerModel.LaunchPower;
             Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
 
-            _interactionProcessor.UseInteractionProcessor(_playerStats, _effector);
-            _interactionProcessor.GetInteraction(InteractionType.BasicAttack);
+            _interactionProcessor.Init(_playerModel, _effector);
+
+            //_interactionProcessor.GetInteraction(InteractionType.BasicAttack);
 
             ///////INTERACTION////////
-            //_interactionDealer.StartInteractionProcess(InteractionType.Knight_HeavyAttack);
-            //_interactions = _interactionDealer.GetQueue();
+            _interactionDealer.Init(_playerModel);
+            _interactionDealer.UseInteraction(InteractionType.BasicAttack);
+            _interactions = _interactionDealer.GetQueue();
             //////////////////////////
 
             _slingShot.OnShoot -= Launch;
         }
 
-        public void ApplyInteractions(IInteractible interactible)
+        public Queue<IInteraction> GetInteractions()
+        { 
+            return _interactionDealer.GetQueue(); 
+        }    
+
+        public void ApplyInteractions(Queue<IInteraction> interactions)
         {
-            _interactionProcessor.GetInteractionHandler(interactible);
-            _interactionProcessor.HandleInteraction();
+            _interactionProcessor.HandleInteraction(interactions);
         }
 
-        public void ApplyStats(Stats updatetInteractionHandlerStats)
+        public void ApplyStats(CharacterModel updatetInteractionHandlerStats)
         {
-            Debug.LogWarning($"Handler Stats before interaction. Healt: {_playerStats.Health}");
+            Debug.LogWarning($"Handler Stats before interaction. Healt: {_playerModel.Health}");
             _playerModel.ReactiveHealth.Value = updatetInteractionHandlerStats.Health;
-            _playerStats.Health = _playerModel.ReactiveHealth.Value;
-            Debug.LogWarning($"Handler Stats after interaction. Healt: {_playerStats.Health}");
+            _playerModel.Health = _playerModel.ReactiveHealth.Value;
+            Debug.LogWarning($"Handler Stats after interaction. Healt: {_playerModel.Health}");
         }
 
 
@@ -133,9 +149,6 @@ namespace Player
             {
                 ON_END_TURN?.Invoke();
                 _playerView.IsPlayerMoving = false;
-                /////////////////////////
-                //_interactions.Clear();/
-                /////////////////////////
             }
         }
 
@@ -143,11 +156,14 @@ namespace Player
         {
             _playerView.ON_CLICK -= OnClick;
             _playerView.ON_BEGINDRAG -= OnBeginDrag;
-            _playerView.ON_COLLISION -= ApplyInteractions;
 
             _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
             _slingShot.OnShoot -= Launch;
-            _playerView.ON_INTERACTION_FINISH -= ApplyStats;
+        }
+
+        public CharacterModel GetCharacterModel()
+        {
+            return _playerModel;
         }
     }
 }

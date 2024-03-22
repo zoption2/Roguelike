@@ -15,7 +15,7 @@ namespace Interactions
             _damage = damage;
         }
 
-        public abstract Stats Interacte(Stats stats);
+        public abstract CharacterModel Interacte(CharacterModel stats);
     }
 }
 
