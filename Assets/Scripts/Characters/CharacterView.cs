@@ -45,6 +45,7 @@ public class CharacterView : MonoBehaviour,
     private CharacterModel _model;
 
     public IControllerInputs ControllerInputs { get; set; } //private
+
     private Rigidbody _rigidbody;
     public Rigidbody Rigidbody { get { return _rigidbody; } }
     public void Init(IControllerInputs controllerInputs)
