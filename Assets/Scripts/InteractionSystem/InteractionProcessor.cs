@@ -73,7 +73,7 @@ namespace Interactions
             }
         }
 
-        public Stats UpdateStats(Stats stats)
+        public OriginStats UpdateStats(OriginStats stats)
         {
             ///////
             return stats;

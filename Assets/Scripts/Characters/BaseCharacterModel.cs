@@ -17,12 +17,12 @@ public abstract class CharacterModelBase : ICharacterModel
     //protected ReactiveInt _health;
     protected ReactiveInt _speed;
     protected ReactiveFloat _launchPower;
-    private Stats _stats;
+    private OriginStats _stats;
 
     public ReactiveFloat Velocity { get { return _velocity; } }
     public ReactiveInt ReactiveHealth { get { return _health; } }
 
-    public CharacterModelBase(Stats stats)
+    public CharacterModelBase(OriginStats stats)
     {
         _damage = new ReactiveInt(stats.Damage);
         _health = new ReactiveInt(stats.Health);
@@ -32,7 +32,7 @@ public abstract class CharacterModelBase : ICharacterModel
         _stats = stats;
     }
 
-    public Stats GetStats()
+    public OriginStats GetStats()
     {
         return _stats;
     }

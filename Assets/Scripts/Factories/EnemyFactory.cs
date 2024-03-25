@@ -16,7 +16,7 @@ public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
         
     }
 
-    protected override Stats GetStats(CharacterType type)
+    protected override OriginStats GetStats(CharacterType type)
     {
         return _statsProvider.GetEnemyStats(type);
     }

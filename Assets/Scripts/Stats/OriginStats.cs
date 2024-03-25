@@ -4,7 +4,7 @@ using System;
 namespace CharactersStats
 {
     [Serializable]
-    public class Stats
+    public class OriginStats
     {
         private int _speed;
         private int _health;
@@ -15,7 +15,7 @@ namespace CharactersStats
         public int Damage { get { return _damage;} set { _damage = value; } }
         public float LaunchPower { get { return _launchPower; } set { _launchPower = value; } }
 
-        public Stats(int speed, int health, int damage, float launchPower)
+        public OriginStats(int speed, int health, int damage, float launchPower)
         {
             _damage = damage;
             _speed = speed;

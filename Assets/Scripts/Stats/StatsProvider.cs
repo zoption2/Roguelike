@@ -2,13 +2,14 @@ using Prefab;
 using Player;
 using Enemy;
 using UnityEngine;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 namespace CharactersStats
 {
     public interface IStatsProvider
     {
-        public Stats GetPlayerStats(CharacterType playerType);
-        public Stats GetEnemyStats(CharacterType enemyType);
+        public OriginStats GetPlayerStats(CharacterType playerType);
+        public OriginStats GetEnemyStats(CharacterType enemyType);
     }
 
     public class StatsProvider : IStatsProvider
@@ -18,9 +19,9 @@ namespace CharactersStats
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
-        public Stats GetPlayerStats(CharacterType playerType)
+        public OriginStats GetPlayerStats(CharacterType playerType)
         {
-            Stats stats;
+            OriginStats stats;
             stats = _savedModelHolder.GetSavedStats(playerType);
             Debug.LogWarning(" Not Found Save: " + (stats == null));
             if (stats == null)
@@ -32,9 +33,9 @@ namespace CharactersStats
             return stats;
         }
 
-        public Stats GetEnemyStats(CharacterType enemyType)
+        public OriginStats GetEnemyStats(CharacterType enemyType)
         {
-            Stats stats;
+            OriginStats stats;
 
             stats = _defaultEnemyModelHolder.GetDefaultStats(enemyType);
 

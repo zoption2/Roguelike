@@ -32,7 +32,7 @@ public class TestingCrate : MonoBehaviour
         CharacterModel load = _saveSystem.Load(PlayerType);
         if (load==null)
         {
-            Stats stats = _statsProvider.GetPlayerStats(PlayerType);
+            OriginStats stats = _statsProvider.GetPlayerStats(PlayerType);
             CharacterModel savedModel = new CharacterModel(stats, PlayerType);
             _saveSystem.Save(savedModel);
             _characterSelector.AddPanel(PlayerType);

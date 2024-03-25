@@ -11,7 +11,7 @@ public class CharacterModel : CharacterModelBase
     public int Health, Damage, Speed; //Health, 
     public float LaunchPower;
 
-    public CharacterModel(Stats stats, CharacterType type) : base(stats)
+    public CharacterModel(OriginStats stats, CharacterType type) : base(stats)
     {
         Type = type;
         Health = stats.Health;

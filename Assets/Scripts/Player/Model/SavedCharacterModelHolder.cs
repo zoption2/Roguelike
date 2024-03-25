@@ -7,7 +7,7 @@ namespace Player
 {
     public interface ISavedCharacterModelHolder
     {
-        Stats GetSavedStats(CharacterType type, int receivedID=-1);
+        OriginStats GetSavedStats(CharacterType type, int receivedID=-1);
 
         void Init();
 
@@ -21,13 +21,13 @@ namespace Player
         {
 
         }
-        public Stats GetSavedStats(CharacterType type,int receivedID=-1)
+        public OriginStats GetSavedStats(CharacterType type,int receivedID=-1)
         {
-            Stats stats;
+            OriginStats stats;
             CharacterModel model=_modelSaveSystem.Load(type);
             if(model != null)
             {
-                stats = new Stats(model.Speed, model.Health, model.Damage, model.LaunchPower);
+                stats = new OriginStats(model.Speed, model.Health, model.Damage, model.LaunchPower);
                 return stats;
             }
             else

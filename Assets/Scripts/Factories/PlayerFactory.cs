@@ -17,7 +17,7 @@ public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
     {
     }
 
-    protected override Stats GetStats(CharacterType type)
+    protected override OriginStats GetStats(CharacterType type)
     {
         return _statsProvider.GetPlayerStats(type);
     }

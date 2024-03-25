@@ -12,10 +12,7 @@ namespace Interactions
         bool _isPositive;
         bool _isOnStart;
 
-        public EffectBase(CharacterModel stats)
-        {
-            _stats = stats;
-        }
+        
 
         public abstract CharacterModel UseEffect();
     }

@@ -29,7 +29,7 @@ public abstract class CharacterFactory<TController>
     protected DiContainer _container;
     protected CharacterPooler _characterPooler;
     protected CharacterModel _characterModel;
-    protected Stats _stats;
+    protected OriginStats _stats;
     protected CharacterType _type;
     protected IMyPoolable _poolable;
 
@@ -61,7 +61,7 @@ public abstract class CharacterFactory<TController>
         return controller;
     }
 
-    protected abstract Stats GetStats(CharacterType type);
+    protected abstract OriginStats GetStats(CharacterType type);
 
     protected TController GetNewController()
     {

@@ -34,6 +34,7 @@ namespace Player
         private List<IDisposable> _disposables;
         private Transform _SlingShotInitPosition;
         private CharacterPooler _pooler;
+        private ModifiableStats _modifiableStats;
 
         private IEffector _effector;
         private IInteractionProcessor _interactionProcessor;
@@ -61,6 +62,9 @@ namespace Player
             _playerView = playerView;
             _pooler = characterPooler;
             _playerView.Init(this);
+
+            _modifiableStats = new ModifiableStats(_playerModel.GetStats());
+
             _playerModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
