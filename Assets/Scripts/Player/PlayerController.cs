@@ -25,7 +25,7 @@ namespace Player
         public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
-        private Queue<IInteraction> _interactions;
+        private IInteraction _interaction;
 
         private CharacterView _playerView;
         private CharacterModel _playerModel;
@@ -59,13 +59,18 @@ namespace Player
         CharacterPooler characterPooler)
         {
             _playerModel = playerModel;
+            _modifiableStats = new ModifiableStats(_playerModel.GetStats());
+
+            Debug.LogWarning("Stats from player:");
+            Debug.Log("Damage: " + _modifiableStats.Damage.Value);
+            Debug.Log("Health: " + _modifiableStats.Health.Value);
+            Debug.Log("Speed: " + _modifiableStats.Speed.Value);
+            Debug.Log("LaunchPower: " + _modifiableStats.LaunchPower.Value);
+
             _playerView = playerView;
             _pooler = characterPooler;
             _playerView.Init(this);
-
-            _modifiableStats = new ModifiableStats(_playerModel.GetStats());
-
-            _playerModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
+            _modifiableStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
@@ -107,38 +112,37 @@ namespace Player
 
         public void Launch(Vector2 direction)
         {
-            float launchPower = _playerModel.LaunchPower;
+            float launchPower = _modifiableStats.LaunchPower.Value;
             Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
 
-            _interactionProcessor.Init(_playerModel, _effector);
+            _interactionProcessor.Init(_modifiableStats, _effector);
 
             //_interactionProcessor.GetInteraction(InteractionType.BasicAttack);
 
             ///////INTERACTION////////
-            _interactionDealer.Init(_playerModel);
-            _interactionDealer.UseInteraction(InteractionType.BasicAttack);
-            _interactions = _interactionDealer.GetQueue();
+            _interactionDealer.Init(_modifiableStats);
+            _interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
             //////////////////////////
-
+            Debug.LogWarning(_interaction);
             _slingShot.OnShoot -= Launch;
         }
 
-        public Queue<IInteraction> GetInteractions()
+        public IInteraction GetInteraction()
         { 
-            return _interactionDealer.GetQueue(); 
+            return _interaction; 
         }    
 
-        public void ApplyInteractions(Queue<IInteraction> interactions)
+        public void ApplyInteraction(IInteraction interaction)
         {
-            _interactionProcessor.HandleInteraction(interactions);
+            _interactionProcessor.HandleInteraction(interaction);
         }
 
         public void ApplyStats(CharacterModel updatetInteractionHandlerStats)
         {
             Debug.LogWarning($"Handler Stats before interaction. Healt: {_playerModel.Health}");
-            _playerModel.ReactiveHealth.Value = updatetInteractionHandlerStats.Health;
-            _playerModel.Health = _playerModel.ReactiveHealth.Value;
+            _modifiableStats.Health.Value = updatetInteractionHandlerStats.Health;
+            _playerModel.Health = _modifiableStats.Health.Value;
             Debug.LogWarning($"Handler Stats after interaction. Healt: {_playerModel.Health}");
         }
 
@@ -161,9 +165,13 @@ namespace Player
             _slingShot.OnShoot -= Launch;
         }
 
-        public CharacterModel GetCharacterModel()
+        public ModifiableStats GetCharacterStats()
         {
-            return _playerModel;
+            return _modifiableStats;
+        }
+        public bool GetActiveStatus()
+        {
+            return IsActive;
         }
     }
 }

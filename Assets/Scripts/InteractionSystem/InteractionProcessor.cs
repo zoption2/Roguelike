@@ -8,22 +8,22 @@ namespace Interactions
 {
     public interface IInteractionProcessor
     {
-        void Init(CharacterModel dealerStats, IEffector effector);
-        void HandleInteraction(Queue<IInteraction> interactions);
+        void Init(ModifiableStats dealerStats, IEffector effector);
+        void HandleInteraction(IInteraction interaction);
         //void GetInteractionHandler(IInteractible interactible);
         //void GetInteraction(InteractionType type);
     }
 
     public class InteractionProcessor : IInteractionProcessor
     {
-        private CharacterModel _interationHandlerStatsCopy;
-        private CharacterModel _interationDealerStatsCopy;
+        private ModifiableStats _interationHandlerStatsCopy;
+        private ModifiableStats _interationDealerStatsCopy;
         private IEffector _effector;
 
         [Inject]
         private IInteractionFactory _interactionFactory;
 
-        public void Init(CharacterModel stats, IEffector effector)
+        public void Init(ModifiableStats stats, IEffector effector)
         {
             _interationHandlerStatsCopy = stats;
             _effector = effector;
@@ -40,16 +40,12 @@ namespace Interactions
         //    _interaction = interaction;
         //}
         
-        public void HandleInteraction(Queue<IInteraction> interactions)
+        public void HandleInteraction(IInteraction interaction)
         {
             CheckPreAttackEffects();
-            if (interactions != null)
-            {
-                foreach (IInteraction interaction in interactions)
-                {
-                    interaction.Interacte(_interationHandlerStatsCopy); 
-                }
-            }
+
+            interaction.Interacte(_interationHandlerStatsCopy); 
+
             CheckPostAttackEffects();
             //interactible.GetStatsAfterInteraction(_interationHandlerStatsCopy);
             Debug.LogWarning("Interaction was handled!");
@@ -60,7 +56,7 @@ namespace Interactions
             foreach(IEffect effect in _effector.GetPreInteractionEffects())
             {
                 if (_effector.GetPreInteractionEffects().Count <= 0) return;
-                _interationHandlerStatsCopy = effect.UseEffect();
+                effect.UseEffect(_interationHandlerStatsCopy);
             }
         }
 
@@ -69,7 +65,7 @@ namespace Interactions
             foreach (IEffect effect in _effector.GetPostInteractionEffects())
             {
                 if (_effector.GetPostInteractionEffects().Count <= 0) return;
-                _interationHandlerStatsCopy = effect.UseEffect();
+                effect.UseEffect(_interationHandlerStatsCopy);
             }
         }
 

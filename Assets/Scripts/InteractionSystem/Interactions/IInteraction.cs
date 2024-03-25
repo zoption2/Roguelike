@@ -7,7 +7,7 @@ namespace Interactions
 {
     public interface IInteraction
     {
-        CharacterModel Interacte(CharacterModel stat);
+        ModifiableStats Interacte(ModifiableStats stat);
     }
 }
 

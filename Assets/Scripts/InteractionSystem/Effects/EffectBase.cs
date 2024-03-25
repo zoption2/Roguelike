@@ -8,13 +8,13 @@ namespace Interactions
     public abstract class EffectBase : IEffect
     {
         public int Duration { get; set; }
-        protected CharacterModel _stats;
+        protected ModifiableStats _stats;
         bool _isPositive;
         bool _isOnStart;
 
         
 
-        public abstract CharacterModel UseEffect();
+        public abstract void UseEffect(ModifiableStats stats);
     }
 }
 

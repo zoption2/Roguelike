@@ -10,9 +10,10 @@ using Zenject;
 
 public interface IControllerInputs
 {
-    CharacterModel GetCharacterModel();
-    Queue<IInteraction> GetInteractions();
-    void ApplyInteractions(Queue<IInteraction> interactions);
+    bool GetActiveStatus();
+    ModifiableStats GetCharacterStats();
+    IInteraction GetInteraction();
+    void ApplyInteraction(IInteraction interactions);
 }
 
 public interface ICharacterController

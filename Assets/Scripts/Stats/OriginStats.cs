@@ -1,4 +1,3 @@
-using Player;
 using System;
 
 namespace CharactersStats
@@ -6,21 +5,25 @@ namespace CharactersStats
     [Serializable]
     public class OriginStats
     {
-        private int _speed;
-        private int _health;
-        private int _damage;
-        private float _launchPower;
-        public int Speed { get { return _speed; } set { _speed = value; } } 
-        public int Health { get { return _health;} set {_health = value;} }
-        public int Damage { get { return _damage;} set { _damage = value; } }
-        public float LaunchPower { get { return _launchPower; } set { _launchPower = value; } }
+        private ReactiveInt _speed;
+        private ReactiveInt _health;
+        private ReactiveInt _damage;
+        private ReactiveFloat _velocity;
+        private ReactiveFloat _launchPower;
+
+        public ReactiveInt Speed { get { return _speed; } }
+        public ReactiveInt Health { get { return _health; } }
+        public ReactiveInt Damage { get { return _damage; } }
+        public ReactiveFloat LaunchPower { get { return _launchPower; } }
+        public ReactiveFloat Velocity { get { return _velocity; } }
 
         public OriginStats(int speed, int health, int damage, float launchPower)
         {
-            _damage = damage;
-            _speed = speed;
-            _health = health;
-            _launchPower = launchPower;
+            _speed = new ReactiveInt(speed);
+            _health = new ReactiveInt(health);
+            _damage = new ReactiveInt(damage);
+            _launchPower = new ReactiveFloat(launchPower);
+            _velocity = new ReactiveFloat(0f);
         }
     }
 }

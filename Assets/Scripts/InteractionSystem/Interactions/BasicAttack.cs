@@ -10,9 +10,9 @@ namespace Interactions
         {
         }
 
-        public override CharacterModel Interacte(CharacterModel stats)
+        public override ModifiableStats Interacte(ModifiableStats stats)
         {
-            stats.ReactiveHealth.Value -= _damage;
+            stats.Health.Value -= _damage;
             return stats;
         }
     }

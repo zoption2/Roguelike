@@ -6,21 +6,21 @@ using System.Collections.Generic;
 using UnityEngine;
 public interface IInteractionFactory
 {
-    IInteraction Create(InteractionType type, CharacterModel stats);
+    IInteraction Create(InteractionType type, ModifiableStats stats);
 }
 
 public class InteractionFactory : IInteractionFactory
 {
-    public IInteraction Create(InteractionType type, CharacterModel stats)
+    public IInteraction Create(InteractionType type, ModifiableStats stats)
     {
         switch (type)
         {
             case InteractionType.BasicAttack:
-                return new BasicAttack(stats.Damage);
+                return new BasicAttack(stats.Damage.Value);
             case InteractionType.Knight_HeavyAttack:
-                return new Knight_HeavyAttack(stats.Damage, 2);
+                return new Knight_HeavyAttack(stats.Damage.Value, 2);
             default:
-                return new BasicAttack(stats.Damage);
+                return new BasicAttack(stats.Damage.Value);
         }
     }
 }

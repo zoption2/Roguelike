@@ -13,9 +13,9 @@ namespace Interactions
             _damageMultiplayer = damageMultiplayer;
         }
 
-        public override CharacterModel Interacte(CharacterModel stats)
+        public override ModifiableStats Interacte(ModifiableStats stats)
         {
-            stats.Health -= _damage * _damageMultiplayer;
+            stats.Health.Value -= _damage * _damageMultiplayer;
             return stats;
         }
     }

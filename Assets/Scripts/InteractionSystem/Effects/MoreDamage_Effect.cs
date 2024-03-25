@@ -13,11 +13,10 @@ namespace Interactions
             Duration = duration;
         }
 
-        public override CharacterModel UseEffect() //CharacterModel stats
+        public override void UseEffect(ModifiableStats stats)
         {
             Duration--;
-            _stats.Damage *= 2;
-            return _stats;
+            stats.Damage.Value *= 2;
         }
     }
 }

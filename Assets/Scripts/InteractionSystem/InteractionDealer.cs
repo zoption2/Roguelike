@@ -10,43 +10,27 @@ namespace Interactions
 {
     public interface IInteractionDealer
     {
-        public void Init(CharacterModel stats);
-        void UseInteraction(InteractionType type);
-        void AddInteraction(InteractionType type);
-        Queue<IInteraction> GetQueue();
+        public void Init(ModifiableStats stats);
+        IInteraction UseInteraction(InteractionType type);
     }
 
     public class InteractionDealer : IInteractionDealer
     {
-        private Queue<IInteraction> _interactions;
-        private CharacterModel _damageDealerStatsCopy;
+        private IInteraction _interaction;
+        private ModifiableStats _damageDealerStatsCopy;
 
         [Inject]
         private IInteractionFactory _interactionFactory;
 
-        public void Init(CharacterModel stats)
+        public void Init(ModifiableStats stats)
         {
             _damageDealerStatsCopy = stats;
-            _interactions = new Queue<IInteraction>();
         }
 
-        public void UseInteraction(InteractionType type)
+        public IInteraction UseInteraction(InteractionType type)
         {
             IInteraction interaction = _interactionFactory.Create(type, _damageDealerStatsCopy);
-            if(!_interactions.Contains(interaction)) _interactions.Enqueue(interaction);
-            Debug.Log($"Selected interaction {type}. Objs in Queue: {_interactions.Count}");
-        }
-
-        public void AddInteraction(InteractionType type)
-        {
-            IInteraction interaction = _interactionFactory.Create(type, _damageDealerStatsCopy);
-            _interactions.Enqueue(interaction);
-            Debug.Log($"Added interaction {type}. Objs in Queue: {_interactions.Count}");
-        }
-
-        public Queue<IInteraction> GetQueue()
-        {
-            return _interactions;
+            return interaction;
         }
     }
 

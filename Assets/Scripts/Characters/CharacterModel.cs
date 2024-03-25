@@ -8,16 +8,17 @@ public class CharacterModel : CharacterModelBase
 {
     public CharacterType Type;
 
-    public int Health, Damage, Speed; //Health, 
-    public float LaunchPower;
+    public int Health, Damage, Speed;
+    public float LaunchPower, Velocity;
 
-    public CharacterModel(OriginStats stats, CharacterType type) : base(stats)
+    public CharacterModel(OriginStats originStats, CharacterType type) : base(originStats)
     {
         Type = type;
-        Health = stats.Health;
-        Damage = stats.Damage;
-        Speed = stats.Speed;
-        LaunchPower = stats.LaunchPower;
+        Health = _health;
+        Damage = _damage;
+        Speed = _speed;
+        LaunchPower = _launchPower;
+        Velocity = _velocity;
     }
 }
 

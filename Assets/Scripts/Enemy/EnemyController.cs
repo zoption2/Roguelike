@@ -21,13 +21,14 @@ namespace Enemy
 
         private CharacterView _enemyView;
         private CharacterModel _enemyModel;
+        private ModifiableStats _modifiableStats;
         private IEffector _effector;
         private CharacterPooler _pooler;
 
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
         public bool IsActive { get; set; }
-        private Queue<IInteraction> _interactions;
+        private IInteraction _interaction;
 
         [Inject]
         public void Construct(
@@ -44,11 +45,14 @@ namespace Enemy
         public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
         {
             _enemyModel = characterModel;
+
+            _modifiableStats = new ModifiableStats(_enemyModel.GetStats());
+
             _enemyView = characterView;
             _pooler = characterPooler;
             _enemyView.Init(this);
             _enemyView.ON_CLICK += OnClick;
-            _interactionProcessor.Init(_enemyModel, _effector);
+            _interactionProcessor.Init(_modifiableStats, _effector);
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
@@ -62,14 +66,14 @@ namespace Enemy
             }
         }
 
-        public Queue<IInteraction> GetInteractions()
+        public IInteraction GetInteraction()
         {
-            return _interactions;
+            return _interaction;
         }
 
         public void DoInteractionConclusion()
         {
-            _enemyModel.Health = _enemyModel.ReactiveHealth.Value;
+            _enemyModel.Health = _modifiableStats.Health.Value;
             if (_enemyModel.Health <= 0)
             {
                 _pooler.Push(_enemyModel.Type, _enemyView);
@@ -81,14 +85,19 @@ namespace Enemy
             _enemyView.ON_CLICK -= OnClick;
         }
 
-        public CharacterModel GetCharacterModel()
+        public ModifiableStats GetCharacterStats()
         {
-            return _enemyModel;
+            return _modifiableStats;
         }
 
-        public void ApplyInteractions(Queue<IInteraction> interactions)
+        public void ApplyInteraction(IInteraction interaction)
         {
-            _interactionProcessor.HandleInteraction(interactions);
+            _interactionProcessor.HandleInteraction(interaction);
+        }
+
+        public bool GetActiveStatus()
+        {
+            return IsActive;
         }
     }
 }

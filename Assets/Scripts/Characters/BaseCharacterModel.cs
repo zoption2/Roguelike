@@ -10,26 +10,21 @@ public interface ICharacterModel
 public abstract class CharacterModelBase : ICharacterModel
 {
 
-    private ReactiveFloat _velocity;
-    private ReactiveInt _health;
-
-    protected ReactiveInt _damage;
-    //protected ReactiveInt _health;
-    protected ReactiveInt _speed;
-    protected ReactiveFloat _launchPower;
+    protected float _velocity;
+    protected int _damage;
+    protected int _health;
+    protected int _speed;
+    protected float _launchPower;
     private OriginStats _stats;
 
-    public ReactiveFloat Velocity { get { return _velocity; } }
-    public ReactiveInt ReactiveHealth { get { return _health; } }
-
-    public CharacterModelBase(OriginStats stats)
+    public CharacterModelBase(OriginStats originStats)
     {
-        _damage = new ReactiveInt(stats.Damage);
-        _health = new ReactiveInt(stats.Health);
-        _speed = new ReactiveInt(stats.Speed);
-        _launchPower = new ReactiveFloat(stats.LaunchPower);
-        _velocity = new ReactiveFloat(0f);
-        _stats = stats;
+        _damage = originStats.Damage.Value;
+        _health = originStats.Health.Value;
+        _speed = originStats.Speed.Value;
+        _launchPower = originStats.LaunchPower.Value;
+        _velocity = originStats.Velocity.Value;
+        _stats = originStats;
     }
 
     public OriginStats GetStats()

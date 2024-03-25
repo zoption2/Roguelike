@@ -42,7 +42,7 @@ public class CharacterView : MonoBehaviour,
 
     [SerializeField] Transform _viewTransform;
     public bool IsPlayerMoving { get; set; }
-    private CharacterModel _model;
+    private ModifiableStats _stats;
 
     public IControllerInputs ControllerInputs { get; set; } //private
 
@@ -51,7 +51,7 @@ public class CharacterView : MonoBehaviour,
     public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
-        _model = controllerInputs.GetCharacterModel();
+        _stats = controllerInputs.GetCharacterStats();
     }
 
     private void Start()
@@ -63,7 +63,7 @@ public class CharacterView : MonoBehaviour,
     {
         if (IsPlayerMoving)
         {
-            _model.Velocity.Value = _rigidbody.velocity.magnitude;
+            _stats.Velocity.Value = _rigidbody.velocity.magnitude;
         }
 
         if (IsPlayerMoving) ViewRotation();
@@ -95,7 +95,11 @@ public class CharacterView : MonoBehaviour,
 
     public void StartInteraction(IInteractible interactible)
     {
-        ControllerInputs.ApplyInteractions(interactible.ControllerInputs.GetInteractions());
+        Debug.LogWarning(ControllerInputs.GetActiveStatus());
+        if (ControllerInputs.GetActiveStatus())
+        {
+            interactible.ControllerInputs.ApplyInteraction(ControllerInputs.GetInteraction());
+        }
     }
 
     public void OnCreate()
