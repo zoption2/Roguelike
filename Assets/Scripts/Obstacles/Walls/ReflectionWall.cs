@@ -5,7 +5,7 @@ using Obstacles;
 
 namespace Obstacles
 {
-    public class ReflectionWall : MonoBehaviour, IObstacle
+    public class ReflectionWall : MonoBehaviour, IWall
     {
         public void ProcessCollision(Rigidbody rigidbody, Vector3 velocity)
         {

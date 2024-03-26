@@ -8,7 +8,7 @@ namespace Interactions
     public abstract class InteractionBase : IInteraction
     {
         protected int _damage;
-        protected IEffect _effect;
+        protected List<IEffect> _effects;
 
         public InteractionBase(
             int damage)
@@ -17,7 +17,7 @@ namespace Interactions
         }
 
         public abstract ModifiableStats Interacte(ModifiableStats stats);
-        public abstract IEffect GetEffect();
+        public abstract List<IEffect> GetEffects();
     }
 }
 

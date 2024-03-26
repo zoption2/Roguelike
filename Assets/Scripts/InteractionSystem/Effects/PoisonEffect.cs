@@ -7,20 +7,20 @@ using UnityEngine;
 
 namespace Interactions
 {
-    public class Fire_Effect : EffectBase
+    public class PoisonEffect : EffectBase
     {
-        public Fire_Effect(int duration)
+        public PoisonEffect(int duration)
         {
             Duration = duration;
             IsOnInteractionStart = false;
             IsPositive = false;
-            IsOnTurnStart = false;
+            IsOnTurnStart = true;
         }
 
         public override void UseEffect(ModifiableStats stats)
         {
             Duration--;
-            stats.Health.Value -= 2;
+            stats.Health.Value -= 20;
         }
     }
 }

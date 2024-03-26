@@ -35,6 +35,8 @@ namespace Interactions
 
             interaction.Interacte(_interationHandlerInteractionResult);
 
+            _effector.ProcessEffectsOnEnd(_interationHandlerInteractionResult);
+
             UpdateModifiableStats(_interationHandlerInteractionResult);
             Debug.LogWarning("Interaction was handled!");
         }

@@ -125,19 +125,22 @@ namespace Player
         public IInteraction GetInteraction()
         { 
             return _interaction; 
-        }    
+        }
 
         public void ApplyInteraction(IInteraction interaction)
         {
-            if(!IsActive)
+            if (!IsActive)
             {
-                IEffect effect = interaction.GetEffect();
-                if (effect != null)
+                List<IEffect> effects = interaction.GetEffects();
+                if (effects != null && effects.Count > 0)
                 {
-                    _effector.AddEffects(effect);
+                    foreach (IEffect effect in effects)
+                    {
+                        _effector.AddEffects(effect);
+                    }
                 }
                 _interactionProcessor.ProcessInteraction(interaction);
-            }  
+            }
         }
 
         public void EndTurn(float velocity)
@@ -162,6 +165,18 @@ namespace Player
         public ModifiableStats GetCharacterStats()
         {
             return _modifiableStats;
+        }
+
+        public void AddEffects(List<IEffect> effects)
+        {
+            if (effects != null && effects.Count > 0)
+            {
+                foreach (IEffect effect in effects)
+                {
+                    _effector.AddEffects(effect);
+                }
+            }
+            _effector.ProcessStatsBeforeInteraction(_modifiableStats);
         }
     }
 }

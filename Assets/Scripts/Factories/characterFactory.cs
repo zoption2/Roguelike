@@ -13,6 +13,7 @@ public interface IControllerInputs
     ModifiableStats GetCharacterStats();
     IInteraction GetInteraction();
     void ApplyInteraction(IInteraction interactions);
+    void AddEffects(List<IEffect> effects);
 }
 
 public interface ICharacterController

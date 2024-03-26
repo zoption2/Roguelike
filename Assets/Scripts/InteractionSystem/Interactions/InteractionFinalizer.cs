@@ -38,7 +38,7 @@ namespace Interactions
             _stats.Damage.Value -= Mathf.Abs(_interactionResult.Damage.Value);
             _stats.LaunchPower.Value -= Mathf.Abs(_interactionResult.LaunchPower.Value);
             _stats.Velocity.Value -= Mathf.Abs(_interactionResult.Velocity.Value);
-            _effectProcessor.ProcessEffectsOnEnd(_stats);
+            
 
             return _stats;
         }

@@ -1,5 +1,6 @@
 using CharactersStats;
 using Interactions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interactions 
@@ -8,13 +9,16 @@ namespace Interactions
     {
         public BasicAttack(int damage) : base(damage)
         {
-            _effect = new Fire_Effect(3);
-            //_effect = new MoreDamage_Effect(damage);
+            _effects = new()
+            {
+                new FireEffect(2),
+                new PoisonEffect(4),
+            };
         }
 
-        public override IEffect GetEffect()
+        public override List<IEffect> GetEffects()
         {
-            return _effect;
+            return _effects;
         }
 
         public override ModifiableStats Interacte(ModifiableStats stats)

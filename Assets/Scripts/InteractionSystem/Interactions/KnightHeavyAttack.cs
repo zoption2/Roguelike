@@ -5,18 +5,22 @@ using UnityEngine;
 
 namespace Interactions
 {
-    public class Knight_HeavyAttack : InteractionBase
+    public class KnightHeavyAttack : InteractionBase
     {
         private int _damageMultiplayer;
-        public Knight_HeavyAttack(int damage, int damageMultiplayer) : base(damage)
+        public KnightHeavyAttack(int damage, int damageMultiplayer) : base(damage)
         {
             _damageMultiplayer = damageMultiplayer;
-            _effect = null;
+
+            _effects = new()
+            {
+                
+            };
         }
 
-        public override IEffect GetEffect()
+        public override List<IEffect> GetEffects()
         {
-            return _effect;
+            return _effects;
         }
 
         public override ModifiableStats Interacte(ModifiableStats stats)

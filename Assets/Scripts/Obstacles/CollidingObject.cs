@@ -36,7 +36,7 @@ public class CollidingObject : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
 
-        if (collision.gameObject.TryGetComponent(out IObstacle obstacle))
+        if (collision.gameObject.TryGetComponent(out IWall obstacle))
         {
             Vector3 velocity = GetVelocity();
             obstacle.ProcessCollision(_rigidbody, velocity);
@@ -47,5 +47,13 @@ public class CollidingObject : MonoBehaviour
             _characterView.StartInteraction(interactible);
         }
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out IBuff obstacle))
+        {
+            _characterView.ControllerInputs.AddEffects(obstacle.ProcessTrigger());
+        }
     }
 }
