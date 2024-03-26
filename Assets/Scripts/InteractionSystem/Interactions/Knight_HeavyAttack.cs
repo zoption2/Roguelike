@@ -11,6 +11,12 @@ namespace Interactions
         public Knight_HeavyAttack(int damage, int damageMultiplayer) : base(damage)
         {
             _damageMultiplayer = damageMultiplayer;
+            _effect = null;
+        }
+
+        public override IEffect GetEffect()
+        {
+            return _effect;
         }
 
         public override ModifiableStats Interacte(ModifiableStats stats)

@@ -8,6 +8,7 @@ namespace Interactions
     public interface IInteraction
     {
         ModifiableStats Interacte(ModifiableStats stat);
+        IEffect GetEffect();
     }
 }
 

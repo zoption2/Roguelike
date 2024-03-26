@@ -16,13 +16,24 @@ namespace CharactersStats
         public ReactiveFloat LaunchPower { get { return _launchPower; } }
         public ReactiveFloat Velocity { get { return _velocity; } }
 
-        public ModifiableStats(OriginStats originStats)
+        public ModifiableStats(OriginStats originStats = null)
         {
-            _speed = originStats.Speed;
-            _health = originStats.Health;
-            _damage = originStats.Damage;
-            _launchPower = originStats.LaunchPower;
-            _velocity = originStats.Velocity;
+            if (originStats != null)
+            {
+                _speed = originStats.Speed;
+                _health = originStats.Health;
+                _damage = originStats.Damage;
+                _launchPower = originStats.LaunchPower;
+                _velocity = originStats.Velocity;
+            }
+            else
+            {
+                _speed = new ReactiveInt(0);
+                _health = new ReactiveInt(0);
+                _damage = new ReactiveInt(0);
+                _launchPower = new ReactiveFloat(0f);
+                _velocity = new ReactiveFloat(0f);
+            }
         }
     }
 }

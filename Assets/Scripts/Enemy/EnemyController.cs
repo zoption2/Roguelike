@@ -22,11 +22,12 @@ namespace Enemy
         private CharacterView _enemyView;
         private CharacterModel _enemyModel;
         private ModifiableStats _modifiableStats;
-        private IEffector _effector;
+        private IEffectProcessor _effector;
         private CharacterPooler _pooler;
 
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
+        private IInteractionFinalizer _interactionFinalizer;
         public bool IsActive { get; set; }
         private IInteraction _interaction;
 
@@ -34,12 +35,13 @@ namespace Enemy
         public void Construct(
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
-            IEffector effector
-            )
+            IEffectProcessor effector,
+            IInteractionFinalizer interactionFinalizer)
         {
             _interactionProcessor = interactionProcessor;
             _interactionDealer = interactionDealer;
             _effector = effector;
+            _interactionFinalizer = interactionFinalizer;
         }
 
         public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
@@ -47,22 +49,24 @@ namespace Enemy
             _enemyModel = characterModel;
 
             _modifiableStats = new ModifiableStats(_enemyModel.GetStats());
+            _interactionProcessor.Init(_effector);
+            _interactionFinalizer.Init(_interactionProcessor, _effector);
 
             _enemyView = characterView;
             _pooler = characterPooler;
             _enemyView.Init(this);
             _enemyView.ON_CLICK += OnClick;
-            _interactionProcessor.Init(_modifiableStats, _effector);
+            _interactionProcessor.Init(_effector);
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
             if (IsActive)
             {
+                _effector.ProcessEffectsOnStart(_modifiableStats);
                 ON_END_TURN?.Invoke();
-                Debug.Log(_enemyModel.Health);
+                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats);
                 DoInteractionConclusion();
-                Debug.Log(_enemyModel.Health);
             }
         }
 
@@ -73,8 +77,8 @@ namespace Enemy
 
         public void DoInteractionConclusion()
         {
-            _enemyModel.Health = _modifiableStats.Health.Value;
-            if (_enemyModel.Health <= 0)
+            Debug.LogWarning(_modifiableStats.Health.Value);
+            if (_modifiableStats.Health.Value <= 0)
             {
                 _pooler.Push(_enemyModel.Type, _enemyView);
             }
@@ -92,12 +96,15 @@ namespace Enemy
 
         public void ApplyInteraction(IInteraction interaction)
         {
-            _interactionProcessor.HandleInteraction(interaction);
-        }
-
-        public bool GetActiveStatus()
-        {
-            return IsActive;
+            if (!IsActive)
+            {
+                IEffect effect = interaction.GetEffect();
+                if (effect != null)
+                {
+                    _effector.AddEffects(effect);
+                }
+                _interactionProcessor.ProcessInteraction(interaction);
+            }
         }
     }
 }

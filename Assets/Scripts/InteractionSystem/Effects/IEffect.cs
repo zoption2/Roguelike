@@ -9,9 +9,9 @@ namespace Interactions
     {
         void UseEffect(ModifiableStats stats);
         int Duration { get; set; }
+        bool IsPositive { get; set; }
+        bool IsOnInteractionStart { get; set; }
+        public bool IsOnTurnStart { get; set; }
     }
-
-    public interface IPreInteractionEffect { }
-    public interface IPostInteractionEffect { }
 }
 

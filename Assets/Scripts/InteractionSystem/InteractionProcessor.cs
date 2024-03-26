@@ -1,5 +1,6 @@
 using CharactersStats;
 using Prefab;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -8,72 +9,52 @@ namespace Interactions
 {
     public interface IInteractionProcessor
     {
-        void Init(ModifiableStats dealerStats, IEffector effector);
-        void HandleInteraction(IInteraction interaction);
-        //void GetInteractionHandler(IInteractible interactible);
-        //void GetInteraction(InteractionType type);
+        void Init(IEffectProcessor effector);
+        void ProcessInteraction(IInteraction interaction);
+        void GetInteractionResult(out ModifiableStats result, Action<ModifiableStats> callback);
+        void SetToDefault();
     }
 
     public class InteractionProcessor : IInteractionProcessor
     {
-        private ModifiableStats _interationHandlerStatsCopy;
-        private ModifiableStats _interationDealerStatsCopy;
-        private IEffector _effector;
+        private ModifiableStats _interationHandlerInteractionResult;
+        private IEffectProcessor _effector;
 
-        [Inject]
-        private IInteractionFactory _interactionFactory;
-
-        public void Init(ModifiableStats stats, IEffector effector)
+        public void Init(IEffectProcessor effector)
         {
-            _interationHandlerStatsCopy = stats;
             _effector = effector;
+            _interationHandlerInteractionResult = new();
         }
 
-        //public void GetInteractionHandler(IInteractible interactible)
-        //{
-        //    _interactible = interactible;
-        //}
-
-        //public void GetInteraction(InteractionType type)
-        //{
-        //    IInteraction interaction = _interactionFactory.Create(type, _interationDealerStatsCopy);
-        //    _interaction = interaction;
-        //}
         
-        public void HandleInteraction(IInteraction interaction)
+        public void ProcessInteraction(IInteraction interaction)
         {
-            CheckPreAttackEffects();
+            _interationHandlerInteractionResult = new();
 
-            interaction.Interacte(_interationHandlerStatsCopy); 
+            _effector.ProcessStatsBeforeInteraction(_interationHandlerInteractionResult);
 
-            CheckPostAttackEffects();
-            //interactible.GetStatsAfterInteraction(_interationHandlerStatsCopy);
+            interaction.Interacte(_interationHandlerInteractionResult);
+
+            UpdateModifiableStats(_interationHandlerInteractionResult);
             Debug.LogWarning("Interaction was handled!");
         }
 
-        private void CheckPreAttackEffects()
+        private void UpdateModifiableStats(ModifiableStats stats)
         {
-            foreach(IEffect effect in _effector.GetPreInteractionEffects())
-            {
-                if (_effector.GetPreInteractionEffects().Count <= 0) return;
-                effect.UseEffect(_interationHandlerStatsCopy);
-            }
+            _interationHandlerInteractionResult = stats;
         }
 
-        private void CheckPostAttackEffects()
+        public void GetInteractionResult(out ModifiableStats result, Action<ModifiableStats> callback)
         {
-            foreach (IEffect effect in _effector.GetPostInteractionEffects())
-            {
-                if (_effector.GetPostInteractionEffects().Count <= 0) return;
-                effect.UseEffect(_interationHandlerStatsCopy);
-            }
+            result = _interationHandlerInteractionResult;
+            callback?.Invoke(_interationHandlerInteractionResult);
         }
 
-        public OriginStats UpdateStats(OriginStats stats)
+        public void SetToDefault()
         {
-            ///////
-            return stats;
+            _interationHandlerInteractionResult = new();
         }
+
     }
 
 }

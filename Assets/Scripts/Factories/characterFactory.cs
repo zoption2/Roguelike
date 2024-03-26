@@ -10,7 +10,6 @@ using Zenject;
 
 public interface IControllerInputs
 {
-    bool GetActiveStatus();
     ModifiableStats GetCharacterStats();
     IInteraction GetInteraction();
     void ApplyInteraction(IInteraction interactions);

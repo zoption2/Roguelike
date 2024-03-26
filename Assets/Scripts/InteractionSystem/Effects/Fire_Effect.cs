@@ -4,23 +4,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 namespace Interactions
 {
-    public class MoreDamage_Effect : EffectBase
+    public class Fire_Effect : EffectBase
     {
-        public MoreDamage_Effect(int duration)
+        public Fire_Effect(int duration)
         {
             Duration = duration;
-            IsOnInteractionStart = true;
-            IsPositive = true;
-            IsOnTurnStart = true;
+            IsOnInteractionStart = false;
+            IsPositive = false;
+            IsOnTurnStart = false;
         }
 
         public override void UseEffect(ModifiableStats stats)
         {
             Duration--;
-            stats.Damage.Value += 20;
+            stats.Health.Value -= 2;
         }
     }
 }
-

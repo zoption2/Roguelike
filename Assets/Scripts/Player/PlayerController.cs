@@ -36,21 +36,24 @@ namespace Player
         private CharacterPooler _pooler;
         private ModifiableStats _modifiableStats;
 
-        private IEffector _effector;
+        private IEffectProcessor _effector;
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
+        private IInteractionFinalizer _interactionFinalizer;
 
         [Inject]
         public void Construct(
             SlingshotPooler slingShotPooler,      
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
-            IEffector effector)
+            IEffectProcessor effector,
+            IInteractionFinalizer interactionFinalizer)
         {
             _slingShotPooler = slingShotPooler;
             _interactionProcessor = interactionProcessor;
             _interactionDealer = interactionDealer;
             _effector = effector;
+            _interactionFinalizer = interactionFinalizer;   
         }
 
         public void Init(
@@ -59,13 +62,10 @@ namespace Player
         CharacterPooler characterPooler)
         {
             _playerModel = playerModel;
-            _modifiableStats = new ModifiableStats(_playerModel.GetStats());
 
-            Debug.LogWarning("Stats from player:");
-            Debug.Log("Damage: " + _modifiableStats.Damage.Value);
-            Debug.Log("Health: " + _modifiableStats.Health.Value);
-            Debug.Log("Speed: " + _modifiableStats.Speed.Value);
-            Debug.Log("LaunchPower: " + _modifiableStats.LaunchPower.Value);
+            _modifiableStats = new ModifiableStats(_playerModel.GetStats());
+            _interactionProcessor.Init(_effector);
+            _interactionFinalizer.Init(_interactionProcessor, _effector);
 
             _playerView = playerView;
             _pooler = characterPooler;
@@ -116,15 +116,9 @@ namespace Player
             Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
 
-            _interactionProcessor.Init(_modifiableStats, _effector);
-
-            //_interactionProcessor.GetInteraction(InteractionType.BasicAttack);
-
-            ///////INTERACTION////////
             _interactionDealer.Init(_modifiableStats);
             _interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
-            //////////////////////////
-            Debug.LogWarning(_interaction);
+
             _slingShot.OnShoot -= Launch;
         }
 
@@ -135,17 +129,16 @@ namespace Player
 
         public void ApplyInteraction(IInteraction interaction)
         {
-            _interactionProcessor.HandleInteraction(interaction);
+            if(!IsActive)
+            {
+                IEffect effect = interaction.GetEffect();
+                if (effect != null)
+                {
+                    _effector.AddEffects(effect);
+                }
+                _interactionProcessor.ProcessInteraction(interaction);
+            }  
         }
-
-        public void ApplyStats(CharacterModel updatetInteractionHandlerStats)
-        {
-            Debug.LogWarning($"Handler Stats before interaction. Healt: {_playerModel.Health}");
-            _modifiableStats.Health.Value = updatetInteractionHandlerStats.Health;
-            _playerModel.Health = _modifiableStats.Health.Value;
-            Debug.LogWarning($"Handler Stats after interaction. Healt: {_playerModel.Health}");
-        }
-
 
         public void EndTurn(float velocity)
         {
@@ -153,6 +146,7 @@ namespace Player
             {
                 ON_END_TURN?.Invoke();
                 _playerView.IsPlayerMoving = false;
+                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats);
             }
         }
 
@@ -168,10 +162,6 @@ namespace Player
         public ModifiableStats GetCharacterStats()
         {
             return _modifiableStats;
-        }
-        public bool GetActiveStatus()
-        {
-            return IsActive;
         }
     }
 }

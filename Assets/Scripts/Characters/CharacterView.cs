@@ -44,7 +44,7 @@ public class CharacterView : MonoBehaviour,
     public bool IsPlayerMoving { get; set; }
     private ModifiableStats _stats;
 
-    public IControllerInputs ControllerInputs { get; set; } //private
+    public IControllerInputs ControllerInputs { get; set; } 
 
     private Rigidbody _rigidbody;
     public Rigidbody Rigidbody { get { return _rigidbody; } }
@@ -95,11 +95,9 @@ public class CharacterView : MonoBehaviour,
 
     public void StartInteraction(IInteractible interactible)
     {
-        Debug.LogWarning(ControllerInputs.GetActiveStatus());
-        if (ControllerInputs.GetActiveStatus())
-        {
-            interactible.ControllerInputs.ApplyInteraction(ControllerInputs.GetInteraction());
-        }
+         IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+         interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+
     }
 
     public void OnCreate()
