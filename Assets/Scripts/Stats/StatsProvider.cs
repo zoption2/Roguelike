@@ -2,7 +2,7 @@ using Prefab;
 using Player;
 using Enemy;
 using UnityEngine;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using SaveSystem;
 
 namespace CharactersStats
 {
@@ -15,21 +15,18 @@ namespace CharactersStats
     public class StatsProvider : IStatsProvider
     {
         private DefaultPlayerModelHolder _defaultModelHolder;
-        private ISavedCharacterModelHolder _savedModelHolder;
+        private IDataService _dataService;
 
         private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
         public OriginStats GetPlayerStats(CharacterType playerType)
         {
             OriginStats stats;
-            stats = _savedModelHolder.GetSavedStats(playerType);
-            Debug.LogWarning(" Not Found Save: " + (stats == null));
+            stats = _dataService.PlayerStats.GetStats(playerType);
             if (stats == null)
             {
                 stats = _defaultModelHolder.GetDefaultStats(playerType);
-                Debug.LogWarning("Took default" + stats.Health);
             }
-
             return stats;
         }
 
@@ -42,10 +39,12 @@ namespace CharactersStats
             return stats;
         }
 
-        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, ISavedCharacterModelHolder savedModelHolder, DefaultEnemyModelHolder defaultEnemyModelHolder)
+
+
+        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, IDataService dataService, DefaultEnemyModelHolder defaultEnemyModelHolder)
         {
             _defaultModelHolder = defaultModelHolder;
-            _savedModelHolder = savedModelHolder;
+            _dataService = dataService;
             _defaultEnemyModelHolder = defaultEnemyModelHolder;
         }
     }

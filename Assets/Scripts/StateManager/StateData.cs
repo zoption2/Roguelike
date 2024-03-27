@@ -13,15 +13,18 @@ namespace Gameplay
         EnemyTurn
     }
 
-    public interface IStateData
+    public interface IStateFactory
     {
-        Dictionary<TypeOfState, IState> GetStateSet(IScenario scenarioInstance, ICharacterScenarioContext context);
+        public void Init(IScenario scenarioInstance, ICharacterScenarioContext context);
+        public IState CreateState(TypeOfState type);
     }
-    public class StateData : IStateData
+    public class StateData : IStateFactory
     {
         private IPlayerFactory _playerFactory;
         private IEnemyFactory _enemyFactory;
         private IStatsProvider _statsProvider;
+        private IScenario _scenarioInstance;
+        private ICharacterScenarioContext _context;
 
         [Inject]
         public void Construct(IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider)
@@ -30,21 +33,30 @@ namespace Gameplay
             _playerFactory = playerFactory;
             _statsProvider = statsProvider;
         }
-        // how to change this method so it would work when scenario will have generics
-        public Dictionary<TypeOfState, IState> GetStateSet(IScenario scenarioInstance, ICharacterScenarioContext context)
-        {
 
-            Dictionary<TypeOfState, IState> stateSet = new Dictionary<TypeOfState, IState>();
-            //Debug.Log(scenarioInstance.GetType());
-            switch (scenarioInstance)
+        public void Init(IScenario scenarioInstance, ICharacterScenarioContext context)
+        {
+            _context = context;
+            _scenarioInstance = scenarioInstance;
+        }
+
+
+        public IState CreateState(TypeOfState type)
+        {
+            IState state = null;
+            switch (type)
             {
-                case DefaultScenario:
-                    stateSet.Add(TypeOfState.Init, new InitLevelState(scenarioInstance, context, _statsProvider, _playerFactory, _enemyFactory));
-                    stateSet.Add(TypeOfState.PlayerTurn, new PlayerTurnState(scenarioInstance, context));
-                    stateSet.Add(TypeOfState.EnemyTurn, new EnemyTurnState(scenarioInstance, context));
+                case TypeOfState.Init:
+                    state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _playerFactory, _enemyFactory);
+                    break;
+                case TypeOfState.PlayerTurn:
+                    state = new PlayerTurnState(_scenarioInstance, _context);
+                    break;
+                case TypeOfState.EnemyTurn:
+                    state = new EnemyTurnState(_scenarioInstance, _context);
                     break;
             }
-            return stateSet;
+            return state;
         }
     }
 }

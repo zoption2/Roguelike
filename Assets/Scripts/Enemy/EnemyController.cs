@@ -2,11 +2,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
-using Zenject;
-using CharactersStats;
 using Interactions;
 using System.Collections.Generic;
 using Pool;
+using BehaviourTree;
+using CharactersStats;
+using Zenject;
+using System.Threading.Tasks;
+using Gameplay;
 
 namespace Enemy
 {
@@ -24,29 +27,40 @@ namespace Enemy
         private ModifiableStats _modifiableStats;
         private IEffectProcessor _effector;
         private CharacterPooler _pooler;
-
+        private ICharacterScenarioContext _characterScenarioContext;
+        private ITestingBehaviourTree _testBehaviourTree;
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
         private IInteractionFinalizer _interactionFinalizer;
         public bool IsActive { get; set; }
+        private List<IDisposable> _disposables;
         private IInteraction _interaction;
+        private DiContainer _container;
+        private int _milisecondsDelay = 3000;
 
         [Inject]
         public void Construct(
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
-            IInteractionFinalizer interactionFinalizer)
+            IInteractionFinalizer interactionFinalizer,
+            DiContainer container)
         {
             _interactionProcessor = interactionProcessor;
             _interactionDealer = interactionDealer;
             _effector = effector;
             _interactionFinalizer = interactionFinalizer;
+            _container = container;
         }
 
         public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
         {
+             _testBehaviourTree = _container.Resolve<ITestingBehaviourTree>();
+            _testBehaviourTree.InitTree(this);
+
             _enemyModel = characterModel;
+
+            _enemyModel.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
 
             _modifiableStats = new ModifiableStats(_enemyModel.GetStats());
             _interactionProcessor.Init(_effector);
@@ -124,6 +138,53 @@ namespace Enemy
                     _effector.AddEffects(effects);
                 }
             }
+        public void Launch(Vector2 direction)
+        {
+            float launchPower = _enemyModel.GetStats().LaunchPower;
+            direction.Normalize();
+            Vector2 forceVector = direction * launchPower;
+            _enemyView.AddImpulse(forceVector);
+        }
+
+        public void EndTurn(float velocity)
+        {
+            if (Mathf.Abs(velocity) < 0.2f && velocity != 0)
+            {
+                OnEndTurn?.Invoke();
+                _enemyView.IsMoving = false;
+            }
+        }
+
+        public async void Attack()
+        {
+            Transform target = _testBehaviourTree.GetTarget();
+            Transform enemy = GetTransform();
+            Vector2 direction = enemy.position - target.position;
+            _enemyView.ChangeDirection(direction);
+            await Task.Delay(_milisecondsDelay);
+            Launch(direction * -1);
+        }
+
+        public async void Move()
+        {
+            Debug.Log("Enemy has moved");
+            await Task.Delay(_milisecondsDelay);
+        }
+
+        public void Tick()
+        {
+            _testBehaviourTree.TickTree();
+        }
+
+        public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
+        {
+            _characterScenarioContext = characterScenarioContext;
+            _testBehaviourTree.SetCharacters(_characterScenarioContext);
+        }
+
+        public Transform GetTransform()
+        {
+            return _enemyView.GetTransform();
         }
     }
 }

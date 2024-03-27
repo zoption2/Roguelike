@@ -3,6 +3,8 @@ using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SaveSystem;
+using CharactersStats;
 
 namespace UI
 {
@@ -21,8 +23,8 @@ namespace UI
         public void Init(CharacterType playerType)
         {
             PlayerCharacterType = playerType;
-            _saveSystem = ModelSaveSystem.GetInstance();
-            Model = _saveSystem.Load(PlayerCharacterType);
+            Stats stats = _dataService.PlayerStats.GetStats(playerType);
+            Model = new PlayerModel(stats,playerType);
         }
     }
 }

@@ -9,6 +9,8 @@ using Enemy;
 using SlingShotLogic;
 using UI;
 using Interactions;
+using SaveSystem;
+using BehaviourTree;
 public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
@@ -59,15 +61,18 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IEffectProcessor>().To<EffectProcessor>().AsTransient();
         Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
         Container.Bind<IInteractionFinalizer>().To<InteractionFinalizer>().AsTransient();
+        BindBehaviourTrees();
+
     }
 
     #region BindMethods
     public void BindServices()
     {
         Container.Bind<IGameplayService>().To<GameplayService>().AsSingle();
-        Container.Bind<IStateData>().To<StateData>().AsSingle();
+        Container.Bind<IStateFactory>().To<StateData>().AsSingle();
         Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
         Container.Bind<ICharacterSelector>().To<CharacterSelector>().AsSingle();
+        Container.Bind<IDataService>().To<DataService>().AsSingle(); 
     }
 
     public void BindScenarios()
@@ -103,7 +108,6 @@ public class ContextInstaller : MonoInstaller
     {
         Container.Bind<DefaultPlayerModelHolder>().FromInstance(_defaultPlayerModelHolder).AsSingle();
         Container.Bind<DefaultEnemyModelHolder>().FromInstance(_defaultEnemyModelHolder).AsSingle();
-        Container.Bind<ISavedCharacterModelHolder>().To<SavedCharacterModelHolder>().AsSingle();
         Container.Bind<ICharacterPanelModel>().To<CharacterPanelModel>().AsTransient();
     }
 
@@ -112,6 +116,11 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IPlayerController>().To<PlayerController>().AsTransient();
         Container.Bind<IEnemyController>().To<EnemyController>().AsTransient();
         Container.Bind<ICharacterPanelController>().To<CharacterPanelController>().AsTransient();
+    }
+
+    public void BindBehaviourTrees()
+    {
+        Container.Bind<ITestingBehaviourTree>().To<TestingBehaviourTree>().AsTransient();
     }
     #endregion
 }

@@ -3,6 +3,7 @@ using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SaveSystem;
 
 namespace UI
 {
@@ -21,12 +22,13 @@ namespace UI
         private List<ICharacterPanelController> _unSelectedPanels = new List<ICharacterPanelController>();
         private List<ICharacterPanelController> _selectedPanels= new List<ICharacterPanelController>();
         private ICharacterPanelFactory _characterPanelFactory;
-        private ModelSaveSystem _modelSaveSystem;
+        private IDataService _dataService;
         private int _requiredPlayers;
         public RectTransform RectTrans { get; set; }
-        public CharacterSelector(ICharacterPanelFactory characterPanelFactory)
+        public CharacterSelector(ICharacterPanelFactory characterPanelFactory, IDataService dataService)
         {
             _characterPanelFactory = characterPanelFactory;
+            _dataService = dataService;
         }
 
         public void SelectPanel(ICharacterPanelController controller)
@@ -73,12 +75,14 @@ namespace UI
             {
                 AddPanel(characterType);
             }
-            _unSelectedPanels = _availablePanels;
+            _unSelectedPanels = availablePlayers;
+            
         }
         public void AddPanel(CharacterType characterType)
         {
             ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(characterType, RectTrans);
             _availablePanels.Add(controller);
+            _unSelectedPanels.Add(controller);
         }
     }
 }

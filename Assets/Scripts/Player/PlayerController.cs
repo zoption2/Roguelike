@@ -1,5 +1,6 @@
 using CharactersStats;
 using Interactions;
+using Gameplay;
 using Pool;
 using Prefab;
 using SlingShotLogic;
@@ -9,7 +10,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
-using Zenject.SpaceFighter;
 
 namespace Player
 {
@@ -25,6 +25,7 @@ namespace Player
         public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
+        private ICharacterScenarioContext _characterScenarioContext;
         private CharacterView _playerView;
         private CharacterModel _playerModel;
         private SlingshotPooler _slingShotPooler;
@@ -192,5 +193,30 @@ namespace Player
                 }
             }
         }
+        public void Attack()
+        {
+            Debug.Log("Enemy has attacked");
+        }
+
+        public void Move()
+        {
+            Debug.Log("Enemy has moved");
+        }
+
+        public void Tick()
+        {
+
+        }
+
+        public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
+        {
+            _characterScenarioContext = characterScenarioContext;
+        }
+
+        public Transform GetTransform()
+        {
+            return _playerView.GetTransform();
+        }
+
     }
 }
