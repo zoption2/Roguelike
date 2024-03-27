@@ -19,7 +19,7 @@ namespace Interactions
         public override void UseEffect(ModifiableStats stats)
         {
             Duration--;
-            stats.Damage.Value += 20;
+            stats.Damage.Value *= 2;
         }
     }
 }

@@ -25,8 +25,6 @@ namespace Player
         public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
-        private IInteraction _interaction;
-
         private CharacterView _playerView;
         private CharacterModel _playerModel;
         private SlingshotPooler _slingShotPooler;
@@ -79,6 +77,19 @@ namespace Player
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _SlingShotInitPosition = point;
+
+            //////////////////////|Check effects on start|\\\\\\\\\\\\\\\\\\\\\
+            _effector.ProcessEffectsOnStart(_modifiableStats);
+            //////////////////////|----------------------|\\\\\\\\\\\\\\\\\\\\\
+
+            Debug.LogWarning("Effects before interaction: \n");
+            _effector.PrintEffects(_effector.GetPreInteractionEffects());
+
+            Debug.LogWarning("Effects on Start interaction: \n");
+            _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
+
+            Debug.LogWarning("Effects on End interaction: \n");
+            _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -116,15 +127,19 @@ namespace Player
             Vector2 forceVector = direction * launchPower;
             _playerView.AddImpulse(forceVector);
 
-            _interactionDealer.Init(_modifiableStats);
-            _interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
-
             _slingShot.OnShoot -= Launch;
         }
 
         public IInteraction GetInteraction()
-        { 
-            return _interaction; 
+        {
+            
+            //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
+            _effector.ProcessStatsBeforeInteraction(_modifiableStats);
+            //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
+
+            _interactionDealer.Init(_modifiableStats);
+            IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
+            return interaction; 
         }
 
         public void ApplyInteraction(IInteraction interaction)
@@ -136,7 +151,7 @@ namespace Player
                 {
                     foreach (IEffect effect in effects)
                     {
-                        _effector.AddEffects(effect);
+                        _effector.AddEffects(effects);
                     }
                 }
                 _interactionProcessor.ProcessInteraction(interaction);
@@ -173,10 +188,9 @@ namespace Player
             {
                 foreach (IEffect effect in effects)
                 {
-                    _effector.AddEffects(effect);
+                    _effector.AddEffects(effects);
                 }
             }
-            _effector.ProcessStatsBeforeInteraction(_modifiableStats);
         }
     }
 }

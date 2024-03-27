@@ -8,35 +8,40 @@ namespace Interactions
 {
     public interface IEffectProcessor
     {
-        void AddEffects(IEffect effect);
+        void AddEffects(List<IEffect> effects);
         void ProcessStatsBeforeInteraction(ModifiableStats stats);
         void ProcessEffectsOnStart(ModifiableStats stats);
         void ProcessEffectsOnEnd(ModifiableStats stats);
         List<IEffect> GetPreInteractionEffects();
         List<IEffect> GetOnStartTurnInteractionEffects();
         List<IEffect> GetOnEndTurnInteractionEffects();
+        void PrintEffects(List<IEffect> effects);
     }
     public class EffectProcessor : IEffectProcessor
     {
         List<IEffect> _preInteractionEffects = new();
         List<IEffect> _onStartTurnEffects = new();
         List<IEffect> _onEndTurnEffects = new();
-        public void AddEffects(IEffect effect)
+        public void AddEffects(List<IEffect> effects)
         {
-            if(effect.IsOnInteractionStart)
+            foreach (IEffect effect in effects)
             {
-                ReplaceOrAddEffect(effect, _preInteractionEffects);
-            }
-          
-            if(effect.IsOnTurnStart) 
-            { 
-                ReplaceOrAddEffect(effect, _onStartTurnEffects);
-            }
-            else
-            {
-                ReplaceOrAddEffect(effect, _onEndTurnEffects);
+                if (effect.IsOnInteractionStart)
+                {
+                    ReplaceOrAddEffect(effect, _preInteractionEffects);
+                }
+
+                if (effect.IsOnTurnStart)
+                {
+                    ReplaceOrAddEffect(effect, _onStartTurnEffects);
+                }
+                else
+                {
+                    ReplaceOrAddEffect(effect, _onEndTurnEffects);
+                }
             }
         }
+
 
         private List<IEffect> ReplaceOrAddEffect(IEffect effect, List<IEffect> effectList)
         {
@@ -68,8 +73,6 @@ namespace Interactions
 
         public void ProcessStatsBeforeInteraction(ModifiableStats stats) 
         {
-            string logMessage = "EffectsOnStart: ";
-
             if (_preInteractionEffects.Count > 0)
             {
                 for (int i = 0; i < _preInteractionEffects.Count; i++)
@@ -77,9 +80,6 @@ namespace Interactions
                     if (_preInteractionEffects[i].Duration > 0)
                     {
                         _preInteractionEffects[i].UseEffect(stats);
-
-                        logMessage += _preInteractionEffects[i].ToString() + ", ";
-                        Debug.LogWarning(logMessage);
                     }
                     else
                     {
@@ -91,8 +91,6 @@ namespace Interactions
 
         public void ProcessEffectsOnStart(ModifiableStats stats)
         {
-            string logMessage = "EffectsOnStart: ";
-
             if (_onStartTurnEffects.Count > 0)
             {
                 for (int i = 0; i < _onStartTurnEffects.Count; i++)
@@ -100,9 +98,6 @@ namespace Interactions
                     if (_onStartTurnEffects[i].Duration > 0)
                     {
                         _onStartTurnEffects[i].UseEffect(stats);
-
-                        logMessage += _onStartTurnEffects[i].ToString() + ", ";
-                        Debug.LogWarning(logMessage);
                     }
                     else
                     {
@@ -114,8 +109,6 @@ namespace Interactions
 
         public void ProcessEffectsOnEnd(ModifiableStats stats)
         {
-            string logMessage = "EffectsOnEnd: ";
-
             if (_onEndTurnEffects.Count > 0)
             {
                 for (int i = 0; i < _onEndTurnEffects.Count; i++)
@@ -123,9 +116,6 @@ namespace Interactions
                     if (_onEndTurnEffects[i].Duration > 0)
                     {
                         _onEndTurnEffects[i].UseEffect(stats);
-
-                        logMessage += _onEndTurnEffects[i].ToString() + ", ";
-                        Debug.LogWarning(logMessage);
                     }
                     else
                     {
@@ -137,31 +127,17 @@ namespace Interactions
 
 
         //////////////////////////////////////////////////
-        public void DebugLogPreInteractionEffects()
+        public void PrintEffects(List<IEffect> effects)
         {
-            string logMessage = "PreInteractionEffects: ";
-            foreach (IEffect effect in _preInteractionEffects)
+            foreach (IEffect effect in effects)
             {
-                if (_preInteractionEffects.Count > 0)
-                {
-                    logMessage += effect.ToString() + ", ";
-                    Debug.LogWarning(logMessage);
-                }   
+                string effectName = effect.GetType().Name;
+                float effectDuration = effect.Duration;
+
+                Debug.Log($"{effectName}, Duration: {effectDuration}");
             }
         }
 
-        //public void DebugLogPostInteractionEffects()
-        //{
-        //    string logMessage = "PostInteractionEffects: ";
-        //    foreach (IEffect effect in _postInteractionEffects)
-        //    {
-        //        if (_postInteractionEffects.Count > 0)
-        //        {
-        //            logMessage += effect.ToString() + ", ";
-        //            Debug.LogWarning(logMessage);
-        //        } 
-        //    }
-        //}
     }
 
 }

@@ -37,6 +37,12 @@ namespace Prefab
         Knight_HeavyAttack = 2,
     }
 
+    public enum BuffType
+    {
+        None = 0,
+        MoreDamage = 1,
+    }
+
 
 
     public abstract class PrefabHolder<T> : ScriptableObject where T : Enum

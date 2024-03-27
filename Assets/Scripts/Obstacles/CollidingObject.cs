@@ -1,6 +1,7 @@
 using Interactions;
 using Obstacles;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -10,6 +11,7 @@ public class CollidingObject : MonoBehaviour
     [SerializeField] CharacterView _characterView;
 
     private Rigidbody _rigidbody;
+    private bool _isStoppedInsideTrigger;
     Queue<Vector3> _lastVelocities = new(2);
 
 
@@ -51,9 +53,44 @@ public class CollidingObject : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out IBuff obstacle))
+        
+        if (other.gameObject.TryGetComponent(out IBuff buff))
         {
-            _characterView.ControllerInputs.AddEffects(obstacle.ProcessTrigger());
+            _isStoppedInsideTrigger = true;
+            StartCoroutine(CheckPlayerStopped(buff));
         }
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        
+        if (other.gameObject.TryGetComponent(out IBuff buff))
+        {
+            _isStoppedInsideTrigger = false;
+            StopCoroutine(CheckPlayerStopped(buff));
+        }
+    }
+
+    private IEnumerator CheckPlayerStopped(IBuff buff)
+    {
+        while (_isStoppedInsideTrigger)
+        {
+            if (!_characterView.IsPlayerMoving)
+            {
+                List<IEffect> effects = buff.ProcessTrigger();
+
+                _characterView.ControllerInputs.AddEffects(effects);
+
+                Debug.LogWarning(buff + " effects were added");
+                buff.DisableBuff();
+                _isStoppedInsideTrigger = false;
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+
+
+
 }

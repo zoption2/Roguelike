@@ -11,8 +11,8 @@ namespace Interactions
         {
             _effects = new()
             {
-                new FireEffect(2),
-                new PoisonEffect(4),
+                //new FireEffect(2),
+                //new PoisonEffect(4),
             };
         }
 

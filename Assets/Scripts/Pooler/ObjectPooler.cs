@@ -79,11 +79,18 @@ namespace Pool
         }
         public void Push(TEnum tag,IMyPoolable obj)
         {
-            Debug.Log(_poolDictionary.ContainsKey(tag));
+            //Debug.Log(_poolDictionary.ContainsKey(tag));
             if (_poolDictionary.ContainsKey(tag))
             {
                 obj.gameObject.SetActive(false);
                 _poolDictionary[tag].Enqueue(obj);
+                obj.OnRelease();
+            }
+            else
+            {
+                _poolDictionary.Add(tag, new Queue<IMyPoolable>());
+                _poolDictionary[tag].Enqueue(obj);
+                obj.gameObject.SetActive(false);
                 obj.OnRelease();
             }
         }

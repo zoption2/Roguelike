@@ -32,6 +32,9 @@ public class ContextInstaller : MonoInstaller
 
     [SerializeField]
     private DefaultEnemyModelHolder _defaultEnemyModelHolder;
+
+    [SerializeField]
+    private BuffPrefabHolder _buffPrefabHolder;
     //
     #endregion
     public override void InstallBindings()
@@ -76,6 +79,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<CharacterPooler>().To<CharacterPooler>().AsSingle();
         Container.Bind<SlingshotPooler>().To<SlingshotPooler>().AsSingle();
         Container.Bind<CharacterPanelPooler>().To<CharacterPanelPooler>().AsSingle();
+        Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
     }
 
     public void BindFactories()
@@ -92,6 +96,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<CharacterPrefabHolder>().FromInstance(_characterPrefabHolder).AsSingle();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<CharacterPanelPrefabHolder>().FromInstance(characterPanelPrefabHolder).AsSingle();
+        Container.Bind<BuffPrefabHolder>().FromInstance(_buffPrefabHolder).AsSingle();
     }
 
     public void BindModelHolders()

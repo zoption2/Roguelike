@@ -61,6 +61,12 @@ namespace Enemy
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
+            Debug.LogWarning("Effects on Start interaction: \n");
+            _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
+
+            Debug.LogWarning("Effects on End interaction: \n");
+            _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
+
             if (IsActive)
             {
                 _effector.ProcessEffectsOnStart(_modifiableStats);
@@ -77,7 +83,7 @@ namespace Enemy
 
         public void DoInteractionConclusion()
         {
-            Debug.LogWarning(_modifiableStats.Health.Value);
+            Debug.LogWarning("Hp After Interaction: " + _modifiableStats.Health.Value);
             if (_modifiableStats.Health.Value <= 0)
             {
                 _pooler.Push(_enemyModel.Type, _enemyView);
@@ -103,7 +109,7 @@ namespace Enemy
                 {
                     foreach (IEffect effect in effects)
                     {
-                        _effector.AddEffects(effect);
+                        _effector.AddEffects(effects);
                     }
                 }
                 _interactionProcessor.ProcessInteraction(interaction);
@@ -115,7 +121,7 @@ namespace Enemy
             {
                 foreach (IEffect effect in effects)
                 {
-                    _effector.AddEffects(effect);
+                    _effector.AddEffects(effects);
                 }
             }
         }
