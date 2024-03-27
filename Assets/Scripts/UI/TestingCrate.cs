@@ -8,11 +8,12 @@ using SaveSystem;
 
 public class TestingCrate : MonoBehaviour
 {
+    private IDataService _dataService;
     private const string LAST_ID = "LastID";
     private IStatsProvider _statsProvider;
     private Button _crateButton;
     private ICharacterSelector _characterSelector;
-    [field: SerializeField] public CharacterType PlayerType { get; set; }
+    [field: SerializeField] public CharacterType CharacterType { get; set; }
     void Start()
     {
         _crateButton = GetComponent<Button>();
@@ -30,13 +31,13 @@ public class TestingCrate : MonoBehaviour
 
     private void CreateSavedModel()
     {
-        OriginalStats load = _dataService.PlayerStats.GetStats(PlayerType);
+        OriginStats load = _dataService.PlayerStats.GetStats(CharacterType);
         if (load==null)
         {
-            OriginalStats stats = _statsProvider.GetPlayerStats(PlayerType);
-            CharacterModel savedModel = new CharacterModel(stats, PlayerType);
-            _dataService.PlayerStats.SetStats(PlayerType, stats);
-            _characterSelector.AddPanel(PlayerType);
+            OriginStats stats = _statsProvider.GetPlayerStats(CharacterType);
+            CharacterModel savedModel = new CharacterModel(stats, CharacterType);
+            _dataService.PlayerStats.SetStats(CharacterType, stats);
+            _characterSelector.AddPanel(CharacterType);
             Destroy(gameObject);
         }
     }

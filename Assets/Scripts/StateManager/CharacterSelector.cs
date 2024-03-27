@@ -63,20 +63,22 @@ namespace UI
             DataTransfer.TypeCollection.Remove(controller.GetModelType());
         }
 
-        public void Init(int requiredPlayersNumber,RectTransform rectTransform)
+        public void Init(int requiredPlayersNumber, RectTransform rectTransform)
         {
             DataTransfer.ClearCollections();
             RectTrans = rectTransform;
             _requiredPlayers = requiredPlayersNumber;
-            _modelSaveSystem = ModelSaveSystem.GetInstance();
             List<CharacterType> availablePlayers = new List<CharacterType>();
-            availablePlayers = _modelSaveSystem.GetAvailablePlayersTypes();
-            foreach (CharacterType characterType in availablePlayers)
+            availablePlayers = _dataService.PlayerStats.GetAvailablePlayers();
+            if (availablePlayers != null)
             {
-                AddPanel(characterType);
+                foreach (CharacterType CharacterType in availablePlayers)
+                {
+                    AddPanel(CharacterType);
+                }
+                _unSelectedPanels = _availablePanels;
             }
-            _unSelectedPanels = availablePlayers;
-            
+
         }
         public void AddPanel(CharacterType characterType)
         {

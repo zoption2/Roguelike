@@ -1,5 +1,6 @@
 ﻿using CharactersStats;
 using Enemy;
+using Gameplay;
 using Interactions;
 using Player;
 using Pool;
@@ -55,6 +56,8 @@ public abstract class CharacterFactory<TController>
     {
         TController controller = GetNewController();
 
+        RawMapper mapper = new RawMapper();
+
         _stats = GetStats(type);
         _characterModel = new CharacterModel(_stats, type);
 
@@ -63,7 +66,8 @@ public abstract class CharacterFactory<TController>
 
         controller.Init(_characterModel, characterView, _characterPooler);
 
-        //Debug.Log($"Player {type} was created. He spawned on {point.position}");
+        mapper.Controller = controller;
+        DataTransfer.RawMappers.Add(mapper);
 
         return controller;
     }

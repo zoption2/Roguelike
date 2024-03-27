@@ -30,9 +30,6 @@ public class ContextInstaller : MonoInstaller
     private DefaultPlayerModelHolder _defaultPlayerModelHolder;
 
     [SerializeField]
-    private SavedCharacterModelHolder _savedCharacterModelHolder;
-
-    [SerializeField]
     private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
     [SerializeField]

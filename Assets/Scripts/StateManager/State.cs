@@ -33,14 +33,14 @@ namespace Gameplay
         public void OnEnter()
         {
             _characterController.IsActive = true;
-            _characterController.OnEndTurn += _scenario.OnStateEnd;
+            _characterController.ON_END_TURN += _scenario.OnStateEnd;
             Debug.Log("Entered player turn state");
         }
 
         public void OnExit()
         {
             _characterController.IsActive = false;
-            _characterController.OnEndTurn -= _scenario.OnStateEnd;
+            _characterController.ON_END_TURN -= _scenario.OnStateEnd;
         }
 
         public void SetCharacter(ICharacterController controller)
@@ -64,7 +64,7 @@ namespace Gameplay
         public void OnEnter()
         {
             _characterController.IsActive = true;
-            _characterController.OnEndTurn += _scenario.OnStateEnd;
+            _characterController.ON_END_TURN += _scenario.OnStateEnd;
             Debug.Log("Entered enemy turn state");
             _characterController.Tick();
         }
@@ -72,7 +72,7 @@ namespace Gameplay
         public void OnExit()
         {
             _characterController.IsActive = false;
-            _characterController.OnEndTurn -= _scenario.OnStateEnd;
+            _characterController.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("Exited enemy turn state");
         }
 

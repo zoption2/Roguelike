@@ -10,21 +10,23 @@ namespace UI
 {
     public interface ICharacterPanelModel
     {
-        public CharacterModel Model { get; }
         public CharacterType PlayerCharacterType { get; set; }
         public void Init(CharacterType playerType);
     }
     public class CharacterPanelModel : ICharacterPanelModel
     {
-        public CharacterModel Model { get; private set; }
         public CharacterType PlayerCharacterType { get; set; }
-        private ModelSaveSystem _saveSystem;
+        private IDataService _dataService;
 
+        public CharacterPanelModel(IDataService dataService)
+        {
+
+            _dataService = dataService;
+        }
         public void Init(CharacterType playerType)
         {
             PlayerCharacterType = playerType;
-            Stats stats = _dataService.PlayerStats.GetStats(playerType);
-            Model = new PlayerModel(stats,playerType);
+            OriginStats stats = _dataService.PlayerStats.GetStats(playerType);
         }
     }
 }

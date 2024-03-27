@@ -75,7 +75,7 @@ public class CollidingObject : MonoBehaviour
     {
         while (_isStoppedInsideTrigger)
         {
-            if (!_characterView.IsPlayerMoving)
+            if (!_characterView.IsMoving)
             {
                 List<IEffect> effects = buff.ProcessTrigger();
 

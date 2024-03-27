@@ -1,11 +1,8 @@
 using CharactersStats;
-using JetBrains.Annotations;
 using Player;
 using Prefab;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace SaveSystem
@@ -16,7 +13,7 @@ namespace SaveSystem
         private const string kStatsFormat = "{0}_Stats";
         private const string PLAYER_TYPE_FORMAT = "AvailablePlayers";
        
-        public void SetStats(PlayerType type, Stats stats)
+        public void SetStats(CharacterType type, OriginStats stats)
         {
             string data = JsonUtility.ToJson(stats);
             string key = string.Format(kStatsFormat, type);
@@ -24,34 +21,34 @@ namespace SaveSystem
             SetAvailablePlayers(type);
         }
 
-        public Stats GetStats(PlayerType type)
+        public OriginStats GetStats(CharacterType type)
         {
             string key = string.Format(kStatsFormat, type);
             string data = GPrefs.GetString(key);
-            Stats stats = JsonUtility.FromJson<Stats>(data);
+            OriginStats stats = JsonUtility.FromJson<OriginStats>(data);
             return stats;
         }
 
-        public void SetAvailablePlayers(PlayerType type)
+        public void SetAvailablePlayers(CharacterType type)
         {
 
-            List<PlayerType> list = GetAvailablePlayers();
+            List<CharacterType> list = GetAvailablePlayers();
             if (list == null)
-                list = new List<PlayerType>();
+                list = new List<CharacterType>();
             if(!list.Contains(type))
                 list.Add(type);
-            string data = JsonUtility.ToJson(new JsonListWrapper<PlayerType>(list));
+            string data = JsonUtility.ToJson(new JsonListWrapper<CharacterType>(list));
             GPrefs.SetString(PLAYER_TYPE_FORMAT,data);
         }
 
-        public List<PlayerType> GetAvailablePlayers()
+        public List<CharacterType> GetAvailablePlayers()
         {
             string list = GPrefs.GetString(PLAYER_TYPE_FORMAT);
-            JsonListWrapper<PlayerType> wrapper;
-            wrapper = JsonUtility.FromJson<JsonListWrapper<PlayerType>>(list);
+            JsonListWrapper<CharacterType> wrapper;
+            wrapper = JsonUtility.FromJson<JsonListWrapper<CharacterType>>(list);
             if(wrapper == null)
-                wrapper = new JsonListWrapper<PlayerType>(new List<PlayerType>());
-            List<PlayerType> playerTypes= wrapper.list;
+                wrapper = new JsonListWrapper<CharacterType>(new List<CharacterType>());
+            List<CharacterType> playerTypes= wrapper.list;
             return playerTypes;
         }
     }

@@ -95,7 +95,7 @@ namespace Player
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (IsActive && !_playerView.IsPlayerMoving)
+            if (IsActive && !_playerView.IsMoving)
             {
                 UseSlingshot(eventData);
             }
@@ -164,7 +164,7 @@ namespace Player
             if (Mathf.Abs(velocity) < 0.2f && velocity != 0)
             {
                 ON_END_TURN?.Invoke();
-                _playerView.IsPlayerMoving = false;
+                _playerView.IsMoving = false;
                 _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats);
             }
         }

@@ -22,7 +22,7 @@ public interface ICharacterView
     void Init(IControllerInputs controllerInputs);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
-    bool IsPlayerMoving { get; set; }
+    bool IsMoving { get; set; }
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
@@ -41,7 +41,7 @@ public class CharacterView : MonoBehaviour,
     public event Action<PointerEventData> ON_BEGINDRAG;
 
     [SerializeField] Transform _viewTransform;
-    public bool IsPlayerMoving { get; set; }
+    public bool IsMoving { get; set; }
     private ModifiableStats _stats;
 
     public IControllerInputs ControllerInputs { get; set; } 
@@ -61,12 +61,12 @@ public class CharacterView : MonoBehaviour,
 
     private void FixedUpdate()
     {
-        if (IsPlayerMoving)
+        if (IsMoving)
         {
             _stats.Velocity.Value = _rigidbody.velocity.magnitude;
         }
 
-        if (IsPlayerMoving) ViewRotation();
+        if (IsMoving) ViewRotation();
         //Debug.Log($"View {_model.Type} has {_model.Health} hp");
     }
 
@@ -90,7 +90,7 @@ public class CharacterView : MonoBehaviour,
     {
         _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
         _rigidbody.velocity = _rigidbody.velocity.normalized;
-        IsPlayerMoving = true;
+        IsMoving = true;
     }
 
     public void StartInteraction(IInteractible interactible)
@@ -124,6 +124,11 @@ public class CharacterView : MonoBehaviour,
 
     public void OnRelease()
     {
+    }
+
+    public Transform GetTransform()
+    {
+        return _viewTransform;
     }
 }
 
