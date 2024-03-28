@@ -2,6 +2,12 @@ using System;
 
 namespace CharactersStats
 {
+    public interface IStats
+    {
+        public int Speed { get; set; }
+
+    }
+
     [Serializable]
     public class OriginStats
     {
