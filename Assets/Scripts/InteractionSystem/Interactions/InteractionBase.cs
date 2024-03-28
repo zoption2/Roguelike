@@ -16,7 +16,7 @@ namespace Interactions
             _damage = damage;
         }
 
-        public abstract ModifiableStats Interacte(ModifiableStats stats);
+        public abstract ReactiveStats Interacte(ReactiveStats stats);
         public abstract List<IEffect> GetEffects();
     }
 }

@@ -13,7 +13,7 @@ public static class GPrefs  {
     public static void DeleteAll ()
 	{
         if (File.Exists(dataPath))
-            File.Delete(dataPath);      
+            File.Delete(dataPath);
 	}
 
 	public static void DeleteKey (string key){

@@ -42,7 +42,7 @@ public class CharacterView : MonoBehaviour,
 
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
-    private ModifiableStats _stats;
+    private ReactiveStats _stats;
 
     public IControllerInputs ControllerInputs { get; set; } 
 
@@ -88,15 +88,25 @@ public class CharacterView : MonoBehaviour,
 
     public void AddImpulse(Vector2 forceVector)
     {
-        _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
-        _rigidbody.velocity = _rigidbody.velocity.normalized;
-        IsMoving = true;
+        if(_rigidbody != null)
+        {
+            _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+            _rigidbody.velocity = _rigidbody.velocity.normalized;
+            IsMoving = true;
+        }
     }
 
     public void StartInteraction(IInteractible interactible)
     {
-         IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
-         interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+        var dealerType = ControllerInputs.GetType();
+        var handlerType = interactible.ControllerInputs.GetType();
+
+        if (!dealerType.Equals(handlerType))
+        {
+            IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+            interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+        }
+        
 
     }
 

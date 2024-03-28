@@ -7,40 +7,21 @@ namespace Interactions
 {
     public interface IInteractionFinalizer
     {
-        void Init(IInteractionProcessor processor, IEffectProcessor effectProcessor);
-        ModifiableStats FinalizeInteraction(ModifiableStats modifiableStats);
+        ReactiveStats FinalizeInteraction(ReactiveStats modifiableStats, ReactiveStats interactionResult);
     }
 
     public class InteractionFinalizer : IInteractionFinalizer
     {
-        private IInteractionProcessor _processor;
-        private IEffectProcessor _effectProcessor;
-        private ModifiableStats _interactionResult;
-        private ModifiableStats _stats;
-        public void Init(IInteractionProcessor processor, IEffectProcessor effectProcessor)
+        public ReactiveStats FinalizeInteraction(ReactiveStats modifiableStats, ReactiveStats interactionResult)
         {
-            _processor = processor;
-            _effectProcessor = effectProcessor;
-        }
-
-        public ModifiableStats FinalizeInteraction(ModifiableStats modifiableStats)
-        {
-            _stats = modifiableStats;
-
-            _processor.GetInteractionResult(out _interactionResult, result =>
-            {
-                _interactionResult = result;
-                _processor.SetToDefault();
-            });
-
-            _stats.Speed.Value -= Mathf.Abs(_interactionResult.Speed.Value);
-            _stats.Health.Value -= Mathf.Abs(_interactionResult.Health.Value);
-            _stats.Damage.Value -= Mathf.Abs(_interactionResult.Damage.Value);
-            _stats.LaunchPower.Value -= Mathf.Abs(_interactionResult.LaunchPower.Value);
-            _stats.Velocity.Value -= Mathf.Abs(_interactionResult.Velocity.Value);
+            modifiableStats.Speed.Value -= Mathf.Abs(interactionResult.Speed.Value);
+            modifiableStats.Health.Value -= Mathf.Abs(interactionResult.Health.Value);
+            modifiableStats.Damage.Value -= Mathf.Abs(interactionResult.Damage.Value);
+            modifiableStats.LaunchPower.Value -= Mathf.Abs(interactionResult.LaunchPower.Value);
+            modifiableStats.Velocity.Value -= Mathf.Abs(interactionResult.Velocity.Value);
             
 
-            return _stats;
+            return modifiableStats;
         }
     }
 }

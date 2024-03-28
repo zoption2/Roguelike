@@ -11,7 +11,7 @@ using Zenject;
 
 public interface IControllerInputs
 {
-    ModifiableStats GetCharacterStats();
+    ReactiveStats GetCharacterStats();
     IInteraction GetInteraction();
     void ApplyInteraction(IInteraction interactions);
     void AddEffects(List<IEffect> effects);

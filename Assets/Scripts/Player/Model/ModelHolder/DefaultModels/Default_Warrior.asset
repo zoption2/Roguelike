@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Default_Warrior
   m_EditorClassIdentifier: 
   Type: 1
-  Health: 10
+  Health: 1000
   Damage: 5
   Speed: 5
   LaunchPower: 15

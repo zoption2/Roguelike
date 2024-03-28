@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using UnityEngine;
 public interface IInteractionFactory
 {
-    IInteraction Create(InteractionType type, ModifiableStats stats);
+    IInteraction Create(InteractionType type, ReactiveStats stats);
 }
 
 public class InteractionFactory : IInteractionFactory
 {
-    public IInteraction Create(InteractionType type, ModifiableStats stats)
+    public IInteraction Create(InteractionType type, ReactiveStats stats)
     {
         switch (type)
         {

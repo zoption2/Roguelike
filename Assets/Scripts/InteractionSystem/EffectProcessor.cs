@@ -9,9 +9,9 @@ namespace Interactions
     public interface IEffectProcessor
     {
         void AddEffects(List<IEffect> effects);
-        void ProcessStatsBeforeInteraction(ModifiableStats stats);
-        void ProcessEffectsOnStart(ModifiableStats stats);
-        void ProcessEffectsOnEnd(ModifiableStats stats);
+        void ProcessStatsBeforeInteraction(ReactiveStats stats);
+        void ProcessEffectsOnStart(ReactiveStats stats);
+        void ProcessEffectsOnEnd(ReactiveStats stats);
         List<IEffect> GetPreInteractionEffects();
         List<IEffect> GetOnStartTurnInteractionEffects();
         List<IEffect> GetOnEndTurnInteractionEffects();
@@ -71,7 +71,7 @@ namespace Interactions
             return _onEndTurnEffects;
         }
 
-        public void ProcessStatsBeforeInteraction(ModifiableStats stats) 
+        public void ProcessStatsBeforeInteraction(ReactiveStats stats) 
         {
             if (_preInteractionEffects.Count > 0)
             {
@@ -89,7 +89,7 @@ namespace Interactions
             }
         }
 
-        public void ProcessEffectsOnStart(ModifiableStats stats)
+        public void ProcessEffectsOnStart(ReactiveStats stats)
         {
             if (_onStartTurnEffects.Count > 0)
             {
@@ -107,7 +107,7 @@ namespace Interactions
             }
         }
 
-        public void ProcessEffectsOnEnd(ModifiableStats stats)
+        public void ProcessEffectsOnEnd(ReactiveStats stats)
         {
             if (_onEndTurnEffects.Count > 0)
             {

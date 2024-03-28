@@ -11,11 +11,11 @@ namespace Interactions
         public bool IsPositive { get; set; }
         public bool IsOnInteractionStart { get; set; }
         public bool IsOnTurnStart { get; set; }
-        protected ModifiableStats _stats;
+        protected ReactiveStats _stats;
 
 
 
-        public abstract void UseEffect(ModifiableStats stats);
+        public abstract void UseEffect(ReactiveStats stats);
     }
 }
 

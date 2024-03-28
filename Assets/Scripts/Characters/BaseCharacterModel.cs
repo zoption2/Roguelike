@@ -19,11 +19,11 @@ public abstract class CharacterModelBase : ICharacterModel
 
     public CharacterModelBase(OriginStats originStats)
     {
-        _damage = originStats.Damage.Value;
-        _health = originStats.Health.Value;
-        _speed = originStats.Speed.Value;
-        _launchPower = originStats.LaunchPower.Value;
-        _velocity = originStats.Velocity.Value;
+        _damage = originStats.Damage;
+        _health = originStats.Health;
+        _speed = originStats.Speed;
+        _launchPower = originStats.LaunchPower;
+        _velocity = originStats.Velocity;
         _stats = originStats;
     }
 

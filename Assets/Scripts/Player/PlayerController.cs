@@ -10,6 +10,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using Zenject.SpaceFighter;
 
 namespace Player
 {
@@ -33,7 +34,8 @@ namespace Player
         private List<IDisposable> _disposables;
         private Transform _SlingShotInitPosition;
         private CharacterPooler _pooler;
-        private ModifiableStats _modifiableStats;
+        private ReactiveStats _modifiableStats;
+        private ReactiveStats _interactionResult;
 
         private IEffectProcessor _effector;
         private IInteractionProcessor _interactionProcessor;
@@ -61,15 +63,17 @@ namespace Player
         CharacterPooler characterPooler)
         {
             _playerModel = playerModel;
+            var stats = _playerModel.GetStats();
+            _modifiableStats = stats.ToReactive();
 
-            _modifiableStats = new ModifiableStats(_playerModel.GetStats());
             _interactionProcessor.Init(_effector);
-            _interactionFinalizer.Init(_interactionProcessor, _effector);
 
             _playerView = playerView;
             _pooler = characterPooler;
             _playerView.Init(this);
+
             _modifiableStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
+
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
             _slingShotPooler.Init();
@@ -155,7 +159,7 @@ namespace Player
                         _effector.AddEffects(effects);
                     }
                 }
-                _interactionProcessor.ProcessInteraction(interaction);
+                _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
             }
         }
 
@@ -165,7 +169,22 @@ namespace Player
             {
                 ON_END_TURN?.Invoke();
                 _playerView.IsMoving = false;
-                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats);
+                Debug.LogWarning("Hp Before Interaction: " + _modifiableStats.Health.Value);
+                if (_interactionResult != null)
+                {
+                    
+                    _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
+                }
+                PushIfDead();
+            }
+        }
+
+        public void PushIfDead()
+        {
+            Debug.LogWarning("Hp After Interaction: " + _modifiableStats.Health.Value);
+            if (_modifiableStats.Health.Value <= 0)
+            {
+                _pooler.Push(_playerModel.Type, _playerView);
             }
         }
 
@@ -178,7 +197,7 @@ namespace Player
             _slingShot.OnShoot -= Launch;
         }
 
-        public ModifiableStats GetCharacterStats()
+        public ReactiveStats GetCharacterStats()
         {
             return _modifiableStats;
         }

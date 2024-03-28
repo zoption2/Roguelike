@@ -10,52 +10,52 @@ namespace Interactions
     public interface IInteractionProcessor
     {
         void Init(IEffectProcessor effector);
-        void ProcessInteraction(IInteraction interaction);
-        void GetInteractionResult(out ModifiableStats result, Action<ModifiableStats> callback);
-        void SetToDefault();
+        ReactiveStats ProcessInteraction(IInteraction interaction);
+        //void GetInteractionResult(out ReactiveStats result, Action<ReactiveStats> callback);
+        //void SetToDefault();
     }
 
     public class InteractionProcessor : IInteractionProcessor
     {
-        private ModifiableStats _interationHandlerInteractionResult;
         private IEffectProcessor _effector;
 
         public void Init(IEffectProcessor effector)
         {
             _effector = effector;
-            _interationHandlerInteractionResult = new();
         }
 
         
-        public void ProcessInteraction(IInteraction interaction)
+        public ReactiveStats ProcessInteraction(IInteraction interaction)
         {
-            _interationHandlerInteractionResult = new();
+            var stats = new ReactiveStats();
 
-            _effector.ProcessStatsBeforeInteraction(_interationHandlerInteractionResult);
+            _effector.ProcessStatsBeforeInteraction(stats);
 
-            interaction.Interacte(_interationHandlerInteractionResult);
+            interaction.Interacte(stats);
 
-            _effector.ProcessEffectsOnEnd(_interationHandlerInteractionResult);
+            _effector.ProcessEffectsOnEnd(stats);
 
-            UpdateModifiableStats(_interationHandlerInteractionResult);
+            //UpdateModifiableStats(stats);
             Debug.LogWarning("Interaction was handled!");
+
+            return stats;
         }
 
-        private void UpdateModifiableStats(ModifiableStats stats)
-        {
-            _interationHandlerInteractionResult = stats;
-        }
+        //private void UpdateModifiableStats(ReactiveStats stats)
+        //{
+        //    _interationHandlerInteractionResult = stats;
+        //}
 
-        public void GetInteractionResult(out ModifiableStats result, Action<ModifiableStats> callback)
-        {
-            result = _interationHandlerInteractionResult;
-            callback?.Invoke(_interationHandlerInteractionResult);
-        }
+        //public void GetInteractionResult(out ReactiveStats result, Action<ReactiveStats> callback)
+        //{
+        //    result = _interationHandlerInteractionResult;
+        //    callback?.Invoke(_interationHandlerInteractionResult);
+        //}
 
-        public void SetToDefault()
-        {
-            _interationHandlerInteractionResult = new();
-        }
+        //public void SetToDefault()
+        //{
+        //    _interationHandlerInteractionResult = new();
+        //}
 
     }
 

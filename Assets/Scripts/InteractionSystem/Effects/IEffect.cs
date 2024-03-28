@@ -7,7 +7,7 @@ namespace Interactions
 {
     public interface IEffect
     {
-        void UseEffect(ModifiableStats stats);
+        void UseEffect(ReactiveStats stats);
         int Duration { get; set; }
         bool IsPositive { get; set; }
         bool IsOnInteractionStart { get; set; }

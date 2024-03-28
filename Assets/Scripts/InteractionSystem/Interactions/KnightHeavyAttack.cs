@@ -23,7 +23,7 @@ namespace Interactions
             return _effects;
         }
 
-        public override ModifiableStats Interacte(ModifiableStats stats)
+        public override ReactiveStats Interacte(ReactiveStats stats)
         {
             stats.Health.Value -= _damage * _damageMultiplayer;
             return stats;

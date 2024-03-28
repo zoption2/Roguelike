@@ -7,7 +7,7 @@ namespace Interactions
 {
     public interface IInteraction
     {
-        ModifiableStats Interacte(ModifiableStats stat);
+        ReactiveStats Interacte(ReactiveStats stat);
         List<IEffect> GetEffects();
     }
 }

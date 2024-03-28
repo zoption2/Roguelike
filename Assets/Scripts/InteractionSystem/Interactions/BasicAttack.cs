@@ -11,7 +11,7 @@ namespace Interactions
         {
             _effects = new()
             {
-                //new FireEffect(2),
+                new FireEffect(2),
                 //new PoisonEffect(4),
             };
         }
@@ -21,7 +21,7 @@ namespace Interactions
             return _effects;
         }
 
-        public override ModifiableStats Interacte(ModifiableStats stats)
+        public override ReactiveStats Interacte(ReactiveStats stats)
         {
             stats.Health.Value -= _damage;
             return stats;

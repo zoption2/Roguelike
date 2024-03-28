@@ -16,7 +16,7 @@ namespace Interactions
             IsOnTurnStart = true;
         }
 
-        public override void UseEffect(ModifiableStats stats)
+        public override void UseEffect(ReactiveStats stats)
         {
             Duration--;
             stats.Damage.Value *= 2;
