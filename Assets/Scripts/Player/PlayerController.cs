@@ -27,6 +27,8 @@ namespace Player
         //public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
+        public event OnCharacterDeath On_Character_Death;
+
         private ICharacterScenarioContext _characterScenarioContext;
         private CharacterView _playerView;
         private CharacterModel _playerModel;
@@ -199,6 +201,7 @@ namespace Player
 
             if (_modifiableStats.Health.Value <= 0)
             {
+                On_Character_Death(this);
                 _pooler.Push(_playerModel.Type, _playerView);
             }
         }

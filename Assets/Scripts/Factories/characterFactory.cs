@@ -18,6 +18,7 @@ public interface IControllerInputs
     void AddEffects(List<IEffect> effects);
 }
 
+public delegate void OnCharacterDeath(ICharacterController controller);
 public interface ICharacterController
 {
     public bool IsActive { get; set; }
@@ -29,6 +30,8 @@ public interface ICharacterController
     public bool CheckIfMoving();
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public Transform GetTransform();
+    
+    public event OnCharacterDeath On_Character_Death;
 
 }
 

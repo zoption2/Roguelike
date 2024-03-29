@@ -1,5 +1,7 @@
 using Enemy;
+using Player;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 
@@ -43,8 +45,28 @@ namespace Gameplay
                     break;
                 }
             }
+            if(controller is IPlayerController)
+            {
+                _scenarioContext.Players.Remove((IPlayerController)controller);
+            }
+            else
+            {
+                _scenarioContext.Enemies.Remove((IEnemyController)controller);
+            }
         }
 
+        private void SubscribeToDeathOfCharacters()
+        {
+            foreach(ICharacterController controller in _scenarioContext.Players)
+            {
+                controller.On_Character_Death += EraseCharacter;
+            }
+
+            foreach (ICharacterController controller in _scenarioContext.Enemies)
+            {
+                controller.On_Character_Death += EraseCharacter;
+            }
+        }
         
         public override void Init(IScenarioContext context)
         {
@@ -86,6 +108,7 @@ namespace Gameplay
         {
             if(_turnsOrder.Count == 0)
             {
+                SubscribeToDeathOfCharacters();
                 GetSortedTurns();
             }
             foreach(CookedMapper mapper in _turnsOrder)

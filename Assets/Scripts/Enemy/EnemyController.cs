@@ -23,6 +23,7 @@ namespace Enemy
     public class EnemyController : IEnemyController, IControllerInputs, IDisposable
     {
         //public event OnEndTurn ON_END_TURN;
+        public event OnCharacterDeath On_Character_Death;
 
         private CharacterView _enemyView;
         private CharacterModel _enemyModel;
@@ -180,6 +181,7 @@ namespace Enemy
 
             if (_reactiveStats.Health.Value <= 0)
             {
+                On_Character_Death?.Invoke(this);
                 _pooler.Push(_enemyModel.Type, _enemyView);
             }
         }
