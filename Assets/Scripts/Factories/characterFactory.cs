@@ -20,11 +20,12 @@ public interface IControllerInputs
 public interface ICharacterController
 {
     public bool IsActive { get; set; }
-    public event OnEndTurn ON_END_TURN;
+    //public event OnEndTurn ON_END_TURN;
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
     public void Attack();
     public void Move();
     public void Tick();
+    public bool CheckIfMoving();
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public Transform GetTransform();
 

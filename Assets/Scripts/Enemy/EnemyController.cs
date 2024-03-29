@@ -21,7 +21,7 @@ namespace Enemy
     }
     public class EnemyController : IEnemyController, IControllerInputs, IDisposable
     {
-        public event OnEndTurn ON_END_TURN;
+        //public event OnEndTurn ON_END_TURN;
 
         private CharacterView _enemyView;
         private CharacterModel _enemyModel;
@@ -65,7 +65,7 @@ namespace Enemy
             var stats = _enemyModel.GetStats();
             _reactiveStats = stats.ToReactive();
 
-            _reactiveStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
+            //_reactiveStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
 
             _interactionDealer.Init(_reactiveStats);
             _interactionProcessor.Init(_effector);
@@ -74,6 +74,7 @@ namespace Enemy
             _pooler = characterPooler;
             _enemyView.Init(this);
             _enemyView.ON_CLICK += OnClick;
+            _enemyView.On_Stop_Movement += CheckForEndOfState;
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
@@ -163,27 +164,27 @@ namespace Enemy
             _enemyView.AddImpulse(forceVector);
         }
 
-        public void EndTurn(float velocity)
+        public void CheckForEndOfState()
         {
-            if (Mathf.Abs(velocity) < 0.2f && velocity != 0)
-            {
-                ON_END_TURN?.Invoke();
-                _enemyView.IsMoving = false;
-
-                Debug.LogWarning("Hp Before Interaction: " + _reactiveStats.Health.Value);
-
-                if (_interactionResult != null)
-                {
-                    _reactiveStats = _interactionFinalizer.FinalizeInteraction(_reactiveStats, _interactionResult);
-
-
-                }
-                PushIfDead();
-
-            }
+            _characterScenarioContext.CheckIfAllStopped();
+            EndInteraction();
         }
 
+        public void EndInteraction()
+        {
+            Debug.LogWarning("Hp Before Interaction: " + _reactiveStats.Health.Value);
 
+            if (_interactionResult != null)
+            {
+                _reactiveStats = _interactionFinalizer.FinalizeInteraction(_reactiveStats, _interactionResult);
+            }
+            PushIfDead();
+        }
+
+        public bool CheckIfMoving()
+        {
+            return _enemyView.IsMoving;
+        }
 
         public async void Attack()
         {

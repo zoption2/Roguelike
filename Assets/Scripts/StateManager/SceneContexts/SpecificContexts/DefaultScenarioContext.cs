@@ -26,6 +26,9 @@ namespace Gameplay
         public List<IEnemyController> Enemies { get; set; }
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
+        public void CheckIfAllStopped();
+
+        public event OnEndTurn ON_END_TURN;
     }
     [System.Serializable]
     public class DefaultScenarioContext : MonoBehaviour, ICharacterScenarioContext
@@ -35,12 +38,39 @@ namespace Gameplay
         [field: SerializeField] public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         [field: SerializeField] public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
 
+        public event OnEndTurn ON_END_TURN;
+
         public DefaultScenarioContext()
         {
             Players = new List<IPlayerController>();
             Enemies = new List<IEnemyController>();
             PlayerSpawnPoints = new List<PlayerSpawnPointWithType>();
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
+        }
+
+        public void CheckIfAllStopped()
+        {
+            Debug.Log("Checking...");
+            foreach (IPlayerController player in Players)
+            {
+                if (player.CheckIfMoving())
+                {
+                    Debug.Log("one of the players is moving");
+                    return;
+                }
+            }
+            foreach(IEnemyController enemy in Enemies)
+            {
+                if (enemy.CheckIfMoving())
+                {
+                    Debug.Log("one of the enemies is moving");
+                    return;
+                }
+                    
+            }
+            Debug.Log("All stopped!!!!");
+
+            ON_END_TURN?.Invoke();
         }
     }
 }

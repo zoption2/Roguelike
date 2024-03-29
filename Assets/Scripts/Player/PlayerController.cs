@@ -23,7 +23,7 @@ namespace Player
     public delegate void OnEndTurn();
     public class PlayerController : IPlayerController, IControllerInputs, IDisposable
     {
-        public event OnEndTurn ON_END_TURN;
+        //public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
 
         private ICharacterScenarioContext _characterScenarioContext;
@@ -72,10 +72,11 @@ namespace Player
             _pooler = characterPooler;
             _playerView.Init(this);
 
-            _modifiableStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
+            //_modifiableStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
 
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
+            _playerView.On_Stop_Movement += CheckForEndOfState;
             _slingShotPooler.Init();
         }
 
@@ -171,20 +172,22 @@ namespace Player
             }
         }
 
-        public void EndTurn(float velocity)
+        public void CheckForEndOfState()
         {
-            if (Mathf.Abs(velocity) < 0.2f && velocity != 0)
+            _characterScenarioContext.CheckIfAllStopped();
+            EndInteraction();
+        }
+
+        public void EndInteraction()
+        {
+            Debug.LogWarning("Hp Before Interaction: " + _modifiableStats.Health.Value);
+
+            if (_interactionResult != null)
             {
-                ON_END_TURN?.Invoke();
-                _playerView.IsMoving = false;
-                Debug.LogWarning("Hp Before Interaction: " + _modifiableStats.Health.Value);
-                if (_interactionResult != null)
-                {
-                    
-                    _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
-                }
-                PushIfDead();
+
+                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
             }
+            PushIfDead();
         }
 
         public void PushIfDead()
@@ -235,6 +238,10 @@ namespace Player
 
         }
 
+        public bool CheckIfMoving()
+        {
+            return _playerView.IsMoving;
+        }
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
         {
             _characterScenarioContext = characterScenarioContext;

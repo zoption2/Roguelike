@@ -16,12 +16,14 @@ public interface IInteractible
     IControllerInputs ControllerInputs { get; set; }
 }
 
-
+public delegate void OnStopMovement();
 public interface ICharacterView
 {
     void Init(IControllerInputs controllerInputs);
     public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
+
+    public event OnStopMovement On_Stop_Movement;
     bool IsMoving { get; set; }
 
     event Action<Transform, PointerEventData> ON_CLICK;
@@ -39,6 +41,7 @@ public class CharacterView : MonoBehaviour,
 {
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
+    public event OnStopMovement On_Stop_Movement;
 
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
@@ -61,9 +64,16 @@ public class CharacterView : MonoBehaviour,
 
     private void FixedUpdate()
     {
-        if (IsMoving)
+        if (_rigidbody.velocity.magnitude > 0.2f && !IsMoving)
         {
-            _stats.Velocity.Value = _rigidbody.velocity.magnitude;
+            IsMoving = true;
+            Debug.Log(gameObject.name + " is moving!");
+        }
+        else if (_rigidbody.velocity.magnitude < 0.2f && _rigidbody.velocity.magnitude > 0f && IsMoving)
+        {
+            IsMoving = false;
+            Debug.Log(gameObject.name + " stopped moving!");
+            On_Stop_Movement?.Invoke();
         }
 
         if (IsMoving) ViewRotation();
@@ -92,7 +102,7 @@ public class CharacterView : MonoBehaviour,
         {
             _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
             _rigidbody.velocity = _rigidbody.velocity.normalized;
-            IsMoving = true;
+            //IsMoving = true;
         }
     }
 
