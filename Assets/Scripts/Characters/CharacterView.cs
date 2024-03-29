@@ -106,7 +106,8 @@ public class CharacterView : MonoBehaviour,
             IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
         }
-        
+
+        if (dealerType.Equals(handlerType)) return;
 
     }
 

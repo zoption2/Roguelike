@@ -137,14 +137,22 @@ namespace Player
 
         public IInteraction GetInteraction()
         {
-            
-            //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
-            _effector.ProcessStatsBeforeInteraction(_modifiableStats);
-            //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
+            if(IsActive)
+            {
+                //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
+                _effector.ProcessStatsBeforeInteraction(_modifiableStats);
+                //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
 
-            _interactionDealer.Init(_modifiableStats);
-            IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
-            return interaction; 
+                _interactionDealer.Init(_modifiableStats);
+                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
+                return interaction;
+            } 
+            else
+            {
+                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.None);
+                return interaction;
+            }
+            
         }
 
         public void ApplyInteraction(IInteraction interaction)

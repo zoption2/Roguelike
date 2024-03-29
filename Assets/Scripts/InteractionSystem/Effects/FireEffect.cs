@@ -21,6 +21,7 @@ namespace Interactions
         {
             Duration--;
             stats.Health.Value -= 2;
+            Debug.LogWarning("FIRE!!!!!");
         }
     }
 }

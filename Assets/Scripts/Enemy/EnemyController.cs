@@ -92,14 +92,22 @@ namespace Enemy
 
         public IInteraction GetInteraction()
         {
+            if (IsActive)
+            {
+                //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
+                _effector.ProcessStatsBeforeInteraction(_reactiveStats);
+                //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
 
-            //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
-            _effector.ProcessStatsBeforeInteraction(_reactiveStats);
-            //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
+                _interactionDealer.Init(_reactiveStats);
+                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
+                return interaction;
+            }
+            else
+            {
+                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.None);
+                return interaction;
+            }
 
-            _interactionDealer.Init(_reactiveStats);
-            IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
-            return interaction;
         }
 
         public void PushIfDead()
@@ -134,7 +142,6 @@ namespace Enemy
                     }
                 }
                 _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
-
             }
         }
 
@@ -162,7 +169,9 @@ namespace Enemy
             {
                 ON_END_TURN?.Invoke();
                 _enemyView.IsMoving = false;
+
                 Debug.LogWarning("Hp Before Interaction: " + _reactiveStats.Health.Value);
+
                 if (_interactionResult != null)
                 {
                     _reactiveStats = _interactionFinalizer.FinalizeInteraction(_reactiveStats, _interactionResult);
