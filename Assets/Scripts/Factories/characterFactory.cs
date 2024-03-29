@@ -2,6 +2,7 @@
 using Enemy;
 using Gameplay;
 using Interactions;
+using Obstacles;
 using Player;
 using Pool;
 using Prefab;

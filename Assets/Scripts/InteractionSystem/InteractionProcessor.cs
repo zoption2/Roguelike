@@ -36,7 +36,7 @@ namespace Interactions
             _effector.ProcessEffectsOnEnd(stats);
 
             //UpdateModifiableStats(stats);
-            Debug.LogWarning("Interaction was handled!");
+            //Debug.LogWarning("Interaction was handled!");
 
             return stats;
         }

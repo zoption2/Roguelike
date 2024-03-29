@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using Zenject.SpaceFighter;
+using Obstacles;
 
 namespace Player
 {
@@ -86,15 +87,16 @@ namespace Player
 
             //////////////////////|Check effects on start|\\\\\\\\\\\\\\\\\\\\\
             _effector.ProcessEffectsOnStart(_modifiableStats);
+            Debug.LogWarning("Effects On Start Was Processed:");
             //////////////////////|----------------------|\\\\\\\\\\\\\\\\\\\\\
 
-            Debug.LogWarning("Effects before interaction: \n");
+            Debug.LogWarning("Effects before interaction:");
             _effector.PrintEffects(_effector.GetPreInteractionEffects());
 
-            Debug.LogWarning("Effects on Start interaction: \n");
+            Debug.LogWarning("Effects on Start interaction:");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
 
-            Debug.LogWarning("Effects on End interaction: \n");
+            Debug.LogWarning("Effects on End interaction:");
             _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
         }
 
@@ -192,7 +194,9 @@ namespace Player
 
         public void PushIfDead()
         {
-            Debug.LogWarning("Hp After Interaction: " + _modifiableStats.Health.Value);
+            Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _modifiableStats.Health.Value + "</color>");
+            Debug.LogWarning("----------");
+
             if (_modifiableStats.Health.Value <= 0)
             {
                 _pooler.Push(_playerModel.Type, _playerView);

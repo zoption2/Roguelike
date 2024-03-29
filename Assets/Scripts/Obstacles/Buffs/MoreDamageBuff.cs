@@ -25,7 +25,7 @@ public class MoreDamageObstacle : MonoBehaviour, IBuff, IMyPoolable
     [Inject]
     private BuffPooler _pooler;
 
-    public List<IEffect> ProcessTrigger()
+    public List<IEffect> UseBuff()
     {
         _pooler.Init();
         List<IEffect> effects = new List<IEffect>()

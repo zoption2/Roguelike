@@ -5,7 +5,7 @@ namespace Obstacles
 {
     public interface IBuff
     {
-        public List<IEffect> ProcessTrigger();
+        public List<IEffect> UseBuff();
         void DisableBuff();
     }
 }

@@ -1380,8 +1380,16 @@ PrefabInstance:
       value: MoreDamageBuff
       objectReference: {fileID: 0}
     - target: {fileID: 7848901629094753963, guid: 1d4bf32b19ad67147a94aa8a5ee42519, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4.2545576
+      objectReference: {fileID: 0}
+    - target: {fileID: 7848901629094753963, guid: 1d4bf32b19ad67147a94aa8a5ee42519, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 6.4823995
+      objectReference: {fileID: 0}
+    - target: {fileID: 7848901629094753963, guid: 1d4bf32b19ad67147a94aa8a5ee42519, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.89
+      value: 1.7627
       objectReference: {fileID: 0}
     - target: {fileID: 7848901629094753963, guid: 1d4bf32b19ad67147a94aa8a5ee42519, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1389,7 +1397,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7848901629094753963, guid: 1d4bf32b19ad67147a94aa8a5ee42519, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.51
+      value: -1.7516
       objectReference: {fileID: 0}
     - target: {fileID: 7848901629094753963, guid: 1d4bf32b19ad67147a94aa8a5ee42519, type: 3}
       propertyPath: m_LocalRotation.w

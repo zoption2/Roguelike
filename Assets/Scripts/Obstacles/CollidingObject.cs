@@ -3,6 +3,8 @@ using Obstacles;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using Zenject;
 
@@ -75,13 +77,14 @@ public class CollidingObject : MonoBehaviour
     {
         while (_isStoppedInsideTrigger)
         {
-            if (!_characterView.IsMoving)
+            if (!_characterView.IsMoving)//
             {
-                List<IEffect> effects = buff.ProcessTrigger();
+                List<IEffect> effects = buff.UseBuff();
 
                 _characterView.ControllerInputs.AddEffects(effects);
 
-                Debug.LogWarning(buff + " effects were added");
+                //Debug.LogWarning(buff + " effects were added");
+                Debug.Log("<color=#07C3FF>" + buff + " effects were added" + "</color>");
                 buff.DisableBuff();
                 _isStoppedInsideTrigger = false;
                 yield break;

@@ -11,6 +11,7 @@ using Zenject;
 using System.Threading.Tasks;
 using Gameplay;
 using Prefab;
+using Obstacles;
 
 namespace Enemy
 {
@@ -109,15 +110,6 @@ namespace Enemy
                 return interaction;
             }
 
-        }
-
-        public void PushIfDead()
-        {
-            Debug.LogWarning("Hp After Interaction: " + _reactiveStats.Health.Value);
-            if (_reactiveStats.Health.Value <= 0)
-            {
-                _pooler.Push(_enemyModel.Type, _enemyView);
-            }
         }
 
         public void Dispose()

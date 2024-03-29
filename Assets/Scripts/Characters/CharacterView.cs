@@ -115,12 +115,12 @@ public class CharacterView : MonoBehaviour,
         {
             IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+            Debug.LogWarning("!Interaction!");
         }
 
         if (dealerType.Equals(handlerType)) return;
 
     }
-
     public void OnCreate()
     {
         //Debug.LogWarning($"Hello from {this.name} view");
