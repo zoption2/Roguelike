@@ -85,15 +85,16 @@ namespace Player
 
             //////////////////////|Check effects on start|\\\\\\\\\\\\\\\\\\\\\
             _effector.ProcessEffectsOnStart(_modifiableStats);
+            Debug.LogWarning("Effects On Start Was Processed:");
             //////////////////////|----------------------|\\\\\\\\\\\\\\\\\\\\\
 
-            Debug.LogWarning("Effects before interaction: \n");
+            Debug.LogWarning("Effects before interaction:");
             _effector.PrintEffects(_effector.GetPreInteractionEffects());
 
-            Debug.LogWarning("Effects on Start interaction: \n");
+            Debug.LogWarning("Effects on Start interaction:");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
 
-            Debug.LogWarning("Effects on End interaction: \n");
+            Debug.LogWarning("Effects on End interaction:");
             _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
         }
 
@@ -177,10 +178,12 @@ namespace Player
             {
                 ON_END_TURN?.Invoke();
                 _playerView.IsMoving = false;
-                Debug.LogWarning("Hp Before Interaction: " + _modifiableStats.Health.Value);
+
+                Debug.LogWarning("-----" + _playerModel.Type + "-----");
+                Debug.Log("Hp On Start Turn: " + _modifiableStats.Health.Value);
+
                 if (_interactionResult != null)
                 {
-                    
                     _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
                 }
                 PushIfDead();
@@ -189,7 +192,9 @@ namespace Player
 
         public void PushIfDead()
         {
-            Debug.LogWarning("Hp After Interaction: " + _modifiableStats.Health.Value);
+            Debug.Log("Hp On End Turn: " + _modifiableStats.Health.Value);
+            Debug.LogWarning("----------");
+
             if (_modifiableStats.Health.Value <= 0)
             {
                 _pooler.Push(_playerModel.Type, _playerView);

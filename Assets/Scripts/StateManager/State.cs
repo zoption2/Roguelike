@@ -65,7 +65,7 @@ namespace Gameplay
         {
             _characterController.IsActive = true;
             _characterController.ON_END_TURN += _scenario.OnStateEnd;
-            Debug.Log("Entered enemy turn state");
+            //Debug.Log("Entered enemy turn state");
             _characterController.Tick();
         }
 
@@ -73,7 +73,7 @@ namespace Gameplay
         {
             _characterController.IsActive = false;
             _characterController.ON_END_TURN -= _scenario.OnStateEnd;
-            Debug.Log("Exited enemy turn state");
+            //Debug.Log("Exited enemy turn state");
         }
 
         public void SetCharacter(ICharacterController controller)

@@ -14,14 +14,13 @@ namespace Interactions
             Duration = duration;
             IsOnInteractionStart = false;
             IsPositive = false;
-            IsOnTurnStart = false;
+            IsOnTurnStart = true;
         }
 
         public override void UseEffect(ReactiveStats stats)
         {
             Duration--;
             stats.Health.Value -= 2;
-            Debug.LogWarning("FIRE!!!!!");
         }
     }
 }

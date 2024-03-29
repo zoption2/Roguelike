@@ -110,14 +110,7 @@ namespace Enemy
 
         }
 
-        public void PushIfDead()
-        {
-            Debug.LogWarning("Hp After Interaction: " + _reactiveStats.Health.Value);
-            if (_reactiveStats.Health.Value <= 0)
-            {
-                _pooler.Push(_enemyModel.Type, _enemyView);
-            }
-        }
+        
 
         public void Dispose()
         {
@@ -170,7 +163,8 @@ namespace Enemy
                 ON_END_TURN?.Invoke();
                 _enemyView.IsMoving = false;
 
-                Debug.LogWarning("Hp Before Interaction: " + _reactiveStats.Health.Value);
+                Debug.LogWarning("-----" + _enemyModel.Type + "-----");
+                Debug.Log("Hp On Start Turn: " + _reactiveStats.Health.Value);
 
                 if (_interactionResult != null)
                 {
@@ -180,6 +174,17 @@ namespace Enemy
                 }
                 PushIfDead();
 
+            }
+        }
+
+        public void PushIfDead()
+        {
+            Debug.Log("Hp On End Turn: " + _reactiveStats.Health.Value);
+            Debug.LogWarning("----------");
+
+            if (_reactiveStats.Health.Value <= 0)
+            {
+                _pooler.Push(_enemyModel.Type, _enemyView);
             }
         }
 
