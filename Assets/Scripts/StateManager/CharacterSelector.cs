@@ -33,7 +33,7 @@ namespace UI
 
         public void SelectPanel(ICharacterPanelController controller)
         {
-            if (_selectedPanels.Count + 1 <= _requiredPlayers)
+            if (_selectedPanels.Count < _requiredPlayers)
             {
                 _selectedPanels.Add(controller);
                 _unSelectedPanels.Remove(controller);
@@ -76,7 +76,6 @@ namespace UI
                 {
                     AddPanel(CharacterType);
                 }
-                _unSelectedPanels = _availablePanels;
             }
 
         }
@@ -85,6 +84,8 @@ namespace UI
             ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(characterType, RectTrans);
             _availablePanels.Add(controller);
             _unSelectedPanels.Add(controller);
+            if(HasRequiredNumberOfPlayers())
+                controller.RevertInteract();
         }
     }
 }
