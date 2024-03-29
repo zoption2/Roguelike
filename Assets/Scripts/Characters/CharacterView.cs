@@ -67,12 +67,10 @@ public class CharacterView : MonoBehaviour,
         if (_rigidbody.velocity.magnitude > 0.2f && !IsMoving)
         {
             IsMoving = true;
-            Debug.Log(gameObject.name + " is moving!");
         }
         else if (_rigidbody.velocity.magnitude < 0.2f && _rigidbody.velocity.magnitude > 0f && IsMoving)
         {
             IsMoving = false;
-            Debug.Log(gameObject.name + " stopped moving!");
             On_Stop_Movement?.Invoke();
         }
 

@@ -190,6 +190,7 @@ namespace Player
             {
 
                 _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
+                _interactionResult = null;
             }
             PushIfDead();
         }
