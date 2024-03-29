@@ -173,6 +173,17 @@ namespace Enemy
             PushIfDead();
         }
 
+        public void PushIfDead()
+        {
+            Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _reactiveStats.Health.Value + "</color>");
+            Debug.LogWarning("----------");
+
+            if (_reactiveStats.Health.Value <= 0)
+            {
+                _pooler.Push(_enemyModel.Type, _enemyView);
+            }
+        }
+
         public bool CheckIfMoving()
         {
             return _enemyView.IsMoving;
