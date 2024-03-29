@@ -111,7 +111,6 @@ public class CharacterView : MonoBehaviour,
         if (dealerType.Equals(handlerType)) return;
 
     }
-
     public void OnCreate()
     {
         //Debug.LogWarning($"Hello from {this.name} view");

@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using Zenject.SpaceFighter;
+using Obstacles;
 
 namespace Player
 {
@@ -180,7 +181,7 @@ namespace Player
                 _playerView.IsMoving = false;
 
                 Debug.LogWarning("-----" + _playerModel.Type + "-----");
-                Debug.Log("Hp On Start Turn: " + _modifiableStats.Health.Value);
+                Debug.Log("<color=#339C2E>" + "Hp On Start Turn: " + _modifiableStats.Health.Value + "</color>");
 
                 if (_interactionResult != null)
                 {
@@ -192,7 +193,7 @@ namespace Player
 
         public void PushIfDead()
         {
-            Debug.Log("Hp On End Turn: " + _modifiableStats.Health.Value);
+            Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _modifiableStats.Health.Value + "</color>");
             Debug.LogWarning("----------");
 
             if (_modifiableStats.Health.Value <= 0)

@@ -11,6 +11,7 @@ using Zenject;
 using System.Threading.Tasks;
 using Gameplay;
 using Prefab;
+using Obstacles;
 
 namespace Enemy
 {
@@ -110,8 +111,6 @@ namespace Enemy
 
         }
 
-        
-
         public void Dispose()
         {
             _enemyView.ON_CLICK -= OnClick;
@@ -164,13 +163,11 @@ namespace Enemy
                 _enemyView.IsMoving = false;
 
                 Debug.LogWarning("-----" + _enemyModel.Type + "-----");
-                Debug.Log("Hp On Start Turn: " + _reactiveStats.Health.Value);
+                Debug.Log("<color=#339C2E>" + "Hp On Start Turn: " + _reactiveStats.Health.Value + "</color>");
 
                 if (_interactionResult != null)
                 {
                     _reactiveStats = _interactionFinalizer.FinalizeInteraction(_reactiveStats, _interactionResult);
-
-
                 }
                 PushIfDead();
 
@@ -179,7 +176,7 @@ namespace Enemy
 
         public void PushIfDead()
         {
-            Debug.Log("Hp On End Turn: " + _reactiveStats.Health.Value);
+            Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _reactiveStats.Health.Value + "</color>");
             Debug.LogWarning("----------");
 
             if (_reactiveStats.Health.Value <= 0)
