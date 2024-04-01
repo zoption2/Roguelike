@@ -217,5 +217,9 @@ namespace Enemy
             return _enemyView.GetTransform();
         }
 
+        public bool GetActiveStatus()
+        {
+            return IsActive;
+        }
     }
 }

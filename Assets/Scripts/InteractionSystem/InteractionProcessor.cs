@@ -11,8 +11,6 @@ namespace Interactions
     {
         void Init(IEffectProcessor effector);
         ReactiveStats ProcessInteraction(IInteraction interaction);
-        //void GetInteractionResult(out ReactiveStats result, Action<ReactiveStats> callback);
-        //void SetToDefault();
     }
 
     public class InteractionProcessor : IInteractionProcessor
@@ -35,28 +33,8 @@ namespace Interactions
 
             _effector.ProcessEffectsOnEnd(stats);
 
-            //UpdateModifiableStats(stats);
-            //Debug.LogWarning("Interaction was handled!");
-
             return stats;
         }
-
-        //private void UpdateModifiableStats(ReactiveStats stats)
-        //{
-        //    _interationHandlerInteractionResult = stats;
-        //}
-
-        //public void GetInteractionResult(out ReactiveStats result, Action<ReactiveStats> callback)
-        //{
-        //    result = _interationHandlerInteractionResult;
-        //    callback?.Invoke(_interationHandlerInteractionResult);
-        //}
-
-        //public void SetToDefault()
-        //{
-        //    _interationHandlerInteractionResult = new();
-        //}
-
     }
 
 }

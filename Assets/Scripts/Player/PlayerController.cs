@@ -184,7 +184,7 @@ namespace Player
 
         public void EndInteraction()
         {
-            Debug.LogWarning("Hp Before Interaction: " + _modifiableStats.Health.Value);
+            Debug.Log("<color=#189C0C>" + "Hp On Start Turn: " + _modifiableStats.Health.Value + "</color>");
 
             if (_interactionResult != null)
             {
@@ -204,7 +204,6 @@ namespace Player
             {
                 On_Character_Death(this);
                 _pooler.Push(_playerModel.Type, _playerView);
-                //
             }
         }
 
@@ -261,5 +260,9 @@ namespace Player
             return _playerView.GetTransform();
         }
 
+        public bool GetActiveStatus()
+        {
+            return IsActive;
+        }
     }
 }
