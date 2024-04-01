@@ -36,8 +36,16 @@ namespace BehaviourTree
         protected override void UpdateBlackboard()
         {
             FindTarget();
-            _blackboard.SetData(_attackKey, true);
-            _blackboard.SetData(_moveKey, true);
+            if(GetTarget() != null)
+            {
+                _blackboard.SetData(_attackKey, true);
+                _blackboard.SetData(_moveKey, true);
+            }
+            else
+            {
+                _blackboard.SetData(_attackKey, false);
+                _blackboard.SetData(_moveKey, false);
+            }
         }
 
         protected void FindTargetIfNeeded()
@@ -68,6 +76,10 @@ namespace BehaviourTree
                 }
                 Transform transform = _characterScenarioContext.Players[minIndex].GetTransform();
                 _blackboard.SetData(_targetKey, transform);
+            }
+            else
+            {
+                _blackboard.SetData(_targetKey, null);
             }
         }
     }

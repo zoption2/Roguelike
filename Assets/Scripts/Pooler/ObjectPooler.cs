@@ -18,14 +18,14 @@ namespace Pool
        void OnRelease();
     }
 
-    public interface IPool<TEnum> //where TEnum : Enum 
+    public interface IPool<TEnum>
     {
         public void Init();
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         public void Push(TEnum tag, IMyPoolable obj);
     }
 
-    public abstract class ObjectPooler<TEnum> : IPool<TEnum> //where TEnum : Enum
+    public abstract class ObjectPooler<TEnum> : IPool<TEnum>
     {
         protected Dictionary<TEnum, Queue<IMyPoolable>> _poolDictionary;
 
@@ -79,7 +79,6 @@ namespace Pool
         }
         public void Push(TEnum tag,IMyPoolable obj)
         {
-            //Debug.Log(_poolDictionary.ContainsKey(tag));
             if (_poolDictionary.ContainsKey(tag))
             {
                 obj.gameObject.SetActive(false);

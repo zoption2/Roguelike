@@ -25,6 +25,7 @@ namespace BehaviourTree
                     case NodeState.Failure:
                         continue;
                     case NodeState.Success:
+                        _state = NodeState.Success;
                         return _state;
                     case NodeState.Running:
                         _state = NodeState.Running;

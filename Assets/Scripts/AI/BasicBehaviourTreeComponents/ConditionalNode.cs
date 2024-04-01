@@ -10,7 +10,7 @@ namespace BehaviourTree
         protected abstract string _key { get; }
         public override NodeState Evaluate()
         {
-            bool value = (bool)_blackboard.GetData(_key);
+            bool value = (bool) _blackboard.GetData(_key);
             if (value)
             {
                 _state = NodeState.Success;

@@ -146,7 +146,6 @@ namespace Gameplay
 
         public void OnExit()
         {
-            //Debug.Log("Exited init state");
         }
 
         public void SetCharacter(ICharacterController controller)

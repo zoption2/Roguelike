@@ -75,7 +75,6 @@ public class CharacterView : MonoBehaviour,
         }
 
         if (IsMoving) ViewRotation();
-        //Debug.Log($"View {_model.Type} has {_model.Health} hp");
     }
 
     private void ViewRotation()
@@ -100,7 +99,6 @@ public class CharacterView : MonoBehaviour,
         {
             _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
             _rigidbody.velocity = _rigidbody.velocity.normalized;
-            //IsMoving = true;
         }
     }
 
@@ -121,7 +119,6 @@ public class CharacterView : MonoBehaviour,
     }
     public void OnCreate()
     {
-        //Debug.LogWarning($"Hello from {this.name} view");
     }
 
     public void OnPointerDown(PointerEventData eventData)
