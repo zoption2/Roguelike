@@ -203,6 +203,7 @@ namespace Player
             {
                 On_Character_Death(this);
                 _pooler.Push(_playerModel.Type, _playerView);
+                //
             }
         }
 
