@@ -50,12 +50,10 @@ namespace Gameplay
 
         public void CheckIfAllStopped()
         {
-            Debug.Log("Checking...");
             foreach (IPlayerController player in Players)
             {
                 if (player.CheckIfMoving())
                 {
-                    Debug.Log("one of the players is moving");
                     return;
                 }
             }
@@ -63,13 +61,10 @@ namespace Gameplay
             {
                 if (enemy.CheckIfMoving())
                 {
-                    Debug.Log("one of the enemies is moving");
                     return;
                 }
                     
             }
-            Debug.Log("All stopped!!!!");
-
             ON_END_TURN?.Invoke();
         }
     }

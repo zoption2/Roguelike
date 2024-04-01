@@ -2,6 +2,7 @@ using CharactersStats;
 using Enemy;
 using Player;
 using Prefab;
+using System.Linq;
 using UnityEngine;
 
 namespace Gameplay
@@ -35,6 +36,8 @@ namespace Gameplay
             _characterController.IsActive = true;
             _characters.ON_END_TURN += _scenario.OnStateEnd;
             Debug.Log("Entered player turn state");
+            if (!_characters.Players.Contains(_characterController))
+                _scenario.OnStateEnd();
         }
 
         public void OnExit()
@@ -67,6 +70,8 @@ namespace Gameplay
             _characters.ON_END_TURN += _scenario.OnStateEnd;
             Debug.Log("Entered enemy turn state");
             _characterController.Tick();
+            if (!_characters.Enemies.Contains(_characterController))
+                _scenario.OnStateEnd();
         }
 
         public void OnExit()
@@ -141,7 +146,6 @@ namespace Gameplay
 
         public void OnExit()
         {
-            //Debug.Log("Exited init state");
         }
 
         public void SetCharacter(ICharacterController controller)

@@ -10,7 +10,6 @@ namespace UI
     public interface ICharacterPanelFactory
     {
         ICharacterPanelController CreateCharacterPanel(CharacterType panelType, RectTransform transform);
-        // you should also add a reference to the grid in which the panel should be added
     }
     public class CharacterPanelFactory : ICharacterPanelFactory
     {

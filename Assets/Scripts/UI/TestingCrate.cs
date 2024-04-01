@@ -40,6 +40,5 @@ public class TestingCrate : MonoBehaviour
             _characterSelector.AddPanel(CharacterType);
             Destroy(gameObject);
         }
-        //GPrefs.DeleteAll();
     }
 }

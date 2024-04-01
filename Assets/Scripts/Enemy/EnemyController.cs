@@ -67,8 +67,6 @@ namespace Enemy
             var stats = _enemyModel.GetStats();
             _reactiveStats = stats.ToReactive();
 
-            //_reactiveStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
-
             _interactionDealer.Init(_reactiveStats);
             _interactionProcessor.Init(_effector);
 
@@ -87,10 +85,6 @@ namespace Enemy
             Debug.LogWarning("Effects on End interaction: \n");
             _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
 
-            //if (IsActive)
-            //{
-            //    _effector.ProcessEffectsOnStart(_reactiveStats);
-            //}
         }
 
         public IInteraction GetInteraction()
@@ -204,7 +198,6 @@ namespace Enemy
 
         public async void Move()
         {
-            Debug.Log("Enemy has moved");
             await Task.Delay(_milisecondsDelay);
         }
 

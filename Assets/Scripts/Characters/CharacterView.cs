@@ -67,17 +67,14 @@ public class CharacterView : MonoBehaviour,
         if (_rigidbody.velocity.magnitude > 0.2f && !IsMoving)
         {
             IsMoving = true;
-            Debug.Log(gameObject.name + " is moving!");
         }
         else if (_rigidbody.velocity.magnitude < 0.2f && _rigidbody.velocity.magnitude > 0f && IsMoving)
         {
             IsMoving = false;
-            Debug.Log(gameObject.name + " stopped moving!");
             On_Stop_Movement?.Invoke();
         }
 
         if (IsMoving) ViewRotation();
-        //Debug.Log($"View {_model.Type} has {_model.Health} hp");
     }
 
     private void ViewRotation()
@@ -102,7 +99,6 @@ public class CharacterView : MonoBehaviour,
         {
             _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
             _rigidbody.velocity = _rigidbody.velocity.normalized;
-            //IsMoving = true;
         }
     }
 
@@ -123,7 +119,6 @@ public class CharacterView : MonoBehaviour,
     }
     public void OnCreate()
     {
-        //Debug.LogWarning($"Hello from {this.name} view");
     }
 
     public void OnPointerDown(PointerEventData eventData)

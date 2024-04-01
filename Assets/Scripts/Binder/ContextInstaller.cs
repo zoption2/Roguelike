@@ -52,12 +52,8 @@ public class ContextInstaller : MonoInstaller
 
         BindControllers();
 
-        Container.Bind<IInteractionDealer>().To<InteractionDealer>().AsTransient();
-        Container.Bind<IInteractionFactory>().To<InteractionFactory>().AsSingle();
+        BindInteractions();
 
-        Container.Bind<IEffectProcessor>().To<EffectProcessor>().AsTransient();
-        Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
-        Container.Bind<IInteractionFinalizer>().To<InteractionFinalizer>().AsTransient();
         BindBehaviourTrees();
 
     }
@@ -70,6 +66,16 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
         Container.Bind<ICharacterSelector>().To<CharacterSelector>().AsSingle();
         Container.Bind<IDataService>().To<DataService>().AsSingle(); 
+    }
+
+    public void BindInteractions()
+    {
+        Container.Bind<IInteractionDealer>().To<InteractionDealer>().AsTransient();
+        Container.Bind<IInteractionFactory>().To<InteractionFactory>().AsSingle();
+
+        Container.Bind<IEffectProcessor>().To<EffectProcessor>().AsTransient();
+        Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
+        Container.Bind<IInteractionFinalizer>().To<InteractionFinalizer>().AsTransient();
     }
 
     public void BindScenarios()
