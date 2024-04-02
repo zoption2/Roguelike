@@ -6,15 +6,10 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    public class RawMapper : IComparable<RawMapper>
+    public class RawMapper
     {
         public int Speed;
         public ICharacterController Controller;
-
-        public int CompareTo(RawMapper other)
-        {
-            return this.Speed.CompareTo(other.Speed);
-        }
     }
     public class DataTransfer
     {

@@ -1,6 +1,7 @@
 using Enemy;
 using Player;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -80,10 +81,10 @@ namespace Gameplay
 
         private void GetSortedTurns()
         {
-            DataTransfer.RawMappers.Sort();
-            DataTransfer.RawMappers.Reverse();
+            DataTransfer.RawMappers = DataTransfer.RawMappers.OrderByDescending(x => x.Speed).ToList();
             foreach (RawMapper mapper in DataTransfer.RawMappers)
             {
+                Debug.Log("Speed:" + mapper.Speed);
                 CookedMapper cookedMapper;
                 cookedMapper = ConvertToCookedMapper(mapper.Controller);
                 _turnsOrder.Add(cookedMapper);

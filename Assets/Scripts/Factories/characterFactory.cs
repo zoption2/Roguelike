@@ -64,6 +64,7 @@ public abstract class CharacterFactory<TController>
 
         _stats = GetStats(type);
         _characterModel = new CharacterModel(_stats, type);
+        mapper.Speed = _stats.Speed;
 
         _poolable = _characterPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();

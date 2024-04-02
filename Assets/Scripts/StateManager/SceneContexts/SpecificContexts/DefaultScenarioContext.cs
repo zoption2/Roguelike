@@ -3,6 +3,7 @@ using Player;
 using Prefab;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Gameplay
@@ -42,6 +43,7 @@ namespace Gameplay
 
         public DefaultScenarioContext()
         {
+            
             Players = new List<IPlayerController>();
             Enemies = new List<IEnemyController>();
             PlayerSpawnPoints = new List<PlayerSpawnPointWithType>();
