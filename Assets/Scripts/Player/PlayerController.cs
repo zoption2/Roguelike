@@ -184,7 +184,7 @@ namespace Player
 
         public void EndInteraction()
         {
-            Debug.LogWarning("Hp Before Interaction: " + _modifiableStats.Health.Value);
+            Debug.Log("<color=#189C0C>" + "Hp On Start Turn: " + _modifiableStats.Health.Value + "</color>");
 
             if (_interactionResult != null)
             {
@@ -260,5 +260,9 @@ namespace Player
             return _playerView.GetTransform();
         }
 
+        public bool GetActiveStatus()
+        {
+            return IsActive;
+        }
     }
 }

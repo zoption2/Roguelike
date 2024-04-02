@@ -16,6 +16,7 @@ public interface IControllerInputs
     IInteraction GetInteraction();
     void ApplyInteraction(IInteraction interactions);
     void AddEffects(List<IEffect> effects);
+    bool GetActiveStatus();//!!//
 }
 
 public delegate void OnCharacterDeath(ICharacterController controller);

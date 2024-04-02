@@ -77,17 +77,21 @@ public class CollidingObject : MonoBehaviour
     {
         while (_isStoppedInsideTrigger)
         {
-            if (!_characterView.IsMoving)//
+            if (!_characterView.IsMoving)
             {
-                List<IEffect> effects = buff.UseBuff();
+                bool activeStatus = _characterView.ControllerInputs.GetActiveStatus();
+                if (activeStatus)
+                {
+                    List<IEffect> effects = buff.UseBuff();
 
-                _characterView.ControllerInputs.AddEffects(effects);
+                    _characterView.ControllerInputs.AddEffects(effects);
 
-                //Debug.LogWarning(buff + " effects were added");
-                Debug.Log("<color=#07C3FF>" + buff + " effects were added" + "</color>");
-                buff.DisableBuff();
-                _isStoppedInsideTrigger = false;
-                yield break;
+                    //Debug.LogWarning(buff + " effects were added");
+                    Debug.Log("<color=#07C3FF>" + buff + " effects were added" + "</color>");
+                    buff.DisableBuff();
+                    _isStoppedInsideTrigger = false;
+                    yield break;
+                }
             }
             yield return null;
         }

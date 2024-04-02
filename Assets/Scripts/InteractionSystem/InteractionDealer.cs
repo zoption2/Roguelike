@@ -16,7 +16,6 @@ namespace Interactions
 
     public class InteractionDealer : IInteractionDealer
     {
-        private IInteraction _interaction;
         private ReactiveStats _damageDealerStatsCopy;
 
         [Inject]
