@@ -14,12 +14,17 @@ namespace Interactions
     {
         public ReactiveStats FinalizeInteraction(ReactiveStats modifiableStats, ReactiveStats interactionResult)
         {
+            Debug.Log("Reactive stats before finalizer: " + modifiableStats.Health.Value);
+
             modifiableStats.Speed.Value -= Mathf.Abs(interactionResult.Speed.Value);
             modifiableStats.Health.Value -= Mathf.Abs(interactionResult.Health.Value);
             modifiableStats.Damage.Value -= Mathf.Abs(interactionResult.Damage.Value);
             modifiableStats.LaunchPower.Value -= Mathf.Abs(interactionResult.LaunchPower.Value);
             modifiableStats.Velocity.Value -= Mathf.Abs(interactionResult.Velocity.Value);
+
+
             
+            Debug.Log("Reactive stats after finalizer: " + modifiableStats.Health.Value);
 
             return modifiableStats;
         }

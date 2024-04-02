@@ -3,6 +3,7 @@ using Enemy;
 using Player;
 using Prefab;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 namespace Gameplay
@@ -34,8 +35,12 @@ namespace Gameplay
         public void OnEnter()
         {
             _characterController.IsActive = true;
+
+            _characterController.UseEffectsOnStart();
+            _characterController.AnalizeCondition();
+
             _characters.ON_END_TURN += _scenario.OnStateEnd;
-            Debug.Log("Entered player turn state");
+            //Debug.Log("Entered player turn state");
             if (!_characters.Players.Contains(_characterController))
                 _scenario.OnStateEnd();
         }
@@ -66,9 +71,16 @@ namespace Gameplay
         }
         public void OnEnter()
         {
+            Debug.Log($"-----------------------------|{_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
+
+
+            _characterController.UseEffectsOnStart();
+            _characterController.AnalizeCondition();
+
+
             _characters.ON_END_TURN += _scenario.OnStateEnd;
-            Debug.Log("Entered enemy turn state");
+            //Debug.Log("Entered enemy turn state");
             _characterController.Tick();
             if (!_characters.Enemies.Contains(_characterController))
                 _scenario.OnStateEnd();
@@ -76,9 +88,13 @@ namespace Gameplay
 
         public void OnExit()
         {
+            _characterController.UseEffectsOnEnd();
+            _characterController.AnalizeCondition();
+
             _characterController.IsActive = false;
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
-            Debug.Log("Exited enemy turn state");
+            //Debug.Log("Exited enemy turn state");
+            Debug.Log("----------------------------|EXIT|--------------------------------");
         }
 
         public void SetCharacter(ICharacterController controller)

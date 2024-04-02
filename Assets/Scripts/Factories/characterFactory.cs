@@ -16,7 +16,7 @@ public interface IControllerInputs
     IInteraction GetInteraction();
     void ApplyInteraction(IInteraction interactions);
     void AddEffects(List<IEffect> effects);
-    bool GetActiveStatus();//!!//
+    bool GetActiveStatus();
 }
 
 public delegate void OnCharacterDeath(ICharacterController controller);
@@ -24,6 +24,13 @@ public interface ICharacterController
 {
     public bool IsActive { get; set; }
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
+    public void UseEffectsOnStart();
+    public void AnalizeCondition();
+    void SwitchState(TypeOfConditionState state);
+    void UseEffectsOnEnd();
+
+    CharacterType GetCharacterType();
+    void PushIfDead();//
     public void Attack();
     public void Move();
     public void Tick();

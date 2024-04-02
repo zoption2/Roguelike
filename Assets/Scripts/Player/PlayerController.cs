@@ -40,6 +40,10 @@ namespace Player
         private ReactiveStats _modifiableStats;
         private ReactiveStats _interactionResult;
 
+        private IAnalyzer _analyzer;
+        private IConditionState _conditionState;
+        private IStateFactory _stateFactory;
+
         private IEffectProcessor _effector;
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
@@ -51,13 +55,15 @@ namespace Player
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
-            IInteractionFinalizer interactionFinalizer)
+            IInteractionFinalizer interactionFinalizer,
+            IStateFactory stateFactory)
         {
             _slingShotPooler = slingShotPooler;
             _interactionProcessor = interactionProcessor;
             _interactionDealer = interactionDealer;
             _effector = effector;
-            _interactionFinalizer = interactionFinalizer;   
+            _interactionFinalizer = interactionFinalizer; 
+            _stateFactory = stateFactory;   
         }
 
         public void Init(
@@ -68,6 +74,9 @@ namespace Player
             _playerModel = playerModel;
             var stats = _playerModel.GetStats();
             _modifiableStats = stats.ToReactive();
+
+            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.DefaultState, this);
+            _analyzer = new Analyzer(this);
 
             _interactionProcessor.Init(_effector);
 
@@ -86,11 +95,6 @@ namespace Player
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _SlingShotInitPosition = point;
-
-            //////////////////////|Check effects on start|\\\\\\\\\\\\\\\\\\\\\
-            _effector.ProcessEffectsOnStart(_modifiableStats);
-            Debug.LogWarning("Effects On Start Was Processed:");
-            //////////////////////|----------------------|\\\\\\\\\\\\\\\\\\\\\
 
             Debug.LogWarning("Effects before interaction:");
             _effector.PrintEffects(_effector.GetPreInteractionEffects());
@@ -184,7 +188,7 @@ namespace Player
 
         public void EndInteraction()
         {
-            Debug.Log("<color=#189C0C>" + "Hp On Start Turn: " + _modifiableStats.Health.Value + "</color>");
+            //Debug.Log("<color=#189C0C>" + "Hp On Start Turn: " + _modifiableStats.Health.Value + "</color>");
 
             if (_interactionResult != null)
             {
@@ -197,8 +201,7 @@ namespace Player
 
         public void PushIfDead()
         {
-            Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _modifiableStats.Health.Value + "</color>");
-            Debug.LogWarning("----------");
+            //Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _modifiableStats.Health.Value + "</color>");
 
             if (_modifiableStats.Health.Value <= 0)
             {
@@ -263,6 +266,41 @@ namespace Player
         public bool GetActiveStatus()
         {
             return IsActive;
+        }
+
+        public void UseEffectsOnStart()
+        {
+            _effector.ProcessEffectsOnStart(_modifiableStats);
+            Debug.LogWarning("Effects On Start Was Processed!");
+        }
+
+        public void UseEffectsOnEnd()
+        {
+            _effector.ProcessEffectsOnEnd(_modifiableStats);
+            Debug.LogWarning("Effects On End Was Processed!");
+        }
+
+        public void AnalizeCondition()
+        {
+            Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
+            _analyzer.Analyze(_modifiableStats);
+        }
+
+        public void SwitchState(TypeOfConditionState state)
+        {
+            IConditionState newState = _stateFactory.CreateConditionState(state, this);
+
+            if (newState != _conditionState)
+            {
+                _conditionState?.OnExit();
+                _conditionState = newState;
+                _conditionState.OnEnter();
+            }
+        }
+
+        public CharacterType GetCharacterType()
+        {
+            return _playerModel.Type;
         }
     }
 }

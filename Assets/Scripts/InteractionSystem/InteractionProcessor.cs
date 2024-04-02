@@ -31,7 +31,7 @@ namespace Interactions
 
             interaction.Interacte(stats);
 
-            _effector.ProcessEffectsOnEnd(stats);
+            //_effector.ProcessEffectsOnEnd(stats);
 
             return stats;
         }

@@ -10,13 +10,21 @@ namespace Gameplay
     {
         Init,
         PlayerTurn,
-        EnemyTurn
+        EnemyTurn,
+    }
+
+    public enum TypeOfConditionState
+    {
+        AnalyzerState,
+        DefaultState,
+        DeadState
     }
 
     public interface IStateFactory
     {
         public void Init(IScenario scenarioInstance, ICharacterScenarioContext context);
         public IState CreateState(TypeOfState type);
+        public IConditionState CreateConditionState(TypeOfConditionState type, ICharacterController controller);
     }
     public class StateData : IStateFactory
     {
@@ -55,6 +63,22 @@ namespace Gameplay
                 case TypeOfState.EnemyTurn:
                     state = new EnemyTurnState(_scenarioInstance, _context);
                     break;
+            }
+            return state;
+        }
+
+        public IConditionState CreateConditionState(TypeOfConditionState type, ICharacterController controller)
+        {
+            IConditionState state = null;
+            switch (type)
+            {
+                case TypeOfConditionState.DefaultState:
+                    state = new DefaultState(controller);
+                    break;
+                case TypeOfConditionState.DeadState:
+                    state = new DeadState(controller);
+                    break;
+
             }
             return state;
         }

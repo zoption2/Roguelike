@@ -36,6 +36,10 @@ namespace Enemy
         private IInteractionDealer _interactionDealer;
         private IInteractionFinalizer _interactionFinalizer;
         private ReactiveStats _interactionResult;
+
+        private IAnalyzer _analyzer;
+        private IConditionState _conditionState;
+        private IStateFactory _stateFactory;
         public bool IsActive { get; set; }
         private List<IDisposable> _disposables;
         private IInteraction _interaction;
@@ -48,12 +52,14 @@ namespace Enemy
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
             IInteractionFinalizer interactionFinalizer,
+            IStateFactory stateFactory,
             DiContainer container)
         {
             _interactionProcessor = interactionProcessor;
             _interactionDealer = interactionDealer;
             _effector = effector;
             _interactionFinalizer = interactionFinalizer;
+            _stateFactory = stateFactory;
             _container = container;
         }
 
@@ -67,6 +73,9 @@ namespace Enemy
             var stats = _enemyModel.GetStats();
             _reactiveStats = stats.ToReactive();
 
+            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.DefaultState, this);
+            _analyzer = new Analyzer(this);
+
             _interactionDealer.Init(_reactiveStats);
             _interactionProcessor.Init(_effector);
 
@@ -79,6 +88,8 @@ namespace Enemy
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
+            Debug.Log("<color=#189C0C>" + "Hp: " + _reactiveStats.Health.Value + "</color>");
+
             Debug.LogWarning("Effects on Start interaction: \n");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
 
@@ -159,25 +170,25 @@ namespace Enemy
 
         public void EndInteraction()
         {
-            Debug.LogWarning("Hp Before Interaction: " + _reactiveStats.Health.Value);
-
             if (_interactionResult != null)
             {
+                //Debug.Log("Reactive stats before finalizer: " + _reactiveStats.Health.Value);
                 _reactiveStats = _interactionFinalizer.FinalizeInteraction(_reactiveStats, _interactionResult);
+                //Debug.Log("Reactive stats after finalizer: " + _reactiveStats.Health.Value);
             }
-            PushIfDead();
+            //PushIfDead();
         }
 
         public void PushIfDead()
         {
-            Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _reactiveStats.Health.Value + "</color>");
-            Debug.LogWarning("----------");
-
-            if (_reactiveStats.Health.Value <= 0)
-            {
-                On_Character_Death?.Invoke(this);
-                _pooler.Push(_enemyModel.Type, _enemyView);
-            }
+            //Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _reactiveStats.Health.Value + "</color>");
+            On_Character_Death?.Invoke(this);
+            _pooler.Push(_enemyModel.Type, _enemyView);
+            //if (_reactiveStats.Health.Value <= 0)
+            //{
+            //    On_Character_Death?.Invoke(this);
+            //    _pooler.Push(_enemyModel.Type, _enemyView);
+            //}
         }
 
         public bool CheckIfMoving()
@@ -220,6 +231,41 @@ namespace Enemy
         public bool GetActiveStatus()
         {
             return IsActive;
+        }
+
+        public void UseEffectsOnStart()
+        {
+            _effector.ProcessEffectsOnStart(_reactiveStats);
+            Debug.LogWarning("Effects On Start Was Processed:");
+        }
+
+        public void UseEffectsOnEnd()
+        {
+            _effector.ProcessEffectsOnEnd(_reactiveStats);
+            Debug.LogWarning("Effects On End Was Processed!");
+        }
+
+        public void AnalizeCondition()
+        {
+            Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
+            _analyzer.Analyze(_reactiveStats);
+        }
+
+        public void SwitchState(TypeOfConditionState state)
+        {
+            IConditionState newState = _stateFactory.CreateConditionState(state, this);
+
+            if (newState != _conditionState)
+            {
+                _conditionState?.OnExit();
+                _conditionState = newState;
+                _conditionState.OnEnter();
+            }
+        }
+
+        public CharacterType GetCharacterType()
+        {
+            return _enemyModel.Type;
         }
     }
 }
