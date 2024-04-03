@@ -172,9 +172,9 @@ namespace Enemy
         {
             if (_interactionResult != null)
             {
-                //Debug.Log("Reactive stats before finalizer: " + _reactiveStats.Health.Value);
+                Debug.Log("Reactive stats before finalizer: " + _reactiveStats.Health.Value);
                 _reactiveStats = _interactionFinalizer.FinalizeInteraction(_reactiveStats, _interactionResult);
-                //Debug.Log("Reactive stats after finalizer: " + _reactiveStats.Health.Value);
+                Debug.Log("Reactive stats after finalizer: " + _reactiveStats.Health.Value);
             }
             //PushIfDead();
         }

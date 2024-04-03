@@ -14,7 +14,7 @@ namespace Interactions
     {
         public ReactiveStats FinalizeInteraction(ReactiveStats modifiableStats, ReactiveStats interactionResult)
         {
-            Debug.Log("Reactive stats before finalizer: " + modifiableStats.Health.Value);
+            Debug.Log("Reactive stats before IN finalizer: " + modifiableStats.Health.Value);
 
             modifiableStats.Speed.Value -= Mathf.Abs(interactionResult.Speed.Value);
             modifiableStats.Health.Value -= Mathf.Abs(interactionResult.Health.Value);
@@ -24,7 +24,7 @@ namespace Interactions
 
 
             
-            Debug.Log("Reactive stats after finalizer: " + modifiableStats.Health.Value);
+            Debug.Log("Reactive stats after IN finalizer: " + modifiableStats.Health.Value);
 
             return modifiableStats;
         }
