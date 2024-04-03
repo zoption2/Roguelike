@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using CharactersStats;
-using UnityEngine;
 
 namespace Interactions
 {
@@ -12,6 +9,7 @@ namespace Interactions
         bool IsPositive { get; set; }
         bool IsOnInteractionStart { get; set; }
         public bool IsOnTurnStart { get; set; }
+        public bool IsOnTurnEnd { get; set; }
     }
 }
 

@@ -1,46 +1,8 @@
 ﻿using CharactersStats;
-using Enemy;
 using Gameplay;
-using Interactions;
-using Obstacles;
-using Player;
 using Pool;
-using Prefab;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-
-public interface IControllerInputs
-{
-    ReactiveStats GetCharacterStats();
-    IInteraction GetInteraction();
-    void ApplyInteraction(IInteraction interactions);
-    void AddEffects(List<IEffect> effects);
-    bool GetActiveStatus();
-}
-
-public delegate void OnCharacterDeath(ICharacterController controller);
-public interface ICharacterController
-{
-    public bool IsActive { get; set; }
-    public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
-    public void UseEffectsOnStart();
-    public void AnalizeCondition();
-    void SwitchState(TypeOfConditionState state);
-    void UseEffectsOnEnd();
-
-    CharacterType GetCharacterType();
-    void PushIfDead();//
-    public void Attack();
-    public void Move();
-    public void Tick();
-    public bool CheckIfMoving();
-    public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
-    public Transform GetTransform();
-    
-    public event OnCharacterDeath On_Character_Death;
-
-}
 
 public abstract class CharacterFactory<TController>
     where TController : ICharacterController
@@ -53,7 +15,6 @@ public abstract class CharacterFactory<TController>
     protected CharacterType _type;
     protected IMyPoolable _poolable;
 
-
     public CharacterFactory(
         DiContainer container,
         IStatsProvider statsProvider,
@@ -64,6 +25,7 @@ public abstract class CharacterFactory<TController>
         _characterPooler = pooler;
         _characterPooler.Init();
     }
+
     protected virtual TController CreateCharacter(Transform point, CharacterType type)
     {
         TController controller = GetNewController();

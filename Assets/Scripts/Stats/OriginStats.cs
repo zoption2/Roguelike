@@ -9,7 +9,6 @@ namespace CharactersStats
         public int Damage { get; set; }
         public float LaunchPower { get; set; }
         public float Velocity { get; set; }
-
     }
 
     [Serializable]

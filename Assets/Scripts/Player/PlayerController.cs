@@ -47,7 +47,7 @@ namespace Player
         private IEffectProcessor _effector;
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
-        private IInteractionFinalizer _interactionFinalizer;
+        private IInteractionCalculator _interactionFinalizer;
 
         [Inject]
         public void Construct(
@@ -55,7 +55,7 @@ namespace Player
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
-            IInteractionFinalizer interactionFinalizer,
+            IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory)
         {
             _slingShotPooler = slingShotPooler;
@@ -77,8 +77,6 @@ namespace Player
 
             _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.DefaultState, this);
             _analyzer = new Analyzer(this);
-
-            _interactionProcessor.Init(_effector);
 
             _playerView = playerView;
             _pooler = characterPooler;
@@ -149,10 +147,10 @@ namespace Player
             if(IsActive)
             {
                 //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
-                _effector.ProcessStatsBeforeInteraction(_modifiableStats);
+                ReactiveStats statsWithBonus = _effector.ProcessStatsBeforeInteraction(_modifiableStats);
                 //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
 
-                _interactionDealer.Init(_modifiableStats);
+                _interactionDealer.Init(statsWithBonus);
                 IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
                 return interaction;
             } 

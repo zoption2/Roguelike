@@ -1,7 +1,4 @@
 using CharactersStats;
-using Interactions;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interactions
@@ -13,7 +10,8 @@ namespace Interactions
             Duration = duration;
             IsOnInteractionStart = true;
             IsPositive = true;
-            IsOnTurnStart = true;
+            IsOnTurnStart = false;
+            IsOnTurnEnd = false;
         }
 
         public override void UseEffect(ReactiveStats stats)

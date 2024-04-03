@@ -1,7 +1,5 @@
 using CharactersStats;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 namespace Interactions
@@ -9,7 +7,7 @@ namespace Interactions
     public interface IEffectProcessor
     {
         void AddEffects(List<IEffect> effects);
-        void ProcessStatsBeforeInteraction(ReactiveStats stats);
+        ReactiveStats ProcessStatsBeforeInteraction(ReactiveStats stats);
         void ProcessEffectsOnStart(ReactiveStats stats);
         void ProcessEffectsOnEnd(ReactiveStats stats);
         List<IEffect> GetPreInteractionEffects();
@@ -35,13 +33,13 @@ namespace Interactions
                 {
                     ReplaceOrAddEffect(effect, _onStartTurnEffects);
                 }
-                else
+
+                if (effect.IsOnTurnEnd)
                 {
                     ReplaceOrAddEffect(effect, _onEndTurnEffects);
                 }
             }
         }
-
 
         private List<IEffect> ReplaceOrAddEffect(IEffect effect, List<IEffect> effectList)
         {
@@ -71,15 +69,23 @@ namespace Interactions
             return _onEndTurnEffects;
         }
 
-        public void ProcessStatsBeforeInteraction(ReactiveStats stats) 
+        public ReactiveStats ProcessStatsBeforeInteraction(ReactiveStats stats) 
         {
+            ReactiveStats statsCopy = new ReactiveStats();
+
+            statsCopy.Speed.Value = stats.Speed.Value;
+            statsCopy.Health.Value = stats.Health.Value;
+            statsCopy.Damage.Value = stats.Damage.Value;
+            statsCopy.LaunchPower.Value = stats.LaunchPower.Value;
+            statsCopy.Velocity.Value = stats.Velocity.Value;
+
             if (_preInteractionEffects.Count > 0)
             {
                 for (int i = 0; i < _preInteractionEffects.Count; i++)
                 {
                     if (_preInteractionEffects[i].Duration > 0)
                     {
-                        _preInteractionEffects[i].UseEffect(stats);
+                        _preInteractionEffects[i].UseEffect(statsCopy);
                     }
                     else
                     {
@@ -87,6 +93,7 @@ namespace Interactions
                     }
                 }
             }
+            return statsCopy;
         }
 
         public void ProcessEffectsOnStart(ReactiveStats stats)
@@ -124,7 +131,6 @@ namespace Interactions
                 }
             }
         }
-
 
         //////////////////////////////////////////////////
         public void PrintEffects(List<IEffect> effects)

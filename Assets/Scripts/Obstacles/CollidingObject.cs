@@ -1,12 +1,8 @@
 using Interactions;
 using Obstacles;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using Zenject;
 
 public class CollidingObject : MonoBehaviour
 {
@@ -50,7 +46,6 @@ public class CollidingObject : MonoBehaviour
         {
             _characterView.StartInteraction(interactible);
         }
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -86,8 +81,8 @@ public class CollidingObject : MonoBehaviour
 
                     _characterView.ControllerInputs.AddEffects(effects);
 
-                    //Debug.LogWarning(buff + " effects were added");
                     Debug.Log("<color=#07C3FF>" + buff + " effects were added" + "</color>");
+
                     buff.DisableBuff();
                     _isStoppedInsideTrigger = false;
                     yield break;

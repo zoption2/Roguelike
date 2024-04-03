@@ -1,5 +1,4 @@
 using CharactersStats;
-using Interactions;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,10 +8,10 @@ namespace Interactions
     {
         public BasicAttack(int damage) : base(damage)
         {
+            Debug.Log("Damage: " + damage);
             _effects = new()
             {
-                new FireEffect(2),
-                //new PoisonEffect(4),
+                new FireEffect(3),
             };
         }
 

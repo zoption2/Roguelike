@@ -1,11 +1,7 @@
 using CharactersStats;
-using Prefab;
-using System;
-using UnityEngine;
 
 public interface ICharacterModel
 {
-    
 }
 public abstract class CharacterModelBase : ICharacterModel
 {

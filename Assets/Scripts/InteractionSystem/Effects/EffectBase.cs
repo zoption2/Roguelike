@@ -1,7 +1,4 @@
 using CharactersStats;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Interactions
 {
@@ -11,10 +8,7 @@ namespace Interactions
         public bool IsPositive { get; set; }
         public bool IsOnInteractionStart { get; set; }
         public bool IsOnTurnStart { get; set; }
-        protected ReactiveStats _stats;
-
-
-
+        public bool IsOnTurnEnd { get; set; }
         public abstract void UseEffect(ReactiveStats stats);
     }
 }

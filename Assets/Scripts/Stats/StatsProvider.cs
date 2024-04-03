@@ -39,8 +39,6 @@ namespace CharactersStats
             return stats;
         }
 
-
-
         public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, IDataService dataService, DefaultEnemyModelHolder defaultEnemyModelHolder)
         {
             _defaultModelHolder = defaultModelHolder;

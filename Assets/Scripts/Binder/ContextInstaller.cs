@@ -6,7 +6,6 @@ using Pool;
 using Prefab;
 using CharactersStats;
 using Enemy;
-using SlingShotLogic;
 using UI;
 using Interactions;
 using SaveSystem;
@@ -75,7 +74,7 @@ public class ContextInstaller : MonoInstaller
 
         Container.Bind<IEffectProcessor>().To<EffectProcessor>().AsTransient();
         Container.Bind<IInteractionProcessor>().To<InteractionProcessor>().AsTransient();
-        Container.Bind<IInteractionFinalizer>().To<InteractionFinalizer>().AsTransient();
+        Container.Bind<IInteractionCalculator>().To<InteractionCalculator>().AsTransient();
     }
 
     public void BindScenarios()

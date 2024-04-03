@@ -1,20 +1,18 @@
 using CharactersStats;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interactions
 {
-    public interface IInteractionFinalizer
+    public interface IInteractionCalculator
     {
         ReactiveStats FinalizeInteraction(ReactiveStats modifiableStats, ReactiveStats interactionResult);
     }
 
-    public class InteractionFinalizer : IInteractionFinalizer
+    public class InteractionCalculator : IInteractionCalculator
     {
         public ReactiveStats FinalizeInteraction(ReactiveStats modifiableStats, ReactiveStats interactionResult)
         {
-            Debug.Log("Reactive stats before IN finalizer: " + modifiableStats.Health.Value);
+            Debug.Log("Reactive stats IN calculator before: " + modifiableStats.Health.Value);
 
             modifiableStats.Speed.Value -= Mathf.Abs(interactionResult.Speed.Value);
             modifiableStats.Health.Value -= Mathf.Abs(interactionResult.Health.Value);
@@ -22,9 +20,7 @@ namespace Interactions
             modifiableStats.LaunchPower.Value -= Mathf.Abs(interactionResult.LaunchPower.Value);
             modifiableStats.Velocity.Value -= Mathf.Abs(interactionResult.Velocity.Value);
 
-
-            
-            Debug.Log("Reactive stats after IN finalizer: " + modifiableStats.Health.Value);
+            Debug.Log("Reactive stats IN calculator: " + modifiableStats.Health.Value);
 
             return modifiableStats;
         }

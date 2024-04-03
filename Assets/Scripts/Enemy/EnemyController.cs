@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Gameplay;
 using Prefab;
 using Obstacles;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 namespace Enemy
 {
@@ -27,14 +28,14 @@ namespace Enemy
 
         private CharacterView _enemyView;
         private CharacterModel _enemyModel;
-        private ReactiveStats _reactiveStats;
+        private ReactiveStats _modifiableStats;
         private IEffectProcessor _effector;
         private CharacterPooler _pooler;
         private ICharacterScenarioContext _characterScenarioContext;
         private ITestingBehaviourTree _testBehaviourTree;
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
-        private IInteractionFinalizer _interactionFinalizer;
+        private IInteractionCalculator _interactionFinalizer;
         private ReactiveStats _interactionResult;
 
         private IAnalyzer _analyzer;
@@ -51,7 +52,7 @@ namespace Enemy
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
-            IInteractionFinalizer interactionFinalizer,
+            IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
             DiContainer container)
         {
@@ -71,13 +72,12 @@ namespace Enemy
             _enemyModel = characterModel;
 
             var stats = _enemyModel.GetStats();
-            _reactiveStats = stats.ToReactive();
+            _modifiableStats = stats.ToReactive();
 
             _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.DefaultState, this);
             _analyzer = new Analyzer(this);
 
-            _interactionDealer.Init(_reactiveStats);
-            _interactionProcessor.Init(_effector);
+            _interactionDealer.Init(_modifiableStats);
 
             _enemyView = characterView;
             _pooler = characterPooler;
@@ -88,7 +88,7 @@ namespace Enemy
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
-            Debug.Log("<color=#189C0C>" + "Hp: " + _reactiveStats.Health.Value + "</color>");
+            Debug.Log("<color=#189C0C>" + "Hp: " + _modifiableStats.Health.Value + "</color>");
 
             Debug.LogWarning("Effects on Start interaction: \n");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
@@ -102,11 +102,12 @@ namespace Enemy
         {
             if (IsActive)
             {
+                ReactiveStats statsWithBonus = _effector.ProcessStatsBeforeInteraction(_modifiableStats);
                 //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
-                _effector.ProcessStatsBeforeInteraction(_reactiveStats);
+                //_effector.ProcessStatsBeforeInteraction(_modifiableStats);
                 //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
 
-                _interactionDealer.Init(_reactiveStats);
+                _interactionDealer.Init(statsWithBonus);
                 IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
                 return interaction;
             }
@@ -125,7 +126,7 @@ namespace Enemy
 
         public ReactiveStats GetCharacterStats()
         {
-            return _reactiveStats;
+            return _modifiableStats;
         }
 
         public void ApplyInteraction(IInteraction interaction)
@@ -141,7 +142,9 @@ namespace Enemy
                     }
                 }
                 _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
-                EndInteraction();
+
+                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
+                //EndInteraction();
             }
         }
 
@@ -157,7 +160,7 @@ namespace Enemy
         }
         public void Launch(Vector2 direction)
         {
-            float launchPower = _reactiveStats.LaunchPower.Value;
+            float launchPower = _modifiableStats.LaunchPower.Value;
             direction.Normalize();
             Vector2 forceVector = direction * launchPower;
             _enemyView.AddImpulse(forceVector);
@@ -173,9 +176,9 @@ namespace Enemy
         {
             if (_interactionResult != null)
             {
-                Debug.Log("Reactive stats before finalizer: " + _reactiveStats.Health.Value);
-                _reactiveStats = _interactionFinalizer.FinalizeInteraction(_reactiveStats, _interactionResult);
-                Debug.Log("Reactive stats after finalizer: " + _reactiveStats.Health.Value);
+                Debug.Log("Reactive stats before finalizer: " + _modifiableStats.Health.Value);
+                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
+                Debug.Log("Reactive stats after finalizer: " + _modifiableStats.Health.Value);
             }
             //PushIfDead();
         }
@@ -236,20 +239,20 @@ namespace Enemy
 
         public void UseEffectsOnStart()
         {
-            _effector.ProcessEffectsOnStart(_reactiveStats);
+            _effector.ProcessEffectsOnStart(_modifiableStats);
             Debug.LogWarning("Effects On Start Was Processed:");
         }
 
         public void UseEffectsOnEnd()
         {
-            _effector.ProcessEffectsOnEnd(_reactiveStats);
+            _effector.ProcessEffectsOnEnd(_modifiableStats);
             Debug.LogWarning("Effects On End Was Processed!");
         }
 
         public void AnalizeCondition()
         {
             Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
-            _analyzer.Analyze(_reactiveStats);
+            _analyzer.Analyze(_modifiableStats);
         }
 
         public void SwitchState(TypeOfConditionState state)

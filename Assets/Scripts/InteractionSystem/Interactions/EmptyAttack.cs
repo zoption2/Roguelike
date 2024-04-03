@@ -9,13 +9,11 @@ namespace Interactions
     {
         public EmptyAttack(int damage) : base(damage)
         {
-
             _effects = new()
             {
 
             };
         }
-
         public override List<IEffect> GetEffects()
         {
             return _effects;

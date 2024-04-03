@@ -1,14 +1,8 @@
-using Enemy;
 using Interactions;
-using Obstacles;
-using Player;
 using Pool;
-using CharactersStats;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Prefab;
 
 public interface IInteractible
 {
@@ -28,7 +22,6 @@ public interface ICharacterView
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
-    
 }
 
 public class CharacterView : MonoBehaviour,
@@ -45,7 +38,6 @@ public class CharacterView : MonoBehaviour,
 
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
-    private ReactiveStats _stats;
 
     public IControllerInputs ControllerInputs { get; set; } 
 
@@ -54,7 +46,6 @@ public class CharacterView : MonoBehaviour,
     public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
-        _stats = controllerInputs.GetCharacterStats();
     }
 
     private void Start()
@@ -118,7 +109,7 @@ public class CharacterView : MonoBehaviour,
             return;
         }
 
-        }
+    }
         public void OnCreate()
     {
     }

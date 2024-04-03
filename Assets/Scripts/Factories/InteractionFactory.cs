@@ -1,9 +1,7 @@
 using Interactions;
 using Prefab;
 using CharactersStats;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+
 public interface IInteractionFactory
 {
     IInteraction Create(InteractionType type, ReactiveStats stats);

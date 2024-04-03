@@ -1,39 +1,10 @@
 using CharactersStats;
-using Gameplay;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IConditionState
 {
     public void OnEnter();
     public void OnExit();
-}
-
-public interface IAnalyzer
-{
-    public void Analyze(ReactiveStats stats);
-}
-
-public class Analyzer : IAnalyzer
-{
-    private ICharacterController _controller;
-    public Analyzer(ICharacterController controller)
-    {
-        _controller = controller;
-    }
-    public void Analyze(ReactiveStats stats)
-    {
-
-        Debug.Log(stats.Health.Value);
-        if (stats.Health.Value <= 0)
-        {
-            _controller.SwitchState(TypeOfConditionState.DeadState);
-        } else
-        {
-            _controller.SwitchState(TypeOfConditionState.DefaultState);
-        }
-    }
 }
 
 public class DefaultState : IConditionState

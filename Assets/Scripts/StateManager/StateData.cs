@@ -1,25 +1,9 @@
 using CharactersStats;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 namespace Gameplay
 {
-    public enum TypeOfState
-    {
-        Init,
-        PlayerTurn,
-        EnemyTurn,
-    }
-
-    public enum TypeOfConditionState
-    {
-        AnalyzerState,
-        DefaultState,
-        DeadState
-    }
-
     public interface IStateFactory
     {
         public void Init(IScenario scenarioInstance, ICharacterScenarioContext context);
@@ -47,7 +31,6 @@ namespace Gameplay
             _context = context;
             _scenarioInstance = scenarioInstance;
         }
-
 
         public IState CreateState(TypeOfState type)
         {

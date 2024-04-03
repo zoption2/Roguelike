@@ -2,7 +2,6 @@ using Interactions;
 using Obstacles;
 using Pool;
 using Prefab;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
