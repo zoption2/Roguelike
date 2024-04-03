@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Prefab;
+using UnityEngine.AI;
 
 public interface IInteractible
 {
@@ -51,9 +52,12 @@ public class CharacterView : MonoBehaviour,
 
     private Rigidbody _rigidbody;
     public Rigidbody Rigidbody { get { return _rigidbody; } }
+
+    public NavMeshAgent NavMeshAgent { get; set; }
     public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
+        NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         _stats = controllerInputs.GetCharacterStats();
     }
 

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Gameplay;
 using Prefab;
 using Obstacles;
+using UnityEngine.AI;
 
 namespace Enemy
 {
@@ -36,6 +37,7 @@ namespace Enemy
         private IInteractionDealer _interactionDealer;
         private IInteractionFinalizer _interactionFinalizer;
         private ReactiveStats _interactionResult;
+        private NavMeshAgent _navMeshAgent;
 
         private IAnalyzer _analyzer;
         private IConditionState _conditionState;
@@ -82,6 +84,7 @@ namespace Enemy
             _enemyView = characterView;
             _pooler = characterPooler;
             _enemyView.Init(this);
+            _navMeshAgent = _enemyView.NavMeshAgent;
             _enemyView.ON_CLICK += OnClick;
             _enemyView.On_Stop_Movement += CheckForEndOfState;
         }
@@ -210,7 +213,15 @@ namespace Enemy
 
         public async void Move()
         {
+            Transform target = _testBehaviourTree.GetTarget();
+            Transform enemy = GetTransform();
+            _navMeshAgent.SetDestination(target.position);
+            Vector3 waypoint = _navMeshAgent.steeringTarget;
+            _navMeshAgent.isStopped = true;
+            Vector2 direction = enemy.position - waypoint;
+            _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
+            Launch(direction * -1);
         }
 
         public void Tick()

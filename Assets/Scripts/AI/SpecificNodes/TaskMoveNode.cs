@@ -8,7 +8,7 @@ namespace BehaviourTree
     {
         public override NodeState Evaluate()
         {
-            _characterController.Move();
+            //_characterController.Move();
             _state = NodeState.Success;
             return _state;
         }

@@ -12,6 +12,7 @@ using UnityEngine.EventSystems;
 using Zenject;
 using Zenject.SpaceFighter;
 using Obstacles;
+using UnityEngine.AI;
 
 namespace Player
 {
@@ -39,6 +40,7 @@ namespace Player
         private CharacterPooler _pooler;
         private ReactiveStats _modifiableStats;
         private ReactiveStats _interactionResult;
+        private NavMeshAgent _navMeshAgent;
 
         private IAnalyzer _analyzer;
         private IConditionState _conditionState;
@@ -83,6 +85,7 @@ namespace Player
             _playerView = playerView;
             _pooler = characterPooler;
             _playerView.Init(this);
+            _navMeshAgent = _playerView.NavMeshAgent;
 
             //_modifiableStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
 

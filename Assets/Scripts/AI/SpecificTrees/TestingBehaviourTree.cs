@@ -38,6 +38,7 @@ namespace BehaviourTree
             FindTarget();
             if(GetTarget() != null)
             {
+                //CheckIfCanAttack();
                 _blackboard.SetData(_attackKey, true);
                 _blackboard.SetData(_moveKey, true);
             }
@@ -48,12 +49,29 @@ namespace BehaviourTree
             }
         }
 
-        protected void FindTargetIfNeeded()
+        protected void CheckIfCanAttack()
         {
-            if(_blackboard.GetData(_targetKey) == null)
+            Transform  character= _characterController.GetTransform();
+            Transform  target = GetTarget();
+            Vector3 direction = target.position - character.position;
+            float length = 15f;
+            Debug.Log(character.parent.gameObject.name);
+            int layer = ~character.gameObject.layer;
+            direction.Normalize();
+            RaycastHit hit;
+            Physics.Raycast(character.position, direction,out hit, length,layer);
+            Debug.DrawRay(character.position, direction,Color.red,hit.distance);
+            if(hit.transform == target)
             {
-                FindTarget();
+                _blackboard.SetData(_attackKey, true);
+                Debug.Log("CanAttack");
             }
+            else
+            {
+                Debug.Log("CANT_Attack");
+                _blackboard.SetData(_attackKey, false);
+            }
+
         }
         protected void FindTarget()
         {
