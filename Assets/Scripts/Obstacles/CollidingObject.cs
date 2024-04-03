@@ -12,7 +12,6 @@ public class CollidingObject : MonoBehaviour
     private bool _isStoppedInsideTrigger;
     Queue<Vector3> _lastVelocities = new(2);
 
-
     void FixedUpdate()
     {
         _lastVelocities.Enqueue(_rigidbody.velocity);
@@ -35,7 +34,6 @@ public class CollidingObject : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-
         if (collision.gameObject.TryGetComponent(out IWall obstacle))
         {
             Vector3 velocity = GetVelocity();
@@ -50,7 +48,6 @@ public class CollidingObject : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
         if (other.gameObject.TryGetComponent(out IBuff buff))
         {
             _isStoppedInsideTrigger = true;
@@ -60,7 +57,6 @@ public class CollidingObject : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        
         if (other.gameObject.TryGetComponent(out IBuff buff))
         {
             _isStoppedInsideTrigger = false;

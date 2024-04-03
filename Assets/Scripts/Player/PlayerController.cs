@@ -2,16 +2,12 @@ using CharactersStats;
 using Interactions;
 using Gameplay;
 using Pool;
-using Prefab;
 using SlingShotLogic;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
-using Zenject.SpaceFighter;
-using Obstacles;
 
 namespace Player
 {
@@ -24,26 +20,21 @@ namespace Player
     public delegate void OnEndTurn();
     public class PlayerController : IPlayerController, IControllerInputs, IDisposable
     {
-        //public event OnEndTurn ON_END_TURN;
         public bool IsActive { get; set; }
+        public event OnCharacterDeath ON_CHARACTER_DEATH;
 
-        public event OnCharacterDeath On_Character_Death;
-
-        private ICharacterScenarioContext _characterScenarioContext;
         private CharacterView _playerView;
         private CharacterModel _playerModel;
         private SlingshotPooler _slingShotPooler;
-        private ISlingShot _slingShot;
-        private List<IDisposable> _disposables;
         private Transform _SlingShotInitPosition;
         private CharacterPooler _pooler;
         private ReactiveStats _modifiableStats;
         private ReactiveStats _interactionResult;
-
+        private ISlingShot _slingShot;
         private IAnalyzer _analyzer;
         private IConditionState _conditionState;
         private IStateFactory _stateFactory;
-
+        private ICharacterScenarioContext _characterScenarioContext;
         private IEffectProcessor _effector;
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
@@ -72,6 +63,7 @@ namespace Player
         CharacterPooler characterPooler)
         {
             _playerModel = playerModel;
+
             var stats = _playerModel.GetStats();
             _modifiableStats = stats.ToReactive();
 
@@ -82,11 +74,9 @@ namespace Player
             _pooler = characterPooler;
             _playerView.Init(this);
 
-            //_modifiableStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
-
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
-            _playerView.On_Stop_Movement += CheckForEndOfState;
+            _playerView.ON_STOP_MOVEMENT += CheckForEndOfState;
             _slingShotPooler.Init();
         }
 
@@ -94,13 +84,16 @@ namespace Player
         {
             _SlingShotInitPosition = point;
 
-            Debug.LogWarning("Effects before interaction:");
+            Debug.Log($"-----|{_playerModel.Type}|-----");
+            Debug.Log("<color=#189C0C>" + "Hp: " + _modifiableStats.Health.Value + "</color>");
+
+            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
             _effector.PrintEffects(_effector.GetPreInteractionEffects());
 
-            Debug.LogWarning("Effects on Start interaction:");
+            Debug.Log("<color=#F4DA64>" + "Effects on Start interaction: " + "</color>");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
 
-            Debug.LogWarning("Effects on End interaction:");
+            Debug.Log("<color=#F4DA64>" + "Effects on End interaction: " + "</color>");
             _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
         }
 
@@ -137,8 +130,7 @@ namespace Player
         {
             float launchPower = _modifiableStats.LaunchPower.Value;
             Vector2 forceVector = direction * launchPower;
-            _playerView.AddImpulse(forceVector);
-
+            _playerView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
             _slingShot.OnShoot -= Launch;
         }
 
@@ -146,9 +138,7 @@ namespace Player
         {
             if(IsActive)
             {
-                //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
                 ReactiveStats statsWithBonus = _effector.ProcessStatsBeforeInteraction(_modifiableStats);
-                //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
 
                 _interactionDealer.Init(statsWithBonus);
                 IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
@@ -159,7 +149,6 @@ namespace Player
                 IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.None);
                 return interaction;
             }
-            
         }
 
         public void ApplyInteraction(IInteraction interaction)
@@ -175,46 +164,20 @@ namespace Player
                     }
                 }
                 _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
+
+                _modifiableStats = _interactionFinalizer.CalculateInteractionResult(_modifiableStats, _interactionResult);
             }
         }
 
         public void CheckForEndOfState()
         {
             _characterScenarioContext.CheckIfAllStopped();
-            EndInteraction();
-        }
-
-        public void EndInteraction()
-        {
-            //Debug.Log("<color=#189C0C>" + "Hp On Start Turn: " + _modifiableStats.Health.Value + "</color>");
-
-            if (_interactionResult != null)
-            {
-
-                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
-                _interactionResult = null;
-            }
-            PushIfDead();
         }
 
         public void PushIfDead()
         {
-            //Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _modifiableStats.Health.Value + "</color>");
-
-            if (_modifiableStats.Health.Value <= 0)
-            {
-                On_Character_Death(this);
-                _pooler.Push(_playerModel.Type, _playerView);
-            }
-        }
-
-        public void Dispose()
-        {
-            _playerView.ON_CLICK -= OnClick;
-            _playerView.ON_BEGINDRAG -= OnBeginDrag;
-
-            _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
-            _slingShot.OnShoot -= Launch;
+            ON_CHARACTER_DEATH(this);
+            _pooler.Push(_playerModel.Type, _playerView);
         }
 
         public ReactiveStats GetCharacterStats()
@@ -234,17 +197,16 @@ namespace Player
         }
         public void Attack()
         {
-            Debug.Log("Enemy has attacked");
+            Debug.Log("Player has attacked");
         }
 
         public void Move()
         {
-            Debug.Log("Enemy has moved");
+            Debug.Log("Player has moved");
         }
 
         public void Tick()
         {
-
         }
 
         public bool CheckIfMoving()
@@ -299,6 +261,15 @@ namespace Player
         public CharacterType GetCharacterType()
         {
             return _playerModel.Type;
+        }
+
+        public void Dispose()
+        {
+            _playerView.ON_CLICK -= OnClick;
+            _playerView.ON_BEGINDRAG -= OnBeginDrag;
+
+            _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
+            _slingShot.OnShoot -= Launch;
         }
     }
 }

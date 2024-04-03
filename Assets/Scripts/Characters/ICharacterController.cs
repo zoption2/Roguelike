@@ -2,8 +2,6 @@ using Gameplay;
 using Pool;
 using UnityEngine;
 
-public delegate void OnCharacterDeath(ICharacterController controller);
-
 public interface ICharacterController
 {
     public bool IsActive { get; set; }
@@ -13,7 +11,7 @@ public interface ICharacterController
     void SwitchState(TypeOfConditionState state);
     void UseEffectsOnEnd();
     CharacterType GetCharacterType();
-    void PushIfDead();//
+    void PushIfDead();
     public void Attack();
     public void Move();
     public void Tick();
@@ -21,5 +19,7 @@ public interface ICharacterController
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public Transform GetTransform();
 
-    public event OnCharacterDeath On_Character_Death;
+    public event OnCharacterDeath ON_CHARACTER_DEATH;
 }
+
+public delegate void OnCharacterDeath(ICharacterController controller);

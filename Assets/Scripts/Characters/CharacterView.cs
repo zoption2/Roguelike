@@ -9,20 +9,18 @@ public interface IInteractible
     void StartInteraction(IInteractible interactible);
     IControllerInputs ControllerInputs { get; set; }
 }
-
-public delegate void OnStopMovement();
 public interface ICharacterView
 {
     void Init(IControllerInputs controllerInputs);
-    public void AddImpulse(Vector2 forceVector);
     public void ChangeDirection(Vector2 direction);
-
-    public event OnStopMovement On_Stop_Movement;
     bool IsMoving { get; set; }
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
+    event OnStopMovement ON_STOP_MOVEMENT;
 }
+
+public delegate void OnStopMovement();
 
 public class CharacterView : MonoBehaviour,
     IPointerDownHandler,
@@ -34,15 +32,13 @@ public class CharacterView : MonoBehaviour,
 {
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
-    public event OnStopMovement On_Stop_Movement;
+    public event OnStopMovement ON_STOP_MOVEMENT;
 
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
-
     public IControllerInputs ControllerInputs { get; set; } 
-
-    private Rigidbody _rigidbody;
     public Rigidbody Rigidbody { get { return _rigidbody; } }
+    private Rigidbody _rigidbody;
     public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
@@ -62,7 +58,7 @@ public class CharacterView : MonoBehaviour,
         else if (_rigidbody.velocity.magnitude < 0.2f && _rigidbody.velocity.magnitude > 0f && IsMoving)
         {
             IsMoving = false;
-            On_Stop_Movement?.Invoke();
+            ON_STOP_MOVEMENT?.Invoke();
         }
 
         if (IsMoving) ViewRotation();
@@ -84,15 +80,6 @@ public class CharacterView : MonoBehaviour,
         _viewTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
     }
 
-    public void AddImpulse(Vector2 forceVector)
-    {
-        if(_rigidbody != null)
-        {
-            _rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
-            _rigidbody.velocity = _rigidbody.velocity.normalized;
-        }
-    }
-
     public void StartInteraction(IInteractible interactible)
     {
         var dealerType = ControllerInputs.GetType();
@@ -108,9 +95,9 @@ public class CharacterView : MonoBehaviour,
             Debug.LogWarning("INTERACTION CANCELED");
             return;
         }
-
     }
-        public void OnCreate()
+
+    public void OnCreate()
     {
     }
 
@@ -118,12 +105,13 @@ public class CharacterView : MonoBehaviour,
     {
         ON_CLICK?.Invoke(_viewTransform, eventData);
     }
+
     public void OnDrag(PointerEventData eventData)
     {
     }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
-        
         ON_BEGINDRAG?.Invoke(eventData);
     }
 

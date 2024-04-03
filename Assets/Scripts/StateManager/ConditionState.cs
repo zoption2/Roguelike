@@ -1,5 +1,6 @@
 using CharactersStats;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public interface IConditionState
 {

@@ -60,12 +60,12 @@ namespace Gameplay
         {
             foreach(ICharacterController controller in _scenarioContext.Players)
             {
-                controller.On_Character_Death += EraseCharacter;
+                controller.ON_CHARACTER_DEATH += EraseCharacter;
             }
 
             foreach (ICharacterController controller in _scenarioContext.Enemies)
             {
-                controller.On_Character_Death += EraseCharacter;
+                controller.ON_CHARACTER_DEATH += EraseCharacter;
             }
         }
         

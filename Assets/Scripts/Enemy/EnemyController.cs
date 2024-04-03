@@ -1,5 +1,4 @@
-﻿using Player;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 using Interactions;
@@ -10,40 +9,32 @@ using CharactersStats;
 using Zenject;
 using System.Threading.Tasks;
 using Gameplay;
-using Prefab;
-using Obstacles;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 namespace Enemy
 {
-
     public interface IEnemyController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
     }
     public class EnemyController : IEnemyController, IControllerInputs, IDisposable
     {
-        //public event OnEndTurn ON_END_TURN;
-        public event OnCharacterDeath On_Character_Death;
+        public event OnCharacterDeath ON_CHARACTER_DEATH;
+        public bool IsActive { get; set; }
 
-        private CharacterView _enemyView;
-        private CharacterModel _enemyModel;
-        private ReactiveStats _modifiableStats;
         private IEffectProcessor _effector;
-        private CharacterPooler _pooler;
+        private IAnalyzer _analyzer;
+        private IConditionState _conditionState;
+        private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private ITestingBehaviourTree _testBehaviourTree;
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
         private IInteractionCalculator _interactionFinalizer;
+        private CharacterView _enemyView;
+        private CharacterModel _enemyModel;
+        private ReactiveStats _modifiableStats;
         private ReactiveStats _interactionResult;
-
-        private IAnalyzer _analyzer;
-        private IConditionState _conditionState;
-        private IStateFactory _stateFactory;
-        public bool IsActive { get; set; }
-        private List<IDisposable> _disposables;
-        private IInteraction _interaction;
+        private CharacterPooler _pooler;
         private DiContainer _container;
         private int _milisecondsDelay = 3000;
 
@@ -83,40 +74,40 @@ namespace Enemy
             _pooler = characterPooler;
             _enemyView.Init(this);
             _enemyView.ON_CLICK += OnClick;
-            _enemyView.On_Stop_Movement += CheckForEndOfState;
+            _enemyView.ON_STOP_MOVEMENT += CheckForEndOfState;
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
+            Debug.Log($"-----|{_enemyModel.Type}|-----");
             Debug.Log("<color=#189C0C>" + "Hp: " + _modifiableStats.Health.Value + "</color>");
 
-            Debug.LogWarning("Effects on Start interaction: \n");
+            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
+            _effector.PrintEffects(_effector.GetPreInteractionEffects());
+
+            Debug.Log("<color=#F4DA64>" + "Effects on Start interaction: " + "</color>");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
 
-            Debug.LogWarning("Effects on End interaction: \n");
+            Debug.Log("<color=#F4DA64>" + "Effects on End interaction: " + "</color>");
             _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
-
         }
 
         public IInteraction GetInteraction()
         {
+            IInteraction interaction;
             if (IsActive)
             {
                 ReactiveStats statsWithBonus = _effector.ProcessStatsBeforeInteraction(_modifiableStats);
-                //////////////////////|Check effects before interaction|\\\\\\\\\\\\\\\\\\\\\
-                //_effector.ProcessStatsBeforeInteraction(_modifiableStats);
-                //////////////////////|--------------------------------|\\\\\\\\\\\\\\\\\\\\\
 
                 _interactionDealer.Init(statsWithBonus);
-                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
+                interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
                 return interaction;
             }
             else
             {
-                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.None);
+                interaction = _interactionDealer.UseInteraction(InteractionType.None);
                 return interaction;
             }
-
         }
 
         public void Dispose()
@@ -143,8 +134,7 @@ namespace Enemy
                 }
                 _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
 
-                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
-                //EndInteraction();
+                _modifiableStats = _interactionFinalizer.CalculateInteractionResult(_modifiableStats, _interactionResult);
             }
         }
 
@@ -163,36 +153,18 @@ namespace Enemy
             float launchPower = _modifiableStats.LaunchPower.Value;
             direction.Normalize();
             Vector2 forceVector = direction * launchPower;
-            _enemyView.AddImpulse(forceVector);
+            _enemyView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
         }
 
         public void CheckForEndOfState()
         {
             _characterScenarioContext.CheckIfAllStopped();
-            //EndInteraction();
-        }
-
-        public void EndInteraction()
-        {
-            if (_interactionResult != null)
-            {
-                Debug.Log("Reactive stats before finalizer: " + _modifiableStats.Health.Value);
-                _modifiableStats = _interactionFinalizer.FinalizeInteraction(_modifiableStats, _interactionResult);
-                Debug.Log("Reactive stats after finalizer: " + _modifiableStats.Health.Value);
-            }
-            //PushIfDead();
         }
 
         public void PushIfDead()
         {
-            //Debug.Log("<color=#9C3C15>" + "Hp On End Turn: " + _reactiveStats.Health.Value + "</color>");
-            On_Character_Death?.Invoke(this);
+            ON_CHARACTER_DEATH?.Invoke(this);
             _pooler.Push(_enemyModel.Type, _enemyView);
-            //if (_reactiveStats.Health.Value <= 0)
-            //{
-            //    On_Character_Death?.Invoke(this);
-            //    _pooler.Push(_enemyModel.Type, _enemyView);
-            //}
         }
 
         public bool CheckIfMoving()
@@ -208,7 +180,6 @@ namespace Enemy
             _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
             Launch(direction * -1);
-
         }
 
         public async void Move()
