@@ -141,6 +141,7 @@ namespace Enemy
                     }
                 }
                 _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
+                EndInteraction();
             }
         }
 
@@ -165,7 +166,7 @@ namespace Enemy
         public void CheckForEndOfState()
         {
             _characterScenarioContext.CheckIfAllStopped();
-            EndInteraction();
+            //EndInteraction();
         }
 
         public void EndInteraction()

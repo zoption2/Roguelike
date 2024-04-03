@@ -107,16 +107,19 @@ public class CharacterView : MonoBehaviour,
         var dealerType = ControllerInputs.GetType();
         var handlerType = interactible.ControllerInputs.GetType();
 
-        if (!dealerType.Equals(handlerType))
+        if (!dealerType.Equals(handlerType) && ControllerInputs.GetActiveStatus())
         {
             IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+        } 
+        else
+        {
+            Debug.LogWarning("INTERACTION CANCELED");
+            return;
         }
 
-        if (dealerType.Equals(handlerType)) return;
-
-    }
-    public void OnCreate()
+        }
+        public void OnCreate()
     {
     }
 
