@@ -47,7 +47,6 @@ public class CharacterView : MonoBehaviour,
     {
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-        _stats = controllerInputs.GetCharacterStats();
     }
 
     private void Start()
@@ -131,7 +130,7 @@ public class CharacterView : MonoBehaviour,
 
     public void TrySkipTurn()
     {
-        On_Stop_Movement?.Invoke();
+        ON_STOP_MOVEMENT?.Invoke();
     }
 
 

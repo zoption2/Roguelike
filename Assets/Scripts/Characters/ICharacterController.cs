@@ -8,10 +8,11 @@ public interface ICharacterController
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
     public void UseEffectsOnStart();
     public void AnalizeCondition();
-    void SwitchState(TypeOfConditionState state);
-    void UseEffectsOnEnd();
-    CharacterType GetCharacterType();
-    void PushIfDead();
+    public void SwitchState(TypeOfConditionState state);
+    public void UseEffectsOnEnd();
+    public CharacterType GetCharacterType();
+    public void PushIfDead();
+    public void SkipTurn();
     public void Attack();
     public void Move();
     public void Tick();
