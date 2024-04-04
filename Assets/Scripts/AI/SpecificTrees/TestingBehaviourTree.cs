@@ -63,11 +63,7 @@ namespace BehaviourTree
             float radius = 0.4f;
             RaycastHit hit;
             Physics.SphereCast(character.position, radius, direction,out hit);
-            Debug.Log(hit.transform.gameObject.name + "was hit at: " + hit.point);
-            //Physics.Raycast(character.position, direction, out hit);
-            //Vector3 dir = hit.point - character.position;
-            //Debug.DrawRay(character.position, dir,Color.red,5f);
-            //Debug.DrawLine(character.position, hit.point, Color.red, 5);
+            //Debug.Log(hit.transform.gameObject.name + "was hit at: " + hit.point);
             Transform hitTransform = hit.transform;
             if(hit.transform.childCount > 0)
             {
