@@ -13,7 +13,7 @@ namespace Interactions
 
             _effects = new()
             {
-                
+                new StunEffect(2),
             };
         }
 

@@ -4,15 +4,16 @@ using UnityEngine;
 
 namespace Obstacles
 {
-
     public class DistortionWall : MonoBehaviour, IWall
-{
+    {
         public void ProcessCollision(Rigidbody rigidbody, Vector3 velocity)
         {
-            var modifiedVelocity = new Vector3(-velocity.x, velocity.y, -velocity.z);
-            rigidbody.velocity = Vector3.zero;
-            rigidbody.AddForce(modifiedVelocity, ForceMode.VelocityChange);
+            Vector3 surfaceNormal = transform.forward;
+            Vector3 oppositeVelocity = -velocity;
+            Vector3 distortedVelocity = Vector3.Reflect(oppositeVelocity, surfaceNormal);
+            rigidbody.velocity = distortedVelocity;
         }
     }
+
 }
 

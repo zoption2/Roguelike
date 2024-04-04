@@ -141,7 +141,7 @@ namespace Player
                 ReactiveStats statsWithBonus = _effector.ProcessStatsBeforeInteraction(_modifiableStats);
 
                 _interactionDealer.Init(statsWithBonus);
-                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
+                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.Knight_HeavyAttack);
                 return interaction;
             } 
             else
