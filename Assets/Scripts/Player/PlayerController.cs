@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using UnityEngine.AI;
 
 namespace Player
 {
@@ -31,6 +32,7 @@ namespace Player
         private ReactiveStats _modifiableStats;
         private ReactiveStats _interactionResult;
         private ISlingShot _slingShot;
+        private NavMeshAgent _navMeshAgent;
         private IAnalyzer _analyzer;
         private IConditionState _conditionState;
         private IStateFactory _stateFactory;
@@ -73,6 +75,8 @@ namespace Player
             _playerView = playerView;
             _pooler = characterPooler;
             _playerView.Init(this);
+            _navMeshAgent = _playerView.NavMeshAgent;
+            _navMeshAgent.enabled = false;
 
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;
@@ -207,6 +211,11 @@ namespace Player
 
         public void Tick()
         {
+        }
+
+        public void SkipTurn()
+        {
+            
         }
 
         public bool CheckIfMoving()

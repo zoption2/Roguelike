@@ -9,6 +9,9 @@ using CharactersStats;
 using Zenject;
 using System.Threading.Tasks;
 using Gameplay;
+using Prefab;
+using Obstacles;
+using UnityEngine.AI;
 
 namespace Enemy
 {
@@ -35,6 +38,7 @@ namespace Enemy
         private ReactiveStats _modifiableStats;
         private ReactiveStats _interactionResult;
         private CharacterPooler _pooler;
+        private NavMeshAgent _navMeshAgent;
         private DiContainer _container;
         private int _milisecondsDelay = 3000;
 
@@ -73,6 +77,8 @@ namespace Enemy
             _enemyView = characterView;
             _pooler = characterPooler;
             _enemyView.Init(this);
+            _navMeshAgent = _enemyView.NavMeshAgent;
+            _navMeshAgent.enabled = false;
             _enemyView.ON_CLICK += OnClick;
             _enemyView.ON_STOP_MOVEMENT += CheckForEndOfState;
         }
@@ -179,17 +185,36 @@ namespace Enemy
             Vector2 direction = enemy.position - target.position;
             _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
+            if(_navMeshAgent != null)
+                _navMeshAgent.enabled = false;
             Launch(direction * -1);
         }
 
         public async void Move()
         {
+            _navMeshAgent.enabled = true;
+            Transform target = _testBehaviourTree.GetTarget();
+            Transform enemy = GetTransform();
+            _navMeshAgent.SetDestination(target.position);
+            _navMeshAgent.isStopped = true;
+            await Task.Delay(_milisecondsDelay/10);
+            Vector3 waypoint = _navMeshAgent.steeringTarget;
+            _navMeshAgent.enabled = false;
+            Vector2 direction = enemy.position - waypoint;
+            _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
+            Launch(direction * -1);
         }
 
         public void Tick()
         {
             _testBehaviourTree.TickTree();
+        }
+
+        public async void SkipTurn()
+        {
+            await Task.Delay(_milisecondsDelay);
+            _enemyView.TrySkipTurn();
         }
 
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)

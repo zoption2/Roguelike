@@ -3,6 +3,8 @@ using Pool;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Prefab;
+using UnityEngine.AI;
 
 public interface IInteractible
 {
@@ -36,12 +38,16 @@ public class CharacterView : MonoBehaviour,
 
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
+    public NavMeshAgent NavMeshAgent { get; set; }
     public IControllerInputs ControllerInputs { get; set; } 
     public Rigidbody Rigidbody { get { return _rigidbody; } }
     private Rigidbody _rigidbody;
+
     public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
+        NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+        _stats = controllerInputs.GetCharacterStats();
     }
 
     private void Start()
@@ -122,6 +128,12 @@ public class CharacterView : MonoBehaviour,
     public void OnRelease()
     {
     }
+
+    public void TrySkipTurn()
+    {
+        On_Stop_Movement?.Invoke();
+    }
+
 
     public Transform GetTransform()
     {
