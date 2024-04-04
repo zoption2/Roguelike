@@ -122,8 +122,8 @@ public class CharacterView : MonoBehaviour,
             return;
         }
 
-        }
-        public void OnCreate()
+    }
+    public void OnCreate()
     {
     }
 
@@ -147,6 +147,12 @@ public class CharacterView : MonoBehaviour,
     public void OnRelease()
     {
     }
+
+    public void TrySkipTurn()
+    {
+        On_Stop_Movement?.Invoke();
+    }
+
 
     public Transform GetTransform()
     {

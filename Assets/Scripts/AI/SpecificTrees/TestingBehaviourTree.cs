@@ -24,6 +24,10 @@ namespace BehaviourTree
                 {
                     new CanMoveNode(),
                     new TaskMoveNode(),
+                }),
+                 new Sequence(new List<Node>
+                {
+                    new DoNothingNode(),
                 })
             });
             return rootNode;
@@ -38,8 +42,8 @@ namespace BehaviourTree
             FindTarget();
             if(GetTarget() != null)
             {
-                //CheckIfCanAttack();
-                _blackboard.SetData(_attackKey, true);
+                CheckIfCanAttack();
+                //_blackboard.SetData(_attackKey, true);
                 _blackboard.SetData(_moveKey, true);
             }
             else
@@ -54,14 +58,22 @@ namespace BehaviourTree
             Transform  character= _characterController.GetTransform();
             Transform  target = GetTarget();
             Vector3 direction = target.position - character.position;
-            float length = 15f;
-            Debug.Log(character.parent.gameObject.name);
-            int layer = ~character.gameObject.layer;
             direction.Normalize();
+            //float length = 15f;
+            float radius = 0.4f;
             RaycastHit hit;
-            Physics.Raycast(character.position, direction,out hit, length,layer);
-            Debug.DrawRay(character.position, direction,Color.red,hit.distance);
-            if(hit.transform == target)
+            Physics.SphereCast(character.position, radius, direction,out hit);
+            Debug.Log(hit.transform.gameObject.name + "was hit at: " + hit.point);
+            //Physics.Raycast(character.position, direction, out hit);
+            //Vector3 dir = hit.point - character.position;
+            //Debug.DrawRay(character.position, dir,Color.red,5f);
+            //Debug.DrawLine(character.position, hit.point, Color.red, 5);
+            Transform hitTransform = hit.transform;
+            if(hit.transform.childCount > 0)
+            {
+                hitTransform = hit.transform.GetChild(0);
+            }
+            if (hitTransform == target)
             {
                 _blackboard.SetData(_attackKey, true);
                 Debug.Log("CanAttack");

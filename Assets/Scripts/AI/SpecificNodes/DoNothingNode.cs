@@ -4,11 +4,12 @@ using UnityEngine;
 
 namespace BehaviourTree
 {
-    public class TaskMoveNode : Node
+    public class DoNothingNode : Node
     {
         public override NodeState Evaluate()
         {
-            _characterController.Move();
+            _characterController.SkipTurn();
+            Debug.Log("Skipped turn");
             _state = NodeState.Success;
             return _state;
         }

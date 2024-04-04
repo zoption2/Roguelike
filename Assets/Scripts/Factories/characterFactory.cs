@@ -30,10 +30,11 @@ public interface ICharacterController
     void UseEffectsOnEnd();
 
     CharacterType GetCharacterType();
-    void PushIfDead();//
+    void PushIfDead();
     public void Attack();
     public void Move();
     public void Tick();
+    public void SkipTurn();
     public bool CheckIfMoving();
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public Transform GetTransform();

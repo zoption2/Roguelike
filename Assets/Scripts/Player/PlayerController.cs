@@ -86,6 +86,7 @@ namespace Player
             _pooler = characterPooler;
             _playerView.Init(this);
             _navMeshAgent = _playerView.NavMeshAgent;
+            _navMeshAgent.enabled = false;
 
             //_modifiableStats.Velocity.ToDisposableList(_disposables).Subscribe(EndTurn);
 
@@ -250,6 +251,11 @@ namespace Player
         public void Tick()
         {
 
+        }
+
+        public void SkipTurn()
+        {
+            
         }
 
         public bool CheckIfMoving()
