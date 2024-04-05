@@ -37,7 +37,7 @@ public class CollidingObject : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out IWall obstacle))
         {
             Vector3 velocity = GetVelocity();
-            obstacle.ProcessCollision(_rigidbody, velocity);
+            obstacle.ProcessCollision(collision, _rigidbody, velocity);
         }
 
         if (collision.gameObject.TryGetComponent(out IInteractible interactible))

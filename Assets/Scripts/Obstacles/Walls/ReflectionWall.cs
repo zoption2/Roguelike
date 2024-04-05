@@ -7,7 +7,7 @@ namespace Obstacles
 {
     public class ReflectionWall : MonoBehaviour, IWall
     {
-        public void ProcessCollision(Rigidbody rigidbody, Vector3 velocity)
+        public void ProcessCollision(Collision collision, Rigidbody rigidbody, Vector3 velocity)
         {
             rigidbody.velocity = Vector3.zero;
             var modifiedVelocity = velocity * -1.5f;

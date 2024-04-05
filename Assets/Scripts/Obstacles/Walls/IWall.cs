@@ -4,7 +4,7 @@ namespace Obstacles
 {
     public interface IWall
     {
-        public void ProcessCollision(Rigidbody rigidbody, Vector3 velocity);
+        public void ProcessCollision(Collision collision, Rigidbody rigidbody, Vector3 velocity);
     }
 } 
 
