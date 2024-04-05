@@ -170,7 +170,7 @@ namespace Enemy
             Vector3 direction = point - GetTransform().position;
             float distance = direction.magnitude;
             direction.Normalize();
-            float multiplier = Mathf.Clamp(distance, 3, launchPower);
+            float multiplier = Mathf.Clamp(distance, 4, launchPower);
             Vector3 initialVelocity = direction * multiplier;
             _enemyView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
         }

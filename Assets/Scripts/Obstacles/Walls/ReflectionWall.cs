@@ -10,7 +10,7 @@ namespace Obstacles
         public void ProcessCollision(Rigidbody rigidbody, Vector3 velocity)
         {
             rigidbody.velocity = Vector3.zero;
-            var modifiedVelocity = velocity * -2;
+            var modifiedVelocity = velocity * -1.5f;
             rigidbody.velocity = Vector3.zero;
             rigidbody.AddForce(modifiedVelocity, ForceMode.VelocityChange);
         }
