@@ -60,7 +60,7 @@ namespace BehaviourTree
             Vector3 direction = target.position - character.position;
             direction.Normalize();
             //float length = 15f;
-            float radius = 0.4f;
+            float radius = 0.3f;
             RaycastHit hit;
             Physics.SphereCast(character.position, radius, direction,out hit);
             //Debug.Log(hit.transform.gameObject.name + "was hit at: " + hit.point);

@@ -141,6 +141,8 @@ namespace Enemy
                 _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
 
                 _modifiableStats = _interactionFinalizer.CalculateInteractionResult(_modifiableStats, _interactionResult);
+
+                AnalizeCondition();
             }
         }
 
@@ -160,6 +162,17 @@ namespace Enemy
             direction.Normalize();
             Vector2 forceVector = direction * launchPower;
             _enemyView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        }
+
+        public void LaunchToPoint(Vector3 point)
+        {
+            float launchPower = _modifiableStats.LaunchPower.Value;
+            Vector3 direction = point - GetTransform().position;
+            float distance = direction.magnitude;
+            direction.Normalize();
+            float multiplier = Mathf.Clamp(distance, 3, launchPower);
+            Vector3 initialVelocity = direction * multiplier;
+            _enemyView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
         }
 
         public void CheckForEndOfState()
@@ -203,7 +216,7 @@ namespace Enemy
             Vector2 direction = enemy.position - waypoint;
             _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
-            Launch(direction * -1);
+            LaunchToPoint(waypoint);
         }
 
         public void Tick()

@@ -1,4 +1,5 @@
 using Enemy;
+using Obstacles;
 using Player;
 using Prefab;
 using System.Collections;
@@ -27,6 +28,7 @@ namespace Gameplay
         public List<IEnemyController> Enemies { get; set; }
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
+        public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         public void CheckIfAllStopped();
 
         public event OnEndTurn ON_END_TURN;
@@ -36,9 +38,10 @@ namespace Gameplay
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
+        [field: SerializeField] public List<TeleportWallEnter> TeleportWallEnters { get; set; }//
         [field: SerializeField] public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         [field: SerializeField] public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
-
+        
         public event OnEndTurn ON_END_TURN;
 
         public DefaultScenarioContext()

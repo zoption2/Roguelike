@@ -118,6 +118,7 @@ namespace Gameplay
                 state.SetCharacter(mapper.Controller);
                 _queueOfStates.Enqueue(state);
             }
+            _scenarioContext.TeleportWallEnters.ForEach(teleportWallEnter => teleportWallEnter.Recharge());
         }
     }
 
