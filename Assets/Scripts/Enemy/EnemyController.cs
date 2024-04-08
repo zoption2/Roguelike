@@ -70,7 +70,7 @@ namespace Enemy
             var stats = _enemyModel.GetStats();
             _modifiableStats = stats.ToReactive();
 
-            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.DefaultState, this);
+            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             _analyzer = new Analyzer(this);
 
             _interactionDealer.Init(_modifiableStats);
@@ -92,10 +92,10 @@ namespace Enemy
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
             _effector.PrintEffects(_effector.GetPreInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on Start interaction: " + "</color>");
+            Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on End interaction: " + "</color>");
+            Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
             _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
         }
 
@@ -225,9 +225,8 @@ namespace Enemy
             _testBehaviourTree.TickTree();
         }
 
-        public async void SkipTurn()
+        public void SkipTurn()
         {
-            await Task.Delay(_milisecondsDelay);
             _enemyView.TrySkipTurn();
         }
 

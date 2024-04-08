@@ -34,6 +34,7 @@ namespace Gameplay
 
         public void OnEnter()
         {
+            Debug.Log($"-----------------------------|Player {_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
 
             _characters.ON_END_TURN += _scenario.OnStateEnd;
@@ -50,6 +51,7 @@ namespace Gameplay
         {
             _characterController.IsActive = false;
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
+            Debug.Log("----------------------------|EXIT|--------------------------------");
         }
 
         public void SetCharacter(ICharacterController controller)
@@ -72,7 +74,7 @@ namespace Gameplay
         }
         public void OnEnter()
         {
-            Debug.Log($"-----------------------------|{_characterController.GetCharacterType()}|-------------------------------");
+            Debug.Log($"-----------------------------|Enemy {_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
 
             _characters.ON_END_TURN += _scenario.OnStateEnd;

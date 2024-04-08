@@ -2,7 +2,6 @@ using Enemy;
 using Player;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 
 
@@ -163,6 +162,7 @@ namespace Gameplay
 
         public void OnStateEnd()
         {
+            Debug.LogWarning(_queueOfStates.Count);
             if (_queueOfStates.Count == 0)
             {
                 RenewQueue();

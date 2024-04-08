@@ -18,6 +18,7 @@ public class Analyzer : IAnalyzer
     {
 
         Debug.Log("Health on start: " + stats.Health.Value);
+        
         if (stats.Health.Value <= 0)
         {
             _controller.SwitchState(TypeOfConditionState.DeadState);
@@ -33,6 +34,15 @@ public class Analyzer : IAnalyzer
             }
         }
 
-        _controller.SwitchState(TypeOfConditionState.DefaultState);
+        if (_controller.IsActive)
+        {
+            _controller.SwitchState(TypeOfConditionState.ActiveState);
+            return;
+        }
+        else if (!_controller.IsActive)
+        {
+            _controller.SwitchState(TypeOfConditionState.InactiveState);
+            return;
+        }
     }
 }

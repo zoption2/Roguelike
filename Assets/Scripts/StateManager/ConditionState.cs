@@ -19,11 +19,52 @@ public class DefaultState : IConditionState
     public void OnEnter()
     {
         Debug.Log("<color=#5A539C>" + "--|Enter Default Condition State|-- " + "</color>");
+        
     }
 
     public void OnExit()
     {
         //Debug.Log("<color=#5A539C>" + "--|Exit Default Condition State|-- " + "</color>");
+    }
+}
+
+public class ActiveState : IConditionState
+{
+    private ICharacterController _characterController;
+
+    public ActiveState(ICharacterController characterController)
+    {
+        _characterController = characterController;
+    }
+    public void OnEnter()
+    {
+        Debug.Log("<color=#44F44F>" + "--|Enter Active State|-- " + "</color>");
+
+    }
+
+    public void OnExit()
+    {
+        //Debug.Log("<color=#44F44F>" + "--|Exit Active State|-- " + "</color>");
+    }
+}
+
+public class InactiveState : IConditionState
+{
+    private ICharacterController _characterController;
+
+    public InactiveState(ICharacterController characterController)
+    {
+        _characterController = characterController;
+    }
+    public void OnEnter()
+    {
+        Debug.Log("<color=#C0C8D8>" + "--|Enter InactiveState State|-- " + "</color>");
+
+    }
+
+    public void OnExit()
+    {
+        //Debug.Log("<color=#C0C8D8>" + "--|Exit InactiveState State|-- " + "</color>");
     }
 }
 

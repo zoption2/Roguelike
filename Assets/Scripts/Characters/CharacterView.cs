@@ -56,7 +56,7 @@ public class CharacterView : MonoBehaviour,
 
     private void FixedUpdate()
     {
-        if (_rigidbody.velocity.magnitude > 0.2f && !IsMoving)
+        if (_rigidbody.velocity.magnitude > 0.5f && !IsMoving)
         {
             IsMoving = true;
         }

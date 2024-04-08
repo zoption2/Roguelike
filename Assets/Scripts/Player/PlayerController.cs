@@ -9,8 +9,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using UnityEngine.AI;
-using Zenject.SpaceFighter;
-using System.Threading.Tasks;
 
 namespace Player
 {
@@ -34,8 +32,8 @@ namespace Player
         private CharacterPooler _pooler;
         private ReactiveStats _modifiableStats;
         private ReactiveStats _interactionResult;
-        private ISlingShot _slingShot;
         private NavMeshAgent _navMeshAgent;
+        private ISlingShot _slingShot;
         private IAnalyzer _analyzer;
         private IConditionState _conditionState;
         private IStateFactory _stateFactory;
@@ -44,7 +42,6 @@ namespace Player
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
         private IInteractionCalculator _interactionFinalizer;
-        private int _milisecondsDelay = 3000;
 
         [Inject]
         public void Construct(
@@ -73,7 +70,7 @@ namespace Player
             var stats = _playerModel.GetStats();
             _modifiableStats = stats.ToReactive();
 
-            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.DefaultState, this);
+            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             _analyzer = new Analyzer(this);
 
             _playerView = playerView;
@@ -98,10 +95,10 @@ namespace Player
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
             _effector.PrintEffects(_effector.GetPreInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on Start interaction: " + "</color>");
+            Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
             _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on End interaction: " + "</color>");
+            Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
             _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
         }
 
@@ -219,9 +216,8 @@ namespace Player
         {
         }
 
-        public async void SkipTurn()
+        public void SkipTurn()
         {
-            await Task.Delay(_milisecondsDelay);
             _playerView.TrySkipTurn();
             
         }

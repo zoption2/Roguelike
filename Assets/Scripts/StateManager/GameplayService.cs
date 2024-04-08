@@ -1,8 +1,4 @@
 using CharactersStats;
-using Enemy;
-using Player;
-using System.Collections.Generic;
-using UnityEngine;
 using Zenject;
 
 namespace Gameplay

@@ -7,8 +7,8 @@ public enum TypeOfState
 
 public enum TypeOfConditionState
 {
-    AnalyzerState,
-    DefaultState,
+    ActiveState,
+    InactiveState,
     DeadState,
     StunState,
 }
