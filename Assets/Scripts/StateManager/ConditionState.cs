@@ -58,14 +58,14 @@ public class StunState : IConditionState
     public void OnEnter()
     {
         _characterController.IsStunned = true;
-        Debug.Log("<color=#F43D39>" + "--|Enter Stun Condition State|-- " + "</color>");
+        Debug.Log("<color=#FFFFFF>" + "--|Enter Stun Condition State|-- " + "</color>");
         
     }
 
     public void OnExit()
     {
         _characterController.IsStunned = false;
-        Debug.Log("<color=#F43D39>" + "--|Exit Stun Condition State|-- " + "</color>");
+        //Debug.Log("<color=#FFFFF>" + "--|Exit Stun Condition State|-- " + "</color>");
     }
 }
 

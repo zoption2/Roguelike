@@ -229,7 +229,6 @@ namespace Enemy
         {
             await Task.Delay(_milisecondsDelay);
             _enemyView.TrySkipTurn();
-            Debug.LogWarning("Turn Must be skiped!!!");
         }
 
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
@@ -270,12 +269,12 @@ namespace Enemy
         {
             IConditionState newState = _stateFactory.CreateConditionState(state, this);
 
-            if (newState != _conditionState)
+            if (!_conditionState.Equals(newState))
             {
                 _conditionState?.OnExit();
                 _conditionState = newState;
                 _conditionState.OnEnter();
-            }
+            } 
         }
 
         public CharacterType GetCharacterType()

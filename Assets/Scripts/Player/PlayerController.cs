@@ -267,7 +267,7 @@ namespace Player
         {
             IConditionState newState = _stateFactory.CreateConditionState(state, this);
 
-            if (newState != _conditionState)
+            if (!_conditionState.Equals(newState))
             {
                 _conditionState?.OnExit();
                 _conditionState = newState;
