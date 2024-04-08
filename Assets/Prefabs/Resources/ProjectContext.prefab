@@ -81,3 +81,4 @@ MonoBehaviour:
   _defaultPlayerModelHolder: {fileID: 11400000, guid: 8e639817bd91c2b4ab519fa7f1314c5e, type: 2}
   _defaultEnemyModelHolder: {fileID: 11400000, guid: f1c0fa4d0760b5d4aab70b01e440abae, type: 2}
   _buffPrefabHolder: {fileID: 11400000, guid: 3b6c0fb5697b36648b111203c8d2f388, type: 2}
+  _navPrefabHolder: {fileID: 11400000, guid: 31137b7de190d474e91459f7e3879668, type: 2}

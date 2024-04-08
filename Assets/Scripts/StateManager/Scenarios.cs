@@ -167,6 +167,7 @@ namespace Gameplay
             {
                 RenewQueue();
             }
+            Debug.Log("STATE WAS ENDED");
             IState state = _queueOfStates.Dequeue();
             SwitchState(state);
         }

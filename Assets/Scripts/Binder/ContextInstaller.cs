@@ -33,6 +33,8 @@ public class ContextInstaller : MonoInstaller
 
     [SerializeField]
     private BuffPrefabHolder _buffPrefabHolder;
+    [SerializeField]
+    private NavigationPrefabHolder _navPrefabHolder;
     //
     #endregion
     public override void InstallBindings()
@@ -95,6 +97,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IPlayerFactory>().To<PlayerFactory>().AsSingle();
         Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsSingle();
         Container.Bind<ICharacterPanelFactory>().To<CharacterPanelFactory>().AsSingle();
+        Container.Bind<INavigationFactory>().To<NavigationFactory>().AsSingle();
 
     }
 
@@ -104,6 +107,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<CharacterPanelPrefabHolder>().FromInstance(characterPanelPrefabHolder).AsSingle();
         Container.Bind<BuffPrefabHolder>().FromInstance(_buffPrefabHolder).AsSingle();
+        Container.Bind<NavigationPrefabHolder>().FromInstance(_navPrefabHolder).AsSingle();
     }
 
     public void BindModelHolders()

@@ -167,13 +167,16 @@ namespace Enemy
 
         public void LaunchToPoint(Vector3 point)
         {
-            float launchPower = _modifiableStats.LaunchPower.Value;
-            Vector3 direction = point - GetTransform().position;
-            float distance = direction.magnitude;
-            direction.Normalize();
-            float multiplier = Mathf.Clamp(distance, 4, launchPower);
-            Vector3 initialVelocity = direction * multiplier;
-            _enemyView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
+            if (GetTransform() != null) 
+            {
+                float launchPower = _modifiableStats.LaunchPower.Value;
+                Vector3 direction = point - GetTransform().position;
+                float distance = direction.magnitude;
+                direction.Normalize();
+                float multiplier = Mathf.Clamp(distance, 4, launchPower);
+                Vector3 initialVelocity = direction * multiplier;
+                _enemyView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
+            }
         }
 
         public void CheckForEndOfState()
@@ -199,19 +202,16 @@ namespace Enemy
             Vector2 direction = enemy.position - target.position;
             _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
-            if(_navMeshAgent != null)
-                _navMeshAgent.enabled = false;
             Launch(direction * -1);
         }
 
         public async void Move()
         {
-            _navMeshAgent.enabled = true;
             Transform target = _testBehaviourTree.GetTarget();
             Transform enemy = GetTransform();
+            _navMeshAgent.enabled = true;
             _navMeshAgent.SetDestination(target.position);
-            _navMeshAgent.isStopped = true;
-            await Task.Delay(_milisecondsDelay/10);
+            await Task.Delay(_milisecondsDelay / 10);
             Vector3 waypoint = _navMeshAgent.steeringTarget;
             _navMeshAgent.enabled = false;
             Vector2 direction = enemy.position - waypoint;
