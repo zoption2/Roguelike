@@ -9,7 +9,8 @@ public enum TypeOfConditionState
 {
     AnalyzerState,
     DefaultState,
-    DeadState
+    DeadState,
+    StunState,
 }
 
 public enum CharacterType

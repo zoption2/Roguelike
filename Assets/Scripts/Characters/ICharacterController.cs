@@ -5,6 +5,7 @@ using UnityEngine;
 public interface ICharacterController
 {
     public bool IsActive { get; set; }
+    public bool IsStunned { get; set; }
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
     public void UseEffectsOnStart();
     public void AnalizeCondition();

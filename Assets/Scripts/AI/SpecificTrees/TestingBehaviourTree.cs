@@ -42,13 +42,24 @@ namespace BehaviourTree
             FindTarget();
             if(GetTarget() != null)
             {
+                
                 CheckIfCanAttack();
-                //_blackboard.SetData(_attackKey, true);
-                _blackboard.SetData(_moveKey, true);
+                CheckIfCanMove();   
             }
             else
             {
                 _blackboard.SetData(_attackKey, false);
+                _blackboard.SetData(_moveKey, false);
+            }
+        }
+
+        private void CheckIfCanMove()
+        {
+            if (!_characterController.IsStunned)
+            {
+                _blackboard.SetData(_moveKey, true);
+            } else
+            {
                 _blackboard.SetData(_moveKey, false);
             }
         }
@@ -69,7 +80,7 @@ namespace BehaviourTree
             {
                 hitTransform = hit.transform.GetChild(0);
             }
-            if (hitTransform == target)
+            if (hitTransform == target && !_characterController.IsStunned)
             {
                 _blackboard.SetData(_attackKey, true);
                 Debug.Log("CanAttack");

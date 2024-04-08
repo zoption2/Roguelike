@@ -23,6 +23,7 @@ namespace Enemy
     {
         public event OnCharacterDeath ON_CHARACTER_DEATH;
         public bool IsActive { get; set; }
+        public bool IsStunned { get; set; }
 
         private IEffectProcessor _effector;
         private IAnalyzer _analyzer;
@@ -228,6 +229,7 @@ namespace Enemy
         {
             await Task.Delay(_milisecondsDelay);
             _enemyView.TrySkipTurn();
+            Debug.LogWarning("Turn Must be skiped!!!");
         }
 
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
@@ -261,7 +263,7 @@ namespace Enemy
         public void AnalizeCondition()
         {
             Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
-            _analyzer.Analyze(_modifiableStats);
+            _analyzer.Analyze(_modifiableStats, _effector);
         }
 
         public void SwitchState(TypeOfConditionState state)

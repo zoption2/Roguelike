@@ -1,9 +1,10 @@
 using CharactersStats;
+using Interactions;
 using UnityEngine;
 
 public interface IAnalyzer
 {
-    public void Analyze(ReactiveStats stats);
+    public void Analyze(ReactiveStats stats, IEffectProcessor effectProcessor);
 }
 
 public class Analyzer : IAnalyzer
@@ -13,17 +14,25 @@ public class Analyzer : IAnalyzer
     {
         _controller = controller;
     }
-    public void Analyze(ReactiveStats stats)
+    public void Analyze(ReactiveStats stats, IEffectProcessor effectProcessor)
     {
 
         Debug.Log(stats.Health.Value);
         if (stats.Health.Value <= 0)
         {
             _controller.SwitchState(TypeOfConditionState.DeadState);
+            return;
         }
-        else
+
+        foreach (IEffect effect in effectProcessor.GetOnStartTurnInteractionEffects())
         {
-            _controller.SwitchState(TypeOfConditionState.DefaultState);
+            if (effect is StunEffect)
+            {
+                _controller.SwitchState(TypeOfConditionState.StunState);
+                return;
+            }
         }
+
+        _controller.SwitchState(TypeOfConditionState.DefaultState);
     }
 }

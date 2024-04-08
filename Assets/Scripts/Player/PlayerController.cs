@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using UnityEngine.AI;
+using Zenject.SpaceFighter;
+using System.Threading.Tasks;
 
 namespace Player
 {
@@ -22,6 +24,7 @@ namespace Player
     public class PlayerController : IPlayerController, IControllerInputs, IDisposable
     {
         public bool IsActive { get; set; }
+        public bool IsStunned { get; set; }
         public event OnCharacterDeath ON_CHARACTER_DEATH;
 
         private CharacterView _playerView;
@@ -41,6 +44,7 @@ namespace Player
         private IInteractionProcessor _interactionProcessor;
         private IInteractionDealer _interactionDealer;
         private IInteractionCalculator _interactionFinalizer;
+        private int _milisecondsDelay = 3000;
 
         [Inject]
         public void Construct(
@@ -145,7 +149,7 @@ namespace Player
                 ReactiveStats statsWithBonus = _effector.ProcessStatsBeforeInteraction(_modifiableStats);
 
                 _interactionDealer.Init(statsWithBonus);
-                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
+                IInteraction interaction = _interactionDealer.UseInteraction(InteractionType.Knight_HeavyAttack);
                 return interaction;
             } 
             else
@@ -215,8 +219,10 @@ namespace Player
         {
         }
 
-        public void SkipTurn()
+        public async void SkipTurn()
         {
+            await Task.Delay(_milisecondsDelay);
+            _playerView.TrySkipTurn();
             
         }
 
@@ -254,7 +260,7 @@ namespace Player
         public void AnalizeCondition()
         {
             Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
-            _analyzer.Analyze(_modifiableStats);
+            _analyzer.Analyze(_modifiableStats, _effector);
         }
 
         public void SwitchState(TypeOfConditionState state)

@@ -15,6 +15,8 @@ namespace Interactions
             {
                 new StunEffect(2),
             };
+
+            _damage = 0;
         }
 
         public override List<IEffect> GetEffects()

@@ -47,3 +47,25 @@ public class DeadState : IConditionState
     }
 }
 
+public class StunState : IConditionState
+{
+    private ICharacterController _characterController;
+
+    public StunState(ICharacterController characterController)
+    {
+        _characterController = characterController;
+    }
+    public void OnEnter()
+    {
+        _characterController.IsStunned = true;
+        Debug.Log("<color=#F43D39>" + "--|Enter Stun Condition State|-- " + "</color>");
+        
+    }
+
+    public void OnExit()
+    {
+        _characterController.IsStunned = false;
+        Debug.Log("<color=#F43D39>" + "--|Exit Stun Condition State|-- " + "</color>");
+    }
+}
+

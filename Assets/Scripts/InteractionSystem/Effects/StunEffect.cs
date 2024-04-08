@@ -2,6 +2,8 @@ using CharactersStats;
 
 namespace Interactions
 {
+    //public interface IStunEffect : IEffect { }
+
     public class StunEffect : EffectBase
     {
         public StunEffect(int duration)

@@ -36,10 +36,11 @@ namespace Gameplay
         {
             _characterController.IsActive = true;
 
+            _characters.ON_END_TURN += _scenario.OnStateEnd;
+
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
 
-            _characters.ON_END_TURN += _scenario.OnStateEnd;
             //Debug.Log("Entered player turn state");
             if (!_characters.Players.Contains(_characterController))
                 _scenario.OnStateEnd();
@@ -74,12 +75,11 @@ namespace Gameplay
             Debug.Log($"-----------------------------|{_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
 
+            _characters.ON_END_TURN += _scenario.OnStateEnd;
 
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
 
-
-            _characters.ON_END_TURN += _scenario.OnStateEnd;
             //Debug.Log("Entered enemy turn state");
             _characterController.Tick();
             if (!_characters.Enemies.Contains(_characterController))

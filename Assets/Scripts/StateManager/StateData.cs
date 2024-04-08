@@ -61,6 +61,9 @@ namespace Gameplay
                 case TypeOfConditionState.DeadState:
                     state = new DeadState(controller);
                     break;
+                case TypeOfConditionState.StunState:
+                    state = new StunState(controller);
+                    break;
 
             }
             return state;
