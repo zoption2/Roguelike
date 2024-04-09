@@ -40,6 +40,7 @@ namespace Enemy
         private ReactiveStats _interactionResult;
         private CharacterPooler _pooler;
         private NavMeshAgent _navMeshAgent;
+        private NavMeshObstacle _navMeshObstacle;
         private DiContainer _container;
         private int _milisecondsDelay = 3000;
 
@@ -79,7 +80,10 @@ namespace Enemy
             _pooler = characterPooler;
             _enemyView.Init(this);
             _navMeshAgent = _enemyView.NavMeshAgent;
+            _navMeshObstacle = _enemyView.NavMeshObstacle;
             _navMeshAgent.enabled = false;
+            _navMeshObstacle.carving = true;
+            _navMeshObstacle.carveOnlyStationary = true;
             _enemyView.ON_CLICK += OnClick;
             _enemyView.ON_STOP_MOVEMENT += CheckForEndOfState;
         }
@@ -207,6 +211,8 @@ namespace Enemy
 
         public async void Move()
         {
+            _navMeshObstacle.enabled = false;
+            await Task.Delay(_milisecondsDelay / 10);
             Transform target = _testBehaviourTree.GetTarget();
             Transform enemy = GetTransform();
             _navMeshAgent.enabled = true;
@@ -218,6 +224,7 @@ namespace Enemy
             _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
             LaunchToPoint(waypoint);
+            _navMeshObstacle.enabled = true;
         }
 
         public void Tick()

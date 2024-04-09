@@ -71,7 +71,7 @@ namespace BehaviourTree
             Vector3 direction = target.position - character.position;
             direction.Normalize();
             //float length = 15f;
-            float radius = 0.3f;
+            float radius = 0.4f;
             RaycastHit hit;
             Physics.SphereCast(character.position, radius, direction,out hit);
             //Debug.Log(hit.transform.gameObject.name + "was hit at: " + hit.point);
@@ -96,9 +96,9 @@ namespace BehaviourTree
         {
             if(_characterScenarioContext.Players.Count > 0)
             {
-                Vector3 target = _characterScenarioContext.Players[0].GetTransform().position;
+                Vector3 target; //= _characterScenarioContext.Players[0].GetTransform().position;
                 Vector3 enemy = _characterController.GetTransform().position;
-                float minDistance = Vector3.Distance(target,enemy);
+                float minDistance = 100;//Vector3.Distance(target,enemy);
                 float currentDistance;
                 int minIndex = 0;
                 for (int i=0,n = _characterScenarioContext.Players.Count; i < n; i++)

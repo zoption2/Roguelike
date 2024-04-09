@@ -39,6 +39,7 @@ public class CharacterView : MonoBehaviour,
     [SerializeField] Transform _viewTransform;
     public bool IsMoving { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
+    public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; } 
     public Rigidbody Rigidbody { get { return _rigidbody; } }
     private Rigidbody _rigidbody;
@@ -47,6 +48,7 @@ public class CharacterView : MonoBehaviour,
     {
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+        NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
     }
 
     private void Start()

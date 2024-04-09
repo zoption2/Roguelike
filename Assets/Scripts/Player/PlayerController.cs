@@ -36,6 +36,7 @@ namespace Player
         private ReactiveStats _interactionResult;
         private ISlingShot _slingShot;
         private NavMeshAgent _navMeshAgent;
+        private NavMeshObstacle _navMeshObstacle;
         private IAnalyzer _analyzer;
         private IConditionState _conditionState;
         private IStateFactory _stateFactory;
@@ -80,7 +81,10 @@ namespace Player
             _pooler = characterPooler;
             _playerView.Init(this);
             _navMeshAgent = _playerView.NavMeshAgent;
+            _navMeshObstacle = _playerView.NavMeshObstacle;
             _navMeshAgent.enabled = false;
+            _navMeshObstacle.carving = true;
+            _navMeshObstacle.carveOnlyStationary = true;
 
             _playerView.ON_CLICK += OnClick;
             _playerView.ON_BEGINDRAG += OnBeginDrag;

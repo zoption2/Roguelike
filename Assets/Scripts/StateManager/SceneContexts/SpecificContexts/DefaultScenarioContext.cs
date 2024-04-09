@@ -74,7 +74,7 @@ namespace Gameplay
                 }
                     
             }
-            NavMeshSurface.BuildNavMesh();
+            //NavMeshSurface.BuildNavMesh();
             ON_END_TURN?.Invoke();
         }
     }
