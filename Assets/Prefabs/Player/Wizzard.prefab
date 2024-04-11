@@ -218,6 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _viewTransform: {fileID: 6015431970128935106}
+  MaxVelocity: 50
 --- !u!135 &2538648762374529337
 SphereCollider:
   m_ObjectHideFlags: 0

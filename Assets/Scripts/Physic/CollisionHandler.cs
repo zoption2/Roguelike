@@ -84,7 +84,7 @@ public class CollisionHandler : MonoBehaviour
     {
         while (_isStoppedInsideTrigger)
         {
-            if (!_characterView.IsMoving)
+            if (!_characterView.ControllerInputs.IsMoving)
             {
                 bool activeStatus = _characterView.ControllerInputs.GetActiveStatus();
                 if (activeStatus)

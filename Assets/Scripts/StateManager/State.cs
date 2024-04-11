@@ -50,6 +50,10 @@ namespace Gameplay
         public void OnExit()
         {
             _characterController.IsActive = false;
+
+            _characterController.UseEffectsOnStart();
+            _characterController.AnalizeCondition();
+
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
         }
@@ -90,10 +94,12 @@ namespace Gameplay
 
         public void OnExit()
         {
+            _characterController.IsActive = false;
+
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
 
-            _characterController.IsActive = false;
+            
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
             //Debug.Log("Exited enemy turn state");
             Debug.Log("----------------------------|EXIT|--------------------------------");

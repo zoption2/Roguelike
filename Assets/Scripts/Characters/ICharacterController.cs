@@ -1,11 +1,23 @@
+using CharactersStats;
 using Gameplay;
+using Interactions;
 using Pool;
 using UnityEngine;
 
 public interface ICharacterController
 {
+    public IEffectProcessor Effector { get; set; }
+    public IInteractionProcessor InteractionProcessor { get; set; }
+    public IInteractionDealer InteractionDealer { get; set; }
+    public IInteractionCalculator InteractionFinalizer { get; set; }
+    public ReactiveStats ModifiableStats { get; set; }
+    public IAnalyzer Analyzer { get; set; }
+    public CharacterView CharacterView { get; set; }
+    
     public bool IsActive { get; set; }
     public bool IsStunned { get; set; }
+
+    
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
     public void UseEffectsOnStart();
     public void AnalizeCondition();
@@ -21,7 +33,10 @@ public interface ICharacterController
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public Transform GetTransform();
 
+
     public event OnCharacterDeath ON_CHARACTER_DEATH;
+    event OnStopMovement ON_STOP_MOVEMENT;
 }
 
 public delegate void OnCharacterDeath(ICharacterController controller);
+public delegate void OnStopMovement();

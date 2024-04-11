@@ -22,21 +22,22 @@ namespace Enemy
     public class EnemyController : IEnemyController, IControllerInputs, IDisposable
     {
         public event OnCharacterDeath ON_CHARACTER_DEATH;
+        public event OnStopMovement ON_STOP_MOVEMENT;
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
-
-        private IEffectProcessor _effector;
-        private IAnalyzer _analyzer;
+        public bool IsMoving { get; set; }
+        public IAnalyzer Analyzer { get; set; }
         private IConditionState _conditionState;
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private ITestingBehaviourTree _testBehaviourTree;
-        private IInteractionProcessor _interactionProcessor;
-        private IInteractionDealer _interactionDealer;
-        private IInteractionCalculator _interactionFinalizer;
-        private CharacterView _enemyView;
+        public IEffectProcessor Effector { get; set; }
+        public IInteractionProcessor InteractionProcessor { get; set; }
+        public IInteractionDealer InteractionDealer { get; set; }
+        public IInteractionCalculator InteractionFinalizer { get; set; }
+        public CharacterView CharacterView { get; set; }
         private CharacterModel _enemyModel;
-        private ReactiveStats _modifiableStats;
+        public ReactiveStats ModifiableStats { get; set; }
         private ReactiveStats _interactionResult;
         private CharacterPooler _pooler;
         private NavMeshAgent _navMeshAgent;
@@ -52,10 +53,10 @@ namespace Enemy
             IStateFactory stateFactory,
             DiContainer container)
         {
-            _interactionProcessor = interactionProcessor;
-            _interactionDealer = interactionDealer;
-            _effector = effector;
-            _interactionFinalizer = interactionFinalizer;
+            InteractionProcessor = interactionProcessor;
+            InteractionDealer = interactionDealer;
+            Effector = effector;
+            InteractionFinalizer = interactionFinalizer;
             _stateFactory = stateFactory;
             _container = container;
         }
@@ -68,112 +69,99 @@ namespace Enemy
             _enemyModel = characterModel;
 
             var stats = _enemyModel.GetStats();
-            _modifiableStats = stats.ToReactive();
+            ModifiableStats = stats.ToReactive();
 
             _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
-            _analyzer = new Analyzer(this);
+            Analyzer = new Analyzer(this);
 
-            _interactionDealer.Init(_modifiableStats);
+            InteractionDealer.Init(ModifiableStats);
 
-            _enemyView = characterView;
+            CharacterView = characterView;
             _pooler = characterPooler;
-            _enemyView.Init(this);
-            _navMeshAgent = _enemyView.NavMeshAgent;
+            CharacterView.Init(this);
+            _navMeshAgent = CharacterView.NavMeshAgent;
             _navMeshAgent.enabled = false;
-            _enemyView.ON_CLICK += OnClick;
-            _enemyView.ON_STOP_MOVEMENT += CheckForEndOfState;
+            CharacterView.ON_CLICK += OnClick;
+            ON_STOP_MOVEMENT += CheckForEndOfState;
+        }
+
+        public void DoUpdate()
+        {
+            if (CharacterView.Rigidbody.velocity.magnitude > CharacterView.MaxVelocity)
+            {
+                CharacterView.Rigidbody.velocity = CharacterView.Rigidbody.velocity.normalized * CharacterView.MaxVelocity;
+            }
+
+
+            if (CharacterView.Rigidbody.velocity.magnitude > 0.5f && !IsMoving)
+            {
+                IsMoving = true;
+            }
+            else if (CharacterView.Rigidbody.velocity.magnitude < 0.2f && CharacterView.Rigidbody.velocity.magnitude > 0f && IsMoving)
+            {
+                IsMoving = false;
+                ON_STOP_MOVEMENT?.Invoke();
+            }
+
+            if (IsMoving)
+            {
+                _conditionState.ViewRotation();
+            }
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
             Debug.Log($"-----|{_enemyModel.Type}|-----");
-            Debug.Log("<color=#189C0C>" + "Hp: " + _modifiableStats.Health.Value + "</color>");
+            Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
-            _effector.PrintEffects(_effector.GetPreInteractionEffects());
+            Effector.PrintEffects(Effector.GetPreInteractionEffects());
 
             Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
-            _effector.PrintEffects(_effector.GetOnStartTurnInteractionEffects());
+            Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
 
             Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
-            _effector.PrintEffects(_effector.GetOnEndTurnInteractionEffects());
+            Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
         }
 
         public IInteraction GetInteraction()
         {
-            IInteraction interaction;
-            if (IsActive)
-            {
-                ReactiveStats statsWithBonus = _effector.ProcessStatsBeforeInteraction(_modifiableStats);
-
-                _interactionDealer.Init(statsWithBonus);
-                interaction = _interactionDealer.UseInteraction(InteractionType.BasicAttack);
-                return interaction;
-            }
-            else
-            {
-                interaction = _interactionDealer.UseInteraction(InteractionType.None);
-                return interaction;
-            }
+            return _conditionState.GetInteraction(InteractionType.BasicAttack);
         }
 
         public void Dispose()
         {
-            _enemyView.ON_CLICK -= OnClick;
+            CharacterView.ON_CLICK -= OnClick;
         }
 
         public ReactiveStats GetCharacterStats()
         {
-            return _modifiableStats;
+            return ModifiableStats;
         }
 
         public void ApplyInteraction(IInteraction interaction)
         {
-            if (!IsActive)
-            {
-                List<IEffect> effects = interaction.GetEffects();
-                if (effects != null && effects.Count > 0)
-                {
-                    foreach (IEffect effect in effects)
-                    {
-                        _effector.AddEffects(effects);
-                    }
-                }
-                _interactionResult = _interactionProcessor.ProcessInteraction(interaction);
-
-                _modifiableStats = _interactionFinalizer.CalculateInteractionResult(_modifiableStats, _interactionResult);
-
-                AnalizeCondition();
-            }
+            _conditionState.ApplyInteraction(interaction);
         }
 
         public void AddEffects(List<IEffect> effects)
         {
-            if (effects != null && effects.Count > 0)
-            {
-                foreach (IEffect effect in effects)
-                {
-                    _effector.AddEffects(effects);
-                }
-            }
+            _conditionState.AddEffects(effects);
         }
         public void Launch(Vector2 direction)
         {
-            float launchPower = _modifiableStats.LaunchPower.Value;
-            direction.Normalize();
-            Vector2 forceVector = direction * launchPower;
-            _enemyView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+            _conditionState.Launch(direction);
         }
 
         public void LaunchToPoint(Vector3 point)
         {
-            float launchPower = _modifiableStats.LaunchPower.Value;
+            float launchPower = ModifiableStats.LaunchPower.Value;
             Vector3 direction = point - GetTransform().position;
             float distance = direction.magnitude;
             direction.Normalize();
             float multiplier = Mathf.Clamp(distance, 4, launchPower);
             Vector3 initialVelocity = direction * multiplier;
-            _enemyView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
+            CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
         }
 
         public void CheckForEndOfState()
@@ -184,12 +172,12 @@ namespace Enemy
         public void PushIfDead()
         {
             ON_CHARACTER_DEATH?.Invoke(this);
-            _pooler.Push(_enemyModel.Type, _enemyView);
+            _pooler.Push(_enemyModel.Type, CharacterView);
         }
 
         public bool CheckIfMoving()
         {
-            return _enemyView.IsMoving;
+            return IsMoving;
         }
 
         public async void Attack()
@@ -197,7 +185,7 @@ namespace Enemy
             Transform target = _testBehaviourTree.GetTarget();
             Transform enemy = GetTransform();
             Vector2 direction = enemy.position - target.position;
-            _enemyView.ChangeDirection(-direction);
+            CharacterView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
             if(_navMeshAgent != null)
                 _navMeshAgent.enabled = false;
@@ -215,7 +203,7 @@ namespace Enemy
             Vector3 waypoint = _navMeshAgent.steeringTarget;
             _navMeshAgent.enabled = false;
             Vector2 direction = enemy.position - waypoint;
-            _enemyView.ChangeDirection(-direction);
+            CharacterView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
             LaunchToPoint(waypoint);
         }
@@ -227,7 +215,7 @@ namespace Enemy
 
         public void SkipTurn()
         {
-            _enemyView.TrySkipTurn();
+            ON_STOP_MOVEMENT?.Invoke();
         }
 
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
@@ -238,7 +226,7 @@ namespace Enemy
 
         public Transform GetTransform()
         {
-            return _enemyView.GetTransform();
+            return CharacterView.GetTransform();
         }
 
         public bool GetActiveStatus()
@@ -248,20 +236,20 @@ namespace Enemy
 
         public void UseEffectsOnStart()
         {
-            _effector.ProcessEffectsOnStart(_modifiableStats);
+            Effector.ProcessEffectsOnStart(ModifiableStats);
             Debug.LogWarning("Effects On Start Was Processed:");
         }
 
         public void UseEffectsOnEnd()
         {
-            _effector.ProcessEffectsOnEnd(_modifiableStats);
+            Effector.ProcessEffectsOnEnd(ModifiableStats);
             Debug.LogWarning("Effects On End Was Processed!");
         }
 
         public void AnalizeCondition()
         {
             Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
-            _analyzer.Analyze(_modifiableStats, _effector);
+            Analyzer.Analyze(ModifiableStats, Effector);
         }
 
         public void SwitchState(TypeOfConditionState state)
