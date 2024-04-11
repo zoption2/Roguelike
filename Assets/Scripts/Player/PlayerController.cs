@@ -284,5 +284,9 @@ namespace Player
             _slingShot.OnDirectionChange -= _playerView.ChangeDirection;
             _slingShot.OnShoot -= Launch;
         }
+        public IConditionState GetCurrentConditionState()
+        {
+            return _conditionState;
+        }
     }
 }

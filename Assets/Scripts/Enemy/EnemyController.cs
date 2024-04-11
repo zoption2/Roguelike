@@ -280,5 +280,10 @@ namespace Enemy
         {
             return _enemyModel.Type;
         }
+
+        public IConditionState GetCurrentConditionState()
+        {
+            return _conditionState;
+        }
     }
 }

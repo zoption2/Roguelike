@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollidingObject : MonoBehaviour
+public class CollisionHandler : MonoBehaviour
 {
     [SerializeField] CharacterView _characterView;
 
@@ -43,6 +43,22 @@ public class CollidingObject : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out IInteractible interactible))
         {
             _characterView.StartInteraction(interactible);
+        }
+
+        if (collision.gameObject.TryGetComponent(out CharacterView otherView))
+        {
+            //_characterView.HandleMovement(otherView);
+            bool isCharacterActiveOnThisTurn = _characterView.ControllerInputs.GetActiveStatus();
+            if (isCharacterActiveOnThisTurn)
+            {
+                IMovable movableBehaviour = new StopAndPush();
+                movableBehaviour.ApplyForce(_rigidbody, otherView.Rigidbody);
+            }
+            //else
+            //{
+            //    IMovable movableBehaviour = new Bounce();
+            //    movableBehaviour.ApplyForce(_rigidbody, otherView.Rigidbody);
+            //}
         }
     }
 

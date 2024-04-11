@@ -9,4 +9,5 @@ public interface IControllerInputs
     void ApplyInteraction(IInteraction interactions);
     void AddEffects(List<IEffect> effects);
     bool GetActiveStatus();
+    IConditionState GetCurrentConditionState();
 }

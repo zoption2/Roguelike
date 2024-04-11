@@ -6,6 +6,10 @@ using UnityEngine.EventSystems;
 using Prefab;
 using UnityEngine.AI;
 
+public interface IMovable
+{
+    void ApplyForce(Rigidbody providerRb, Rigidbody handlerRb);
+}
 public interface IInteractible
 {
     void StartInteraction(IInteractible interactible);
@@ -15,6 +19,8 @@ public interface ICharacterView
 {
     void Init(IControllerInputs controllerInputs);
     public void ChangeDirection(Vector2 direction);
+
+    //void HandleMovement(CharacterView otherView);
     bool IsMoving { get; set; }
 
     event Action<Transform, PointerEventData> ON_CLICK;
@@ -42,6 +48,7 @@ public class CharacterView : MonoBehaviour,
     public IControllerInputs ControllerInputs { get; set; } 
     public Rigidbody Rigidbody { get { return _rigidbody; } }
     private Rigidbody _rigidbody;
+    private float _maxVelocity = 50f;
 
     public void Init(IControllerInputs controllerInputs)
     {
@@ -56,6 +63,12 @@ public class CharacterView : MonoBehaviour,
 
     private void FixedUpdate()
     {
+        if (_rigidbody.velocity.magnitude > _maxVelocity)
+        {
+            _rigidbody.velocity = _rigidbody.velocity.normalized * _maxVelocity;
+        }
+
+
         if (_rigidbody.velocity.magnitude > 0.5f && !IsMoving)
         {
             IsMoving = true;
@@ -66,7 +79,10 @@ public class CharacterView : MonoBehaviour,
             ON_STOP_MOVEMENT?.Invoke();
         }
 
-        if (IsMoving) ViewRotation();
+        if (IsMoving)
+        {
+            ViewRotation();
+        } 
     }
 
     private void ViewRotation()
@@ -74,10 +90,21 @@ public class CharacterView : MonoBehaviour,
         Vector3 velocity = _rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        Quaternion targetRotation;
+
+        IConditionState conditionState = ControllerInputs.GetCurrentConditionState();
+        if (conditionState.GetType() == typeof(StunState))
+        {
+            targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
+        }
+        else
+        {
+            targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        }
 
         _viewTransform.rotation = Quaternion.Slerp(_viewTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
+
 
     public void ChangeDirection(Vector2 direction)
     {
@@ -87,6 +114,7 @@ public class CharacterView : MonoBehaviour,
 
     public void StartInteraction(IInteractible interactible)
     {
+        //реалізувати логіку обробки прискорення тут
         var dealerType = ControllerInputs.GetType();
         var handlerType = interactible.ControllerInputs.GetType();
 
@@ -101,6 +129,21 @@ public class CharacterView : MonoBehaviour,
             return;
         }
     }
+
+    //public void HandleMovement(CharacterView otherView)
+    //{
+    //    if(ControllerInputs.GetActiveStatus())
+    //    {
+    //        IMovable movableBehaviour = new StopAndPush();
+    //        movableBehaviour.ApplyForce(_rigidbody, otherView._rigidbody);
+    //    }
+    //    else
+    //    {
+    //        IMovable movableBehaviour = new Bounce();
+    //        movableBehaviour.ApplyForce(_rigidbody, otherView._rigidbody);
+    //    }
+        
+    //}
 
     public void OnCreate()
     {

@@ -162,7 +162,6 @@ namespace Gameplay
 
         public void OnStateEnd()
         {
-            Debug.LogWarning(_queueOfStates.Count);
             if (_queueOfStates.Count == 0)
             {
                 RenewQueue();
