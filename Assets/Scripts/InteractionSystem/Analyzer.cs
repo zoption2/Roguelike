@@ -1,5 +1,7 @@
 using CharactersStats;
+using Enemy;
 using Interactions;
+using Player;
 using UnityEngine;
 
 public interface IAnalyzer
@@ -36,8 +38,16 @@ public class Analyzer : IAnalyzer
 
         if (_controller.IsActive)
         {
-            _controller.SwitchState(TypeOfConditionState.ActiveState);
-            return;
+            if (_controller is IPlayerController)
+            {
+                _controller.SwitchState(TypeOfConditionState.PlayerActiveState);
+                return;
+            }
+            else if (_controller is IEnemyController)
+            {
+                _controller.SwitchState(TypeOfConditionState.EnemyActiveState);
+                return;
+            }
         }
         else if (!_controller.IsActive)
         {

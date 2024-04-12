@@ -8,6 +8,8 @@ public enum TypeOfState
 public enum TypeOfConditionState
 {
     ActiveState,
+    PlayerActiveState,
+    EnemyActiveState,
     InactiveState,
     DeadState,
     StunState,

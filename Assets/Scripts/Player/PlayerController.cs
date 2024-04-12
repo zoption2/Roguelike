@@ -27,14 +27,14 @@ namespace Player
         public event OnStopMovement ON_STOP_MOVEMENT;
 
         public CharacterView CharacterView { get; set; }
-        private CharacterModel _playerModel;
-        private SlingshotPooler _slingShotPooler;
+        public CharacterModel CharacterModel { get; set; }
+        public SlingshotPooler SlingShotPooler { get; set; }
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         public ReactiveStats ModifiableStats { get; set; }
         private ReactiveStats _interactionResult;
         private NavMeshAgent _navMeshAgent;
-        private ISlingShot _slingShot;
+        //private ISlingShot _slingShot;
         public IAnalyzer Analyzer { get; set; }
         public bool IsMoving { get; set; }
         private IConditionState _conditionState;
@@ -54,7 +54,7 @@ namespace Player
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory)
         {
-            _slingShotPooler = slingShotPooler;
+            SlingShotPooler = slingShotPooler;
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
@@ -67,9 +67,9 @@ namespace Player
         CharacterView playerView,
         CharacterPooler characterPooler)
         {
-            _playerModel = playerModel;
+            CharacterModel = playerModel;
 
-            var stats = _playerModel.GetStats();
+            var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
             _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
@@ -84,31 +84,12 @@ namespace Player
             CharacterView.ON_CLICK += OnClick;
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
             ON_STOP_MOVEMENT += CheckForEndOfState;
-            _slingShotPooler.Init();
+            SlingShotPooler.Init();
         }
 
         public void DoUpdate()
         {
-            if (CharacterView.Rigidbody.velocity.magnitude > CharacterView.MaxVelocity)
-            {
-                CharacterView.Rigidbody.velocity = CharacterView.Rigidbody.velocity.normalized * CharacterView.MaxVelocity;
-            }
-
-
-            if (CharacterView.Rigidbody.velocity.magnitude > 0.5f && !IsMoving)
-            {
-                IsMoving = true;
-            }
-            else if (CharacterView.Rigidbody.velocity.magnitude < 0.2f && CharacterView.Rigidbody.velocity.magnitude > 0f && IsMoving)
-            {
-                IsMoving = false;
-                ON_STOP_MOVEMENT?.Invoke();
-            }
-            
-            if (IsMoving)
-            {
-                _conditionState.ViewRotation();
-            }
+            _conditionState.DoUpdate();
         }
 
 
@@ -117,7 +98,7 @@ namespace Player
         {
             _slingShotInitPosition = point;
 
-            Debug.Log($"-----|{_playerModel.Type}|-----");
+            Debug.Log($"-----|{CharacterModel.Type}|-----");
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
@@ -134,35 +115,13 @@ namespace Player
         {
             if (IsActive && !IsMoving)
             {
-                UseSlingshot(eventData);
+                _conditionState.UseSlingshot(eventData, _slingShotInitPosition);
             }
-        }
-
-        private void UseSlingshot(PointerEventData eventData)
-        {
-            CharacterType type = _playerModel.Type;
-
-            Vector3 fixedInitPosition = new Vector3(_slingShotInitPosition.position.x, _slingShotInitPosition.position.y, _slingShotInitPosition.position.z - 1f);
-
-            _slingShot = _slingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.identity, _slingShotInitPosition.parent);
-
-            _slingShot.Init(_slingShotInitPosition.position, type);
-
-            _slingShot.OnDirectionChange -= CharacterView.ChangeDirection;
-            _slingShot.OnDirectionChange += CharacterView.ChangeDirection;
-
-            _slingShot.OnShoot -= Launch;
-            _slingShot.OnShoot += Launch;
-
-            DragInputModule.dragFocusObject = _slingShot.gameObject;
-            eventData.pointerDrag = _slingShot.gameObject;
-            eventData.dragging = true;
         }
 
         public void Launch(Vector2 direction)
         {
             _conditionState.Launch(direction);
-            _slingShot.OnShoot -= Launch;
         }
 
         public IInteraction GetInteraction()
@@ -183,7 +142,7 @@ namespace Player
         public void PushIfDead()
         {
             ON_CHARACTER_DEATH(this);
-            _pooler.Push(_playerModel.Type, CharacterView);
+            _pooler.Push(CharacterModel.Type, CharacterView);
         }
 
         public ReactiveStats GetCharacterStats()
@@ -265,16 +224,21 @@ namespace Player
 
         public CharacterType GetCharacterType()
         {
-            return _playerModel.Type;
+            return CharacterModel.Type;
         }
+
+        public void HandleStopMovement()
+        {
+            ON_STOP_MOVEMENT?.Invoke();
+        }
+
 
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
 
-            _slingShot.OnDirectionChange -= CharacterView.ChangeDirection;
-            _slingShot.OnShoot -= Launch;
+            
         }
         public IConditionState GetCurrentConditionState()
         {

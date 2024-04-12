@@ -13,11 +13,11 @@ public interface ICharacterController
     public ReactiveStats ModifiableStats { get; set; }
     public IAnalyzer Analyzer { get; set; }
     public CharacterView CharacterView { get; set; }
-    
+    public SlingshotPooler SlingShotPooler { get; set; }
     public bool IsActive { get; set; }
     public bool IsStunned { get; set; }
-
-    
+    public CharacterModel CharacterModel { get; set; }
+    public bool IsMoving { get; set; }
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
     public void UseEffectsOnStart();
     public void AnalizeCondition();
@@ -32,10 +32,11 @@ public interface ICharacterController
     public bool CheckIfMoving();
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public Transform GetTransform();
+    public void HandleStopMovement();
 
 
     public event OnCharacterDeath ON_CHARACTER_DEATH;
-    event OnStopMovement ON_STOP_MOVEMENT;
+    public event OnStopMovement ON_STOP_MOVEMENT;
 }
 
 public delegate void OnCharacterDeath(ICharacterController controller);

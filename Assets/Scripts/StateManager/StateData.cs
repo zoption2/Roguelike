@@ -55,9 +55,9 @@ namespace Gameplay
             IConditionState state = null;
             switch (type)
             {
-                case TypeOfConditionState.ActiveState:
-                    state = new ActiveState(controller);
-                    break;
+                //case TypeOfConditionState.ActiveState:
+                //    state = new ActiveState(controller);
+                //    break;
                 case TypeOfConditionState.InactiveState:
                     state = new InactiveState(controller);
                     break;
@@ -67,7 +67,12 @@ namespace Gameplay
                 case TypeOfConditionState.StunState:
                     state = new StunState(controller);
                     break;
-
+                case TypeOfConditionState.PlayerActiveState:
+                    state = new PlayerActiveState(controller);
+                    break;
+                case TypeOfConditionState.EnemyActiveState:
+                    state = new EnemyActiveState(controller);
+                    break;
             }
             return state;
         }

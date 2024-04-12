@@ -36,8 +36,10 @@ namespace Enemy
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionFinalizer { get; set; }
         public CharacterView CharacterView { get; set; }
-        private CharacterModel _enemyModel;
+        public CharacterModel CharacterModel { get; set; }
+        public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
+        private Transform _slingShotInitPosition;
         private ReactiveStats _interactionResult;
         private CharacterPooler _pooler;
         private NavMeshAgent _navMeshAgent;
@@ -66,9 +68,9 @@ namespace Enemy
             _testBehaviourTree = _container.Resolve<ITestingBehaviourTree>();
             _testBehaviourTree.InitTree(this);
 
-            _enemyModel = characterModel;
+            CharacterModel = characterModel;
 
-            var stats = _enemyModel.GetStats();
+            var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
             _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
@@ -87,31 +89,13 @@ namespace Enemy
 
         public void DoUpdate()
         {
-            if (CharacterView.Rigidbody.velocity.magnitude > CharacterView.MaxVelocity)
-            {
-                CharacterView.Rigidbody.velocity = CharacterView.Rigidbody.velocity.normalized * CharacterView.MaxVelocity;
-            }
-
-
-            if (CharacterView.Rigidbody.velocity.magnitude > 0.5f && !IsMoving)
-            {
-                IsMoving = true;
-            }
-            else if (CharacterView.Rigidbody.velocity.magnitude < 0.2f && CharacterView.Rigidbody.velocity.magnitude > 0f && IsMoving)
-            {
-                IsMoving = false;
-                ON_STOP_MOVEMENT?.Invoke();
-            }
-
-            if (IsMoving)
-            {
-                _conditionState.ViewRotation();
-            }
+            _conditionState.DoUpdate();
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
-            Debug.Log($"-----|{_enemyModel.Type}|-----");
+            _slingShotInitPosition = point;
+            Debug.Log($"-----|{CharacterModel.Type}|-----");
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
@@ -123,12 +107,22 @@ namespace Enemy
             Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
             Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
         }
-
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (IsActive && !IsMoving)
+            {
+                _conditionState.UseSlingshot(eventData, _slingShotInitPosition);
+            }
+        }
         public IInteraction GetInteraction()
         {
             return _conditionState.GetInteraction(InteractionType.BasicAttack);
         }
 
+        public void HandleStopMovement()
+        {
+            ON_STOP_MOVEMENT?.Invoke();
+        }
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;
@@ -155,13 +149,7 @@ namespace Enemy
 
         public void LaunchToPoint(Vector3 point)
         {
-            float launchPower = ModifiableStats.LaunchPower.Value;
-            Vector3 direction = point - GetTransform().position;
-            float distance = direction.magnitude;
-            direction.Normalize();
-            float multiplier = Mathf.Clamp(distance, 4, launchPower);
-            Vector3 initialVelocity = direction * multiplier;
-            CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
+            _conditionState.LaunchToPoint(point);
         }
 
         public void CheckForEndOfState()
@@ -172,7 +160,7 @@ namespace Enemy
         public void PushIfDead()
         {
             ON_CHARACTER_DEATH?.Invoke(this);
-            _pooler.Push(_enemyModel.Type, CharacterView);
+            _pooler.Push(CharacterModel.Type, CharacterView);
         }
 
         public bool CheckIfMoving()
@@ -266,7 +254,7 @@ namespace Enemy
 
         public CharacterType GetCharacterType()
         {
-            return _enemyModel.Type;
+            return CharacterModel.Type;
         }
 
         public IConditionState GetCurrentConditionState()
