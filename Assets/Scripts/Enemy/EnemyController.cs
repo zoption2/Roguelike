@@ -213,16 +213,19 @@ namespace Enemy
         {
             _navMeshObstacle.enabled = false;
             await Task.Delay(_milisecondsDelay / 10);
+
             Transform target = _testBehaviourTree.GetTarget();
             Transform enemy = GetTransform();
             _navMeshAgent.enabled = true;
             _navMeshAgent.SetDestination(target.position);
             await Task.Delay(_milisecondsDelay / 10);
+
             Vector3 waypoint = _navMeshAgent.steeringTarget;
             _navMeshAgent.enabled = false;
             Vector2 direction = enemy.position - waypoint;
             _enemyView.ChangeDirection(-direction);
             await Task.Delay(_milisecondsDelay);
+
             LaunchToPoint(waypoint);
             _navMeshObstacle.enabled = true;
         }
