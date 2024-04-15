@@ -61,6 +61,7 @@ public class ActiveState
         direction.Normalize();
         Vector2 forceVector = direction * launchPower;
         _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        
     }
     public IInteraction GetInteraction(InteractionType interactionType)
     {
@@ -85,11 +86,21 @@ public class ActiveState
     {
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(velocity.y, velocity.x);
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
 
+        // Отримання кута обертання
+        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+
+        // Створення кватерніону з отриманого кута
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+
+        // Встановлення обертання
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
+
+
+
+
+
     public void OnExit()
     {
         //Debug.Log("<color=#44F44F>" + "--|Exit Active State|-- " + "</color>");
