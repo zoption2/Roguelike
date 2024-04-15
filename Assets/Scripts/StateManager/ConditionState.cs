@@ -86,21 +86,10 @@ public class ActiveState
     {
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
-
-        // Отримання кута обертання
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-
-        // Створення кватерніону з отриманого кута
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-
-        // Встановлення обертання
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
-
-
-
-
-
     public void OnExit()
     {
         //Debug.Log("<color=#44F44F>" + "--|Exit Active State|-- " + "</color>");
@@ -154,7 +143,6 @@ public class PlayerActiveState : ActiveState, IConditionState
         base.Launch(direction); 
 
         _slingShot.OnShoot -= Launch;
-        Debug.LogWarning("slingshot was unsubscribed!");
     }
 
     public void LaunchToPoint(Vector3 point)
@@ -257,10 +245,7 @@ public class InactiveState : IConditionState
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation;
-
-        targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
-
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
@@ -410,11 +395,7 @@ public class StunState : IConditionState
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation;
-
-        targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-
-
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
     public void OnExit()
