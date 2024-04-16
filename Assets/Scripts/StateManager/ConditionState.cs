@@ -187,15 +187,15 @@ public class EnemyActiveState : ActiveState, IConditionState
         _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
-    public async void Attack()
+    public void Attack()
     {
         Transform target = _characterController.TestBehaviourTree.GetTarget();
         Transform enemy = _characterController.GetTransform();
         Vector2 direction = enemy.position - target.position;
         _characterController.CharacterView.ChangeDirection(-direction);
-        await Task.Delay(_milisecondsDelay);
-        if (_characterController.NavMeshAgent != null)
-            _characterController.NavMeshAgent.enabled = false;
+        //await Task.Delay(_milisecondsDelay);
+        //if (_characterController.NavMeshAgent != null)
+        //    _characterController.NavMeshAgent.enabled = false;
         Launch(direction * -1);
     }
 

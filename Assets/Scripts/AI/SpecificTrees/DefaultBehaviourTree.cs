@@ -20,11 +20,11 @@ namespace BehaviourTree
                     new CanAttackNode(),
                     new TaskAttackNode(),
                 }),
-                new Sequence(new List<Node>
-                {
-                    new CanMoveNode(),
-                    new TaskMoveNode(),
-                }),
+                //new Sequence(new List<Node>
+                //{
+                //    new CanMoveNode(),
+                //    new TaskMoveNode(),
+                //}),
                  new Sequence(new List<Node>
                 {
                     new DoNothingNode(),
@@ -44,12 +44,12 @@ namespace BehaviourTree
             {
                 
                 CheckIfCanAttack();
-                CheckIfCanMove();   
+                //CheckIfCanMove();   
             }
             else
             {
                 _blackboard.SetData(_attackKey, false);
-                _blackboard.SetData(_moveKey, false);
+                //_blackboard.SetData(_moveKey, false);
             }
         }
 
@@ -57,7 +57,6 @@ namespace BehaviourTree
         {
             if (!_characterController.IsStunned)
             {
-                Debug.Log("Can move/////////////////");
                 _blackboard.SetData(_moveKey, true);
             } else
             {
@@ -71,11 +70,9 @@ namespace BehaviourTree
             if (SphereCastHitTheTarget(target) && !_characterController.IsStunned)
             {
                 _blackboard.SetData(_attackKey, true);
-                Debug.Log("CanAttack");
             }
             else
             {
-                Debug.Log("CANT_Attack");
                 _blackboard.SetData(_attackKey, false);
             }
 
