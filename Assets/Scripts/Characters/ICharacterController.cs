@@ -8,26 +8,29 @@ using UnityEngine.AI;
 
 public interface ICharacterController
 {
+    public bool IsActive { get; set; }
+    public bool IsStunned { get; set; }
+    public bool IsMoving { get; set; }
+    
     public IEffectProcessor Effector { get; set; }
     public IInteractionProcessor InteractionProcessor { get; set; }
     public IInteractionDealer InteractionDealer { get; set; }
-    public IInteractionCalculator InteractionFinalizer { get; set; }
-    public ITestingBehaviourTree TestBehaviourTree { get; set; }
-    public ReactiveStats ModifiableStats { get; set; }
+    public IInteractionCalculator InteractionCalculator { get; set; }
+    public IDefaultBehaviourTree TestBehaviourTree { get; set; }
     public IAnalyzer Analyzer { get; set; }
+    public ReactiveStats ModifiableStats { get; set; }
     public CharacterView CharacterView { get; set; }
     public SlingshotPooler SlingShotPooler { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
-    public bool IsActive { get; set; }
-    public bool IsStunned { get; set; }
     public CharacterModel CharacterModel { get; set; }
-    public bool IsMoving { get; set; }
+    public NavMeshObstacle NavMeshObstacle { get; set; }
+    public CharacterType GetCharacterType();
+    public Transform GetTransform();
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
     public void UseEffectsOnStart();
     public void AnalizeCondition();
     public void SwitchState(TypeOfConditionState state);
     public void UseEffectsOnEnd();
-    public CharacterType GetCharacterType();
     public void PushIfDead();
     public void SkipTurn();
     public void Attack();
@@ -35,7 +38,6 @@ public interface ICharacterController
     public void Tick();
     public bool CheckIfMoving();
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
-    public Transform GetTransform();
     public void HandleStopMovement();
 
 

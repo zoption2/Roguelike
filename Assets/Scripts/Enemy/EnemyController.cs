@@ -27,20 +27,20 @@ namespace Enemy
         public IEffectProcessor Effector { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
-        public IInteractionCalculator InteractionFinalizer { get; set; }
-        public ITestingBehaviourTree TestBehaviourTree { get; set; }
+        public IInteractionCalculator InteractionCalculator { get; set; }
+        public IDefaultBehaviourTree TestBehaviourTree { get; set; }
         public CharacterView CharacterView { get; set; }
         public CharacterModel CharacterModel { get; set; }
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
 
-        private IConditionState _conditionState;
+        private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
-        private NavMeshObstacle _navMeshObstacle;
+        public NavMeshObstacle NavMeshObstacle { get; set; }
         private DiContainer _container;
 
         [Inject]
@@ -55,14 +55,14 @@ namespace Enemy
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
-            InteractionFinalizer = interactionFinalizer;
+            InteractionCalculator = interactionFinalizer;
             _stateFactory = stateFactory;
             _container = container;
         }
 
         public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
         {
-            TestBehaviourTree = _container.Resolve<ITestingBehaviourTree>();
+            TestBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             TestBehaviourTree.InitTree(this);
 
             CharacterModel = characterModel;
@@ -70,7 +70,7 @@ namespace Enemy
             var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
-            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
+            _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
             InteractionDealer.Init(ModifiableStats);
@@ -83,14 +83,14 @@ namespace Enemy
             CharacterView.ON_CLICK += OnClick;
             ON_STOP_MOVEMENT += CheckForEndOfState;
 
-            _navMeshObstacle = _enemyView.NavMeshObstacle;
-            _navMeshObstacle.carving = true;
-            _navMeshObstacle.carveOnlyStationary = true;
+            NavMeshObstacle = CharacterView.NavMeshObstacle;
+            NavMeshObstacle.carving = true;
+            NavMeshObstacle.carveOnlyStationary = true;
         }
 
         public void DoUpdate()
         {
-            _conditionState.DoUpdate();
+            _currentState.DoUpdate();
 
             
         }
@@ -114,12 +114,12 @@ namespace Enemy
         {
             if (IsActive && !IsMoving)
             {
-                _conditionState.UseSlingshot(eventData, _slingShotInitPosition);
+                _currentState.UseSlingshot(eventData, _slingShotInitPosition);
             }
         }
         public IInteraction GetInteraction()
         {
-            return _conditionState.GetInteraction(InteractionType.BasicAttack);
+            return _currentState.GetInteraction(InteractionType.BasicAttack);
         }
 
         public void HandleStopMovement()
@@ -138,21 +138,21 @@ namespace Enemy
 
         public void ApplyInteraction(IInteraction interaction)
         {
-            _conditionState.ApplyInteraction(interaction);
+            _currentState.ApplyInteraction(interaction);
         }
 
         public void AddEffects(List<IEffect> effects)
         {
-            _conditionState.AddEffects(effects);
+            _currentState.AddEffects(effects);
         }
         public void Launch(Vector2 direction)
         {
-            _conditionState.Launch(direction);
+            _currentState.Launch(direction);
         }
 
         public void LaunchToPoint(Vector3 point)
         {
-            _conditionState.LaunchToPoint(point);
+            _currentState.LaunchToPoint(point);
         }
 
         public void CheckForEndOfState()
@@ -173,12 +173,12 @@ namespace Enemy
 
         public void Attack()
         {
-            _conditionState.Attack();
+            _currentState.Attack();
         }
 
         public void Move()
         {
-            _conditionState.Move();
+            _currentState.Move();
         }
 
         public void Tick()
@@ -229,11 +229,11 @@ namespace Enemy
         {
             IConditionState newState = _stateFactory.CreateConditionState(state, this);
 
-            if (!_conditionState.Equals(newState))
+            if (!_currentState.Equals(newState))
             {
-                _conditionState?.OnExit();
-                _conditionState = newState;
-                _conditionState.OnEnter();
+                _currentState?.OnExit();
+                _currentState = newState;
+                _currentState.OnEnter();
             } 
         }
 
@@ -244,7 +244,7 @@ namespace Enemy
 
         public IConditionState GetCurrentConditionState()
         {
-            return _conditionState;
+            return _currentState;
         }
     }
 }

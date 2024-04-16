@@ -59,9 +59,6 @@ namespace Gameplay
             IConditionState state = null;
             switch (type)
             {
-                //case TypeOfConditionState.ActiveState:
-                //    state = new ActiveState(controller);
-                //    break;
                 case TypeOfConditionState.InactiveState:
                     state = new InactiveState(controller);
                     break;

@@ -126,7 +126,7 @@ public class ContextInstaller : MonoInstaller
 
     public void BindBehaviourTrees()
     {
-        Container.Bind<ITestingBehaviourTree>().To<TestingBehaviourTree>().AsTransient();
+        Container.Bind<IDefaultBehaviourTree>().To<DefaultBehaviourTree>().AsTransient();
     }
     #endregion
 }

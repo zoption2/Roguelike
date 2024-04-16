@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -14,7 +12,6 @@ public class StopAndPush : IMovable
         _handlerRb = handlerRb;
 
         _handlerRb.velocity = _providerRb.velocity * 1.5f;
-        _handlerRb.angularVelocity = _providerRb.angularVelocity;
 
         _providerRb.velocity = Vector3.zero;
         _providerRb.angularVelocity = Vector3.zero;

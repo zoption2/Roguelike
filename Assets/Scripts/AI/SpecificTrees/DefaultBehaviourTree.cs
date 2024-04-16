@@ -1,15 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace BehaviourTree
 {
-    public interface ITestingBehaviourTree : IBehaviourTree
+    public interface IDefaultBehaviourTree : IBehaviourTree
     {
         public Transform GetTarget();
     }
-    public class TestingBehaviourTree : BehaviourTree, ITestingBehaviourTree
+    public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
         private string _attackKey = "CanAttack", _moveKey = "CanMove",_targetKey ="Target";
         protected override Node SetupRootNode()

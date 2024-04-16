@@ -74,9 +74,6 @@ public class CharacterView : MonoBehaviour,
         var dealerType = ControllerInputs.GetType();
         var handlerType = interactible.ControllerInputs.GetType();
 
-        //IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
-        //interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
-
         if (!dealerType.Equals(handlerType))
         {
             IInteraction interactionFromDealer = ControllerInputs.GetInteraction();

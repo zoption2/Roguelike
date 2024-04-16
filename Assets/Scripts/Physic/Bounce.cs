@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bounce : IMovable
@@ -12,10 +10,8 @@ public class Bounce : IMovable
         _providerRb = rb1;
         _handlerRb = rb2;
 
-        _handlerRb.velocity = _providerRb.velocity * 2;
-        _handlerRb.angularVelocity = _providerRb.angularVelocity;
+        _handlerRb.velocity = _providerRb.velocity;
 
         _providerRb.velocity = -_providerRb.velocity;
-        _providerRb.angularVelocity = -_providerRb.angularVelocity;
     }
 }

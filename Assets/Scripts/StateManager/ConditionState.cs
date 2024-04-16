@@ -26,7 +26,6 @@ public abstract class ActiveState
 {
     protected ICharacterController _characterController;
     protected ISlingShot _slingShot;
-    protected Vector3 _direction;
     protected int _milisecondsDelay = 3000;
 
     public ActiveState(ICharacterController characterController)
@@ -59,7 +58,6 @@ public abstract class ActiveState
 
         if (_characterController.IsMoving)
         {
-            Vector3 currentDirection = _characterController.CharacterView.Rigidbody.velocity.normalized;
             ViewRotation();
         }
     }
@@ -68,7 +66,6 @@ public abstract class ActiveState
     {
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
-        _direction = direction;
         Vector2 forceVector = direction * launchPower;
         _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
     }
@@ -96,7 +93,7 @@ public abstract class ActiveState
     {
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
@@ -149,10 +146,15 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void Launch(Vector2 direction)
     {
-        base.Launch(direction); 
+        //base.Launch(direction);
+
+        float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
+        Vector2 forceVector = direction * launchPower;
+        _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= Launch;
     }
+
 
     public void LaunchToPoint(Vector3 point)
     {
@@ -198,18 +200,23 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public async void Move()
     {
-        _characterController.NavMeshAgent.enabled = true;
+        _characterController.NavMeshObstacle.enabled = false;
+        await Task.Delay(_milisecondsDelay / 10);
+
         Transform target = _characterController.TestBehaviourTree.GetTarget();
         Transform enemy = _characterController.GetTransform();
+        _characterController.NavMeshAgent.enabled = true;
         _characterController.NavMeshAgent.SetDestination(target.position);
-        _characterController.NavMeshAgent.isStopped = true;
         await Task.Delay(_milisecondsDelay / 10);
+
         Vector3 waypoint = _characterController.NavMeshAgent.steeringTarget;
         _characterController.NavMeshAgent.enabled = false;
         Vector2 direction = enemy.position - waypoint;
         _characterController.CharacterView.ChangeDirection(-direction);
         await Task.Delay(_milisecondsDelay);
+
         LaunchToPoint(waypoint);
+        _characterController.NavMeshObstacle.enabled = true;
     }
 }
 
@@ -242,6 +249,7 @@ public class InactiveState : IConditionState
         if (_characterController.IsMoving)
         {
             ViewRotation();
+            
         }
     }
 
@@ -262,7 +270,7 @@ public class InactiveState : IConditionState
             }
         }
         ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
-        _characterController.ModifiableStats = _characterController.InteractionFinalizer.CalculateInteractionResult(_characterController.ModifiableStats, interactionResult);
+        _characterController.ModifiableStats = _characterController.InteractionCalculator.CalculateInteractionResult(_characterController.ModifiableStats, interactionResult);
         _characterController.AnalizeCondition();
     }
 

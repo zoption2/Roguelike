@@ -31,17 +31,19 @@ namespace Player
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
+        public NavMeshObstacle NavMeshObstacle { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
-        public IInteractionCalculator InteractionFinalizer { get; set; }
-        public ITestingBehaviourTree TestBehaviourTree { get; set; }
+        public IInteractionCalculator InteractionCalculator { get; set; }
+        public IDefaultBehaviourTree TestBehaviourTree { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IAnalyzer Analyzer { get; set; }
 
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         private DiContainer _container;
-        private IConditionState _conditionState;
+        private NavMeshObstacle _navMeshObstacle;
+        private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         
@@ -59,7 +61,7 @@ namespace Player
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
-            InteractionFinalizer = interactionFinalizer; 
+            InteractionCalculator = interactionFinalizer; 
             _stateFactory = stateFactory; 
             _container = container;
         }
@@ -69,7 +71,7 @@ namespace Player
         CharacterView playerView,
         CharacterPooler characterPooler)
         {
-            TestBehaviourTree = _container.Resolve<ITestingBehaviourTree>();
+            TestBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             TestBehaviourTree.InitTree(this);
 
             CharacterModel = playerModel;
@@ -77,7 +79,7 @@ namespace Player
             var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
-            _conditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
+            _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
             CharacterView = playerView;
@@ -85,7 +87,7 @@ namespace Player
             CharacterView.Init(this);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
-            _navMeshObstacle = _playerView.NavMeshObstacle;
+            _navMeshObstacle = CharacterView.NavMeshObstacle;
             _navMeshObstacle.carving = true;
             _navMeshObstacle.carveOnlyStationary = true;
 
@@ -97,7 +99,7 @@ namespace Player
 
         public void DoUpdate()
         {
-            _conditionState.DoUpdate();
+            _currentState.DoUpdate();
         }
 
 
@@ -123,23 +125,23 @@ namespace Player
         {
             if (!IsMoving)
             {
-                _conditionState.UseSlingshot(eventData, _slingShotInitPosition);
+                _currentState.UseSlingshot(eventData, _slingShotInitPosition);
             }
         }
 
         public void Launch(Vector2 direction)
         {
-            _conditionState.Launch(direction);
+            _currentState.Launch(direction);
         }
 
         public IInteraction GetInteraction()
         {
-            return _conditionState.GetInteraction(InteractionType.Knight_HeavyAttack);
+            return _currentState.GetInteraction(InteractionType.Knight_HeavyAttack);
         }
 
         public void ApplyInteraction(IInteraction interaction)
         {
-            _conditionState.ApplyInteraction(interaction);
+            _currentState.ApplyInteraction(interaction);
         }
 
         public void CheckForEndOfState()
@@ -160,17 +162,17 @@ namespace Player
 
         public void AddEffects(List<IEffect> effects)
         {
-            _conditionState.AddEffects(effects);
+            _currentState.AddEffects(effects);
         }
 
         public void Attack()
         {
-            _conditionState.Attack();
+            _currentState.Attack();
         }
 
         public void Move()
         {
-            _conditionState.Move();
+            _currentState.Move();
         }
 
         public void Tick()
@@ -223,11 +225,11 @@ namespace Player
         {
             IConditionState newState = _stateFactory.CreateConditionState(state, this);
 
-            if (!_conditionState.Equals(newState))
+            if (!_currentState.Equals(newState))
             {
-                _conditionState?.OnExit();
-                _conditionState = newState;
-                _conditionState.OnEnter();
+                _currentState?.OnExit();
+                _currentState = newState;
+                _currentState.OnEnter();
             }
         }
 
@@ -242,7 +244,7 @@ namespace Player
         }
         public IConditionState GetCurrentConditionState()
         {
-            return _conditionState;
+            return _currentState;
         }
         public void Dispose()
         {

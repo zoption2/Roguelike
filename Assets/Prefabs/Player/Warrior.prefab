@@ -219,6 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _viewTransform: {fileID: 6015431970128935106}
+  MaxVelocity: 50
 --- !u!114 &7177485733226749718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,7 +240,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5019426081544581403}
-  m_Material: {fileID: 13400000, guid: 62ddbeea555de8f47bf6521ae28026ca, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
