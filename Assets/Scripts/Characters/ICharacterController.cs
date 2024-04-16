@@ -1,8 +1,10 @@
+using BehaviourTree;
 using CharactersStats;
 using Gameplay;
 using Interactions;
 using Pool;
 using UnityEngine;
+using UnityEngine.AI;
 
 public interface ICharacterController
 {
@@ -10,10 +12,12 @@ public interface ICharacterController
     public IInteractionProcessor InteractionProcessor { get; set; }
     public IInteractionDealer InteractionDealer { get; set; }
     public IInteractionCalculator InteractionFinalizer { get; set; }
+    public ITestingBehaviourTree TestBehaviourTree { get; set; }
     public ReactiveStats ModifiableStats { get; set; }
     public IAnalyzer Analyzer { get; set; }
     public CharacterView CharacterView { get; set; }
     public SlingshotPooler SlingShotPooler { get; set; }
+    public NavMeshAgent NavMeshAgent { get; set; }
     public bool IsActive { get; set; }
     public bool IsStunned { get; set; }
     public CharacterModel CharacterModel { get; set; }

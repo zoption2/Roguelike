@@ -7,10 +7,7 @@ using Pool;
 using BehaviourTree;
 using CharactersStats;
 using Zenject;
-using System.Threading.Tasks;
 using Gameplay;
-using Prefab;
-using Obstacles;
 using UnityEngine.AI;
 
 namespace Enemy
@@ -27,24 +24,23 @@ namespace Enemy
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
         public IAnalyzer Analyzer { get; set; }
-        private IConditionState _conditionState;
-        private IStateFactory _stateFactory;
-        private ICharacterScenarioContext _characterScenarioContext;
-        private ITestingBehaviourTree _testBehaviourTree;
         public IEffectProcessor Effector { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionFinalizer { get; set; }
+        public ITestingBehaviourTree TestBehaviourTree { get; set; }
         public CharacterView CharacterView { get; set; }
         public CharacterModel CharacterModel { get; set; }
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
+        public NavMeshAgent NavMeshAgent { get; set; }
+
+        private IConditionState _conditionState;
+        private IStateFactory _stateFactory;
+        private ICharacterScenarioContext _characterScenarioContext;
         private Transform _slingShotInitPosition;
-        private ReactiveStats _interactionResult;
         private CharacterPooler _pooler;
-        private NavMeshAgent _navMeshAgent;
         private DiContainer _container;
-        private int _milisecondsDelay = 3000;
 
         [Inject]
         public void Construct(
@@ -65,8 +61,8 @@ namespace Enemy
 
         public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
         {
-            _testBehaviourTree = _container.Resolve<ITestingBehaviourTree>();
-            _testBehaviourTree.InitTree(this);
+            TestBehaviourTree = _container.Resolve<ITestingBehaviourTree>();
+            TestBehaviourTree.InitTree(this);
 
             CharacterModel = characterModel;
 
@@ -81,8 +77,8 @@ namespace Enemy
             CharacterView = characterView;
             _pooler = characterPooler;
             CharacterView.Init(this);
-            _navMeshAgent = CharacterView.NavMeshAgent;
-            _navMeshAgent.enabled = false;
+            NavMeshAgent = CharacterView.NavMeshAgent;
+            NavMeshAgent.enabled = false;
             CharacterView.ON_CLICK += OnClick;
             ON_STOP_MOVEMENT += CheckForEndOfState;
         }
@@ -168,37 +164,19 @@ namespace Enemy
             return IsMoving;
         }
 
-        public async void Attack()
+        public void Attack()
         {
-            Transform target = _testBehaviourTree.GetTarget();
-            Transform enemy = GetTransform();
-            Vector2 direction = enemy.position - target.position;
-            CharacterView.ChangeDirection(-direction);
-            await Task.Delay(_milisecondsDelay);
-            if(_navMeshAgent != null)
-                _navMeshAgent.enabled = false;
-            Launch(direction * -1);
+            _conditionState.Attack();
         }
 
-        public async void Move()
+        public void Move()
         {
-            _navMeshAgent.enabled = true;
-            Transform target = _testBehaviourTree.GetTarget();
-            Transform enemy = GetTransform();
-            _navMeshAgent.SetDestination(target.position);
-            _navMeshAgent.isStopped = true;
-            await Task.Delay(_milisecondsDelay/10);
-            Vector3 waypoint = _navMeshAgent.steeringTarget;
-            _navMeshAgent.enabled = false;
-            Vector2 direction = enemy.position - waypoint;
-            CharacterView.ChangeDirection(-direction);
-            await Task.Delay(_milisecondsDelay);
-            LaunchToPoint(waypoint);
+            _conditionState.Move();
         }
 
         public void Tick()
         {
-            _testBehaviourTree.TickTree();
+            TestBehaviourTree.TickTree();
         }
 
         public void SkipTurn()
@@ -209,7 +187,7 @@ namespace Enemy
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
         {
             _characterScenarioContext = characterScenarioContext;
-            _testBehaviourTree.SetCharacters(_characterScenarioContext);
+            TestBehaviourTree.SetCharacters(_characterScenarioContext);
         }
 
         public Transform GetTransform()

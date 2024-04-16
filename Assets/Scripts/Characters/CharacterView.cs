@@ -3,7 +3,6 @@ using Pool;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Prefab;
 using UnityEngine.AI;
 
 public interface IMovable
@@ -20,14 +19,10 @@ public interface ICharacterView
     void Init(IControllerInputs controllerInputs);
     public void ChangeDirection(Vector2 direction);
 
-    //void HandleMovement(CharacterView otherView);
-
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
     
 }
-
-
 
 public class CharacterView : MonoBehaviour,
     IPointerDownHandler,
@@ -55,9 +50,9 @@ public class CharacterView : MonoBehaviour,
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
     }
 
-    private void Start()
+    private void Awake()
     {
-        _rigidbody = gameObject.GetComponentInChildren<Rigidbody>();
+        _rigidbody = gameObject.GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -68,7 +63,8 @@ public class CharacterView : MonoBehaviour,
     public void ChangeDirection(Vector2 direction)
     {
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        _viewTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        _rigidbody.MoveRotation(targetRotation);
     }
 
     public void StartInteraction(IInteractible interactible)
@@ -76,18 +72,19 @@ public class CharacterView : MonoBehaviour,
         var dealerType = ControllerInputs.GetType();
         var handlerType = interactible.ControllerInputs.GetType();
 
-        IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
-        interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
-        //if (!dealerType.Equals(handlerType))
-        //{
-        //    IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
-        //    interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
-        //} 
-        //else
-        //{
-        //    Debug.LogWarning("INTERACTION CANCELED");
-        //    return;
-        //}
+        //IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+        //interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+
+        if (!dealerType.Equals(handlerType))
+        {
+            IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+            interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+        }
+        else
+        {
+            Debug.LogWarning("INTERACTION CANCELED");
+            return;
+        }
     }
 
     //public void HandleMovement(CharacterView otherView)
@@ -130,12 +127,6 @@ public class CharacterView : MonoBehaviour,
     public void OnRelease()
     {
     }
-
-    public void TrySkipTurn()
-    {
-        //ON_STOP_MOVEMENT?.Invoke();
-    }
-
 
     public Transform GetTransform()
     {

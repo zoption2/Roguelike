@@ -2,13 +2,13 @@ using CharactersStats;
 using Interactions;
 using Gameplay;
 using Pool;
-using SlingShotLogic;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
 using UnityEngine.AI;
+using BehaviourTree;
 
 namespace Player
 {
@@ -21,30 +21,30 @@ namespace Player
     public delegate void OnEndTurn();
     public class PlayerController : IPlayerController, IControllerInputs, IDisposable
     {
-        public bool IsActive { get; set; }
-        public bool IsStunned { get; set; }
         public event OnCharacterDeath ON_CHARACTER_DEATH;
         public event OnStopMovement ON_STOP_MOVEMENT;
-
+        public bool IsActive { get; set; }
+        public bool IsStunned { get; set; }
+        public bool IsMoving { get; set; }
         public CharacterView CharacterView { get; set; }
         public CharacterModel CharacterModel { get; set; }
         public SlingshotPooler SlingShotPooler { get; set; }
-        private Transform _slingShotInitPosition;
-        private CharacterPooler _pooler;
         public ReactiveStats ModifiableStats { get; set; }
-        private ReactiveStats _interactionResult;
-        private NavMeshAgent _navMeshAgent;
-        //private ISlingShot _slingShot;
-        public IAnalyzer Analyzer { get; set; }
-        public bool IsMoving { get; set; }
-        private IConditionState _conditionState;
-        private IStateFactory _stateFactory;
-        private ICharacterScenarioContext _characterScenarioContext;
-        public IEffectProcessor Effector { get; set; }
+        public NavMeshAgent NavMeshAgent { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionFinalizer { get; set; }
+        public ITestingBehaviourTree TestBehaviourTree { get; set; }
+        public IEffectProcessor Effector { get; set; }
+        public IAnalyzer Analyzer { get; set; }
 
+        private Transform _slingShotInitPosition;
+        private CharacterPooler _pooler;
+        private DiContainer _container;
+        private IConditionState _conditionState;
+        private IStateFactory _stateFactory;
+        private ICharacterScenarioContext _characterScenarioContext;
+        
         [Inject]
         public void Construct(
             SlingshotPooler slingShotPooler,      
@@ -52,14 +52,16 @@ namespace Player
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
             IInteractionCalculator interactionFinalizer,
-            IStateFactory stateFactory)
+            IStateFactory stateFactory,
+            DiContainer container)
         {
             SlingShotPooler = slingShotPooler;
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
             InteractionFinalizer = interactionFinalizer; 
-            _stateFactory = stateFactory;   
+            _stateFactory = stateFactory; 
+            _container = container;
         }
 
         public void Init(
@@ -67,6 +69,9 @@ namespace Player
         CharacterView playerView,
         CharacterPooler characterPooler)
         {
+            TestBehaviourTree = _container.Resolve<ITestingBehaviourTree>();
+            TestBehaviourTree.InitTree(this);
+
             CharacterModel = playerModel;
 
             var stats = CharacterModel.GetStats();
@@ -78,8 +83,8 @@ namespace Player
             CharacterView = playerView;
             _pooler = characterPooler;
             CharacterView.Init(this);
-            _navMeshAgent = CharacterView.NavMeshAgent;
-            _navMeshAgent.enabled = false;
+            NavMeshAgent = CharacterView.NavMeshAgent;
+            NavMeshAgent.enabled = false;
 
             CharacterView.ON_CLICK += OnClick;
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
@@ -113,7 +118,7 @@ namespace Player
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (IsActive && !IsMoving)
+            if (!IsMoving)
             {
                 _conditionState.UseSlingshot(eventData, _slingShotInitPosition);
             }
@@ -154,14 +159,15 @@ namespace Player
         {
             _conditionState.AddEffects(effects);
         }
+
         public void Attack()
         {
-            Debug.Log("Player has attacked");
+            _conditionState.Attack();
         }
 
         public void Move()
         {
-            Debug.Log("Player has moved");
+            _conditionState.Move();
         }
 
         public void Tick()
@@ -231,18 +237,14 @@ namespace Player
         {
             ON_STOP_MOVEMENT?.Invoke();
         }
-
-
+        public IConditionState GetCurrentConditionState()
+        {
+            return _conditionState;
+        }
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
-
-            
-        }
-        public IConditionState GetCurrentConditionState()
-        {
-            return _conditionState;
         }
     }
 }

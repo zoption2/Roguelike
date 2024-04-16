@@ -2,6 +2,7 @@ using CharactersStats;
 using Interactions;
 using SlingShotLogic;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -17,22 +18,28 @@ public interface IConditionState
     public void DoUpdate();
     public void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition);
     public void LaunchToPoint(Vector3 point);
+    public void Attack();
+    public void Move();
 }
 
-public class ActiveState
+public abstract class ActiveState
 {
     protected ICharacterController _characterController;
     protected ISlingShot _slingShot;
+    protected Vector3 _direction;
+    protected int _milisecondsDelay = 3000;
 
     public ActiveState(ICharacterController characterController)
     {
         _characterController = characterController;
     }
+
     public void OnEnter()
     {
         Debug.Log("<color=#44F44F>" + "--|Enter Active State|-- " + "</color>");
 
     }
+
     public void DoUpdate()
     {
         if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
@@ -52,17 +59,20 @@ public class ActiveState
 
         if (_characterController.IsMoving)
         {
+            Vector3 currentDirection = _characterController.CharacterView.Rigidbody.velocity.normalized;
             ViewRotation();
         }
     }
+
     public virtual void Launch(Vector2 direction)
     {
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
+        _direction = direction;
         Vector2 forceVector = direction * launchPower;
         _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
-        
     }
+
     public IInteraction GetInteraction(InteractionType interactionType)
     {
         ReactiveStats statsWithBonus = _characterController.Effector.ProcessStatsBeforeInteraction(_characterController.ModifiableStats);
@@ -86,10 +96,11 @@ public class ActiveState
     {
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
+
     public void OnExit()
     {
         //Debug.Log("<color=#44F44F>" + "--|Exit Active State|-- " + "</color>");
@@ -98,7 +109,6 @@ public class ActiveState
             _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
             _slingShot.OnShoot -= Launch;
         }
-        
     }
 
     public void ApplyInteraction(IInteraction interaction)
@@ -112,7 +122,6 @@ public class ActiveState
 
 public class PlayerActiveState : ActiveState, IConditionState
 {
-    
     public PlayerActiveState(ICharacterController characterController) : base(characterController)
     {
     }
@@ -148,6 +157,14 @@ public class PlayerActiveState : ActiveState, IConditionState
     public void LaunchToPoint(Vector3 point)
     {
     }
+
+    public void Attack()
+    {
+    }
+
+    public void Move()
+    {
+    }
 }
 
 public class EnemyActiveState : ActiveState, IConditionState
@@ -166,6 +183,34 @@ public class EnemyActiveState : ActiveState, IConditionState
         Vector3 initialVelocity = direction * multiplier;
         _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
     }
+
+    public async void Attack()
+    {
+        Transform target = _characterController.TestBehaviourTree.GetTarget();
+        Transform enemy = _characterController.GetTransform();
+        Vector2 direction = enemy.position - target.position;
+        _characterController.CharacterView.ChangeDirection(-direction);
+        await Task.Delay(_milisecondsDelay);
+        if (_characterController.NavMeshAgent != null)
+            _characterController.NavMeshAgent.enabled = false;
+        Launch(direction * -1);
+    }
+
+    public async void Move()
+    {
+        _characterController.NavMeshAgent.enabled = true;
+        Transform target = _characterController.TestBehaviourTree.GetTarget();
+        Transform enemy = _characterController.GetTransform();
+        _characterController.NavMeshAgent.SetDestination(target.position);
+        _characterController.NavMeshAgent.isStopped = true;
+        await Task.Delay(_milisecondsDelay / 10);
+        Vector3 waypoint = _characterController.NavMeshAgent.steeringTarget;
+        _characterController.NavMeshAgent.enabled = false;
+        Vector2 direction = enemy.position - waypoint;
+        _characterController.CharacterView.ChangeDirection(-direction);
+        await Task.Delay(_milisecondsDelay);
+        LaunchToPoint(waypoint);
+    }
 }
 
 public class InactiveState : IConditionState
@@ -176,6 +221,7 @@ public class InactiveState : IConditionState
     {
         _characterController = characterController;
     }
+
     public void DoUpdate()
     {
         if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
@@ -198,6 +244,7 @@ public class InactiveState : IConditionState
             ViewRotation();
         }
     }
+
     public IInteraction GetInteraction(InteractionType interactionType)
     {
         IInteraction interaction = _characterController.InteractionDealer.UseInteraction(InteractionType.None);
@@ -206,7 +253,6 @@ public class InactiveState : IConditionState
 
     public void ApplyInteraction(IInteraction interaction)
     {
-
         List<IEffect> effects = interaction.GetEffects();
         if (effects != null && effects.Count > 0)
         {
@@ -216,17 +262,13 @@ public class InactiveState : IConditionState
             }
         }
         ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
-
         _characterController.ModifiableStats = _characterController.InteractionFinalizer.CalculateInteractionResult(_characterController.ModifiableStats, interactionResult);
-
         _characterController.AnalizeCondition();
-
     }
 
     public void OnEnter()
     {
         Debug.Log("<color=#C0C8D8>" + "--|Enter InactiveState State|-- " + "</color>");
-
     }
 
     public void AddEffects(List<IEffect> effects)
@@ -245,7 +287,7 @@ public class InactiveState : IConditionState
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
@@ -265,6 +307,14 @@ public class InactiveState : IConditionState
     public void LaunchToPoint(Vector3 point)
     {
     }
+
+    public void Attack()
+    {
+    }
+
+    public void Move()
+    {
+    }
 }
 
 public class DeadState : IConditionState
@@ -275,10 +325,11 @@ public class DeadState : IConditionState
     {
         _characterController = characterController;
     }
+
     public void DoUpdate()
-    {
-        
+    {  
     }
+
     public void ApplyInteraction(IInteraction interaction)
     {
     }
@@ -326,6 +377,14 @@ public class DeadState : IConditionState
     public void LaunchToPoint(Vector3 point)
     {
     }
+
+    public void Attack()
+    {
+    }
+
+    public void Move()
+    {
+    }
 }
 
 public class StunState : IConditionState
@@ -336,6 +395,7 @@ public class StunState : IConditionState
     {
         _characterController = characterController;
     }
+
     public void DoUpdate()
     {
         if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
@@ -359,6 +419,7 @@ public class StunState : IConditionState
             ViewRotation();
         }
     }
+
     public void ApplyInteraction(IInteraction interaction)
     {
     }
@@ -377,7 +438,6 @@ public class StunState : IConditionState
     {
         _characterController.IsStunned = true;
         Debug.Log("<color=#FFFFFF>" + "--|Enter Stun Condition State|-- " + "</color>");
-        
     }
 
     public void AddEffects(List<IEffect> effects)
@@ -390,14 +450,16 @@ public class StunState : IConditionState
             }
         }
     }
+
     public void ViewRotation()
     {
         Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
         _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
+
     public void OnExit()
     {
         _characterController.IsStunned = false;
@@ -409,6 +471,14 @@ public class StunState : IConditionState
     }
 
     public void LaunchToPoint(Vector3 point)
+    {
+    }
+
+    public void Attack()
+    {
+    }
+
+    public void Move()
     {
     }
 }

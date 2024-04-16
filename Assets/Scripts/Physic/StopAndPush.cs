@@ -13,7 +13,7 @@ public class StopAndPush : IMovable
         _providerRb = providerRb;
         _handlerRb = handlerRb;
 
-        _handlerRb.velocity = _providerRb.velocity * 2;
+        _handlerRb.velocity = _providerRb.velocity * 1.5f;
         _handlerRb.angularVelocity = _providerRb.angularVelocity;
 
         _providerRb.velocity = Vector3.zero;
