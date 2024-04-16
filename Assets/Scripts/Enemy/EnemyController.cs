@@ -98,17 +98,17 @@ namespace Enemy
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
-            Debug.Log($"-----|{CharacterModel.Type}|-----");
-            Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
+            //Debug.Log($"-----|{CharacterModel.Type}|-----");
+            //Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
-            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
-            Effector.PrintEffects(Effector.GetPreInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
+            //Effector.PrintEffects(Effector.GetPreInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
-            Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
+            //Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
-            Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
+            //Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
         }
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -210,18 +210,18 @@ namespace Enemy
         public void UseEffectsOnStart()
         {
             Effector.ProcessEffectsOnStart(ModifiableStats);
-            Debug.LogWarning("Effects On Start Was Processed:");
+            //Debug.LogWarning("Effects On Start Was Processed:");
         }
 
         public void UseEffectsOnEnd()
         {
             Effector.ProcessEffectsOnEnd(ModifiableStats);
-            Debug.LogWarning("Effects On End Was Processed!");
+            //Debug.LogWarning("Effects On End Was Processed!");
         }
 
         public void AnalizeCondition()
         {
-            Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
+            //Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
             Analyzer.Analyze(ModifiableStats, Effector);
         }
 

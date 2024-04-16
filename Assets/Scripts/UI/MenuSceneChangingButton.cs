@@ -1,6 +1,3 @@
-using CharactersStats;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,7 +7,7 @@ namespace UI
 {
     public class MenuSceneChangingButton : MonoBehaviour
     {
-        private const string _sceneName = "Level_MovementTest"; //Level_TestScene Level_1
+        private const string _sceneName = "Level_1"; //Level_TestScene Level_1 Level_MovementTest
         private ICharacterSelector _characterSelector;
 
 

@@ -19,7 +19,7 @@ public class Analyzer : IAnalyzer
     public void Analyze(ReactiveStats stats, IEffectProcessor effectProcessor)
     {
 
-        Debug.Log("Health on start: " + stats.Health.Value);
+        //Debug.Log("Health on start: " + stats.Health.Value);
         
         if (stats.Health.Value <= 0)
         {

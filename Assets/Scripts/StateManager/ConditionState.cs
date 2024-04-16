@@ -177,12 +177,13 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public void LaunchToPoint(Vector3 point)
     {
-        float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-        Vector3 direction = point - _characterController.GetTransform().position;
-        float distance = direction.magnitude;
+        float minLaunchPower = 5f;
+        float maxLaunchPower = _characterController.ModifiableStats.LaunchPower.Value;
+        Vector2 direction = point - _characterController.GetTransform().position;
+        float distance = Vector3.Distance(point, _characterController.GetTransform().position);
         direction.Normalize();
-        float multiplier = Mathf.Clamp(distance, 4, launchPower);
-        Vector3 initialVelocity = direction * multiplier;
+        float multiplier = Mathf.Clamp(distance, minLaunchPower, maxLaunchPower);
+        Vector2 initialVelocity = direction * multiplier;
         _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
@@ -204,6 +205,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         await Task.Delay(_milisecondsDelay / 10);
 
         Transform target = _characterController.TestBehaviourTree.GetTarget();
+        
         Transform enemy = _characterController.GetTransform();
         _characterController.NavMeshAgent.enabled = true;
         _characterController.NavMeshAgent.SetDestination(target.position);
@@ -214,7 +216,6 @@ public class EnemyActiveState : ActiveState, IConditionState
         Vector2 direction = enemy.position - waypoint;
         _characterController.CharacterView.ChangeDirection(-direction);
         await Task.Delay(_milisecondsDelay);
-
         LaunchToPoint(waypoint);
         _characterController.NavMeshObstacle.enabled = true;
     }

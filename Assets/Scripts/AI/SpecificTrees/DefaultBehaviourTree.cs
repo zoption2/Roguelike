@@ -57,6 +57,7 @@ namespace BehaviourTree
         {
             if (!_characterController.IsStunned)
             {
+                Debug.Log("Can move/////////////////");
                 _blackboard.SetData(_moveKey, true);
             } else
             {

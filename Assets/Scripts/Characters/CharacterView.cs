@@ -66,7 +66,8 @@ public class CharacterView : MonoBehaviour,
     {
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        _rigidbody.MoveRotation(targetRotation);
+        transform.rotation = targetRotation;
+        //_rigidbody.MoveRotation(targetRotation);
     }
 
     public void StartInteraction(IInteractible interactible)
@@ -81,7 +82,7 @@ public class CharacterView : MonoBehaviour,
         }
         else
         {
-            Debug.LogWarning("INTERACTION CANCELED");
+            //Debug.LogWarning("INTERACTION CANCELED");
             return;
         }
     }
