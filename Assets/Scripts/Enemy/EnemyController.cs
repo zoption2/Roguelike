@@ -40,6 +40,7 @@ namespace Enemy
         private ICharacterScenarioContext _characterScenarioContext;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
+        private NavMeshObstacle _navMeshObstacle;
         private DiContainer _container;
 
         [Inject]
@@ -81,11 +82,17 @@ namespace Enemy
             NavMeshAgent.enabled = false;
             CharacterView.ON_CLICK += OnClick;
             ON_STOP_MOVEMENT += CheckForEndOfState;
+
+            _navMeshObstacle = _enemyView.NavMeshObstacle;
+            _navMeshObstacle.carving = true;
+            _navMeshObstacle.carveOnlyStationary = true;
         }
 
         public void DoUpdate()
         {
             _conditionState.DoUpdate();
+
+            
         }
 
         public void OnClick(Transform point, PointerEventData eventData)

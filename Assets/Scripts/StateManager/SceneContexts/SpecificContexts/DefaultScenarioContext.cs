@@ -5,6 +5,7 @@ using Prefab;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 namespace Gameplay
@@ -29,6 +30,8 @@ namespace Gameplay
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
+
+        public NavMeshSurface NavMeshSurface { get; set; }
         public void CheckIfAllStopped();
 
         public event OnEndTurn ON_END_TURN;
@@ -38,6 +41,7 @@ namespace Gameplay
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
+        public NavMeshSurface NavMeshSurface { get; set; }
         [field: SerializeField] public List<TeleportWallEnter> TeleportWallEnters { get; set; }//
         [field: SerializeField] public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         [field: SerializeField] public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
@@ -70,6 +74,7 @@ namespace Gameplay
                 }
                     
             }
+            //NavMeshSurface.BuildNavMesh();
             ON_END_TURN?.Invoke();
         }
     }

@@ -4,6 +4,7 @@ using Player;
 using Prefab;
 using System.Linq;
 using System.Threading;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 namespace Gameplay
@@ -123,25 +124,36 @@ namespace Gameplay
 
         IEnemyFactory _enemyFactory;
 
+        INavigationFactory _navigationFactory;
+
 
         public InitLevelState(IScenario scenario,
             ICharacterScenarioContext context,
             IStatsProvider provider,
             IPlayerFactory playerFactory,
-            IEnemyFactory enemyFactory)
+            IEnemyFactory enemyFactory,
+            INavigationFactory navigationFactory)
         {
             _scenario = scenario;
             _characters = context;
             _statsProvider  = provider;
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;
+            _navigationFactory = navigationFactory;
         }
 
         public void OnEnter()
         {
             OnPlayerCreate();
             OnEnemyCreate();
+            OnNavigationCreate();
             _scenario.OnStateEnd();
+        }
+        public void OnNavigationCreate()
+        {
+            NavMeshSurface navMeshSurface = _navigationFactory.CreateNavigation();
+            _characters.NavMeshSurface  = navMeshSurface;
+            navMeshSurface.BuildNavMesh();
         }
 
         public void OnPlayerCreate()

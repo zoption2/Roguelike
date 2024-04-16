@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BehaviourTree
@@ -66,21 +67,8 @@ namespace BehaviourTree
 
         protected void CheckIfCanAttack()
         {
-            Transform  character= _characterController.GetTransform();
             Transform  target = GetTarget();
-            Vector3 direction = target.position - character.position;
-            direction.Normalize();
-            //float length = 15f;
-            float radius = 0.3f;
-            RaycastHit hit;
-            Physics.SphereCast(character.position, radius, direction,out hit);
-            //Debug.Log(hit.transform.gameObject.name + "was hit at: " + hit.point);
-            Transform hitTransform = hit.transform;
-            if(hit.transform.childCount > 0)
-            {
-                hitTransform = hit.transform.GetChild(0);
-            }
-            if (hitTransform == target && !_characterController.IsStunned)
+            if (SphereCastHitTheTarget(target) && !_characterController.IsStunned)
             {
                 _blackboard.SetData(_attackKey, true);
                 Debug.Log("CanAttack");
@@ -92,27 +80,49 @@ namespace BehaviourTree
             }
 
         }
+
+        protected bool SphereCastHitTheTarget(Transform target)
+        {
+            Transform character = _characterController.GetTransform();
+            Vector3 direction = target.position - character.position;
+            direction.Normalize();
+            float radius = 0.4f;
+            RaycastHit hit;
+            Physics.SphereCast(character.position, radius, direction, out hit);
+            Transform hitTransform = hit.transform;
+            if (hit.transform.childCount > 0)
+            {
+                hitTransform = hit.transform.GetChild(0);
+            }
+
+            if (hitTransform == target)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
         protected void FindTarget()
         {
-            if(_characterScenarioContext.Players.Count > 0)
+            Vector3 characterPosition = _characterController.GetTransform().position;
+            List<Transform> allTargets= new List<Transform>();
+            foreach (ICharacterController characterController in _characterScenarioContext.Players)
             {
-                Vector3 target = _characterScenarioContext.Players[0].GetTransform().position;
-                Vector3 enemy = _characterController.GetTransform().position;
-                float minDistance = Vector3.Distance(target,enemy);
-                float currentDistance;
-                int minIndex = 0;
-                for (int i=0,n = _characterScenarioContext.Players.Count; i < n; i++)
+                allTargets.Add(characterController.GetTransform());
+            }
+            allTargets = allTargets.OrderBy(x => Vector3.Distance(x.position,characterPosition)).ToList();
+            if(allTargets.Count > 0)
+            {
+                Transform finalTarget = allTargets[0];
+                foreach (Transform target in allTargets)
                 {
-                    target = _characterScenarioContext.Players[i].GetTransform().position;
-                    currentDistance = Vector3.Distance(target, enemy);
-                    if(currentDistance < minDistance)
+                    if (SphereCastHitTheTarget(target))
                     {
-                        minDistance = currentDistance;
-                        minIndex = i;
+                        _blackboard.SetData(_targetKey, target);
+                        return;
                     }
                 }
-                Transform transform = _characterScenarioContext.Players[minIndex].GetTransform();
-                _blackboard.SetData(_targetKey, transform);
+                _blackboard.SetData(_targetKey, finalTarget);
             }
             else
             {

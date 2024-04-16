@@ -85,6 +85,9 @@ namespace Player
             CharacterView.Init(this);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
+            _navMeshObstacle = _playerView.NavMeshObstacle;
+            _navMeshObstacle.carving = true;
+            _navMeshObstacle.carveOnlyStationary = true;
 
             CharacterView.ON_CLICK += OnClick;
             CharacterView.ON_BEGINDRAG += OnBeginDrag;

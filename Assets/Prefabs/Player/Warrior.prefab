@@ -182,6 +182,7 @@ GameObject:
   - component: {fileID: 216731504792179663}
   - component: {fileID: 486059973603968758}
   - component: {fileID: 5091030802925303555}
+  - component: {fileID: 5128870247787867843}
   m_Layer: 7
   m_Name: Warrior
   m_TagString: Untagged
@@ -288,7 +289,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 5019426081544581403}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.4
+  m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -301,3 +302,19 @@ NavMeshAgent:
   m_BaseOffset: 0.4
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!208 &5128870247787867843
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5019426081544581403}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.4, y: 0.25, z: 0.4}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
