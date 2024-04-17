@@ -1,12 +1,15 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace BehaviourTree
 {
     public interface IDefaultBehaviourTree : IBehaviourTree
     {
         public Transform GetTarget();
+        public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target);
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
@@ -20,11 +23,11 @@ namespace BehaviourTree
                     new CanAttackNode(),
                     new TaskAttackNode(),
                 }),
-                //new Sequence(new List<Node>
-                //{
-                //    new CanMoveNode(),
-                //    new TaskMoveNode(),
-                //}),
+                new Sequence(new List<Node>
+                {
+                    new CanMoveNode(),
+                    new TaskMoveNode(),
+                }),
                  new Sequence(new List<Node>
                 {
                     new DoNothingNode(),
@@ -44,12 +47,12 @@ namespace BehaviourTree
             {
                 
                 CheckIfCanAttack();
-                //CheckIfCanMove();   
+                CheckIfCanMove();   
             }
             else
             {
                 _blackboard.SetData(_attackKey, false);
-                //_blackboard.SetData(_moveKey, false);
+                _blackboard.SetData(_moveKey, false);
             }
         }
 
@@ -67,7 +70,8 @@ namespace BehaviourTree
         protected void CheckIfCanAttack()
         {
             Transform  target = GetTarget();
-            if (SphereCastHitTheTarget(target) && !_characterController.IsStunned)
+            Vector3 characterPosition = _characterController.GetTransform().position;
+            if (SphereCastHitTheTarget(target, characterPosition) && !_characterController.IsStunned)
             {
                 _blackboard.SetData(_attackKey, true);
             }
@@ -78,20 +82,57 @@ namespace BehaviourTree
 
         }
 
-        protected bool SphereCastHitTheTarget(Transform target)
+        protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
         {
-            Transform character = _characterController.GetTransform();
-            Vector3 direction = target.position - character.position;
+            Vector3 characterPosition = _characterController.GetTransform().position;
+            Vector3 direction = target - startingPoint;
+            direction.z = 0;
             direction.Normalize();
             float radius = 0.4f;
             RaycastHit hit;
-            Physics.SphereCast(character.position, radius, direction, out hit);
+            startingPoint.z = characterPosition.z;
+            Physics.SphereCast(startingPoint, radius, direction, out hit, distance);
+            return hit;
+        }
+
+        public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target)
+        {
+            Vector3 waypoint = path.corners[1];
+            foreach (Vector3 point in path.corners)
+            {
+                if (SphereCastHitTheTarget(target, point) && PathToPointIsClear(point))
+                {
+                    Debug.LogWarning("Waypoint was found!: " + point);
+                    waypoint = point;
+                }
+            }
+            return waypoint;
+        }
+        protected bool PathToPointIsClear(Vector3 point)
+        {
+            Transform character = _characterController.GetTransform();
+            float distance = Vector2.Distance(point,character.position);
+            RaycastHit hit = ShootSphereCastToTarget(point,distance,character.position);
+            if(hit.collider == null)
+            {
+                return true;
+            }
+            else
+                return false;
+
+        }
+
+        protected bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
+        {
+            float maxDistance = 15f;
+            
+            RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
             Transform hitTransform = hit.transform;
+            
             if (hit.transform.childCount > 0)
             {
                 hitTransform = hit.transform.GetChild(0);
             }
-
             if (hitTransform == target)
             {
                 return true;
@@ -113,7 +154,7 @@ namespace BehaviourTree
                 Transform finalTarget = allTargets[0];
                 foreach (Transform target in allTargets)
                 {
-                    if (SphereCastHitTheTarget(target))
+                    if (SphereCastHitTheTarget(target, characterPosition))
                     {
                         _blackboard.SetData(_targetKey, target);
                         return;

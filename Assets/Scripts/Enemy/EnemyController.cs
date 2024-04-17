@@ -28,7 +28,7 @@ namespace Enemy
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionCalculator { get; set; }
-        public IDefaultBehaviourTree TestBehaviourTree { get; set; }
+        public IDefaultBehaviourTree DefaultBehaviourTree { get; set; }
         public CharacterView CharacterView { get; set; }
         public CharacterModel CharacterModel { get; set; }
         public SlingshotPooler SlingShotPooler { get; set; }
@@ -62,8 +62,8 @@ namespace Enemy
 
         public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
         {
-            TestBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
-            TestBehaviourTree.InitTree(this);
+            DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
+            DefaultBehaviourTree.InitTree(this);
 
             CharacterModel = characterModel;
 
@@ -183,7 +183,7 @@ namespace Enemy
 
         public void Tick()
         {
-            TestBehaviourTree.TickTree();
+            DefaultBehaviourTree.TickTree();
         }
 
         public void SkipTurn()
@@ -194,7 +194,7 @@ namespace Enemy
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
         {
             _characterScenarioContext = characterScenarioContext;
-            TestBehaviourTree.SetCharacters(_characterScenarioContext);
+            DefaultBehaviourTree.SetCharacters(_characterScenarioContext);
         }
 
         public Transform GetTransform()
