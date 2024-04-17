@@ -254,5 +254,10 @@ namespace Enemy
         {
             return _currentState;
         }
+
+        public Rigidbody GetRigidbody()
+        {
+            return CharacterView.GetRigidbody();
+        }
     }
 }

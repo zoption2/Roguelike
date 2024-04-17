@@ -255,6 +255,12 @@ namespace Player
         {
             return _currentState;
         }
+
+        public Rigidbody GetRigidbody()
+        {
+            return CharacterView.GetRigidbody();
+        }
+
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;

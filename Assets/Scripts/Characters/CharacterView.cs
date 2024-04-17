@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 public interface IMovable
 {
@@ -13,7 +14,7 @@ public interface IInteractible
 {
     void StartInteraction(IInteractible interactible);
     IControllerInputs ControllerInputs { get; set; }
-    Rigidbody Rigidbody { get; set; }
+    public Rigidbody GetRigidbody();
 }
 public interface ICharacterView
 {
@@ -42,19 +43,26 @@ public class CharacterView : MonoBehaviour,
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; } 
-    public Rigidbody Rigidbody { get; set; }
+    //public Rigidbody Rigidbody { get; set; }
+
+    private Rigidbody _rigidbody;
+    
     public float MaxVelocity = 50f;
+    private CollisionHandler _collisionHandler;
 
     public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
+        
     }
 
-    private void Awake()
+    private void Start()
     {
-        Rigidbody = gameObject.GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
+        _collisionHandler = gameObject.AddComponent<CollisionHandler>();
+        _collisionHandler.Init(ControllerInputs, this);
     }
 
     private void FixedUpdate()
@@ -114,6 +122,11 @@ public class CharacterView : MonoBehaviour,
 
     public void OnRelease()
     {
+    }
+
+    public Rigidbody GetRigidbody()
+    {
+        return _rigidbody;
     }
 
     public Transform GetTransform()

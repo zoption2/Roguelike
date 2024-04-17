@@ -44,16 +44,16 @@ public abstract class ActiveState
 
     public void DoUpdate()
     {
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetRigidbody().velocity.magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.CharacterView.Rigidbody.velocity = _characterController.CharacterView.Rigidbody.velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetRigidbody().velocity.normalized * _characterController.CharacterView.MaxVelocity;
         }
 
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetRigidbody().velocity.magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.2f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetRigidbody().velocity.magnitude < 0.2f && _characterController.GetRigidbody().velocity.magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -70,7 +70,7 @@ public abstract class ActiveState
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
         Vector2 forceVector = direction * launchPower;
-        _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
     }
 
     public IInteraction GetInteraction(InteractionType interactionType)
@@ -94,11 +94,11 @@ public abstract class ActiveState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
+        Vector3 velocity = _characterController.GetRigidbody().velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void OnExit()
@@ -121,7 +121,7 @@ public abstract class ActiveState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        bumpFromDealer.ApplyForce(_characterController.CharacterView.Rigidbody, interactible.Rigidbody);
+        bumpFromDealer.ApplyForce(_characterController.GetRigidbody(), interactible.GetRigidbody());
     }
 }
 
@@ -158,7 +158,7 @@ public class PlayerActiveState : ActiveState, IConditionState
 
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         Vector2 forceVector = direction * launchPower;
-        _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= Launch;
     }
@@ -192,7 +192,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         direction.Normalize();
         float multiplier = Mathf.Clamp(distance, minLaunchPower, maxLaunchPower);
         Vector2 initialVelocity = direction * multiplier;
-        _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
+        _characterController.GetRigidbody().AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
     public void Attack()
@@ -242,16 +242,16 @@ public class InactiveState : IConditionState
 
     public void DoUpdate()
     {
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetRigidbody().velocity.magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.CharacterView.Rigidbody.velocity = _characterController.CharacterView.Rigidbody.velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetRigidbody().velocity.normalized * _characterController.CharacterView.MaxVelocity;
         }
 
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetRigidbody().velocity.magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.2f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetRigidbody().velocity.magnitude < 0.2f && _characterController.GetRigidbody().velocity.magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -288,7 +288,7 @@ public class InactiveState : IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
         IMovable bump = new Bounce();
-        bump.ApplyForce(_characterController.CharacterView.Rigidbody, interactible.Rigidbody);
+        bump.ApplyForce(_characterController.GetRigidbody(), interactible.GetRigidbody());
     }
 
     public void OnEnter()
@@ -309,11 +309,11 @@ public class InactiveState : IConditionState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
+        Vector3 velocity = _characterController.GetRigidbody().velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void OnExit()
@@ -427,17 +427,17 @@ public class StunState : IConditionState
 
     public void DoUpdate()
     {
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetRigidbody().velocity.magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.CharacterView.Rigidbody.velocity = _characterController.CharacterView.Rigidbody.velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetRigidbody().velocity.normalized * _characterController.CharacterView.MaxVelocity;
         }
 
 
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetRigidbody().velocity.magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.2f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetRigidbody().velocity.magnitude < 0.2f && _characterController.GetRigidbody().velocity.magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -462,7 +462,7 @@ public class StunState : IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
         IMovable bump = new Bounce();
-        bump.ApplyForce(_characterController.CharacterView.Rigidbody, interactible.Rigidbody);
+        bump.ApplyForce(_characterController.GetRigidbody(), interactible.GetRigidbody());
     }
 
     public void Launch(Vector2 direction)
@@ -488,11 +488,11 @@ public class StunState : IConditionState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
+        Vector3 velocity = _characterController.GetRigidbody().velocity;
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
-        _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void OnExit()
