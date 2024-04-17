@@ -16,7 +16,7 @@ public interface ICharacterController
     public IInteractionProcessor InteractionProcessor { get; set; }
     public IInteractionDealer InteractionDealer { get; set; }
     public IInteractionCalculator InteractionCalculator { get; set; }
-    public IDefaultBehaviourTree TestBehaviourTree { get; set; }
+    public IDefaultBehaviourTree DefaultBehaviourTree { get; set; }
     public IAnalyzer Analyzer { get; set; }
     public ReactiveStats ModifiableStats { get; set; }
     public CharacterView CharacterView { get; set; }

@@ -35,7 +35,7 @@ namespace Player
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionCalculator { get; set; }
-        public IDefaultBehaviourTree TestBehaviourTree { get; set; }
+        public IDefaultBehaviourTree DefaultBehaviourTree { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IAnalyzer Analyzer { get; set; }
 
@@ -71,8 +71,8 @@ namespace Player
         CharacterView playerView,
         CharacterPooler characterPooler)
         {
-            TestBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
-            TestBehaviourTree.InitTree(this);
+            DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
+            DefaultBehaviourTree.InitTree(this);
 
             CharacterModel = playerModel;
 

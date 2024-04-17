@@ -1,9 +1,11 @@
+using BehaviourTree;
 using CharactersStats;
 using Interactions;
 using SlingShotLogic;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 
 public interface IConditionState
@@ -189,7 +191,7 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public void Attack()
     {
-        Transform target = _characterController.TestBehaviourTree.GetTarget();
+        Transform target = _characterController.DefaultBehaviourTree.GetTarget();
         Transform enemy = _characterController.GetTransform();
         Vector2 direction = enemy.position - target.position;
         _characterController.CharacterView.ChangeDirection(-direction);
@@ -201,21 +203,23 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public async void Move()
     {
+        IDefaultBehaviourTree defaultBehaviourTree = _characterController.DefaultBehaviourTree;
         _characterController.NavMeshObstacle.enabled = false;
         await Task.Delay(_milisecondsDelay / 10);
 
-        Transform target = _characterController.TestBehaviourTree.GetTarget();
+        Transform target = defaultBehaviourTree.GetTarget();
         
         Transform enemy = _characterController.GetTransform();
         _characterController.NavMeshAgent.enabled = true;
         _characterController.NavMeshAgent.SetDestination(target.position);
         await Task.Delay(_milisecondsDelay / 10);
+        NavMeshPath path = _characterController.NavMeshAgent.path;
 
-        Vector3 waypoint = _characterController.NavMeshAgent.steeringTarget;
+        Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path,target);
         _characterController.NavMeshAgent.enabled = false;
         Vector2 direction = enemy.position - waypoint;
         _characterController.CharacterView.ChangeDirection(-direction);
-        await Task.Delay(_milisecondsDelay);
+        //await Task.Delay(_milisecondsDelay);
         LaunchToPoint(waypoint);
         _characterController.NavMeshObstacle.enabled = true;
     }
