@@ -16,7 +16,13 @@ namespace Interactions
                 new StunEffect(2),
             };
 
+            _movable = new StopAndPush();
             _damage = 0;
+        }
+
+        public override IMovable GetBump()
+        {
+            return _movable;
         }
 
         public override List<IEffect> GetEffects()

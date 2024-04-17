@@ -13,6 +13,7 @@ public interface IInteractible
 {
     void StartInteraction(IInteractible interactible);
     IControllerInputs ControllerInputs { get; set; }
+    Rigidbody Rigidbody { get; set; }
 }
 public interface ICharacterView
 {
@@ -41,8 +42,7 @@ public class CharacterView : MonoBehaviour,
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; } 
-    public Rigidbody Rigidbody { get { return _rigidbody; } }
-    private Rigidbody _rigidbody;
+    public Rigidbody Rigidbody { get; set; }
     public float MaxVelocity = 50f;
 
     public void Init(IControllerInputs controllerInputs)
@@ -54,7 +54,7 @@ public class CharacterView : MonoBehaviour,
 
     private void Awake()
     {
-        _rigidbody = gameObject.GetComponent<Rigidbody>();
+        Rigidbody = gameObject.GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -67,7 +67,6 @@ public class CharacterView : MonoBehaviour,
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
         transform.rotation = targetRotation;
-        //_rigidbody.MoveRotation(targetRotation);
     }
 
     public void StartInteraction(IInteractible interactible)
@@ -75,9 +74,11 @@ public class CharacterView : MonoBehaviour,
         var dealerType = ControllerInputs.GetType();
         var handlerType = interactible.ControllerInputs.GetType();
 
+        IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+
         if (!dealerType.Equals(handlerType))
         {
-            IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+            
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
         }
         else
@@ -85,6 +86,8 @@ public class CharacterView : MonoBehaviour,
             //Debug.LogWarning("INTERACTION CANCELED");
             return;
         }
+        IMovable bump = interactionFromDealer.GetBump();
+        bump.ApplyForce(interactible.Rigidbody, Rigidbody);
     }
 
     //public void HandleMovement(CharacterView otherView)

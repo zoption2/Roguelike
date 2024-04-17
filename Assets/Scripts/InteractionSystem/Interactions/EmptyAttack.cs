@@ -14,6 +14,12 @@ namespace Interactions
 
             };
         }
+
+        public override IMovable GetBump()
+        {
+            return _movable;
+        }
+
         public override List<IEffect> GetEffects()
         {
             return _effects;

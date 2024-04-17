@@ -1,7 +1,5 @@
 using CharactersStats;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Interactions
 {
@@ -9,6 +7,7 @@ namespace Interactions
     {
         ReactiveStats Interacte(ReactiveStats stat);
         List<IEffect> GetEffects();
+        IMovable GetBump();
     }
 }
 

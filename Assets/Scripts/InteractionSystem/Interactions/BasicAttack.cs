@@ -8,11 +8,16 @@ namespace Interactions
     {
         public BasicAttack(int damage) : base(damage)
         {
-            Debug.Log("Damage: " + damage);
             _effects = new()
             {
                 new FireEffect(3),
             };
+
+        }
+
+        public override IMovable GetBump()
+        {
+            return _movable;
         }
 
         public override List<IEffect> GetEffects()
