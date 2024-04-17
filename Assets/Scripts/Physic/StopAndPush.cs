@@ -8,6 +8,7 @@ public class StopAndPush : IMovable
 
     public void ApplyForce(Rigidbody providerRb, Rigidbody handlerRb)
     {
+        Debug.LogError("HEEEYYY!!!");
         _providerRb = providerRb;
         _handlerRb = handlerRb;
 

@@ -9,6 +9,7 @@ public interface IControllerInputs
     IInteraction GetInteraction();
     IConditionState GetCurrentConditionState();
     void ApplyInteraction(IInteraction interactions);
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer);
     void AddEffects(List<IEffect> effects);
     bool GetActiveStatus();
     public void DoUpdate();

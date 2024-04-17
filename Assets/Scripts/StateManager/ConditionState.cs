@@ -22,6 +22,7 @@ public interface IConditionState
     public void LaunchToPoint(Vector3 point);
     public void Attack();
     public void Move();
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer);
 }
 
 public abstract class ActiveState
@@ -116,6 +117,11 @@ public abstract class ActiveState
 
     public virtual void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
     {
+    }
+
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+        bumpFromDealer.ApplyForce(_characterController.CharacterView.Rigidbody, interactible.Rigidbody);
     }
 }
 
@@ -279,6 +285,12 @@ public class InactiveState : IConditionState
         _characterController.AnalizeCondition();
     }
 
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+        IMovable bump = new Bounce();
+        bump.ApplyForce(_characterController.CharacterView.Rigidbody, interactible.Rigidbody);
+    }
+
     public void OnEnter()
     {
         Debug.Log("<color=#C0C8D8>" + "--|Enter InactiveState State|-- " + "</color>");
@@ -398,6 +410,10 @@ public class DeadState : IConditionState
     public void Move()
     {
     }
+
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+    }
 }
 
 public class StunState : IConditionState
@@ -441,6 +457,12 @@ public class StunState : IConditionState
     {
         IInteraction interaction = _characterController.InteractionDealer.UseInteraction(InteractionType.None);
         return interaction;
+    }
+
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+        IMovable bump = new Bounce();
+        bump.ApplyForce(_characterController.CharacterView.Rigidbody, interactible.Rigidbody);
     }
 
     public void Launch(Vector2 direction)

@@ -122,6 +122,14 @@ namespace Enemy
             return _currentState.GetInteraction(InteractionType.BasicAttack);
         }
 
+        public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+        {
+            if (IsMoving)
+            {
+                _currentState.ApplyBump(interactible, bumpFromDealer);
+            }
+        }
+
         public void HandleStopMovement()
         {
             ON_STOP_MOVEMENT?.Invoke();

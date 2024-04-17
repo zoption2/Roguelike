@@ -45,21 +45,6 @@ public class CollisionHandler : MonoBehaviour
             _characterView.StartInteraction(interactible);
         }
 
-        if (collision.gameObject.TryGetComponent(out CharacterView otherView))
-        {
-            //_characterView.HandleMovement(otherView);
-            bool isCharacterActiveOnThisTurn = _characterView.ControllerInputs.GetActiveStatus();
-            if (isCharacterActiveOnThisTurn)
-            {
-                IMovable movableBehaviour = new StopAndPush();
-                movableBehaviour.ApplyForce(_rigidbody, otherView.Rigidbody);
-            }
-            //else
-            //{
-            //    IMovable movableBehaviour = new Bounce();
-            //    movableBehaviour.ApplyForce(_rigidbody, otherView.Rigidbody);
-            //}
-        }
     }
 
     private void OnTriggerEnter(Collider other)

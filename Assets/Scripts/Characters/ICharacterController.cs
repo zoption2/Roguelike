@@ -26,6 +26,7 @@ public interface ICharacterController
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public CharacterType GetCharacterType();
     public Transform GetTransform();
+    
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
     public void UseEffectsOnStart();
     public void AnalizeCondition();

@@ -75,10 +75,10 @@ public class CharacterView : MonoBehaviour,
         var handlerType = interactible.ControllerInputs.GetType();
 
         IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+        IMovable bump = interactionFromDealer.GetBump();
 
         if (!dealerType.Equals(handlerType))
         {
-            
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
         }
         else
@@ -86,24 +86,9 @@ public class CharacterView : MonoBehaviour,
             //Debug.LogWarning("INTERACTION CANCELED");
             return;
         }
-        IMovable bump = interactionFromDealer.GetBump();
-        bump.ApplyForce(interactible.Rigidbody, Rigidbody);
-    }
 
-    //public void HandleMovement(CharacterView otherView)
-    //{
-    //    if(ControllerInputs.GetActiveStatus())
-    //    {
-    //        IMovable movableBehaviour = new StopAndPush();
-    //        movableBehaviour.ApplyForce(_rigidbody, otherView._rigidbody);
-    //    }
-    //    else
-    //    {
-    //        IMovable movableBehaviour = new Bounce();
-    //        movableBehaviour.ApplyForce(_rigidbody, otherView._rigidbody);
-    //    }
-        
-    //}
+        ControllerInputs.ApplyBump(interactible, bump);
+    }
 
     public void OnCreate()
     {

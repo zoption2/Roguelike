@@ -144,6 +144,15 @@ namespace Player
             _currentState.ApplyInteraction(interaction);
         }
 
+        public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+        {
+            if(IsMoving)
+            {
+                _currentState.ApplyBump(interactible, bumpFromDealer);
+            }
+            
+        }
+
         public void CheckForEndOfState()
         {
             _characterScenarioContext.CheckIfAllStopped();
