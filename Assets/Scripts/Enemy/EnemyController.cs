@@ -259,5 +259,10 @@ namespace Enemy
         {
             return CharacterView.GetRigidbody();
         }
+
+        public Vector3 GetVelocity()
+        {
+            return CharacterView.GetVelocity();
+        }
     }
 }

@@ -15,10 +15,8 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
 
     private Rigidbody _rigidbody;
     private bool _isStoppedInsideTrigger;
-    Queue<Vector3> _lastVelocities = new(2);
     IControllerInputs _controllerInputs;
     
-
     public void Init(IControllerInputs controllerInputs, CharacterView characterView)
     {
         _controllerInputs = controllerInputs;
@@ -26,29 +24,11 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
         _rigidbody = _characterView.GetRigidbody();
     }
 
-    private void FixedUpdate()
-    {
-        if(_rigidbody != null)
-        {
-            _lastVelocities.Enqueue(_rigidbody.velocity);
-
-            if (_lastVelocities.Count > 2)
-            {
-                _lastVelocities.Dequeue();
-            }
-        }
-    }
-
-    public Vector3 GetVelocity()
-    {
-        return _lastVelocities.Dequeue();
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.TryGetComponent(out IWall obstacle))
         {
-            Vector3 velocity = GetVelocity();
+            Vector3 velocity = _characterView.GetLastVelocity();
             obstacle.ProcessCollision(collision, _rigidbody, velocity);
         }
 
@@ -99,8 +79,4 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
             yield return null;
         }
     }
-
-
-
-
 }

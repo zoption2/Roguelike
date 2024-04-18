@@ -44,16 +44,16 @@ public abstract class ActiveState
 
     public void DoUpdate()
     {
-        if (_characterController.GetRigidbody().velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetVelocity().magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.GetRigidbody().velocity = _characterController.GetRigidbody().velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetVelocity().normalized * _characterController.CharacterView.MaxVelocity;
         }
 
-        if (_characterController.GetRigidbody().velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetRigidbody().velocity.magnitude < 0.2f && _characterController.GetRigidbody().velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.2f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -94,7 +94,7 @@ public abstract class ActiveState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.GetRigidbody().velocity;
+        Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
@@ -242,16 +242,16 @@ public class InactiveState : IConditionState
 
     public void DoUpdate()
     {
-        if (_characterController.GetRigidbody().velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetVelocity().magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.GetRigidbody().velocity = _characterController.GetRigidbody().velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetVelocity().normalized * _characterController.CharacterView.MaxVelocity;
         }
 
-        if (_characterController.GetRigidbody().velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetRigidbody().velocity.magnitude < 0.2f && _characterController.GetRigidbody().velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.2f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -309,7 +309,7 @@ public class InactiveState : IConditionState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.GetRigidbody().velocity;
+        Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
@@ -427,17 +427,17 @@ public class StunState : IConditionState
 
     public void DoUpdate()
     {
-        if (_characterController.GetRigidbody().velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetVelocity().magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.GetRigidbody().velocity = _characterController.GetRigidbody().velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetVelocity().normalized * _characterController.CharacterView.MaxVelocity;
         }
 
 
-        if (_characterController.GetRigidbody().velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetRigidbody().velocity.magnitude < 0.2f && _characterController.GetRigidbody().velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.2f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -488,7 +488,7 @@ public class StunState : IConditionState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.GetRigidbody().velocity;
+        Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);

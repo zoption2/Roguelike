@@ -261,6 +261,11 @@ namespace Player
             return CharacterView.GetRigidbody();
         }
 
+        public Vector3 GetVelocity()
+        {
+            return CharacterView.GetVelocity();
+        }
+
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;

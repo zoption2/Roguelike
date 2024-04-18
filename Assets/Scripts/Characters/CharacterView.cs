@@ -18,7 +18,7 @@ public interface IInteractible
 }
 public interface ICharacterView
 {
-    void Init(IControllerInputs controllerInputs);
+    public void Init(IControllerInputs controllerInputs);
     public void ChangeDirection(Vector2 direction);
 
     event Action<Transform, PointerEventData> ON_CLICK;
@@ -37,25 +37,20 @@ public class CharacterView : MonoBehaviour,
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
     
-
     [SerializeField] Transform _viewTransform;
-    
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
-    public IControllerInputs ControllerInputs { get; set; } 
-    //public Rigidbody Rigidbody { get; set; }
-
-    private Rigidbody _rigidbody;
-    
+    public IControllerInputs ControllerInputs { get; set; }
     public float MaxVelocity = 50f;
+    private Rigidbody _rigidbody;
     private CollisionHandler _collisionHandler;
+    private Queue<Vector3> _lastVelocities = new(2);
 
     public void Init(IControllerInputs controllerInputs)
     {
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
-        
     }
 
     private void Start()
@@ -67,7 +62,26 @@ public class CharacterView : MonoBehaviour,
 
     private void FixedUpdate()
     {
+        _lastVelocities.Enqueue(_rigidbody.velocity);
+
+        if (_lastVelocities.Count > 2)
+        {
+            _lastVelocities.Dequeue();
+        }
+
         ControllerInputs.DoUpdate();
+
+        
+    }
+
+    public Vector3 GetLastVelocity()
+    {
+        return _lastVelocities.Dequeue();
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return _rigidbody.velocity;
     }
 
     public void ChangeDirection(Vector2 direction)
