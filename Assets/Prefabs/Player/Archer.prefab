@@ -219,6 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _viewTransform: {fileID: 6015431970128935106}
+  MaxVelocity: 50
 --- !u!54 &3007235188621058909
 Rigidbody:
   m_ObjectHideFlags: 0

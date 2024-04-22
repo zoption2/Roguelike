@@ -53,10 +53,14 @@ public abstract class ActiveState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.2f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f  && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
+        }
+        else if(_characterController.IsMoving && _characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f)
+        {
+            Debug.Log("Here we go again...");
         }
 
         if (_characterController.IsMoving)
@@ -180,18 +184,17 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public void LaunchToPoint(Vector3 point)
     {
-        float minLaunchPower = 6f;
+        float minLaunchPower = 1f;
         float maxLaunchPower = _characterController.ModifiableStats.LaunchPower.Value;
         Vector2 direction = point - _characterController.GetTransform().position;
-        //Debug.Log("finish:" + point);
-        //Debug.Log("start: " +_characterController.GetTransform().position);
-        //Debug.Log("direction: " +direction);
         float distance = Vector2.Distance(point, _characterController.GetTransform().position);
         direction.Normalize();
+        float dragConstant = _characterController.CharacterView.Rigidbody.drag;
+        
         float multiplier = Mathf.Clamp(distance, minLaunchPower, maxLaunchPower);
-        //Debug.Log("multiplier: " + multiplier);
-        //Debug.Log("distance: " + distance);
-        Vector2 initialVelocity = direction * multiplier;
+        Debug.Log("multiplier: " + multiplier * dragConstant);
+        Vector2 initialVelocity = direction * multiplier * dragConstant;
+        Debug.Log("InitialVelocityMove: " + initialVelocity.magnitude);
         _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
@@ -206,26 +209,29 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public async void Move()
     {
+        NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
         IDefaultBehaviourTree defaultBehaviourTree = _characterController.DefaultBehaviourTree;
-        _characterController.NavMeshObstacle.enabled = false;
+        navObstacle.enabled = false;
+        //navObstacle.velocity
         await Task.Delay(_milisecondsDelay / 10);
 
         Transform target = defaultBehaviourTree.GetTarget();
-        
+
         Transform enemy = _characterController.GetTransform();
-        
+
         _characterController.NavMeshAgent.enabled = true;
         _characterController.NavMeshAgent.SetDestination(target.position);
         await Task.Delay(_milisecondsDelay / 10);
+
         NavMeshPath path = _characterController.NavMeshAgent.path;
 
-        Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path,target);
+        Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path, target);
         _characterController.NavMeshAgent.enabled = false;
         Vector2 direction = enemy.position - waypoint;
         _characterController.CharacterView.ChangeDirection(-direction);
 
         LaunchToPoint(waypoint);
-        _characterController.NavMeshObstacle.enabled = true;
+        navObstacle.enabled = true;
     }
 }
 

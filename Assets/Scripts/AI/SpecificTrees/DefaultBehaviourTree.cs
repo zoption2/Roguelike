@@ -92,7 +92,7 @@ namespace BehaviourTree
             direction.Normalize();
             float radius = 0.5f;
             RaycastHit hit;
-            //Debug.DrawRay(target, -direction,Color.red,1f);
+            Debug.DrawRay(target, -direction,Color.red,2f);
             Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
             return hit;
         }
@@ -100,7 +100,6 @@ namespace BehaviourTree
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target)
         {
             Vector3 waypoint = path.corners[1];
-            Debug.Log("first waypoint:" + waypoint);
             foreach (Vector3 point in path.corners)
             {
                 if (PathToPointIsClear(point) && point != path.corners[0])
@@ -108,7 +107,6 @@ namespace BehaviourTree
                     waypoint = point;
                 }
             }
-            Debug.Log("waypoint:" +waypoint);
             return waypoint;
         }
         protected bool PathToPointIsClear(Vector3 point)
