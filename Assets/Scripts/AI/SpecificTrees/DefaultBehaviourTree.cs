@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
@@ -73,6 +72,7 @@ namespace BehaviourTree
             Vector3 characterPosition = _characterController.GetTransform().position;
             if (SphereCastHitTheTarget(target, characterPosition) && !_characterController.IsStunned)
             {
+                Debug.Log("!!!Can Attack!!!");
                 _blackboard.SetData(_attackKey, true);
             }
             else
@@ -84,28 +84,31 @@ namespace BehaviourTree
 
         protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
         {
+            LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
             Vector3 characterPosition = _characterController.GetTransform().position;
+            startingPoint.z = characterPosition.z;
             Vector3 direction = target - startingPoint;
             direction.z = 0;
             direction.Normalize();
-            float radius = 0.4f;
+            float radius = 0.5f;
             RaycastHit hit;
-            startingPoint.z = characterPosition.z;
-            Physics.SphereCast(startingPoint, radius, direction, out hit, distance);
+            //Debug.DrawRay(target, -direction,Color.red,1f);
+            Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
             return hit;
         }
 
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target)
         {
             Vector3 waypoint = path.corners[1];
+            Debug.Log("first waypoint:" + waypoint);
             foreach (Vector3 point in path.corners)
             {
-                if (SphereCastHitTheTarget(target, point) && PathToPointIsClear(point))
+                if (PathToPointIsClear(point) && point != path.corners[0])
                 {
-                    Debug.LogWarning("Waypoint was found!: " + point);
                     waypoint = point;
                 }
             }
+            Debug.Log("waypoint:" +waypoint);
             return waypoint;
         }
         protected bool PathToPointIsClear(Vector3 point)
@@ -118,8 +121,9 @@ namespace BehaviourTree
                 return true;
             }
             else
+            {
                 return false;
-
+            }
         }
 
         protected bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
@@ -128,11 +132,13 @@ namespace BehaviourTree
             
             RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
             Transform hitTransform = hit.transform;
-            
-            if (hit.transform.childCount > 0)
+
+            if (hitTransform != null &&  hitTransform.childCount > 0)
             {
                 hitTransform = hit.transform.GetChild(0);
             }
+            //Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
+            //Debug.LogWarning("Target: " + target.gameObject.name);
             if (hitTransform == target)
             {
                 return true;

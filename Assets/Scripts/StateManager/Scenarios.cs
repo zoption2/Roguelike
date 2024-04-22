@@ -83,7 +83,6 @@ namespace Gameplay
             DataTransfer.RawMappers = DataTransfer.RawMappers.OrderByDescending(x => x.Speed).ToList();
             foreach (RawMapper mapper in DataTransfer.RawMappers)
             {
-                Debug.Log("Speed:" + mapper.Speed);
                 CookedMapper cookedMapper;
                 cookedMapper = ConvertToCookedMapper(mapper.Controller);
                 _turnsOrder.Add(cookedMapper);

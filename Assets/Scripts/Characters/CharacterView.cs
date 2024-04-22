@@ -58,8 +58,9 @@ public class CharacterView : MonoBehaviour,
     }
 
     private void FixedUpdate()
-    {
-        ControllerInputs.DoUpdate();
+    { 
+        if(ControllerInputs!= null)
+            ControllerInputs.DoUpdate();
     }
 
     public void ChangeDirection(Vector2 direction)

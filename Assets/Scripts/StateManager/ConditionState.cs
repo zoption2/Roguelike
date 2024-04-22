@@ -4,6 +4,7 @@ using Interactions;
 using SlingShotLogic;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -179,12 +180,17 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public void LaunchToPoint(Vector3 point)
     {
-        float minLaunchPower = 5f;
+        float minLaunchPower = 6f;
         float maxLaunchPower = _characterController.ModifiableStats.LaunchPower.Value;
         Vector2 direction = point - _characterController.GetTransform().position;
-        float distance = Vector3.Distance(point, _characterController.GetTransform().position);
+        //Debug.Log("finish:" + point);
+        //Debug.Log("start: " +_characterController.GetTransform().position);
+        //Debug.Log("direction: " +direction);
+        float distance = Vector2.Distance(point, _characterController.GetTransform().position);
         direction.Normalize();
         float multiplier = Mathf.Clamp(distance, minLaunchPower, maxLaunchPower);
+        //Debug.Log("multiplier: " + multiplier);
+        //Debug.Log("distance: " + distance);
         Vector2 initialVelocity = direction * multiplier;
         _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
     }
@@ -195,9 +201,6 @@ public class EnemyActiveState : ActiveState, IConditionState
         Transform enemy = _characterController.GetTransform();
         Vector2 direction = enemy.position - target.position;
         _characterController.CharacterView.ChangeDirection(-direction);
-        //await Task.Delay(_milisecondsDelay);
-        //if (_characterController.NavMeshAgent != null)
-        //    _characterController.NavMeshAgent.enabled = false;
         Launch(direction * -1);
     }
 
@@ -210,6 +213,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         Transform target = defaultBehaviourTree.GetTarget();
         
         Transform enemy = _characterController.GetTransform();
+        
         _characterController.NavMeshAgent.enabled = true;
         _characterController.NavMeshAgent.SetDestination(target.position);
         await Task.Delay(_milisecondsDelay / 10);
@@ -219,7 +223,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         _characterController.NavMeshAgent.enabled = false;
         Vector2 direction = enemy.position - waypoint;
         _characterController.CharacterView.ChangeDirection(-direction);
-        //await Task.Delay(_milisecondsDelay);
+
         LaunchToPoint(waypoint);
         _characterController.NavMeshObstacle.enabled = true;
     }
