@@ -192,9 +192,9 @@ public class EnemyActiveState : ActiveState, IConditionState
         float dragConstant = _characterController.CharacterView.Rigidbody.drag;
         
         float multiplier = Mathf.Clamp(distance, minLaunchPower, maxLaunchPower);
-        Debug.Log("multiplier: " + multiplier * dragConstant);
+        //Debug.Log("multiplier: " + multiplier * dragConstant);
         Vector2 initialVelocity = direction * multiplier * dragConstant;
-        Debug.Log("InitialVelocityMove: " + initialVelocity.magnitude);
+        //Debug.Log("InitialVelocityMove: " + initialVelocity.magnitude);
         _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
@@ -212,7 +212,6 @@ public class EnemyActiveState : ActiveState, IConditionState
         NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
         IDefaultBehaviourTree defaultBehaviourTree = _characterController.DefaultBehaviourTree;
         navObstacle.enabled = false;
-        //navObstacle.velocity
         await Task.Delay(_milisecondsDelay / 10);
 
         Transform target = defaultBehaviourTree.GetTarget();
@@ -255,7 +254,7 @@ public class InactiveState : IConditionState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.2f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
