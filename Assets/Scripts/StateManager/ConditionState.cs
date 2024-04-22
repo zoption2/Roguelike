@@ -62,7 +62,7 @@ public abstract class ActiveState
         {
             Debug.Log("velocity magnitude: " + _characterController.CharacterView.Rigidbody.velocity.magnitude);
             Debug.Log("Here we go again...");
-            Debug.Break();
+            //Debug.Break();
         }
 
         if (_characterController.IsMoving)
@@ -73,6 +73,7 @@ public abstract class ActiveState
 
     public virtual void Launch(Vector2 direction)
     {
+        //float dragConstant = _characterController.CharacterView.Rigidbody.drag;
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
         Vector2 forceVector = direction * launchPower;
@@ -193,9 +194,9 @@ public class EnemyActiveState : ActiveState, IConditionState
         direction.Normalize();
         float dragConstant = _characterController.CharacterView.Rigidbody.drag;
         
-        float multiplier = Mathf.Clamp(distance, minLaunchPower, maxLaunchPower);
+        float multiplier = Mathf.Clamp(distance * dragConstant, minLaunchPower, maxLaunchPower);
         //Debug.Log("multiplier: " + multiplier * dragConstant);
-        Vector2 initialVelocity = direction * multiplier * dragConstant;
+        Vector2 initialVelocity = direction * multiplier; //* dragConstant;
         //Debug.Log("InitialVelocityMove: " + initialVelocity.magnitude);
         _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
     }

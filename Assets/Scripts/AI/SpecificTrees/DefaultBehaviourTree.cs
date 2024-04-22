@@ -12,7 +12,7 @@ namespace BehaviourTree
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
-        private string _attackKey = "CanAttack", _moveKey = "CanMove",_targetKey ="Target";
+        private string _attackKey = "CanAttack", _moveKey = "CanMove", _targetKey ="Target";
         protected override Node SetupRootNode()
         {
             Node rootNode = new Selector( new List<Node>
@@ -57,13 +57,30 @@ namespace BehaviourTree
 
         private void CheckIfCanMove()
         {
-            if (!_characterController.IsStunned)
+            Transform target = GetTarget();
+            NavMeshPath path = new NavMeshPath();
+            _characterController.NavMeshObstacle.enabled = false;
+            _characterController.NavMeshAgent.enabled = true;
+            bool pathIsFound = _characterController.NavMeshAgent.CalculatePath(target.position, path);
+            bool couldReachPoint = false;
+            if (pathIsFound)
             {
+                couldReachPoint = CouldReach(FindWaypointToObserveTarget(path, target));
+            }
+
+            if (!_characterController.IsStunned && couldReachPoint)
+            {
+                Debug.Log("Can Move");
                 _blackboard.SetData(_moveKey, true);
-            } else
+            } 
+            else
             {
+                Debug.Log("CAN'T MOVE");
                 _blackboard.SetData(_moveKey, false);
             }
+            _characterController.NavMeshAgent.enabled = false;
+            _characterController.NavMeshObstacle.enabled = true;
+            
         }
 
         protected void CheckIfCanAttack()
@@ -103,7 +120,11 @@ namespace BehaviourTree
             Vector3 waypoint = path.corners[1];
             foreach (Vector3 point in path.corners)
             {
-                if (PathToPointIsClear(point) && point != path.corners[0])
+                if (SphereCastHitTheTarget(target, point) && PathToPointIsClear(point) && point != path.corners[0])
+                {
+                    return point;
+                }
+                else if (PathToPointIsClear(point) && CouldReach(point) && point != path.corners[0])
                 {
                     waypoint = point;
                 }
@@ -124,10 +145,25 @@ namespace BehaviourTree
                 return false;
             }
         }
+        protected bool CouldReach(Vector2 point)
+        {
+            float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
+            float dragConstant = _characterController.CharacterView.Rigidbody.drag;
+            float maxDistance = launchPower / dragConstant;
+            float distance = Vector2.Distance(point, _characterController.GetTransform().position);
+            if(distance > maxDistance)
+            {
+                return false;
+            }
+            else
+                return true;
+        }
 
         protected bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
         {
-            float maxDistance = 15f;
+            float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
+            float dragConstant = _characterController.CharacterView.Rigidbody.drag;
+            float maxDistance = launchPower / dragConstant;
             
             RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
             Transform hitTransform = hit.transform;
