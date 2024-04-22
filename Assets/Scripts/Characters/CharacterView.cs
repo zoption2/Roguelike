@@ -8,13 +8,14 @@ using System.Collections.Generic;
 
 public interface IMovable
 {
-    void ApplyForce(Rigidbody providerRb, Rigidbody handlerRb);
+    void ApplyForce(IInteractible provider, IInteractible handler);
 }
 public interface IInteractible
 {
     void StartInteraction(IInteractible interactible);
     IControllerInputs ControllerInputs { get; set; }
     public Rigidbody GetRigidbody();
+    public Vector3 GetLastVelocity();
 }
 public interface ICharacterView
 {

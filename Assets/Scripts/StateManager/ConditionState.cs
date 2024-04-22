@@ -121,7 +121,7 @@ public abstract class ActiveState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        bumpFromDealer.ApplyForce(_characterController.GetRigidbody(), interactible.GetRigidbody());
+        bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
     }
 }
 
@@ -288,7 +288,7 @@ public class InactiveState : IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
         IMovable bump = new Bounce();
-        bump.ApplyForce(_characterController.GetRigidbody(), interactible.GetRigidbody());
+        bump.ApplyForce(_characterController.CharacterView, interactible);
     }
 
     public void OnEnter()
@@ -462,7 +462,7 @@ public class StunState : IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
         IMovable bump = new Bounce();
-        bump.ApplyForce(_characterController.GetRigidbody(), interactible.GetRigidbody());
+        bump.ApplyForce(_characterController.CharacterView, interactible);
     }
 
     public void Launch(Vector2 direction)
