@@ -77,6 +77,7 @@ namespace BehaviourTree
             }
             else
             {
+                Debug.Log("!!!CAN'T Attack!!!");
                 _blackboard.SetData(_attackKey, false);
             }
 
@@ -92,7 +93,7 @@ namespace BehaviourTree
             direction.Normalize();
             float radius = 0.5f;
             RaycastHit hit;
-            Debug.DrawRay(target, -direction,Color.red,2f);
+            //Debug.DrawRay(target, -direction,Color.red,2f);
             Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
             return hit;
         }

@@ -53,14 +53,16 @@ public abstract class ActiveState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f  && _characterController.IsMoving)
+        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
-        else if(_characterController.IsMoving && _characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f)
+        else if(_characterController.IsMoving && _characterController.CharacterView.Rigidbody.velocity.magnitude == 0f)
         {
+            Debug.Log("velocity magnitude: " + _characterController.CharacterView.Rigidbody.velocity.magnitude);
             Debug.Log("Here we go again...");
+            Debug.Break();
         }
 
         if (_characterController.IsMoving)
