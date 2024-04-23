@@ -16,6 +16,7 @@ public interface IInteractible
     IControllerInputs ControllerInputs { get; set; }
     public Rigidbody GetRigidbody();
     public Vector3 GetLastVelocity();
+    Vector3 GetVelocity();
 }
 public interface ICharacterView
 {
