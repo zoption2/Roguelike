@@ -23,6 +23,7 @@ public interface IConditionState
     public void LaunchToPoint(Vector3 point);
     public void Attack();
     public void Move();
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer);
 }
 
 public abstract class ActiveState
@@ -44,23 +45,23 @@ public abstract class ActiveState
 
     public void DoUpdate()
     {
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetVelocity().magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.CharacterView.Rigidbody.velocity = _characterController.CharacterView.Rigidbody.velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetVelocity().normalized * _characterController.CharacterView.MaxVelocity;
         }
 
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
-        else if(_characterController.IsMoving && _characterController.CharacterView.Rigidbody.velocity.magnitude == 0f)
+        else if(_characterController.IsMoving && _characterController.GetVelocity().magnitude == 0f)
         {
-            Debug.Log("velocity magnitude: " + _characterController.CharacterView.Rigidbody.velocity.magnitude);
+            Debug.Log("velocity magnitude: " + _characterController.GetVelocity().magnitude);
             Debug.Log("Here we go again...");
             //Debug.Break();
         }
@@ -77,7 +78,7 @@ public abstract class ActiveState
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
         Vector2 forceVector = direction * launchPower;
-        _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
     }
 
     public IInteraction GetInteraction(InteractionType interactionType)
@@ -101,11 +102,11 @@ public abstract class ActiveState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
+        Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void OnExit()
@@ -124,6 +125,11 @@ public abstract class ActiveState
 
     public virtual void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
     {
+    }
+
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+        bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
     }
 }
 
@@ -160,7 +166,7 @@ public class PlayerActiveState : ActiveState, IConditionState
 
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         Vector2 forceVector = direction * launchPower;
-        _characterController.CharacterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
+        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= Launch;
     }
@@ -198,7 +204,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         //Debug.Log("multiplier: " + multiplier * dragConstant);
         Vector2 initialVelocity = direction * multiplier; //* dragConstant;
         //Debug.Log("InitialVelocityMove: " + initialVelocity.magnitude);
-        _characterController.CharacterView.Rigidbody.AddForce(initialVelocity, ForceMode.VelocityChange);
+        _characterController.GetRigidbody().AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
     public void Attack()
@@ -248,16 +254,16 @@ public class InactiveState : IConditionState
 
     public void DoUpdate()
     {
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetVelocity().magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.CharacterView.Rigidbody.velocity = _characterController.CharacterView.Rigidbody.velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetVelocity().normalized * _characterController.CharacterView.MaxVelocity;
         }
 
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.1f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -291,6 +297,12 @@ public class InactiveState : IConditionState
         _characterController.AnalizeCondition();
     }
 
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+        IMovable bump = new Bounce();
+        bump.ApplyForce(_characterController.CharacterView, interactible);
+    }
+
     public void OnEnter()
     {
         Debug.Log("<color=#C0C8D8>" + "--|Enter InactiveState State|-- " + "</color>");
@@ -309,11 +321,11 @@ public class InactiveState : IConditionState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
+        Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void OnExit()
@@ -410,6 +422,10 @@ public class DeadState : IConditionState
     public void Move()
     {
     }
+
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+    }
 }
 
 public class StunState : IConditionState
@@ -423,17 +439,17 @@ public class StunState : IConditionState
 
     public void DoUpdate()
     {
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > _characterController.CharacterView.MaxVelocity)
+        if (_characterController.GetVelocity().magnitude > _characterController.CharacterView.MaxVelocity)
         {
-            _characterController.CharacterView.Rigidbody.velocity = _characterController.CharacterView.Rigidbody.velocity.normalized * _characterController.CharacterView.MaxVelocity;
+            _characterController.GetRigidbody().velocity = _characterController.GetVelocity().normalized * _characterController.CharacterView.MaxVelocity;
         }
 
 
-        if (_characterController.CharacterView.Rigidbody.velocity.magnitude > 0.5f && !_characterController.IsMoving)
+        if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.CharacterView.Rigidbody.velocity.magnitude < 0.2f && _characterController.CharacterView.Rigidbody.velocity.magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.2f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -453,6 +469,12 @@ public class StunState : IConditionState
     {
         IInteraction interaction = _characterController.InteractionDealer.UseInteraction(InteractionType.None);
         return interaction;
+    }
+
+    public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+    {
+        IMovable bump = new Bounce();
+        bump.ApplyForce(_characterController.CharacterView, interactible);
     }
 
     public void Launch(Vector2 direction)
@@ -478,11 +500,11 @@ public class StunState : IConditionState
 
     public void ViewRotation()
     {
-        Vector3 velocity = _characterController.CharacterView.Rigidbody.velocity;
+        Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
-        _characterController.CharacterView.Rigidbody.rotation = Quaternion.Slerp(_characterController.CharacterView.Rigidbody.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
     public void OnExit()

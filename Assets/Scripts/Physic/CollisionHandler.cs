@@ -4,61 +4,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollisionHandler : MonoBehaviour
+public interface ICollisionHandler
 {
-    [SerializeField] CharacterView _characterView;
+    void Init(IControllerInputs controllerInputs, CharacterView characterView);
+}
+
+public class CollisionHandler : MonoBehaviour, ICollisionHandler
+{
+    private CharacterView _characterView;
 
     private Rigidbody _rigidbody;
     private bool _isStoppedInsideTrigger;
-    Queue<Vector3> _lastVelocities = new(2);
-
-    void FixedUpdate()
+    IControllerInputs _controllerInputs;
+    
+    public void Init(IControllerInputs controllerInputs, CharacterView characterView)
     {
-        _lastVelocities.Enqueue(_rigidbody.velocity);
-
-        if(_lastVelocities.Count > 2 )
-        {
-            _lastVelocities.Dequeue();
-        }
-    }
-
-    public Vector3 GetVelocity()
-    {
-        return _lastVelocities.Dequeue();
-    }
-
-    private void Start()
-    {
-        _rigidbody = _characterView.Rigidbody;
+        _controllerInputs = controllerInputs;
+        _characterView = characterView;
+        _rigidbody = _characterView.GetRigidbody();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.TryGetComponent(out IWall obstacle))
         {
-            Vector3 velocity = GetVelocity();
+            Vector3 velocity = _characterView.GetLastVelocity();
             obstacle.ProcessCollision(collision, _rigidbody, velocity);
         }
 
         if (collision.gameObject.TryGetComponent(out IInteractible interactible))
         {
             _characterView.StartInteraction(interactible);
-        }
-
-        if (collision.gameObject.TryGetComponent(out CharacterView otherView))
-        {
-            //_characterView.HandleMovement(otherView);
-            bool isCharacterActiveOnThisTurn = _characterView.ControllerInputs.GetActiveStatus();
-            if (isCharacterActiveOnThisTurn)
-            {
-                IMovable movableBehaviour = new StopAndPush();
-                movableBehaviour.ApplyForce(_rigidbody, otherView.Rigidbody);
-            }
-            //else
-            //{
-            //    IMovable movableBehaviour = new Bounce();
-            //    movableBehaviour.ApplyForce(_rigidbody, otherView.Rigidbody);
-            //}
         }
     }
 
@@ -76,7 +52,7 @@ public class CollisionHandler : MonoBehaviour
         if (other.gameObject.TryGetComponent(out IBuff buff))
         {
             _isStoppedInsideTrigger = false;
-            StopCoroutine(CheckPlayerStopped(buff));
+            StartCoroutine(CheckPlayerStopped(buff));
         }
     }
 
@@ -84,14 +60,14 @@ public class CollisionHandler : MonoBehaviour
     {
         while (_isStoppedInsideTrigger)
         {
-            if (!_characterView.ControllerInputs.IsMoving)
+            if (!_controllerInputs.IsMoving)
             {
-                bool activeStatus = _characterView.ControllerInputs.GetActiveStatus();
+                bool activeStatus = _controllerInputs.GetActiveStatus();
                 if (activeStatus)
                 {
                     List<IEffect> effects = buff.UseBuff();
 
-                    _characterView.ControllerInputs.AddEffects(effects);
+                    _controllerInputs.AddEffects(effects);
 
                     Debug.Log("<color=#07C3FF>" + buff + " effects were added" + "</color>");
 
@@ -103,8 +79,4 @@ public class CollisionHandler : MonoBehaviour
             yield return null;
         }
     }
-
-
-
-
 }

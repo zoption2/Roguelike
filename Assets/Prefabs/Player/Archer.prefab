@@ -180,7 +180,6 @@ GameObject:
   - component: {fileID: 566806097844946778}
   - component: {fileID: 3007235188621058909}
   - component: {fileID: 2699408279540228239}
-  - component: {fileID: 6155308447759175646}
   - component: {fileID: -3741253259880368973}
   - component: {fileID: 4889472880577327409}
   m_Layer: 7
@@ -268,19 +267,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6155308447759175646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5019426081544581403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 749e8a36bf113a842b85025e0f5c0a38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterView: {fileID: 566806097844946778}
 --- !u!195 &-3741253259880368973
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -26,7 +26,9 @@ public interface ICharacterController
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public CharacterType GetCharacterType();
     public Transform GetTransform();
+    public Rigidbody GetRigidbody();
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
+    public Vector3 GetVelocity();
     public void UseEffectsOnStart();
     public void AnalizeCondition();
     public void SwitchState(TypeOfConditionState state);

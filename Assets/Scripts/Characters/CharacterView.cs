@@ -4,20 +4,22 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 public interface IMovable
 {
-    void ApplyForce(Rigidbody providerRb, Rigidbody handlerRb);
+    void ApplyForce(IInteractible provider, IInteractible handler);
 }
 public interface IInteractible
 {
     void StartInteraction(IInteractible interactible);
     IControllerInputs ControllerInputs { get; set; }
-    Rigidbody Rigidbody { get; set; }
+    public Rigidbody GetRigidbody();
+    public Vector3 GetLastVelocity();
 }
 public interface ICharacterView
 {
-    void Init(IControllerInputs controllerInputs);
+    public void Init(IControllerInputs controllerInputs);
     public void ChangeDirection(Vector2 direction);
 
     event Action<Transform, PointerEventData> ON_CLICK;
@@ -36,14 +38,14 @@ public class CharacterView : MonoBehaviour,
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
     
-
     [SerializeField] Transform _viewTransform;
-    
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
-    public IControllerInputs ControllerInputs { get; set; } 
-    public Rigidbody Rigidbody { get; set; }
+    public IControllerInputs ControllerInputs { get; set; }
     public float MaxVelocity = 50f;
+    private Rigidbody _rigidbody;
+    private CollisionHandler _collisionHandler;
+    private Queue<Vector3> _lastVelocities = new(2);
 
     public void Init(IControllerInputs controllerInputs)
     {
@@ -52,15 +54,35 @@ public class CharacterView : MonoBehaviour,
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
     }
 
-    private void Awake()
+    private void Start()
     {
-        Rigidbody = gameObject.GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
+        _collisionHandler = gameObject.AddComponent<CollisionHandler>();
+        _collisionHandler.Init(ControllerInputs, this);
     }
 
     private void FixedUpdate()
-    { 
-        if(ControllerInputs!= null)
-            ControllerInputs.DoUpdate();
+    {
+        _lastVelocities.Enqueue(_rigidbody.velocity);
+
+        if (_lastVelocities.Count > 2)
+        {
+            _lastVelocities.Dequeue();
+        }
+
+        ControllerInputs.DoUpdate();
+
+        
+    }
+
+    public Vector3 GetLastVelocity()
+    {
+        return _lastVelocities.Dequeue();
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return _rigidbody.velocity;
     }
 
     public void ChangeDirection(Vector2 direction)
@@ -76,10 +98,10 @@ public class CharacterView : MonoBehaviour,
         var handlerType = interactible.ControllerInputs.GetType();
 
         IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
+        IMovable bump = interactionFromDealer.GetBump();
 
         if (!dealerType.Equals(handlerType))
         {
-            
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
         }
         else
@@ -87,24 +109,9 @@ public class CharacterView : MonoBehaviour,
             //Debug.LogWarning("INTERACTION CANCELED");
             return;
         }
-        IMovable bump = interactionFromDealer.GetBump();
-        bump.ApplyForce(interactible.Rigidbody, Rigidbody);
-    }
 
-    //public void HandleMovement(CharacterView otherView)
-    //{
-    //    if(ControllerInputs.GetActiveStatus())
-    //    {
-    //        IMovable movableBehaviour = new StopAndPush();
-    //        movableBehaviour.ApplyForce(_rigidbody, otherView._rigidbody);
-    //    }
-    //    else
-    //    {
-    //        IMovable movableBehaviour = new Bounce();
-    //        movableBehaviour.ApplyForce(_rigidbody, otherView._rigidbody);
-    //    }
-        
-    //}
+        ControllerInputs.ApplyBump(interactible, bump);
+    }
 
     public void OnCreate()
     {
@@ -130,6 +137,11 @@ public class CharacterView : MonoBehaviour,
 
     public void OnRelease()
     {
+    }
+
+    public Rigidbody GetRigidbody()
+    {
+        return _rigidbody;
     }
 
     public Transform GetTransform()

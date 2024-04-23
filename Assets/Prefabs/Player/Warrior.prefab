@@ -178,7 +178,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5044291117042822025}
   - component: {fileID: 93883676715664555}
-  - component: {fileID: 7177485733226749718}
   - component: {fileID: 216731504792179663}
   - component: {fileID: 486059973603968758}
   - component: {fileID: 5091030802925303555}
@@ -220,19 +219,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _viewTransform: {fileID: 6015431970128935106}
   MaxVelocity: 50
---- !u!114 &7177485733226749718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5019426081544581403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 749e8a36bf113a842b85025e0f5c0a38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterView: {fileID: 93883676715664555}
 --- !u!135 &216731504792179663
 SphereCollider:
   m_ObjectHideFlags: 0

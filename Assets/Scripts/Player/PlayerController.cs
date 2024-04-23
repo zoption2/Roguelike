@@ -144,6 +144,15 @@ namespace Player
             _currentState.ApplyInteraction(interaction);
         }
 
+        public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
+        {
+            if(IsMoving)
+            {
+                _currentState.ApplyBump(interactible, bumpFromDealer);
+            }
+            
+        }
+
         public void CheckForEndOfState()
         {
             _characterScenarioContext.CheckIfAllStopped();
@@ -246,6 +255,17 @@ namespace Player
         {
             return _currentState;
         }
+
+        public Rigidbody GetRigidbody()
+        {
+            return CharacterView.GetRigidbody();
+        }
+
+        public Vector3 GetVelocity()
+        {
+            return CharacterView.GetVelocity();
+        }
+
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;
