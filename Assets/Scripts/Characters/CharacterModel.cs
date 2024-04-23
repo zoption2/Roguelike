@@ -22,8 +22,3 @@ public class CharacterModel : CharacterModelBase
     }
 }
 
-public class SavedModelCollection
-{
-    public List<CharacterModel> List = new List<CharacterModel>();
-}
-
