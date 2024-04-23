@@ -9,6 +9,8 @@ namespace BehaviourTree
     {
         public Transform GetTarget();
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target);
+        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint);
+        public Vector3 GetCharacterPosition();
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
@@ -83,10 +85,14 @@ namespace BehaviourTree
             
         }
 
+        public Vector3 GetCharacterPosition()
+        {
+            return _characterController.GetTransform().position;
+        }
         protected void CheckIfCanAttack()
         {
             Transform  target = GetTarget();
-            Vector3 characterPosition = _characterController.GetTransform().position;
+            Vector3 characterPosition = GetCharacterPosition();
             if (SphereCastHitTheTarget(target, characterPosition) && !_characterController.IsStunned)
             {
                 Debug.Log("!!!Can Attack!!!");
@@ -103,14 +109,13 @@ namespace BehaviourTree
         protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
         {
             LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
-            Vector3 characterPosition = _characterController.GetTransform().position;
-            startingPoint.z = characterPosition.z;
+            //Vector3 characterPosition = GetCharacterPosition();
+            //startingPoint.z = characterPosition.z;
             Vector3 direction = target - startingPoint;
             direction.z = 0;
             direction.Normalize();
             float radius = 0.5f;
             RaycastHit hit;
-            //Debug.DrawRay(target, -direction,Color.red,2f);
             Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
             return hit;
         }
@@ -133,9 +138,9 @@ namespace BehaviourTree
         }
         protected bool PathToPointIsClear(Vector3 point)
         {
-            Transform character = _characterController.GetTransform();
-            float distance = Vector2.Distance(point,character.position);
-            RaycastHit hit = ShootSphereCastToTarget(point,distance,character.position);
+            Vector3 character = GetCharacterPosition();
+            float distance = Vector2.Distance(point,character);
+            RaycastHit hit = ShootSphereCastToTarget(point,distance,character);
             if(hit.collider == null)
             {
                 return true;
@@ -150,7 +155,7 @@ namespace BehaviourTree
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
             float dragConstant = _characterController.GetRigidbody().drag;
             float maxDistance = launchPower / dragConstant;
-            float distance = Vector2.Distance(point, _characterController.GetTransform().position);
+            float distance = Vector2.Distance(point, GetCharacterPosition());
             if(distance > maxDistance)
             {
                 return false;
@@ -159,7 +164,7 @@ namespace BehaviourTree
                 return true;
         }
 
-        protected bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
+        public bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
         {
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
             float dragConstant = _characterController.GetRigidbody().drag;
