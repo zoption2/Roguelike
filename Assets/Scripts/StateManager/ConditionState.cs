@@ -15,12 +15,12 @@ public interface IConditionState
     public void OnExit();
     public IInteraction GetInteraction(InteractionType interactionType);
     public void ApplyInteraction(IInteraction interaction);
-    public void Launch(Vector2 direction);
+    public void LaunchYourself(Vector2 direction);
     public void AddEffects(List<IEffect> effects);
     public void ViewRotation();
     public void DoUpdate();
     public void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition);
-    public void LaunchToPoint(Vector3 point);
+    public void LaunchYourselfToPoint(Vector3 point);
     public void Attack();
     public void Move();
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer);
@@ -72,7 +72,7 @@ public abstract class ActiveState
         }
     }
 
-    public virtual void Launch(Vector2 direction)
+    public virtual void LaunchYourself(Vector2 direction)
     {
         //float dragConstant = _characterController.CharacterView.Rigidbody.drag;
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
@@ -115,7 +115,7 @@ public abstract class ActiveState
         if(_slingShot != null)
         {
             _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
-            _slingShot.OnShoot -= Launch;
+            _slingShot.OnShoot -= LaunchYourself;
         }
     }
 
@@ -152,15 +152,15 @@ public class PlayerActiveState : ActiveState, IConditionState
         _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
         _slingShot.OnDirectionChange += _characterController.CharacterView.ChangeDirection;
 
-        _slingShot.OnShoot -= Launch;
-        _slingShot.OnShoot += Launch;
+        _slingShot.OnShoot -= LaunchYourself;
+        _slingShot.OnShoot += LaunchYourself;
 
         DragInputModule.dragFocusObject = _slingShot.gameObject;
         eventData.pointerDrag = _slingShot.gameObject;
         eventData.dragging = true;
     }
 
-    public override void Launch(Vector2 direction)
+    public override void LaunchYourself(Vector2 direction)
     {
         //base.Launch(direction);
 
@@ -168,11 +168,11 @@ public class PlayerActiveState : ActiveState, IConditionState
         Vector2 forceVector = direction * launchPower;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
-        _slingShot.OnShoot -= Launch;
+        _slingShot.OnShoot -= LaunchYourself;
     }
 
 
-    public void LaunchToPoint(Vector3 point)
+    public void LaunchYourselfToPoint(Vector3 point)
     {
     }
 
@@ -191,7 +191,7 @@ public class EnemyActiveState : ActiveState, IConditionState
     {
     }
 
-    public void LaunchToPoint(Vector3 point)
+    public void LaunchYourselfToPoint(Vector3 point)
     {
         float minLaunchPower = 1f;
         float maxLaunchPower = _characterController.ModifiableStats.LaunchPower.Value;
@@ -213,7 +213,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         Transform enemy = _characterController.GetTransform();
         Vector2 direction = enemy.position - target.position;
         _characterController.CharacterView.ChangeDirection(-direction);
-        Launch(direction * -1);
+        LaunchYourself(direction * -1);
     }
 
     public async void Move()
@@ -238,7 +238,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         Vector2 direction = enemy.position - waypoint;
         _characterController.CharacterView.ChangeDirection(-direction);
 
-        LaunchToPoint(waypoint);
+        LaunchYourselfToPoint(waypoint);
         navObstacle.enabled = true;
     }
 }
@@ -333,7 +333,7 @@ public class InactiveState : IConditionState
         //Debug.Log("<color=#C0C8D8>" + "--|Exit InactiveState State|-- " + "</color>");
     }
 
-    public void Launch(Vector2 direction)
+    public void LaunchYourself(Vector2 direction)
     {
     }
 
@@ -341,7 +341,7 @@ public class InactiveState : IConditionState
     {
     }
 
-    public void LaunchToPoint(Vector3 point)
+    public void LaunchYourselfToPoint(Vector3 point)
     {
     }
 
@@ -377,7 +377,7 @@ public class DeadState : IConditionState
         return interaction;
     }
 
-    public void Launch(Vector2 direction)
+    public void LaunchYourself(Vector2 direction)
     {
     }
 
@@ -411,7 +411,7 @@ public class DeadState : IConditionState
     {
     }
 
-    public void LaunchToPoint(Vector3 point)
+    public void LaunchYourselfToPoint(Vector3 point)
     {
     }
 
@@ -477,7 +477,7 @@ public class StunState : IConditionState
         bump.ApplyForce(_characterController.CharacterView, interactible);
     }
 
-    public void Launch(Vector2 direction)
+    public void LaunchYourself(Vector2 direction)
     {
     }
 
@@ -517,7 +517,7 @@ public class StunState : IConditionState
     {
     }
 
-    public void LaunchToPoint(Vector3 point)
+    public void LaunchYourselfToPoint(Vector3 point)
     {
     }
 

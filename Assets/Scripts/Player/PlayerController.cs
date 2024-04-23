@@ -131,7 +131,7 @@ namespace Player
 
         public void Launch(Vector2 direction)
         {
-            _currentState.Launch(direction);
+            _currentState.LaunchYourself(direction);
         }
 
         public IInteraction GetInteraction()

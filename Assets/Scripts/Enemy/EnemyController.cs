@@ -155,12 +155,12 @@ namespace Enemy
         }
         public void Launch(Vector2 direction)
         {
-            _currentState.Launch(direction);
+            _currentState.LaunchYourself(direction);
         }
 
         public void LaunchToPoint(Vector3 point)
         {
-            _currentState.LaunchToPoint(point);
+            _currentState.LaunchYourselfToPoint(point);
         }
 
         public void CheckForEndOfState()
