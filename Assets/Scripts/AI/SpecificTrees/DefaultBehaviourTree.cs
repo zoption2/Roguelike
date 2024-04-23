@@ -174,7 +174,7 @@ namespace BehaviourTree
             }
             //Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
             //Debug.LogWarning("Target: " + target.gameObject.name);
-            if (hitTransform == target)
+            if (hitTransform != null && hitTransform == target)
             {
                 return true;
             }

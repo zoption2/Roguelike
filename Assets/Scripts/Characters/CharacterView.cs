@@ -52,11 +52,11 @@ public class CharacterView : MonoBehaviour,
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
         _collisionHandler = gameObject.AddComponent<CollisionHandler>();
         _collisionHandler.Init(ControllerInputs, this);
     }
