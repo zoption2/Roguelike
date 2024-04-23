@@ -198,7 +198,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         Vector2 direction = point - _characterController.GetTransform().position;
         float distance = Vector2.Distance(point, _characterController.GetTransform().position);
         direction.Normalize();
-        float dragConstant = _characterController.CharacterView.Rigidbody.drag;
+        float dragConstant = _characterController.GetRigidbody().drag;
         
         float multiplier = Mathf.Clamp(distance * dragConstant, minLaunchPower, maxLaunchPower);
         //Debug.Log("multiplier: " + multiplier * dragConstant);

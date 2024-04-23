@@ -148,7 +148,7 @@ namespace BehaviourTree
         protected bool CouldReach(Vector2 point)
         {
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-            float dragConstant = _characterController.CharacterView.Rigidbody.drag;
+            float dragConstant = _characterController.GetRigidbody().drag;
             float maxDistance = launchPower / dragConstant;
             float distance = Vector2.Distance(point, _characterController.GetTransform().position);
             if(distance > maxDistance)
@@ -162,7 +162,7 @@ namespace BehaviourTree
         protected bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
         {
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-            float dragConstant = _characterController.CharacterView.Rigidbody.drag;
+            float dragConstant = _characterController.GetRigidbody().drag;
             float maxDistance = launchPower / dragConstant;
             
             RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
