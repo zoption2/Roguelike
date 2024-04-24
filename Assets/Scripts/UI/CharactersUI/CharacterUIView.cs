@@ -1,24 +1,32 @@
 using Pool;
 using UnityEngine;
+using UnityEngine.UI;
 
 public interface ICharacterUIView
 {
-    public void Init(ICharacterView view);
+    public void Init(CharacterView view, CharacterUIViewmodel viewmodel);
 }
 
-public class CharacterUIView : MonoBehaviour, IMyPoolable
+public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 {
-    private ICharacterView _characterView;
+    [SerializeField] Scrollbar _scrollbar;
 
-    public void Init(ICharacterView view)
+    private ICharacterView _characterView;
+    private CharacterUIViewmodel _viewmodel;
+
+    public void Init(CharacterView view, CharacterUIViewmodel viewmodel)
     {
         _characterView = view;
+        _viewmodel = viewmodel;
+        Debug.LogError("Hello! My HP:" + _viewmodel.ReactiveHealth.Value);
+        //gameObject.SetActive(false);
+        _scrollbar.size = _viewmodel.ReactiveHealth.Value;
     }
 
     private void FixedUpdate()
     {
-        Vector3 position = _characterView.GetRigidbody().position;
-        transform.position = new Vector3(position.x, position.y + 1.1f, position.z);
+        transform.position = _characterView.transform.position;
+        //_scrollbar.size 
     }
 
     public void OnCreate()

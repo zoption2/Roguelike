@@ -10,6 +10,7 @@ using UI;
 using Interactions;
 using SaveSystem;
 using BehaviourTree;
+using System.ComponentModel;
 public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
@@ -102,6 +103,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsSingle();
         Container.Bind<ICharacterPanelFactory>().To<CharacterPanelFactory>().AsSingle();
         Container.Bind<INavigationFactory>().To<NavigationFactory>().AsSingle();
+        Container.Bind<ICharacterUIFactory>().To<CharacterUIFactory>().AsSingle();
 
     }
 

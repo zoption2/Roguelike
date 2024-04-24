@@ -43,11 +43,8 @@ public abstract class CharacterFactory<TController>
         _poolable = _characterPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();
 
-        ///////
-        Vector3 pos = new Vector3(point.position.x, point.position.y + 1.1f, point.position.z);//!!!
-        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, pos, point.rotation, point.parent);
+        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, point.position, point.rotation, point.parent);
         CharacterUIView characterUIView = _poolable.gameObject.GetComponent<CharacterUIView>();
-        ///////
 
         controller.Init(_characterModel, characterView, _characterPooler, characterUIView);
 

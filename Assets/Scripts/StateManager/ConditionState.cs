@@ -40,7 +40,7 @@ public abstract class ActiveState
     public void OnEnter()
     {
         Debug.Log("<color=#44F44F>" + "--|Enter Active State|-- " + "</color>");
-
+        //_characterController.ActivateUI();
     }
 
     public void DoUpdate()
@@ -300,6 +300,7 @@ public class InactiveState : IConditionState
     public void OnEnter()
     {
         Debug.Log("<color=#C0C8D8>" + "--|Enter InactiveState State|-- " + "</color>");
+        //_characterController.DisableUI();
     }
 
     public void AddEffects(List<IEffect> effects)

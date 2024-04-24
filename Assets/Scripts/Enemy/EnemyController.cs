@@ -34,10 +34,11 @@ namespace Enemy
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
-        public CharacterUIView UIView { get; set; }
+        private CharacterUIView _UIView;
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
+        private ICharacterUIFactory _characterUIFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
@@ -53,6 +54,7 @@ namespace Enemy
             IEffectProcessor effector,
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
+            ICharacterUIFactory characterUIFactory,
             DiContainer container)
         {
             _characterUIPooler = characterUIPooler;
@@ -61,6 +63,7 @@ namespace Enemy
             Effector = effector;
             InteractionCalculator = interactionFinalizer;
             _stateFactory = stateFactory;
+            _characterUIFactory = characterUIFactory;
             _container = container;
         }
 
@@ -78,18 +81,19 @@ namespace Enemy
             var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
-            
+            CharacterView = characterView;
+            CharacterView.Init(this);
 
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
+            CharacterUIViewmodel uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats);
+
             InteractionDealer.Init(ModifiableStats);
 
-            CharacterView = characterView;
-            UIView = characterUIView;
+            _UIView = characterUIView;
             _pooler = characterPooler;
-            CharacterView.Init(this);
-            UIView.Init(CharacterView);
+            _UIView.Init(CharacterView, uIViewmodel);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             CharacterView.ON_CLICK += OnClick;
@@ -279,7 +283,17 @@ namespace Enemy
 
         public void PushCharacterUI()
         {
-            _characterUIPooler.Push(UIType.CharacterUI, UIView);
+            _characterUIPooler.Push(UIType.CharacterUI, _UIView);
+        }
+
+        public void ActivateUI()
+        {
+            _UIView.gameObject.SetActive(true);
+        }
+
+        public void DisableUI()
+        {
+            _UIView.gameObject.SetActive(false);
         }
     }
 }

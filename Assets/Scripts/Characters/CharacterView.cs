@@ -20,6 +20,7 @@ public interface IInteractible
 }
 public interface ICharacterView
 {
+    Transform transform { get; }
     public void Init(IControllerInputs controllerInputs);
     public void ChangeDirection(Vector2 direction);
     public Rigidbody GetRigidbody();

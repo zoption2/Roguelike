@@ -34,7 +34,7 @@ namespace Player
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
         public NavMeshObstacle NavMeshObstacle { get; set; }
-        public CharacterUIView UIView { get; set; }
+        private CharacterUIView _UIView;
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionCalculator { get; set; }
@@ -49,6 +49,7 @@ namespace Player
         private NavMeshObstacle _navMeshObstacle;
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
+        private ICharacterUIFactory _characterUIFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         
         [Inject]
@@ -60,6 +61,7 @@ namespace Player
             IEffectProcessor effector,
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
+            ICharacterUIFactory characterUIFactory,
             DiContainer container)
         {
             SlingShotPooler = slingShotPooler;
@@ -69,6 +71,7 @@ namespace Player
             Effector = effector;
             InteractionCalculator = interactionFinalizer; 
             _stateFactory = stateFactory; 
+            _characterUIFactory = characterUIFactory;
             _container = container;
         }
 
@@ -86,15 +89,18 @@ namespace Player
             var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
+            CharacterView = characterView;
+            CharacterView.Init(this);
+
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
-            
-            CharacterView = characterView;
-            UIView = characterUIView;
+            CharacterUIViewmodel uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats);
+
+            _UIView = characterUIView;
             _pooler = characterPooler;
-            CharacterView.Init(this);
-            UIView.Init(CharacterView);
+            
+            _UIView.Init(CharacterView, uIViewmodel);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             _navMeshObstacle = CharacterView.NavMeshObstacle;
@@ -278,7 +284,7 @@ namespace Player
 
         public void PushCharacterUI()
         {
-            _characterUIPooler.Push(UIType.CharacterUI, UIView);
+            _characterUIPooler.Push(UIType.CharacterUI, _UIView);
         }
 
         public void Dispose()
@@ -287,13 +293,14 @@ namespace Player
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
         }
 
-        //public void ActivateUI()
-        //{
+        public void ActivateUI()
+        {
+            _UIView.gameObject.SetActive(true);
+        }
 
-        //    Rigidbody viewRB = GetRigidbody();
-        //    Vector3 pos = new Vector3(viewRB.position.x, viewRB.position.y + 1.1f, viewRB.position.z);//!!!
-        //    IMyPoolable poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, pos, viewRB.rotation, viewRB.transform.parent);
-        //    CharacterUIView characterUIView = poolable.gameObject.GetComponent<CharacterUIView>();
-        //}
+        public void DisableUI()
+        {
+            _UIView.gameObject.SetActive(false);
+        }
     }
 }
