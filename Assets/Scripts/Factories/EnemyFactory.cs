@@ -11,9 +11,8 @@ public interface IEnemyFactory
 }
 public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 {
-    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler) : base(container, statsProvider, pooler)
+    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler, CharacterUIPooler characterUIPooler) : base(container, statsProvider, pooler, characterUIPooler)
     {
-        
     }
 
     protected override OriginStats GetStats(CharacterType type)

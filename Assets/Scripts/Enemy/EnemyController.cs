@@ -34,17 +34,20 @@ namespace Enemy
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
+        public CharacterUIView UIView { get; set; }
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
+        private CharacterUIPooler _characterUIPooler;
         public NavMeshObstacle NavMeshObstacle { get; set; }
         private DiContainer _container;
 
         [Inject]
         public void Construct(
+            CharacterUIPooler characterUIPooler,
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
@@ -52,6 +55,7 @@ namespace Enemy
             IStateFactory stateFactory,
             DiContainer container)
         {
+            _characterUIPooler = characterUIPooler;
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
@@ -60,7 +64,11 @@ namespace Enemy
             _container = container;
         }
 
-        public void Init(CharacterModel characterModel, CharacterView characterView, CharacterPooler characterPooler)
+        public void Init(
+            CharacterModel characterModel,
+            CharacterView characterView,
+            CharacterPooler characterPooler,
+            CharacterUIView characterUIView)
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             DefaultBehaviourTree.InitTree(this);
@@ -70,14 +78,18 @@ namespace Enemy
             var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
+            
+
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
             InteractionDealer.Init(ModifiableStats);
 
             CharacterView = characterView;
+            UIView = characterUIView;
             _pooler = characterPooler;
             CharacterView.Init(this);
+            UIView.Init(CharacterView);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             CharacterView.ON_CLICK += OnClick;
@@ -263,6 +275,11 @@ namespace Enemy
         public Vector3 GetVelocity()
         {
             return CharacterView.GetVelocity();
+        }
+
+        public void PushCharacterUI()
+        {
+            _characterUIPooler.Push(UIType.CharacterUI, UIView);
         }
     }
 }

@@ -8,7 +8,6 @@ namespace BehaviourTree
     {
         public override NodeState Evaluate()
         {
-            Debug.Log("!!!Turn was skipped!!!");
             _characterController.SkipTurn();
             _state = NodeState.Success;
             return _state;

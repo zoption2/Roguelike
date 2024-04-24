@@ -13,5 +13,7 @@ public interface IControllerInputs
     void AddEffects(List<IEffect> effects);
     bool GetActiveStatus();
     public void DoUpdate();
-    
+    public void PushCharacterUI();
+
+
 }

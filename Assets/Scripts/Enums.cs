@@ -54,3 +54,11 @@ public enum BuffType
     MoreDamage = 1,
 }
 
+public enum UIType
+{
+    None = 0,
+    CharacterUI = 1,
+
+}
+
+

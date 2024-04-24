@@ -17,6 +17,9 @@ public class ContextInstaller : MonoInstaller
     private CharacterPrefabHolder _characterPrefabHolder;
 
     [SerializeField]
+    private CharacterUIPrefabHolder _characterUIPrefabHolder;
+
+    [SerializeField]
     private CharacterPanelPrefabHolder characterPanelPrefabHolder;
 
     [SerializeField]
@@ -89,6 +92,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<SlingshotPooler>().To<SlingshotPooler>().AsSingle();
         Container.Bind<CharacterPanelPooler>().To<CharacterPanelPooler>().AsSingle();
         Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
+        Container.Bind<CharacterUIPooler>().To<CharacterUIPooler>().AsSingle();
     }
 
     public void BindFactories()
@@ -104,6 +108,7 @@ public class ContextInstaller : MonoInstaller
     public void BindPrefabHolders()
     {
         Container.Bind<CharacterPrefabHolder>().FromInstance(_characterPrefabHolder).AsSingle();
+        Container.Bind<CharacterUIPrefabHolder>().FromInstance(_characterUIPrefabHolder).AsTransient();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<CharacterPanelPrefabHolder>().FromInstance(characterPanelPrefabHolder).AsSingle();
         Container.Bind<BuffPrefabHolder>().FromInstance(_buffPrefabHolder).AsSingle();

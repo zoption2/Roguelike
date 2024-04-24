@@ -72,12 +72,10 @@ namespace BehaviourTree
 
             if (!_characterController.IsStunned && couldReachPoint)
             {
-                Debug.Log("Can Move");
                 _blackboard.SetData(_moveKey, true);
             } 
             else
             {
-                Debug.Log("CAN'T MOVE");
                 _blackboard.SetData(_moveKey, false);
             }
             _characterController.NavMeshAgent.enabled = false;
@@ -95,12 +93,10 @@ namespace BehaviourTree
             Vector3 characterPosition = GetCharacterPosition();
             if (SphereCastHitTheTarget(target, characterPosition) && !_characterController.IsStunned)
             {
-                Debug.Log("!!!Can Attack!!!");
                 _blackboard.SetData(_attackKey, true);
             }
             else
             {
-                Debug.Log("!!!CAN'T Attack!!!");
                 _blackboard.SetData(_attackKey, false);
             }
 
@@ -108,7 +104,7 @@ namespace BehaviourTree
 
         protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
         {
-            LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
+            LayerMask mask = LayerMask.GetMask("Default", "Enemy", "Player");
             //Vector3 characterPosition = GetCharacterPosition();
             //startingPoint.z = characterPosition.z;
             Vector3 direction = target - startingPoint;

@@ -22,6 +22,7 @@ public interface ICharacterView
 {
     public void Init(IControllerInputs controllerInputs);
     public void ChangeDirection(Vector2 direction);
+    public Rigidbody GetRigidbody();
 
     event Action<Transform, PointerEventData> ON_CLICK;
     event Action<PointerEventData> ON_BEGINDRAG;
@@ -73,7 +74,7 @@ public class CharacterView : MonoBehaviour,
 
         ControllerInputs.DoUpdate();
 
-        
+
     }
 
     public Vector3 GetLastVelocity()
@@ -138,6 +139,7 @@ public class CharacterView : MonoBehaviour,
 
     public void OnRelease()
     {
+        ControllerInputs.PushCharacterUI();
     }
 
     public Rigidbody GetRigidbody()

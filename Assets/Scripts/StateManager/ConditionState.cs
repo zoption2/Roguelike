@@ -59,12 +59,6 @@ public abstract class ActiveState
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
-        else if(_characterController.IsMoving && _characterController.GetVelocity().magnitude == 0f)
-        {
-            Debug.Log("velocity magnitude: " + _characterController.GetVelocity().magnitude);
-            Debug.Log("Here we go again...");
-            //Debug.Break();
-        }
 
         if (_characterController.IsMoving)
         {

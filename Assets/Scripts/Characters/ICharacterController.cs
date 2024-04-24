@@ -24,10 +24,11 @@ public interface ICharacterController
     public NavMeshAgent NavMeshAgent { get; set; }
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
+    public CharacterUIView UIView { get; set; }
     public CharacterType GetCharacterType();
     public Transform GetTransform();
     public Rigidbody GetRigidbody();
-    public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler);
+    public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler, CharacterUIView uIView);
     public Vector3 GetVelocity();
     public void UseEffectsOnStart();
     public void AnalizeCondition();

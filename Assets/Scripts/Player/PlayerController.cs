@@ -9,6 +9,8 @@ using UnityEngine.EventSystems;
 using Zenject;
 using UnityEngine.AI;
 using BehaviourTree;
+using System.Drawing;
+using Unity.VisualScripting;
 
 namespace Player
 {
@@ -32,6 +34,7 @@ namespace Player
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
         public NavMeshObstacle NavMeshObstacle { get; set; }
+        public CharacterUIView UIView { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionCalculator { get; set; }
@@ -41,6 +44,7 @@ namespace Player
 
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
+        private CharacterUIPooler _characterUIPooler;
         private DiContainer _container;
         private NavMeshObstacle _navMeshObstacle;
         private IConditionState _currentState;
@@ -49,7 +53,8 @@ namespace Player
         
         [Inject]
         public void Construct(
-            SlingshotPooler slingShotPooler,      
+            SlingshotPooler slingShotPooler,   
+            CharacterUIPooler characterUIPooler,
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
@@ -58,6 +63,7 @@ namespace Player
             DiContainer container)
         {
             SlingShotPooler = slingShotPooler;
+            _characterUIPooler = characterUIPooler;
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
@@ -68,8 +74,9 @@ namespace Player
 
         public void Init(
         CharacterModel playerModel,
-        CharacterView playerView,
-        CharacterPooler characterPooler)
+        CharacterView characterView,
+        CharacterPooler characterPooler,
+        CharacterUIView characterUIView)
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             DefaultBehaviourTree.InitTree(this);
@@ -82,9 +89,12 @@ namespace Player
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
-            CharacterView = playerView;
+            
+            CharacterView = characterView;
+            UIView = characterUIView;
             _pooler = characterPooler;
             CharacterView.Init(this);
+            UIView.Init(CharacterView);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             _navMeshObstacle = CharacterView.NavMeshObstacle;
@@ -266,10 +276,24 @@ namespace Player
             return CharacterView.GetVelocity();
         }
 
+        public void PushCharacterUI()
+        {
+            _characterUIPooler.Push(UIType.CharacterUI, UIView);
+        }
+
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
         }
+
+        //public void ActivateUI()
+        //{
+
+        //    Rigidbody viewRB = GetRigidbody();
+        //    Vector3 pos = new Vector3(viewRB.position.x, viewRB.position.y + 1.1f, viewRB.position.z);//!!!
+        //    IMyPoolable poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, pos, viewRB.rotation, viewRB.transform.parent);
+        //    CharacterUIView characterUIView = poolable.gameObject.GetComponent<CharacterUIView>();
+        //}
     }
 }
