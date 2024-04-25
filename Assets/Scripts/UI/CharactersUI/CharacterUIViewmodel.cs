@@ -22,9 +22,9 @@ public class CharacterUIViewmodel
         _model.SetHealth(ReactiveHealth.Value);
     }
 
-    public void AddItemToGrid(GameObject itemPrefab, Transform parentTransform)
+    public void VisualiseEffects()
     {
-        GameObject newItem = UnityEngine.Object.Instantiate(itemPrefab, parentTransform);
+        
     }
 
 

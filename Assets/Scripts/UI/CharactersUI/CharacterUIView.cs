@@ -11,6 +11,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 {
     [SerializeField] private Scrollbar _scrollbar;
     [SerializeField] private GridLayoutGroup _effectsPanel;
+    [SerializeField] private GameObject PrefabHere;
 
     private ICharacterView _characterView;
     private CharacterUIViewmodel _viewmodel;
@@ -29,6 +30,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
         _scrollbar.size = normalizedHealth;
 
         _viewmodel.ReactiveHealth.Subscribe(ChangeHealth);
+        AddItemToGrid(PrefabHere);
     }
 
     private void FixedUpdate()
@@ -45,7 +47,11 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 
     public void AddItemToGrid(GameObject itemPrefab)
     {
-        GameObject newItem = Instantiate(itemPrefab, _effectsPanel.transform);
+        //GameObject newItem = Instantiate(itemPrefab, _effectsPanel.transform);
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject newItem = Instantiate(itemPrefab, _effectsPanel.transform);
+        }
     }
 
 
