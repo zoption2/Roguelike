@@ -43,6 +43,7 @@ namespace Enemy
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         private CharacterUIPooler _characterUIPooler;
+        private CharacterUIViewmodel _uIViewmodel;
         public NavMeshObstacle NavMeshObstacle { get; set; }
         private DiContainer _container;
 
@@ -87,13 +88,13 @@ namespace Enemy
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
-            CharacterUIViewmodel uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats);
+            _uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats);
 
             InteractionDealer.Init(ModifiableStats);
 
             _UIView = characterUIView;
             _pooler = characterPooler;
-            _UIView.Init(CharacterView, uIViewmodel);
+            _UIView.Init(CharacterView, _uIViewmodel);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             CharacterView.ON_CLICK += OnClick;
@@ -135,6 +136,7 @@ namespace Enemy
         }
         public IInteraction GetInteraction()
         {
+
             return _currentState.GetInteraction(InteractionType.BasicAttack);
         }
 
@@ -163,6 +165,8 @@ namespace Enemy
         public void ApplyInteraction(IInteraction interaction)
         {
             _currentState.ApplyInteraction(interaction);
+
+            _uIViewmodel.UpdateStats(ModifiableStats);
         }
 
         public void AddEffects(List<IEffect> effects)

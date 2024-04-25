@@ -5,7 +5,7 @@ public class CharacterUIModel
 
     public CharacterUIModel(ReactiveStats stats)
     {
-        ReactiveHealth = new ReactiveInt(stats.Health.Value);
+        ReactiveHealth = stats.Health;
     }
 
     public void SetHealth(int value)

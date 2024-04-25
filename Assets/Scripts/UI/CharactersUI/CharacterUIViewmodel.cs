@@ -1,4 +1,7 @@
 using CharactersStats;
+using Pool;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterUIViewmodel
 {
@@ -9,13 +12,21 @@ public class CharacterUIViewmodel
     public void Init(CharacterUIModel model)
     {
         _model = model;
-        ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
+        ReactiveHealth = model.ReactiveHealth;
+        //ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
     }
 
-    public void DoHealthDown()
+    public void UpdateStats(ReactiveStats stats)
     {
-        ReactiveHealth.Value--;
+        ReactiveHealth = stats.Health;
+        _model.SetHealth(ReactiveHealth.Value);
     }
+
+    public void AddItemToGrid(GameObject itemPrefab, Transform parentTransform)
+    {
+        GameObject newItem = UnityEngine.Object.Instantiate(itemPrefab, parentTransform);
+    }
+
 
     public void Submit()
     {

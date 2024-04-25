@@ -180,7 +180,6 @@ GameObject:
   - component: {fileID: 93883676715664555}
   - component: {fileID: 2538648762374529337}
   - component: {fileID: 1961280720004932860}
-  - component: {fileID: 5064687624463875365}
   - component: {fileID: -6773394131529632463}
   - component: {fileID: -6154571520593022375}
   m_Layer: 7
@@ -227,7 +226,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5019426081544581403}
-  m_Material: {fileID: 13400000, guid: 62ddbeea555de8f47bf6521ae28026ca, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -268,19 +267,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &5064687624463875365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5019426081544581403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 749e8a36bf113a842b85025e0f5c0a38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterView: {fileID: 93883676715664555}
 --- !u!195 &-6773394131529632463
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -47,6 +47,7 @@ namespace Player
         private CharacterUIPooler _characterUIPooler;
         private DiContainer _container;
         private NavMeshObstacle _navMeshObstacle;
+        private CharacterUIViewmodel _uIViewmodel;
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterUIFactory _characterUIFactory;
@@ -95,12 +96,12 @@ namespace Player
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
-            CharacterUIViewmodel uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats);
+            _uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats);
 
             _UIView = characterUIView;
             _pooler = characterPooler;
             
-            _UIView.Init(CharacterView, uIViewmodel);
+            _UIView.Init(CharacterView, _uIViewmodel);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             _navMeshObstacle = CharacterView.NavMeshObstacle;
@@ -158,6 +159,8 @@ namespace Player
         public void ApplyInteraction(IInteraction interaction)
         {
             _currentState.ApplyInteraction(interaction);
+
+            _uIViewmodel.UpdateStats(ModifiableStats);
         }
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
