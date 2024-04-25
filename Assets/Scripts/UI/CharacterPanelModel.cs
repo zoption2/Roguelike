@@ -20,13 +20,12 @@ namespace UI
 
         public CharacterPanelModel(IDataService dataService)
         {
-
             _dataService = dataService;
         }
         public void Init(CharacterType playerType)
         {
             PlayerCharacterType = playerType;
-            OriginStats stats = _dataService.PlayerStats.GetStats(playerType);
+            OriginStats stats = _dataService.PlayerData.GetStats(playerType);
         }
     }
 }

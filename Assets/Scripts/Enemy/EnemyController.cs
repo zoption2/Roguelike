@@ -23,6 +23,7 @@ namespace Enemy
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
+        public IInteraction CurrentAttack { get; set; }
         public IAnalyzer Analyzer { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
@@ -64,6 +65,7 @@ namespace Enemy
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             DefaultBehaviourTree.InitTree(this);
+            DefaultBehaviourTree.SetAbilities(characterModel.Interactions);
 
             CharacterModel = characterModel;
 
@@ -91,8 +93,6 @@ namespace Enemy
         public void DoUpdate()
         {
             _currentState.DoUpdate();
-
-            
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
@@ -119,7 +119,15 @@ namespace Enemy
         }
         public IInteraction GetInteraction()
         {
-            return _currentState.GetInteraction(InteractionType.BasicAttack);
+            if(CurrentAttack != null)
+            {
+                CurrentAttack.SetStats(ModifiableStats);
+                return CurrentAttack;
+            }
+            else
+            {
+                return _currentState.GetInteraction(InteractionType.None);
+            }
         }
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)

@@ -30,7 +30,7 @@ namespace BehaviourTree
             SetupCharacter(_root);
         }
         protected abstract Node SetupRootNode();
-        protected abstract void UpdateBlackboard();
+        protected abstract void UpdateData();
 
         protected void SetupBlackboard(Node node)
         {
@@ -65,7 +65,7 @@ namespace BehaviourTree
         }
         public void TickTree()
         {
-            UpdateBlackboard();
+            UpdateData();
             _root.Evaluate();
         }
     }

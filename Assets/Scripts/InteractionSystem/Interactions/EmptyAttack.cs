@@ -9,6 +9,8 @@ namespace Interactions
     {
         public EmptyAttack(int damage) : base(damage)
         {
+            _reloadTime = 0;
+            _damageMultiplayer = 0;
             _effects = new()
             {
 
@@ -25,7 +27,7 @@ namespace Interactions
             return _effects;
         }
 
-        public override ReactiveStats Interacte(ReactiveStats stats)
+        public override ReactiveStats InteractWithStats(ReactiveStats stats)
         {
             return stats;
         }

@@ -1,7 +1,9 @@
 using CharactersStats;
 using Enemy;
+using Interactions;
 using Pool;
 using Prefab;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -11,7 +13,8 @@ public interface IEnemyFactory
 }
 public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 {
-    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler) : base(container, statsProvider, pooler)
+    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler,
+        IInteractionFactory interactionFactory) : base(container, statsProvider, pooler, interactionFactory)
     {
         
     }
@@ -19,6 +22,11 @@ public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
     protected override OriginStats GetStats(CharacterType type)
     {
         return _statsProvider.GetEnemyStats(type);
+    }
+
+    protected override List<InteractionType> GetAbilities(CharacterType type)
+    {
+        return _statsProvider.GetEnemyAbilitiesTypes(type);
     }
 
     public IEnemyController CreateEnemy(Transform point, CharacterType type)

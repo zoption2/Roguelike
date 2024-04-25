@@ -2,6 +2,7 @@ using CharactersStats;
 using Player;
 using Pool;
 using Prefab;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -13,13 +14,19 @@ public interface IPlayerFactory
 
 public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
 {
-    public PlayerFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler) : base(container, statsProvider, pooler)
+    public PlayerFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler,
+        IInteractionFactory interactionFactory) : base(container, statsProvider, pooler, interactionFactory)
     {
     }
 
     protected override OriginStats GetStats(CharacterType type)
     {
         return _statsProvider.GetPlayerStats(type);
+    }
+
+    protected override List<InteractionType> GetAbilities(CharacterType type)
+    {
+        return _statsProvider.GetPlayerAbilitiesTypes(type);
     }
 
     public IPlayerController CreatePlayer(Transform point, CharacterType type)

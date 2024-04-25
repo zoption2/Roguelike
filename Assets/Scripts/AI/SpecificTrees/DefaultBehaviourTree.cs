@@ -1,3 +1,4 @@
+using Interactions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,10 +12,16 @@ namespace BehaviourTree
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target);
         public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint);
         public Vector3 GetCharacterPosition();
+        public void SetAbilities(List<IInteraction> abilities);
+        public void SetCurrentAttack(IInteraction attack);
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
         private string _attackKey = "CanAttack", _moveKey = "CanMove", _targetKey ="Target";
+
+        private AttackChooser _attackChooser;
+
+        private List<IInteraction> _abilities;
         protected override Node SetupRootNode()
         {
             Node rootNode = new Selector( new List<Node>
@@ -41,12 +48,11 @@ namespace BehaviourTree
         {
             return (Transform)_blackboard.GetData(_targetKey);
         }
-        protected override void UpdateBlackboard()
+        protected override void UpdateData()
         {
             FindTarget();
             if(GetTarget() != null)
             {
-                
                 CheckIfCanAttack();
                 CheckIfCanMove();   
             }
@@ -55,6 +61,7 @@ namespace BehaviourTree
                 _blackboard.SetData(_attackKey, false);
                 _blackboard.SetData(_moveKey, false);
             }
+            TickAbilities();
         }
 
         private void CheckIfCanMove()
@@ -63,6 +70,7 @@ namespace BehaviourTree
             NavMeshPath path = new NavMeshPath();
             _characterController.NavMeshObstacle.enabled = false;
             _characterController.NavMeshAgent.enabled = true;
+
             bool pathIsFound = _characterController.NavMeshAgent.CalculatePath(target.position, path);
             bool couldReachPoint = false;
             if (pathIsFound)
@@ -93,9 +101,9 @@ namespace BehaviourTree
         {
             Transform  target = GetTarget();
             Vector3 characterPosition = GetCharacterPosition();
-            if (SphereCastHitTheTarget(target, characterPosition) && !_characterController.IsStunned)
+            if (_attackChooser.ChooseAttack() != null && !_characterController.IsStunned)
             {
-                Debug.Log("!!!Can Attack!!!");
+                Debug.Log("Can Attack");
                 _blackboard.SetData(_attackKey, true);
             }
             else
@@ -212,6 +220,29 @@ namespace BehaviourTree
             {
                 _blackboard.SetData(_targetKey, null);
             }
+        }
+
+        public void SetAbilities(List<IInteraction> abilities)
+        {
+            _abilities = abilities;
+            _attackChooser = new AttackChooser(this, _abilities);
+        }
+
+        private void TickAbilities()
+        {
+            foreach(IInteraction interaction in _abilities)
+            {
+                if (!interaction.CouldUseAbility())
+                {
+                    interaction.TickReload();
+                }
+            }
+        }
+
+        public void SetCurrentAttack(IInteraction attack)
+        {
+            _characterController.CurrentAttack = attack;
+            Debug.LogWarning("Now using: " +  attack);
         }
     }
 }

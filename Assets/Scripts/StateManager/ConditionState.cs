@@ -59,12 +59,6 @@ public abstract class ActiveState
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
-        else if(_characterController.IsMoving && _characterController.GetVelocity().magnitude == 0f)
-        {
-            Debug.Log("velocity magnitude: " + _characterController.GetVelocity().magnitude);
-            Debug.Log("Here we go again...");
-            //Debug.Break();
-        }
 
         if (_characterController.IsMoving)
         {
@@ -229,6 +223,7 @@ public class EnemyActiveState : ActiveState, IConditionState
 
         _characterController.NavMeshAgent.enabled = true;
         _characterController.NavMeshAgent.SetDestination(target.position);
+
         await Task.Delay(_milisecondsDelay / 10);
 
         NavMeshPath path = _characterController.NavMeshAgent.path;
@@ -449,7 +444,7 @@ public class StunState : IConditionState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetVelocity().magnitude < 0.2f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();

@@ -5,11 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using SaveSystem;
+using System.Collections.Generic;
+using Interactions;
 
 public class TestingCrate : MonoBehaviour
 {
     private IDataService _dataService;
-    private const string LAST_ID = "LastID";
     private IStatsProvider _statsProvider;
     private Button _crateButton;
     private ICharacterSelector _characterSelector;
@@ -31,14 +32,18 @@ public class TestingCrate : MonoBehaviour
 
     private void CreateSavedModel()
     {
-        OriginStats load = _dataService.PlayerStats.GetStats(CharacterType);
+        OriginStats load = _dataService.PlayerData.GetStats(CharacterType);
+        //Debug.Log(GPrefs.dataPath);
         if (load==null)
         {
             OriginStats stats = _statsProvider.GetPlayerStats(CharacterType);
-            CharacterModel savedModel = new CharacterModel(stats, CharacterType);
-            _dataService.PlayerStats.SetStats(CharacterType, stats);
+            List<InteractionType> abilities = _statsProvider.GetPlayerAbilitiesTypes(CharacterType);
+            //CharacterModel savedModel = new CharacterModel(stats, CharacterType, abilities);
+            _dataService.PlayerData.SetStats(CharacterType, stats);
+            //_dataService.PlayerData.SetAbilities(abilities,CharacterType);
             _characterSelector.AddPanel(CharacterType);
             Destroy(gameObject);
         }
+        //GPrefs.DeleteAll();
     }
 }

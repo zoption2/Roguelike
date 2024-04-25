@@ -8,6 +8,8 @@ namespace Interactions
     {
         public BasicAttack(int damage) : base(damage)
         {
+            _reloadTime = 2;
+            _damageMultiplayer = 1;
             _effects = new()
             {
                 new FireEffect(3),
@@ -25,7 +27,7 @@ namespace Interactions
             return _effects;
         }
 
-        public override ReactiveStats Interacte(ReactiveStats stats)
+        public override ReactiveStats InteractWithStats(ReactiveStats stats)
         {
             stats.Health.Value -= _damage;
             return stats;

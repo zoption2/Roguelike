@@ -9,26 +9,29 @@ namespace BehaviourTree
     
     public class AttackChooser
     {
-        public List<InteractionBase> AllAttacks { get; set; }
+        public List<IInteraction> AllAttacks { get; set; }
         public IDefaultBehaviourTree DefaultBT { get;}
 
 
-        public AttackChooser(IDefaultBehaviourTree defaultBehaviourTree, List<InteractionBase> allAttacks)
+        public AttackChooser(IDefaultBehaviourTree defaultBehaviourTree, List<IInteraction> allAttacks)
         {
             DefaultBT = defaultBehaviourTree;
             AllAttacks = allAttacks;
         }
-        public InteractionBase ChooseAttack() 
+        public IInteraction ChooseAttack() 
         {
-            List<InteractionBase> availableAttacks = AllAttacks.Where(x => x.CouldUseAbility() == true ).ToList();
+            List<IInteraction> availableAttacks = AllAttacks.Where(x => x.CouldUseAbility() == true ).ToList();
             availableAttacks.OrderByDescending(x => x.GetDamage() );
-            InteractionBase chosenAttack = null;
+            IInteraction chosenAttack = null;
             Transform target = DefaultBT.GetTarget();
-            foreach (InteractionBase attackType in availableAttacks)
+            foreach (IInteraction attackType in availableAttacks)
             {
+                Debug.Log(attackType);
                 if (DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition()))
                 {
                     chosenAttack = attackType;
+                    Debug.Log("enemy choosed " + chosenAttack);
+                    DefaultBT.SetCurrentAttack(chosenAttack);
                     return chosenAttack;
                 }
             }

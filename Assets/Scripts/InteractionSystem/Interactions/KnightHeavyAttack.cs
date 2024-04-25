@@ -10,6 +10,7 @@ namespace Interactions
         public KnightHeavyAttack(int damage, int damageMultiplayer) : base(damage)
         {
             _damageMultiplayer = damageMultiplayer;
+            _reloadTime = 3;
 
             _effects = new()
             {
@@ -30,7 +31,7 @@ namespace Interactions
             return _effects;
         }
 
-        public override ReactiveStats Interacte(ReactiveStats stats)
+        public override ReactiveStats InteractWithStats(ReactiveStats stats)
         {
             stats.Health.Value -= _damage * _damageMultiplayer;
             return stats;

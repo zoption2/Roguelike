@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Prefab;
 using CharactersStats;
+using Player;
+using Interactions;
+using Zenject;
 
 
 namespace Enemy
 {
-    public interface IEnemyModelHolder
-    {
-        OriginStats GetDefaultStats(int receivedID);
-    }
     public abstract class EnemyModelHolder<T> : ScriptableObject where T : Enum
     {
         [SerializeField]
@@ -28,5 +27,19 @@ namespace Enemy
             }
             throw new System.ArgumentException(string.Format("Model of type {0} not exists at holder", modelType));
         }
+
+        public List<InteractionType> GetAllAbilities(T modelType)
+        {
+            for (int i = 0; i < _models.Count; i++)
+            {
+                if (_models[i].Type.Equals(modelType))
+                {
+                    return _models[i].Abilities;
+                }
+            }
+            throw new System.ArgumentException(string.Format("Model of type {0} not exists at holder", modelType));
+        }
+
+       
     }
 }

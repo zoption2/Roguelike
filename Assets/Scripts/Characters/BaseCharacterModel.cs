@@ -5,7 +5,6 @@ public interface ICharacterModel
 }
 public abstract class CharacterModelBase : ICharacterModel
 {
-
     protected float _velocity;
     protected int _damage;
     protected int _health;

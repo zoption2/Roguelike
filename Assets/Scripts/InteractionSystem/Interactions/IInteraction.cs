@@ -5,8 +5,13 @@ namespace Interactions
 {
     public interface IInteraction
     {
-        ReactiveStats Interacte(ReactiveStats stat);
+        public bool CouldUseAbility();
+        public int GetDamage();
+        public void TickReload();
+        public ReactiveStats Interact(ReactiveStats stats);
+        ReactiveStats InteractWithStats(ReactiveStats stats);
         List<IEffect> GetEffects();
+        public void SetStats(ReactiveStats stats);
         IMovable GetBump();
     }
 }

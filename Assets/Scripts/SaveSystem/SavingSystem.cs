@@ -3,12 +3,14 @@ using Prefab;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using Interactions;
 
 namespace SaveSystem
 {
-    public class SavedPlayerStatsProvider
+    public class SavedPlayerDataProvider
     {
         private const string kStatsFormat = "{0}_Stats";
+        private const string kAbilitiesFormat = "{0}_Abilities";
         private const string PLAYER_TYPE_FORMAT = "AvailablePlayers";
        
         public void SetStats(CharacterType type, OriginStats stats)
@@ -26,10 +28,25 @@ namespace SaveSystem
             OriginStats stats = JSON.FromJSON<OriginStats>(data);
             return stats;
         }
+        public void SetAbilities(List<InteractionType> abilityTypes,CharacterType type)
+        {
+            string key = string.Format(kAbilitiesFormat, type);
+            string data = JSON.ToJSON(new JsonListWrapper<InteractionType>(abilityTypes));
+            GPrefs.SetString(key, data);
+        }
+
+        public List<InteractionType> GetAbilities(CharacterType type)
+        {
+            string key = string.Format(kAbilitiesFormat, type);
+            string data = GPrefs.GetString(key);
+            JsonListWrapper<InteractionType> wrapper;
+            wrapper = JSON.FromJSON<JsonListWrapper<InteractionType>>(data);
+            List<InteractionType> avilitiesTypes = wrapper.list;
+            return avilitiesTypes;
+        }
 
         public void SetAvailablePlayers(CharacterType type)
         {
-
             List<CharacterType> list = GetAvailablePlayers();
             if (list == null)
                 list = new List<CharacterType>();
@@ -53,12 +70,12 @@ namespace SaveSystem
 
     public interface IDataService
     {
-        SavedPlayerStatsProvider PlayerStats { get; }
+        SavedPlayerDataProvider PlayerData { get; }
     }
 
     public class DataService : IDataService
     {
-        public SavedPlayerStatsProvider PlayerStats { get; } = new();
+        public SavedPlayerDataProvider PlayerData { get; } = new();
     }
 
     public class JsonListWrapper<T>

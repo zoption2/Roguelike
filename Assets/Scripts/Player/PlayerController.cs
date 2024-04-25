@@ -26,6 +26,7 @@ namespace Player
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
+        public IInteraction CurrentAttack { get; set; }
         public CharacterView CharacterView { get; set; }
         public CharacterModel CharacterModel { get; set; }
         public SlingshotPooler SlingShotPooler { get; set; }
@@ -73,6 +74,7 @@ namespace Player
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             DefaultBehaviourTree.InitTree(this);
+            DefaultBehaviourTree.SetAbilities(playerModel.Interactions);
 
             CharacterModel = playerModel;
 
