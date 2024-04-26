@@ -11,16 +11,13 @@ namespace CharactersStats
     {
         public OriginStats GetPlayerStats(CharacterType playerType);
         public OriginStats GetEnemyStats(CharacterType enemyType);
-        public List<InteractionType> GetEnemyAbilitiesTypes(CharacterType characterType);
-        public List<InteractionType> GetPlayerAbilitiesTypes(CharacterType characterType);
+        public List<InteractionType> GetCharacterAbilitiesTypes(CharacterType characterType);
     }
 
     public class StatsProvider : IStatsProvider
     {
-        private DefaultPlayerModelHolder _defaultModelHolder;
+        private DefaultCharacterModelHolder _defaultModelHolder;
         private IDataService _dataService;
-
-        private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
         public OriginStats GetPlayerStats(CharacterType playerType)
         {
@@ -37,26 +34,20 @@ namespace CharactersStats
         {
             OriginStats stats;
 
-            stats = _defaultEnemyModelHolder.GetDefaultStats(enemyType);
+            stats = _defaultModelHolder.GetDefaultStats(enemyType);
 
             return stats;
         }
 
-        public List<InteractionType> GetEnemyAbilitiesTypes(CharacterType characterType)
-        { 
-            return _defaultEnemyModelHolder.GetAllAbilities(characterType);
-        }
-
-        public List<InteractionType> GetPlayerAbilitiesTypes(CharacterType characterType)
+        public List<InteractionType> GetCharacterAbilitiesTypes(CharacterType characterType)
         {
             return _defaultModelHolder.GetAllAbilities(characterType);
         }
 
-        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, IDataService dataService, DefaultEnemyModelHolder defaultEnemyModelHolder)
+        public StatsProvider(DefaultCharacterModelHolder defaultModelHolder, IDataService dataService)
         {
             _defaultModelHolder = defaultModelHolder;
             _dataService = dataService;
-            _defaultEnemyModelHolder = defaultEnemyModelHolder;
         }
     }
 }

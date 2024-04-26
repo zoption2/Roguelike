@@ -61,6 +61,11 @@ public abstract class ActiveState
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
+        else if (_characterController.GetVelocity().magnitude == 0 && _characterController.IsMoving)
+        {
+            _characterController.IsMoving = false;
+            _characterController.HandleStopMovement();
+        }
 
         if (_characterController.IsMoving)
         {
@@ -278,11 +283,15 @@ public class InactiveState : IConditionState
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
+        else if(_characterController.GetVelocity().magnitude == 0 && _characterController.IsMoving)
+        {
+            _characterController.IsMoving = false;
+            _characterController.HandleStopMovement();
+        }
 
         if (_characterController.IsMoving)
         {
             ViewRotation();
-            
         }
     }
 

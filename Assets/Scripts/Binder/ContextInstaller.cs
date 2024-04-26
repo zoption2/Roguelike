@@ -26,10 +26,7 @@ public class ContextInstaller : MonoInstaller
     private SlingShotPrefabHolder _slingShotPrefabHolder;
 
     [SerializeField]
-    private DefaultPlayerModelHolder _defaultPlayerModelHolder;
-
-    [SerializeField]
-    private DefaultEnemyModelHolder _defaultEnemyModelHolder;
+    private DefaultCharacterModelHolder _defaultCharacterModelHolder;
 
     [SerializeField]
     private BuffPrefabHolder _buffPrefabHolder;
@@ -112,8 +109,7 @@ public class ContextInstaller : MonoInstaller
 
     public void BindModelHolders()
     {
-        Container.Bind<DefaultPlayerModelHolder>().FromInstance(_defaultPlayerModelHolder).AsSingle();
-        Container.Bind<DefaultEnemyModelHolder>().FromInstance(_defaultEnemyModelHolder).AsSingle();
+        Container.Bind<DefaultCharacterModelHolder>().FromInstance(_defaultCharacterModelHolder).AsSingle();
         Container.Bind<ICharacterPanelModel>().To<CharacterPanelModel>().AsTransient();
     }
 

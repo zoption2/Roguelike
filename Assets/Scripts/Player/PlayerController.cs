@@ -190,11 +190,6 @@ namespace Player
         {
         }
 
-        public void SkipTurn()
-        {
-            ON_STOP_MOVEMENT?.Invoke();
-        }
-
         public bool CheckIfMoving()
         {
             return IsMoving;

@@ -26,8 +26,9 @@ namespace BehaviourTree
             Transform target = DefaultBT.GetTarget();
             foreach (IInteraction attackType in availableAttacks)
             {
-                Debug.Log(attackType);
-                if (DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(),attackType.GetLaunchMultiplier()))
+                Debug.Log(attackType + "   multiplier: " + attackType.GetLaunchMultiplier());
+                bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(), attackType.GetLaunchMultiplier());
+                if (attackWouldReachTarget)
                 {
                     chosenAttack = attackType;
                     Debug.Log("enemy choosed " + chosenAttack);

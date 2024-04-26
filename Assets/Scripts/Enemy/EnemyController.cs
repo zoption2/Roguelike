@@ -202,11 +202,6 @@ namespace Enemy
             DefaultBehaviourTree.TickTree();
         }
 
-        public void SkipTurn()
-        {
-            ON_STOP_MOVEMENT?.Invoke();
-        }
-
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
         {
             _characterScenarioContext = characterScenarioContext;

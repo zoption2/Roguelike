@@ -4,10 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Enemy
+namespace Player
 {
     [CreateAssetMenu]
-    public class DefaultEnemyModelHolder : EnemyModelHolder<CharacterType>
+    public class DefaultCharacterModelHolder : DefaultCharacterModelHolder<CharacterType>
     {
 
     }

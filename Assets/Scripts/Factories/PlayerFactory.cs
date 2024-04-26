@@ -26,7 +26,7 @@ public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
 
     protected override List<InteractionType> GetAbilities(CharacterType type)
     {
-        return _statsProvider.GetPlayerAbilitiesTypes(type);
+        return _statsProvider.GetCharacterAbilitiesTypes(type);
     }
 
     public IPlayerController CreatePlayer(Transform point, CharacterType type)

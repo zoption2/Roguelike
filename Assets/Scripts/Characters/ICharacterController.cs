@@ -35,7 +35,6 @@ public interface ICharacterController
     public void SwitchState(TypeOfConditionState state);
     public void UseEffectsOnEnd();
     public void PushIfDead();
-    public void SkipTurn();
     public void Attack();
     public void Move();
     public void Tick();

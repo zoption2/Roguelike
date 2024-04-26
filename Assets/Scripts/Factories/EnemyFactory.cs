@@ -26,7 +26,7 @@ public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 
     protected override List<InteractionType> GetAbilities(CharacterType type)
     {
-        return _statsProvider.GetEnemyAbilitiesTypes(type);
+        return _statsProvider.GetCharacterAbilitiesTypes(type);
     }
 
     public IEnemyController CreateEnemy(Transform point, CharacterType type)

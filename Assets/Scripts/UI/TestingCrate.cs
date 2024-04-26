@@ -37,7 +37,7 @@ public class TestingCrate : MonoBehaviour
         if (load==null)
         {
             OriginStats stats = _statsProvider.GetPlayerStats(CharacterType);
-            List<InteractionType> abilities = _statsProvider.GetPlayerAbilitiesTypes(CharacterType);
+            //List<InteractionType> abilities = _statsProvider.GetCharacterAbilitiesTypes(CharacterType);
             //CharacterModel savedModel = new CharacterModel(stats, CharacterType, abilities);
             _dataService.PlayerData.SetStats(CharacterType, stats);
             //_dataService.PlayerData.SetAbilities(abilities,CharacterType);

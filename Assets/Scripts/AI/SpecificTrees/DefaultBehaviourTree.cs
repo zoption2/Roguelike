@@ -1,6 +1,7 @@
 using Interactions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -73,11 +74,14 @@ namespace BehaviourTree
 
             bool pathIsFound = _characterController.NavMeshAgent.CalculatePath(target.position, path);
             bool couldReachPoint = false;
+            Debug.Log("path is found: " + pathIsFound);
             if (pathIsFound)
             {
-                couldReachPoint = CouldReach(FindWaypointToObserveTarget(path, target));
+                Vector2 point = FindWaypointToObserveTarget(path, target);
+                Debug.Log("choosed point: " + point);
+                couldReachPoint = CouldReach(point);
             }
-
+            Debug.Log("finished analyzing");
             if (!_characterController.IsStunned && couldReachPoint)
             {
                 Debug.Log("Can Move");
@@ -164,6 +168,7 @@ namespace BehaviourTree
             float dragConstant = _characterController.GetRigidbody().drag;
             float maxDistance = launchPower / dragConstant;
             float distance = Vector2.Distance(point, GetCharacterPosition());
+            Debug.Log("max distance: " + maxDistance + "  actual distance: " + distance + "  point: " + point);
             if(distance > maxDistance)
             {
                 return false;
