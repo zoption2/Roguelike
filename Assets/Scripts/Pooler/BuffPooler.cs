@@ -1,7 +1,5 @@
 using Pool;
 using Prefab;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BuffPooler : ObjectPooler<BuffType>

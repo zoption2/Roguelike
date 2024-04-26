@@ -10,6 +10,7 @@ namespace Interactions
             IsOnInteractionStart = false;
             IsPositive = false;
             IsOnTurnStart = true;
+            _effectType = EffectType.FireEffect;
         }
 
         public override void UseEffect(ReactiveStats stats)

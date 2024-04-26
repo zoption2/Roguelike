@@ -12,6 +12,7 @@ namespace Interactions
             IsPositive = true;
             IsOnTurnStart = false;
             IsOnTurnEnd = false;
+            _effectType = EffectType.MoreDamageEffect;
         }
 
         public override void UseEffect(ReactiveStats stats)

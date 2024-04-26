@@ -21,6 +21,9 @@ public class ContextInstaller : MonoInstaller
     private CharacterUIPrefabHolder _characterUIPrefabHolder;
 
     [SerializeField]
+    private BuffPrefabHolder _buffPrefabHolder;
+
+    [SerializeField]
     private CharacterPanelPrefabHolder characterPanelPrefabHolder;
 
     [SerializeField]
@@ -36,7 +39,8 @@ public class ContextInstaller : MonoInstaller
     private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
     [SerializeField]
-    private BuffPrefabHolder _buffPrefabHolder;
+    private EffectPrefabHolder _effectPrefabHolder;
+
     [SerializeField]
     private NavigationPrefabHolder _navPrefabHolder;
     //
@@ -92,8 +96,9 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<CharacterPooler>().To<CharacterPooler>().AsSingle();
         Container.Bind<SlingshotPooler>().To<SlingshotPooler>().AsSingle();
         Container.Bind<CharacterPanelPooler>().To<CharacterPanelPooler>().AsSingle();
-        Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
+        Container.Bind<EffectPooler>().To<EffectPooler>().AsSingle();
         Container.Bind<CharacterUIPooler>().To<CharacterUIPooler>().AsSingle();
+        Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
     }
 
     public void BindFactories()
@@ -104,7 +109,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<ICharacterPanelFactory>().To<CharacterPanelFactory>().AsSingle();
         Container.Bind<INavigationFactory>().To<NavigationFactory>().AsSingle();
         Container.Bind<ICharacterUIFactory>().To<CharacterUIFactory>().AsSingle();
-
+        Container.Bind<IUIFactory>().To<UIFactory>().AsSingle();
     }
 
     public void BindPrefabHolders()
@@ -114,6 +119,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<CharacterPanelPrefabHolder>().FromInstance(characterPanelPrefabHolder).AsSingle();
         Container.Bind<BuffPrefabHolder>().FromInstance(_buffPrefabHolder).AsSingle();
+        Container.Bind<EffectPrefabHolder>().FromInstance(_effectPrefabHolder).AsSingle();
         Container.Bind<NavigationPrefabHolder>().FromInstance(_navPrefabHolder).AsSingle();
     }
 

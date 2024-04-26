@@ -13,6 +13,8 @@ namespace Interactions
             IsPositive = false;
             IsOnTurnStart = true;
             IsOnTurnEnd = false;
+
+            _effectType = EffectType.StunEffect;
         }
 
         public override void UseEffect(ReactiveStats stats)

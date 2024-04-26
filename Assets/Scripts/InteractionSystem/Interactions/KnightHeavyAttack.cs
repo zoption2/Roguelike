@@ -13,8 +13,8 @@ namespace Interactions
 
             _effects = new()
             {
-                //new StunEffect(2),
-                new FireEffect(2),
+                new StunEffect(2),
+                //new FireEffect(2),
             };
 
             _movable = new StopAndPush();

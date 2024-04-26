@@ -48,6 +48,14 @@ public enum InteractionType
     Knight_HeavyAttack = 2,
 }
 
+public enum EffectType
+{
+    None = 0,
+    MoreDamageEffect = 1,
+    FireEffect = 2,
+    StunEffect = 3,
+}
+
 public enum BuffType
 {
     None = 0,

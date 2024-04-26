@@ -40,6 +40,7 @@ namespace Enemy
         private IStateFactory _stateFactory;
         private ICharacterUIFactory _characterUIFactory;
         private ICharacterScenarioContext _characterScenarioContext;
+        private IUIFactory _uIFactory;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         private CharacterUIPooler _characterUIPooler;
@@ -56,6 +57,7 @@ namespace Enemy
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
             ICharacterUIFactory characterUIFactory,
+            IUIFactory uIFactory,
             DiContainer container)
         {
             _characterUIPooler = characterUIPooler;
@@ -65,6 +67,7 @@ namespace Enemy
             InteractionCalculator = interactionFinalizer;
             _stateFactory = stateFactory;
             _characterUIFactory = characterUIFactory;
+            _uIFactory = uIFactory;
             _container = container;
         }
 
@@ -88,12 +91,14 @@ namespace Enemy
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
-            _uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats);
-
             InteractionDealer.Init(ModifiableStats);
 
             _UIView = characterUIView;
             _pooler = characterPooler;
+
+            _uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats, _uIFactory, _UIView);
+
+
             _UIView.Init(CharacterView, _uIViewmodel);
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
@@ -115,17 +120,17 @@ namespace Enemy
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
-            //Debug.Log($"-----|{CharacterModel.Type}|-----");
-            //Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
+            Debug.Log($"-----|{CharacterModel.Type}|-----");
+            Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
-            //Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
-            //Effector.PrintEffects(Effector.GetPreInteractionEffects());
+            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
+            Effector.PrintEffects(Effector.GetPreInteractionEffects());
 
-            //Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
-            //Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
+            Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
+            Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
 
-            //Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
-            //Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
+            Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
+            Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
         }
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -251,6 +256,9 @@ namespace Enemy
         {
             //Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
             Analyzer.Analyze(ModifiableStats, Effector);
+            _uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
+                                            Effector.GetPreInteractionEffects(),
+                                            Effector.GetOnEndTurnInteractionEffects());
         }
 
         public void SwitchState(TypeOfConditionState state)
