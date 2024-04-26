@@ -9,22 +9,13 @@ namespace Interactions
         public BasicAttack(int damage) : base(damage)
         {
             _reloadTime = 2;
+            _attackType = TypeOfAttack.MeleeAttack;
             _damageMultiplayer = 1;
             _effects = new()
             {
                 new FireEffect(3),
             };
 
-        }
-
-        public override IMovable GetBump()
-        {
-            return _movable;
-        }
-
-        public override List<IEffect> GetEffects()
-        {
-            return _effects;
         }
 
         public override ReactiveStats InteractWithStats(ReactiveStats stats)

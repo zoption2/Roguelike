@@ -1,23 +1,25 @@
 using CharactersStats;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interactions
 {
-    public class KnightHeavyAttack : InteractionBase
+    public class SuperMegaHeavyAttack : InteractionBase
     {
-        public KnightHeavyAttack(int damage, int damageMultiplayer) : base(damage)
+
+        public SuperMegaHeavyAttack(int damage, int damageMultiplayer) : base(damage)
         {
             _damageMultiplayer = damageMultiplayer;
-            _reloadTime = 3;
+            _reloadTime = 5;
+            _launchMultiplier = 0.5f;
             _attackType = TypeOfAttack.MeleeAttack;
             _effects = new()
             {
-                new StunEffect(2),
+               
             };
 
             _movable = new StopAndPush();
-            //_damage = 0;
         }
 
         public override ReactiveStats InteractWithStats(ReactiveStats stats)
@@ -25,7 +27,7 @@ namespace Interactions
             stats.Health.Value -= _damage * _damageMultiplayer;
             return stats;
         }
+
+        
     }
 }
-
-

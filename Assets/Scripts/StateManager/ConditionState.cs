@@ -16,6 +16,7 @@ public interface IConditionState
     public IInteraction GetInteraction(InteractionType interactionType);
     public void ApplyInteraction(IInteraction interaction);
     public void LaunchYourself(Vector2 direction);
+
     public void AddEffects(List<IEffect> effects);
     public void ViewRotation();
     public void DoUpdate();
@@ -31,6 +32,7 @@ public abstract class ActiveState
     protected ICharacterController _characterController;
     protected ISlingShot _slingShot;
     protected int _milisecondsDelay = 3000;
+    protected float _launchMultiplier = 1;
 
     public ActiveState(ICharacterController characterController)
     {
@@ -68,11 +70,15 @@ public abstract class ActiveState
 
     public virtual void LaunchYourself(Vector2 direction)
     {
-        //float dragConstant = _characterController.CharacterView.Rigidbody.drag;
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
-        Vector2 forceVector = direction * launchPower;
+        Vector2 forceVector = direction * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
+    }
+
+    public void LaunchProjectile(Vector2 direction)
+    {
+
     }
 
     public IInteraction GetInteraction(InteractionType interactionType)
@@ -159,7 +165,7 @@ public class PlayerActiveState : ActiveState, IConditionState
         //base.Launch(direction);
 
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-        Vector2 forceVector = direction * launchPower;
+        Vector2 forceVector = direction * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= LaunchYourself;
@@ -205,9 +211,18 @@ public class EnemyActiveState : ActiveState, IConditionState
     {
         Transform target = _characterController.DefaultBehaviourTree.GetTarget();
         Transform enemy = _characterController.GetTransform();
-        Vector2 direction = enemy.position - target.position;
-        _characterController.CharacterView.ChangeDirection(-direction);
-        LaunchYourself(direction * -1);
+        Vector2 direction = target.position - enemy.position;
+        _characterController.CharacterView.ChangeDirection(direction);
+        IInteraction currentAttack = _characterController.CurrentAttack;
+        _launchMultiplier = currentAttack.GetLaunchMultiplier();
+        if(currentAttack.GetAttackType() == TypeOfAttack.MeleeAttack)
+        {
+            LaunchYourself(direction);
+        }
+        else
+        {
+
+        }
     }
 
     public async void Move()

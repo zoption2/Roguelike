@@ -27,7 +27,7 @@ namespace BehaviourTree
             foreach (IInteraction attackType in availableAttacks)
             {
                 Debug.Log(attackType);
-                if (DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition()))
+                if (DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(),attackType.GetLaunchMultiplier()))
                 {
                     chosenAttack = attackType;
                     Debug.Log("enemy choosed " + chosenAttack);

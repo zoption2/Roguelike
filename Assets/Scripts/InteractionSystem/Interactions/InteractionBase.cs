@@ -10,25 +10,40 @@ namespace Interactions
         protected int _damage;
         protected bool _readyForUse;
         protected int _reloadTime;
-        protected int _turnsLeftToReload = 0;
+        protected int _turnsLeftToReload;
         protected int _damageMultiplayer;
+        protected float _launchMultiplier;
         protected List<IEffect> _effects;
         protected IMovable _movable;
+        protected TypeOfAttack _attackType;
 
         public InteractionBase(
             int damage)
-        { 
+        {
             _damage = damage;
             _readyForUse = true;
+            _damageMultiplayer = 1;
+            _turnsLeftToReload = 0;
+            _launchMultiplier = 1;
             _movable = new Bounce();
         }
         public bool CouldUseAbility()
         {
             return _readyForUse;
         }
+
+        public float GetLaunchMultiplier()
+        {
+            return _launchMultiplier;
+        }
         public int GetDamage()
         {
             return _damage;
+        }
+
+        public TypeOfAttack GetAttackType()
+        {
+            return _attackType;
         }
 
         public void SetStats(ReactiveStats stats)
@@ -61,8 +76,14 @@ namespace Interactions
             return InteractWithStats(stats);
         }
         public abstract ReactiveStats InteractWithStats(ReactiveStats stats);
-        public abstract List<IEffect> GetEffects();
-        public abstract IMovable GetBump();
+        public  List<IEffect> GetEffects()
+        {
+            return _effects;
+        }
+        public IMovable GetBump()
+        {
+            return _movable;
+        }
     }
 }
 

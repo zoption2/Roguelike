@@ -11,20 +11,11 @@ namespace Interactions
         {
             _reloadTime = 0;
             _damageMultiplayer = 0;
+            _attackType = TypeOfAttack.MeleeAttack;
             _effects = new()
             {
 
             };
-        }
-
-        public override IMovable GetBump()
-        {
-            return _movable;
-        }
-
-        public override List<IEffect> GetEffects()
-        {
-            return _effects;
         }
 
         public override ReactiveStats InteractWithStats(ReactiveStats stats)

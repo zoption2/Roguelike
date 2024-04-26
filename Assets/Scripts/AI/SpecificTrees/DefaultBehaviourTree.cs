@@ -10,7 +10,7 @@ namespace BehaviourTree
     {
         public Transform GetTarget();
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target);
-        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint);
+        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float multiplier = 1);
         public Vector3 GetCharacterPosition();
         public void SetAbilities(List<IInteraction> abilities);
         public void SetCurrentAttack(IInteraction attack);
@@ -172,11 +172,11 @@ namespace BehaviourTree
                 return true;
         }
 
-        public bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
+        public bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint, float multiplier = 1)
         {
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
             float dragConstant = _characterController.GetRigidbody().drag;
-            float maxDistance = launchPower / dragConstant;
+            float maxDistance = (launchPower / dragConstant) * multiplier;
             
             RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
             Transform hitTransform = hit.transform;

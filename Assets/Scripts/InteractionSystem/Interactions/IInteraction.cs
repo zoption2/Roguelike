@@ -8,6 +8,9 @@ namespace Interactions
         public bool CouldUseAbility();
         public int GetDamage();
         public void TickReload();
+        public float GetLaunchMultiplier();
+
+        public TypeOfAttack GetAttackType();
         public ReactiveStats Interact(ReactiveStats stats);
         ReactiveStats InteractWithStats(ReactiveStats stats);
         List<IEffect> GetEffects();

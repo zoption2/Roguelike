@@ -46,6 +46,14 @@ public enum InteractionType
     None = 0,
     BasicAttack = 1,
     Knight_HeavyAttack = 2,
+    SuperMegaHeavyAttack = 3,
+}
+
+public enum TypeOfAttack
+{
+    None = 0,
+    MeleeAttack = 1,
+    RangedAttack = 2,
 }
 
 public enum BuffType
