@@ -56,7 +56,7 @@ public abstract class ActiveState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.05f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -278,7 +278,7 @@ public class InactiveState : IConditionState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.05f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();

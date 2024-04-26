@@ -185,13 +185,16 @@ namespace BehaviourTree
             
             RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
             Transform hitTransform = hit.transform;
-
             if (hitTransform != null &&  hitTransform.childCount > 0)
             {
                 hitTransform = hit.transform.GetChild(0);
             }
-            //Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
-            //Debug.LogWarning("Target: " + target.gameObject.name);
+
+            if (hitTransform != null)
+                Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
+            else
+                Debug.Log("nothing was hit");
+            Debug.LogWarning("Target: " + target.gameObject.name);
             if (hitTransform != null && hitTransform == target)
             {
                 return true;

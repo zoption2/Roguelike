@@ -28,6 +28,7 @@ namespace BehaviourTree
             {
                 Debug.Log(attackType + "   multiplier: " + attackType.GetLaunchMultiplier());
                 bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(), attackType.GetLaunchMultiplier());
+                Debug.Log("Attack would reach target: " + attackWouldReachTarget);
                 if (attackWouldReachTarget)
                 {
                     chosenAttack = attackType;
