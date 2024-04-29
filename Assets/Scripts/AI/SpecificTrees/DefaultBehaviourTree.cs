@@ -77,7 +77,9 @@ namespace BehaviourTree
             Debug.Log("path is found: " + pathIsFound);
             if (pathIsFound)
             {
-                Vector2 point = FindWaypointToObserveTarget(path, target);
+                Vector3 point = FindWaypointToObserveTarget(path, target);
+                Debug.Log("Character position during calculation: " + GetCharacterPosition());
+                Debug.DrawLine(GetCharacterPosition(), point, Color.yellow, 3f);
                 Debug.Log("choosed point: " + point);
                 couldReachPoint = CouldReach(point);
             }
@@ -162,13 +164,12 @@ namespace BehaviourTree
                 return false;
             }
         }
-        protected bool CouldReach(Vector2 point)
+        protected bool CouldReach(Vector3 point)
         {
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
             float dragConstant = _characterController.GetRigidbody().drag;
             float maxDistance = launchPower / dragConstant;
-            float distance = Vector2.Distance(point, GetCharacterPosition());
-            Debug.Log("max distance: " + maxDistance + "  actual distance: " + distance + "  point: " + point);
+            float distance = Vector3.Distance(point, GetCharacterPosition());
             if(distance > maxDistance)
             {
                 return false;
@@ -190,11 +191,11 @@ namespace BehaviourTree
                 hitTransform = hit.transform.GetChild(0);
             }
 
-            if (hitTransform != null)
-                Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
-            else
-                Debug.Log("nothing was hit");
-            Debug.LogWarning("Target: " + target.gameObject.name);
+            //if (hitTransform != null)
+            //    Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
+            //else
+            //    Debug.Log("nothing was hit");
+            //Debug.LogWarning("Target: " + target.gameObject.name);
             if (hitTransform != null && hitTransform == target)
             {
                 return true;
