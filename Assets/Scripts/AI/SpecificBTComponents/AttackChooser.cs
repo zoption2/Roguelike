@@ -27,6 +27,7 @@ namespace BehaviourTree
             foreach (IInteraction attackType in availableAttacks)
             {
                 Debug.Log(attackType + "   multiplier: " + attackType.GetLaunchMultiplier());
+                Debug.DrawLine(DefaultBT.GetCharacterPosition(), target.position, Color.red, 4);
                 bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(), attackType.GetLaunchMultiplier());
                 Debug.Log("Attack would reach target: " + attackWouldReachTarget);
                 if (attackWouldReachTarget)

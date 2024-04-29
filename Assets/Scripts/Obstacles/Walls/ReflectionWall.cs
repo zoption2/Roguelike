@@ -9,9 +9,9 @@ namespace Obstacles
     {
         public void ProcessCollision(Collision collision, Rigidbody rigidbody, Vector3 velocity)
         {
-            rigidbody.velocity = Vector3.zero;
+            //rigidbody.velocity = Vector3.zero;
             var modifiedVelocity = velocity * -1.5f;
-            rigidbody.velocity = Vector3.zero;
+            //rigidbody.velocity = Vector3.zero;
             rigidbody.AddForce(modifiedVelocity, ForceMode.VelocityChange);
         }
     }

@@ -12,7 +12,9 @@ public class Bounce : IMovable
         _providerRb = provider.GetRigidbody();
         _handlerRb = handler.GetRigidbody();
         _providerVelocity = provider.GetVelocity();
+        _providerVelocity.z = 0;
         _handlerVelocity = handler.GetVelocity();
+        _handlerVelocity.z = 0;
 
         _handlerRb.velocity = _providerVelocity;
 
