@@ -39,6 +39,7 @@ namespace Player
         public IDefaultBehaviourTree DefaultBehaviourTree { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IAnalyzer Analyzer { get; set; }
+        public NavMeshPath Path { get; set; }
 
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;

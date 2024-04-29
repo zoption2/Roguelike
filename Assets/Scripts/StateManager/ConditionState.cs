@@ -4,7 +4,6 @@ using Interactions;
 using SlingShotLogic;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -16,7 +15,6 @@ public interface IConditionState
     public IInteraction GetInteraction(InteractionType interactionType);
     public void ApplyInteraction(IInteraction interaction);
     public void LaunchYourself(Vector2 direction);
-
     public void AddEffects(List<IEffect> effects);
     public void ViewRotation();
     public void DoUpdate();
@@ -232,29 +230,21 @@ public class EnemyActiveState : ActiveState, IConditionState
 
     public async void Move()
     {
-        NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
         IDefaultBehaviourTree defaultBehaviourTree = _characterController.DefaultBehaviourTree;
-        navObstacle.enabled = false;
-        await Task.Delay(_milisecondsDelay / 10);
-
         Transform target = defaultBehaviourTree.GetTarget();
-
         Transform enemy = _characterController.GetTransform();
-
-        _characterController.NavMeshAgent.enabled = true;
-        _characterController.NavMeshAgent.SetDestination(target.position);
-
         await Task.Delay(_milisecondsDelay / 10);
 
-        NavMeshPath path = _characterController.NavMeshAgent.path;
+        NavMeshPath path = _characterController.Path;
 
         Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path, target);
-        _characterController.NavMeshAgent.enabled = false;
-        Vector2 direction = enemy.position - waypoint;
-        _characterController.CharacterView.ChangeDirection(-direction);
+        Debug.DrawLine(enemy.position, waypoint, Color.green,3f);
+
+        Vector2 direction = waypoint - enemy.position;
+        _characterController.CharacterView.ChangeDirection(direction);
+        await Task.Delay(_milisecondsDelay / 10);
 
         LaunchYourselfToPoint(waypoint);
-        navObstacle.enabled = true;
     }
 }
 

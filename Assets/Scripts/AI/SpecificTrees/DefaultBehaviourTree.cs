@@ -69,23 +69,22 @@ namespace BehaviourTree
         {
             Transform target = GetTarget();
             NavMeshPath path = new NavMeshPath();
-            _characterController.NavMeshObstacle.enabled = false;
-            _characterController.NavMeshAgent.enabled = true;
+            NavMeshAgent navAgent = _characterController.NavMeshAgent;
+            NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
+            navObstacle.enabled = false;
+            navAgent.enabled = true;
 
             bool pathIsFound = _characterController.NavMeshAgent.CalculatePath(target.position, path);
             bool couldReachPoint = false;
-            Debug.Log("path is found: " + pathIsFound);
             if (pathIsFound)
             {
                 Vector3 point = FindWaypointToObserveTarget(path, target);
-                Debug.Log("Character position during calculation: " + GetCharacterPosition());
                 Debug.DrawLine(GetCharacterPosition(), point, Color.yellow, 3f);
-                Debug.Log("choosed point: " + point);
                 couldReachPoint = CouldReach(point);
             }
-            Debug.Log("finished analyzing");
             if (!_characterController.IsStunned && couldReachPoint)
             {
+                SetPath(path);
                 Debug.Log("Can Move");
                 _blackboard.SetData(_moveKey, true);
             } 
@@ -96,7 +95,6 @@ namespace BehaviourTree
             }
             _characterController.NavMeshAgent.enabled = false;
             _characterController.NavMeshObstacle.enabled = true;
-            
         }
 
         public Vector3 GetCharacterPosition()
@@ -123,8 +121,6 @@ namespace BehaviourTree
         protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
         {
             LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
-            //Vector3 characterPosition = GetCharacterPosition();
-            //startingPoint.z = characterPosition.z;
             Vector3 direction = target - startingPoint;
             direction.z = 0;
             direction.Normalize();
@@ -136,7 +132,7 @@ namespace BehaviourTree
 
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target)
         {
-            Vector3 waypoint = path.corners[1];
+            Vector3 waypoint = path.corners[0];
             foreach (Vector3 point in path.corners)
             {
                 if (SphereCastHitTheTarget(target, point) && PathToPointIsClear(point) && point != path.corners[0])
@@ -191,11 +187,6 @@ namespace BehaviourTree
                 hitTransform = hit.transform.GetChild(0);
             }
 
-            //if (hitTransform != null)
-            //    Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
-            //else
-            //    Debug.Log("nothing was hit");
-            //Debug.LogWarning("Target: " + target.gameObject.name);
             if (hitTransform != null && hitTransform == target)
             {
                 return true;
@@ -252,6 +243,11 @@ namespace BehaviourTree
         {
             _characterController.CurrentAttack = attack;
             Debug.LogWarning("Now using: " +  attack);
+        }
+
+        public void SetPath(NavMeshPath path)
+        {
+            _characterController.Path = path;
         }
     }
 }
