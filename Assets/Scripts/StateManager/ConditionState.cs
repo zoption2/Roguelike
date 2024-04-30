@@ -77,6 +77,7 @@ public abstract class ActiveState
 
     public IInteraction GetInteraction(InteractionType interactionType)
     {
+        //!!!
         ReactiveStats statsWithBonus = _characterController.Effector.ProcessStatsBeforeInteraction(_characterController.ModifiableStats);
         _characterController.InteractionDealer.Init(statsWithBonus);
         IInteraction interaction = _characterController.InteractionDealer.UseInteraction(interactionType);

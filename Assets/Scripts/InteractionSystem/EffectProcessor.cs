@@ -6,6 +6,7 @@ namespace Interactions
 {
     public interface IEffectProcessor
     {
+        void Init(CharacterUIViewmodel viewModel);
         void AddEffects(List<IEffect> effects);
         ReactiveStats ProcessStatsBeforeInteraction(ReactiveStats stats);
         void ProcessEffectsOnStart(ReactiveStats stats);
@@ -13,6 +14,7 @@ namespace Interactions
         List<IEffect> GetPreInteractionEffects();
         List<IEffect> GetOnStartTurnInteractionEffects();
         List<IEffect> GetOnEndTurnInteractionEffects();
+        List<IEffect> GetAllEffects();
         void PrintEffects(List<IEffect> effects);
     }
     public class EffectProcessor : IEffectProcessor
@@ -20,6 +22,15 @@ namespace Interactions
         List<IEffect> _preInteractionEffects = new();
         List<IEffect> _onStartTurnEffects = new();
         List<IEffect> _onEndTurnEffects = new();
+        List<IEffect> _allEffects = new List<IEffect>();
+
+        private CharacterUIViewmodel _viewModel;
+
+        public void Init(CharacterUIViewmodel viewModel)
+        {
+            _viewModel = viewModel;
+        }
+
         public void AddEffects(List<IEffect> effects)
         {
             foreach (IEffect effect in effects)
@@ -38,7 +49,11 @@ namespace Interactions
                 {
                     ReplaceOrAddEffect(effect, _onEndTurnEffects);
                 }
+
+                _allEffects.RemoveAll(e => e.GetType() == effect.GetType()); 
+                _allEffects.Add(effect);
             }
+            _allEffects.RemoveAll(e => e.Duration <= 0);
         }
 
         private List<IEffect> ReplaceOrAddEffect(IEffect effect, List<IEffect> effectList)
@@ -53,6 +68,11 @@ namespace Interactions
             }
             effectList.Add(effect);
             return effectList;
+        }
+
+        public List<IEffect> GetAllEffects()
+        {
+            return _allEffects;
         }
 
         public List<IEffect> GetPreInteractionEffects()
@@ -79,6 +99,8 @@ namespace Interactions
             statsCopy.LaunchPower.Value = stats.LaunchPower.Value;
             statsCopy.Velocity.Value = stats.Velocity.Value;
 
+            _viewModel.VisualiseEffects(_allEffects);
+
             if (_preInteractionEffects.Count > 0)
             {
                 for (int i = 0; i < _preInteractionEffects.Count; i++)
@@ -98,6 +120,8 @@ namespace Interactions
 
         public void ProcessEffectsOnStart(ReactiveStats stats)
         {
+            _viewModel.VisualiseEffects(_allEffects);
+
             if (_onStartTurnEffects.Count > 0)
             {
                 for (int i = 0; i < _onStartTurnEffects.Count; i++)
@@ -116,6 +140,8 @@ namespace Interactions
 
         public void ProcessEffectsOnEnd(ReactiveStats stats)
         {
+            _viewModel.VisualiseEffects(_allEffects);
+
             if (_onEndTurnEffects.Count > 0)
             {
                 for (int i = 0; i < _onEndTurnEffects.Count; i++)

@@ -100,6 +100,8 @@ namespace Enemy
 
 
             _UIView.Init(CharacterView, _uIViewmodel);
+            Effector.Init(_uIViewmodel);
+
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             CharacterView.ON_CLICK += OnClick;
@@ -256,9 +258,9 @@ namespace Enemy
         {
             //Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
             Analyzer.Analyze(ModifiableStats, Effector);
-            _uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
-                                            Effector.GetPreInteractionEffects(),
-                                            Effector.GetOnEndTurnInteractionEffects());
+            //_uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
+            //                                Effector.GetPreInteractionEffects(),
+            //                                Effector.GetOnEndTurnInteractionEffects());
         }
 
         public void SwitchState(TypeOfConditionState state)

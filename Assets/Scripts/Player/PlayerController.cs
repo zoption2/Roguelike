@@ -9,8 +9,6 @@ using UnityEngine.EventSystems;
 using Zenject;
 using UnityEngine.AI;
 using BehaviourTree;
-using System.Drawing;
-using Unity.VisualScripting;
 
 namespace Player
 {
@@ -105,6 +103,8 @@ namespace Player
             _uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats, _uIFactory, _UIView);
 
             _UIView.Init(CharacterView, _uIViewmodel);
+            Effector.Init(_uIViewmodel);
+
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
             _navMeshObstacle = CharacterView.NavMeshObstacle;
@@ -250,9 +250,9 @@ namespace Player
         {
             //Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
             Analyzer.Analyze(ModifiableStats, Effector);
-            _uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
-                                            Effector.GetPreInteractionEffects(),
-                                            Effector.GetOnEndTurnInteractionEffects());
+            //_uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
+            //                                Effector.GetPreInteractionEffects(),
+            //                                Effector.GetOnEndTurnInteractionEffects());
 
         }
 

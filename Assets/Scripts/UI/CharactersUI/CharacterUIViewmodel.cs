@@ -33,18 +33,14 @@ public class CharacterUIViewmodel
         _model.SetHealth(ReactiveHealth.Value);
     }
 
-    public void VisualiseEffects(List<IEffect> effects1, List<IEffect> effects2, List<IEffect> effects3)
+    public void VisualiseEffects(List<IEffect> displayedEffects)
     {
         EffectType effectType;
         GridLayoutGroup effectPanel = _uIView.GetEffectsPanel();
 
-        List<IEffect> allEffects = new List<IEffect>(effects1);
-        allEffects.AddRange(effects2);
-        allEffects.AddRange(effects3);
-
-        for (int i = 0; i < allEffects.Count; i++)
+        foreach (var effect in displayedEffects)
         {
-            effectType = allEffects[i].GetEffectType();
+            effectType = effect.GetEffectType();
 
             if (!_visualizedEffects.ContainsKey(effectType))
             {
@@ -53,11 +49,10 @@ public class CharacterUIViewmodel
             }
         }
 
-        // New logic to remove effects not present in allEffects
         List<EffectType> keysToRemove = new List<EffectType>();
         foreach (var effectInVisualized in _visualizedEffects)
         {
-            if (!allEffects.Any(e => e.GetEffectType() == effectInVisualized.Key))
+            if (!displayedEffects.Any(e => e.GetEffectType() == effectInVisualized.Key))
             {
                 _factory.RemoveEffectIcon(effectInVisualized.Key, effectInVisualized.Value);
                 keysToRemove.Add(effectInVisualized.Key);
@@ -69,9 +64,6 @@ public class CharacterUIViewmodel
             _visualizedEffects.Remove(keyToRemove);
         }
     }
-
-
-
 
     public void Submit()
     {
