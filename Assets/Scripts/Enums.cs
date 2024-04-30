@@ -54,6 +54,8 @@ public enum TypeOfAttack
     None = 0,
     MeleeAttack = 1,
     RangedAttack = 2,
+    AreaAttack = 3,
+    ImmediateAttack = 4,
 }
 
 public enum BuffType

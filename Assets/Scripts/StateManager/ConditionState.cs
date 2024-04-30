@@ -224,7 +224,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         }
         else
         {
-
+            LaunchProjectile(direction);
         }
     }
 

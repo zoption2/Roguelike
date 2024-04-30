@@ -107,7 +107,6 @@ public class CharacterView : MonoBehaviour,
         }
         else
         {
-            //Debug.LogWarning("INTERACTION CANCELED");
             return;
         }
 
