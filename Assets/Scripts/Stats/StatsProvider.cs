@@ -11,7 +11,7 @@ namespace CharactersStats
     {
         public OriginStats GetPlayerStats(CharacterType playerType);
         public OriginStats GetEnemyStats(CharacterType enemyType);
-        public List<InteractionType> GetCharacterAbilitiesTypes(CharacterType characterType);
+        public List<AbilityType> GetCharacterAbilitiesTypes(CharacterType characterType);
     }
 
     public class StatsProvider : IStatsProvider
@@ -39,9 +39,9 @@ namespace CharactersStats
             return stats;
         }
 
-        public List<InteractionType> GetCharacterAbilitiesTypes(CharacterType characterType)
+        public List<AbilityType> GetCharacterAbilitiesTypes(CharacterType characterType)
         {
-            return _defaultModelHolder.GetAllAbilities(characterType);
+            return _defaultModelHolder.GetAllAbilitiesTypes(characterType);
         }
 
         public StatsProvider(DefaultCharacterModelHolder defaultModelHolder, IDataService dataService)

@@ -22,13 +22,13 @@ public abstract class CharacterFactory<TController>
     public CharacterFactory(
         DiContainer container,
         IStatsProvider statsProvider,
-        CharacterPooler pooler, IAbilityFactory interactionFactory)
+        CharacterPooler pooler, IAbilityFactory abilityFactory)
     {
         _container = container;
         _statsProvider = statsProvider;
         _characterPooler = pooler;
         _characterPooler.Init();
-        _abilityFactory = interactionFactory;
+        _abilityFactory = abilityFactory;
     }
 
     protected virtual TController CreateCharacter(Transform point, CharacterType type)

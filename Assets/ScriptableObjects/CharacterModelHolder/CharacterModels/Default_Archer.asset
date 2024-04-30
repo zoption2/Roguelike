@@ -17,4 +17,4 @@ MonoBehaviour:
   Damage: 4
   Speed: 7
   LaunchPower: 20
-  Abilities: 01000000
+  Abilities: 00000000

@@ -14,8 +14,8 @@ public interface IPlayerFactory
 
 public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
 {
-    public PlayerFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler,
-        IInteractionFactory interactionFactory) : base(container, statsProvider, pooler, interactionFactory)
+    public PlayerFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler, 
+        IAbilityFactory abilityFactory) : base(container, statsProvider, pooler, abilityFactory)
     {
     }
 
@@ -24,7 +24,7 @@ public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
         return _statsProvider.GetPlayerStats(type);
     }
 
-    protected override List<InteractionType> GetAbilitiesTypes(CharacterType type)
+    protected override List<AbilityType> GetAbilitiesTypes(CharacterType type)
     {
         return _statsProvider.GetCharacterAbilitiesTypes(type);
     }

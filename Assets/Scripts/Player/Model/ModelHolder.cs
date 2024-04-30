@@ -24,7 +24,7 @@ namespace Player
             }
             throw new System.ArgumentException(string.Format("Model of type {0} not exists at holder", modelType));
         }
-        public List<InteractionType> GetAllAbilities(T modelType)
+        public List<AbilityType> GetAllAbilitiesTypes(T modelType)
         {
             for (int i = 0; i < _models.Count; i++)
             {

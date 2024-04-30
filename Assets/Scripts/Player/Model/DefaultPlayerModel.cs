@@ -18,6 +18,6 @@ namespace Player
         public T Type;
         public int Health, Damage, Speed;
         public float LaunchPower;
-        public List<InteractionType> Abilities;
+        public List<AbilityType> Abilities;
     }
 }
