@@ -23,7 +23,7 @@ namespace Enemy
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
-        public IInteraction CurrentAttack { get; set; }
+        public IAbility CurrentAbility { get; set; }
         public IAnalyzer Analyzer { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
@@ -66,7 +66,7 @@ namespace Enemy
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             DefaultBehaviourTree.InitTree(this);
-            DefaultBehaviourTree.SetAbilities(characterModel.Interactions);
+            DefaultBehaviourTree.SetAbilities(characterModel.Abilities);
 
             CharacterModel = characterModel;
 
@@ -120,10 +120,11 @@ namespace Enemy
         }
         public IInteraction GetInteraction()
         {
-            if(CurrentAttack != null)
+            if(CurrentAbility != null)
             {
-                CurrentAttack.SetStats(ModifiableStats);
-                return CurrentAttack;
+                IInteraction interaction = CurrentAbility.Interaction;
+                interaction.SetStats(ModifiableStats);
+                return interaction;
             }
             else
             {
@@ -162,16 +163,6 @@ namespace Enemy
         {
             _currentState.AddEffects(effects);
         }
-        public void Launch(Vector2 direction)
-        {
-            _currentState.LaunchYourself(direction);
-        }
-
-        public void LaunchToPoint(Vector3 point)
-        {
-            _currentState.LaunchYourselfToPoint(point);
-        }
-
         public void CheckForEndOfState()
         {
             _characterScenarioContext.CheckIfAllStopped();

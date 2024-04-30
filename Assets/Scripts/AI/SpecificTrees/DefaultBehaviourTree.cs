@@ -13,8 +13,8 @@ namespace BehaviourTree
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target);
         public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float multiplier = 1);
         public Vector3 GetCharacterPosition();
-        public void SetAbilities(List<IInteraction> abilities);
-        public void SetCurrentAttack(IInteraction attack);
+        public void SetAbilities(List<IAbility> abilities);
+        public void SetCurrentAbility(IAbility ability);
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
@@ -22,7 +22,7 @@ namespace BehaviourTree
 
         private AttackChooser _attackChooser;
 
-        private List<IInteraction> _abilities;
+        private List<IAbility> _abilities;
         protected override Node SetupRootNode()
         {
             Node rootNode = new Selector( new List<Node>
@@ -105,7 +105,7 @@ namespace BehaviourTree
         {
             Transform  target = GetTarget();
             Vector3 characterPosition = GetCharacterPosition();
-            if (_attackChooser.ChooseAttack() != null && !_characterController.IsStunned)
+            if (_attackChooser.ChooseAbility() != null && !_characterController.IsStunned)
             {
                 Debug.Log("Can Attack");
                 _blackboard.SetData(_attackKey, true);
@@ -222,7 +222,7 @@ namespace BehaviourTree
             }
         }
 
-        public void SetAbilities(List<IInteraction> abilities)
+        public void SetAbilities(List<IAbility> abilities)
         {
             _abilities = abilities;
             _attackChooser = new AttackChooser(this, _abilities);
@@ -230,19 +230,16 @@ namespace BehaviourTree
 
         private void TickAbilities()
         {
-            foreach(IInteraction interaction in _abilities)
+            foreach(IAbility ability in _abilities)
             {
-                if (!interaction.CouldUseAbility())
-                {
-                    interaction.TickReload();
-                }
+                ability.TickReload();
             }
         }
 
-        public void SetCurrentAttack(IInteraction attack)
+        public void SetCurrentAbility(IAbility ability)
         {
-            _characterController.CurrentAttack = attack;
-            Debug.LogWarning("Now using: " +  attack);
+            _characterController.CurrentAbility = ability;
+            Debug.LogWarning("Now using: " +  ability);
         }
 
         public void SetPath(NavMeshPath path)

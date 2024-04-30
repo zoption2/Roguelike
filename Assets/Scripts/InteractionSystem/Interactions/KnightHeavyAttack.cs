@@ -9,8 +9,6 @@ namespace Interactions
         public KnightHeavyAttack(int damage, int damageMultiplayer) : base(damage)
         {
             _damageMultiplayer = damageMultiplayer;
-            _reloadTime = 3;
-            _attackType = TypeOfAttack.MeleeAttack;
             _effects = new()
             {
                 new StunEffect(2),

@@ -11,9 +11,6 @@ namespace Interactions
         public SuperMegaHeavyAttack(int damage, int damageMultiplayer) : base(damage)
         {
             _damageMultiplayer = damageMultiplayer;
-            _reloadTime = 5;
-            _launchMultiplier = 0.5f;
-            _attackType = TypeOfAttack.MeleeAttack;
             _effects = new()
             {
                

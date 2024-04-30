@@ -14,21 +14,21 @@ public abstract class CharacterFactory<TController>
     protected CharacterPooler _characterPooler;
     protected CharacterModel _characterModel;
     protected OriginStats _stats;
-    protected List<IInteraction> _abilities;
+    protected List<IAbility> _abilities;
     protected CharacterType _type;
     protected IMyPoolable _poolable;
-    protected IInteractionFactory _interactionFactory;
+    protected IAbilityFactory _abilityFactory;
 
     public CharacterFactory(
         DiContainer container,
         IStatsProvider statsProvider,
-        CharacterPooler pooler,IInteractionFactory interactionFactory)
+        CharacterPooler pooler, IAbilityFactory interactionFactory)
     {
         _container = container;
         _statsProvider = statsProvider;
         _characterPooler = pooler;
         _characterPooler.Init();
-        _interactionFactory = interactionFactory;
+        _abilityFactory = interactionFactory;
     }
 
     protected virtual TController CreateCharacter(Transform point, CharacterType type)
@@ -39,8 +39,8 @@ public abstract class CharacterFactory<TController>
         
         _stats = GetStats(type);
         ReactiveStats reactiveStats = _stats.ToReactive();
-        List<InteractionType> abilityTypes = GetAbilities(type);
-        _abilities = CreateInteractionsFromTypes(abilityTypes, reactiveStats);
+        List<AbilityType> abilityTypes = GetAbilitiesTypes(type);
+        _abilities = CreateAbilities(abilityTypes, reactiveStats);
         
         _characterModel = new CharacterModel(_stats, type, _abilities);
         mapper.Speed = _stats.Speed;
@@ -56,17 +56,17 @@ public abstract class CharacterFactory<TController>
         return controller;
     }
 
-    protected List<IInteraction> CreateInteractionsFromTypes(List<InteractionType> interactionTypes,ReactiveStats stats)
+    protected List<IAbility> CreateAbilities(List<AbilityType> types,ReactiveStats stats)
     {
-        List<IInteraction> abilities = new List<IInteraction>();
-        foreach (InteractionType type in interactionTypes)
+        List<IAbility> abilities = new List<IAbility>();
+        foreach (AbilityType type in types)
         {
-            abilities.Add(_interactionFactory.Create(type,stats));
+            abilities.Add(_abilityFactory.CreateAbility(type, stats));
         }
         return abilities;
     }
     protected abstract OriginStats GetStats(CharacterType type);
-    protected abstract List<InteractionType> GetAbilities(CharacterType type);
+    protected abstract List<AbilityType> GetAbilitiesTypes(CharacterType type);
 
     protected TController GetNewController()
     {

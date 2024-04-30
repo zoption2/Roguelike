@@ -165,8 +165,6 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector2 direction)
     {
-        //base.Launch(direction);
-
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         Vector2 forceVector = direction * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
@@ -204,9 +202,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         float dragConstant = _characterController.GetRigidbody().drag;
         
         float multiplier = Mathf.Clamp(distance * dragConstant, minLaunchPower, maxLaunchPower);
-        //Debug.Log("multiplier: " + multiplier * dragConstant);
-        Vector2 initialVelocity = direction * multiplier; //* dragConstant;
-        //Debug.Log("InitialVelocityMove: " + initialVelocity.magnitude);
+        Vector2 initialVelocity = direction * multiplier;
         _characterController.GetRigidbody().AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
@@ -216,9 +212,9 @@ public class EnemyActiveState : ActiveState, IConditionState
         Transform enemy = _characterController.GetTransform();
         Vector2 direction = target.position - enemy.position;
         _characterController.CharacterView.ChangeDirection(direction);
-        IInteraction currentAttack = _characterController.CurrentAttack;
-        _launchMultiplier = currentAttack.GetLaunchMultiplier();
-        if(currentAttack.GetAttackType() == TypeOfAttack.MeleeAttack)
+        IAbility currentAbility = _characterController.CurrentAbility;
+        _launchMultiplier = currentAbility.GetLaunchModifier();
+        if(currentAbility.GetUseType() == TypeOfUse.MeleeUse)
         {
             LaunchYourself(direction);
         }
@@ -226,6 +222,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         {
             LaunchProjectile(direction);
         }
+        currentAbility.UseAbility();
     }
 
     public async void Move()

@@ -49,13 +49,20 @@ public enum InteractionType
     SuperMegaHeavyAttack = 3,
 }
 
-public enum TypeOfAttack
+public enum AbilityType
+{
+    BasicAttackAbility = 0,
+    HeavyAttackAbility = 1,
+    MegaHeavyAttackAbility = 2,
+}
+
+public enum TypeOfUse
 {
     None = 0,
-    MeleeAttack = 1,
-    RangedAttack = 2,
-    AreaAttack = 3,
-    ImmediateAttack = 4,
+    MeleeUse = 1,
+    RangedUse = 2,
+    AreaUse = 3,
+    ImmediateUse = 4,
 }
 
 public enum BuffType

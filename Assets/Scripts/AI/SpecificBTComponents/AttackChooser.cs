@@ -9,32 +9,32 @@ namespace BehaviourTree
     
     public class AttackChooser
     {
-        public List<IInteraction> AllAttacks { get; set; }
+        public List<IAbility> AllAbilities { get; set; }
         public IDefaultBehaviourTree DefaultBT { get;}
 
 
-        public AttackChooser(IDefaultBehaviourTree defaultBehaviourTree, List<IInteraction> allAttacks)
+        public AttackChooser(IDefaultBehaviourTree defaultBehaviourTree, List<IAbility> allAbilities)
         {
             DefaultBT = defaultBehaviourTree;
-            AllAttacks = allAttacks;
+            AllAbilities = allAbilities;
         }
-        public IInteraction ChooseAttack() 
+        public IAbility ChooseAbility() 
         {
-            List<IInteraction> availableAttacks = AllAttacks.Where(x => x.CouldUseAbility() == true ).ToList();
-            availableAttacks.OrderByDescending(x => x.GetDamage() );
-            IInteraction chosenAttack = null;
+            List<IAbility> availableAbilities = AllAbilities.Where(x => x.ReadyForUse == true ).ToList();
+            availableAbilities.OrderByDescending(x => x.GetUsefulness() );
+            IAbility chosenAttack = null;
             Transform target = DefaultBT.GetTarget();
-            foreach (IInteraction attackType in availableAttacks)
+            foreach (IAbility abilityType in availableAbilities)
             {
-                Debug.Log(attackType + "   multiplier: " + attackType.GetLaunchMultiplier());
+                Debug.Log(abilityType + "   multiplier: " + abilityType.GetLaunchModifier());
                 Debug.DrawLine(DefaultBT.GetCharacterPosition(), target.position, Color.red, 4);
-                bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(), attackType.GetLaunchMultiplier());
+                bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(), abilityType.GetLaunchModifier());
                 Debug.Log("Attack would reach target: " + attackWouldReachTarget);
                 if (attackWouldReachTarget)
                 {
-                    chosenAttack = attackType;
+                    chosenAttack = abilityType;
                     Debug.Log("enemy choosed " + chosenAttack);
-                    DefaultBT.SetCurrentAttack(chosenAttack);
+                    DefaultBT.SetCurrentAbility(chosenAttack);
                     return chosenAttack;
                 }
             }

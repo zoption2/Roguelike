@@ -1,5 +1,6 @@
 using Interactions;
 
+
 public interface IAbility 
 {
     public bool ReadyForUse { get;}
@@ -8,5 +9,8 @@ public interface IAbility
     public IInteraction Interaction { get;}
     public void UseAbility();
     public void TickReload();
+    public void SetForReload();
     public int GetUsefulness();
+    public float GetLaunchModifier();
+    public TypeOfUse GetUseType();
 }

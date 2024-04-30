@@ -11,12 +11,12 @@ public class CharacterModel : CharacterModelBase
 
     public int Health, Damage, Speed;
     public float LaunchPower, Velocity;
-    public List<IInteraction> Interactions;
+    public List<IAbility> Abilities;
 
-    public CharacterModel(OriginStats originStats, CharacterType type, List<IInteraction> interactions) : base(originStats)
+    public CharacterModel(OriginStats originStats, CharacterType type, List<IAbility> abilities) : base(originStats)
     {
         Type = type;
-        Interactions = interactions;
+        Abilities = abilities;
         Health = _health;
         Damage = _damage;
         Speed = _speed;
