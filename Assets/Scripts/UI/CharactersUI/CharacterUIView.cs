@@ -11,6 +11,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 {
     [SerializeField] private Scrollbar _scrollbar;
     [SerializeField] private GridLayoutGroup _effectsPanel;
+    [SerializeField] private GameObject _skillsBTNs;
 
     private ICharacterView _characterView;
     private CharacterUIViewmodel _viewmodel;
@@ -47,6 +48,11 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
     public GridLayoutGroup GetEffectsPanel()
     {
         return _effectsPanel;
+    }
+
+    public GameObject GetSkillsPanel()
+    {
+        return _skillsBTNs;
     }
 
     public void OnCreate()

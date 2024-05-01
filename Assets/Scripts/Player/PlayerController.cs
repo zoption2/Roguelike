@@ -53,7 +53,11 @@ namespace Player
         private ICharacterUIFactory _characterUIFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
-        
+
+        private IDisposable _addSubscription;
+        private IDisposable _removeSubscription;
+        private IDisposable _replaceSubscription;
+
         [Inject]
         public void Construct(
             SlingshotPooler slingShotPooler,   
@@ -118,17 +122,11 @@ namespace Player
             ON_STOP_MOVEMENT += CheckForEndOfState;
             SlingShotPooler.Init();
 
-            Effector.AllEffects.ObserveAdd().Subscribe((CollectionAddEvent<IEffect> effectEvent) =>
-            {
-                Debug.Log($"Added effect: {effectEvent.Value.GetType().Name}");
-            });
+            _addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
-            Effector.AllEffects.ObserveRemove().Subscribe((CollectionRemoveEvent<IEffect> removeEvent) =>
-            {
-                Debug.Log($"Removed effect: {removeEvent.Value.GetType().Name}");
-            });
+            _removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
-            Effector.AllEffects.ObserveCountChanged().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            _replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
         }
 
@@ -142,11 +140,12 @@ namespace Player
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
+            _uIViewmodel.ActivateSkillsBTNs();
 
             Debug.Log($"-----|{CharacterModel.Type}|-----");
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
-            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
+            Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
             Effector.PrintEffects(Effector.AllEffects.ToList());
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
@@ -161,6 +160,7 @@ namespace Player
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            _uIViewmodel.DeactivateSkillsBTNs();
             if (!IsMoving)
             {
                 _currentState.UseSlingshot(eventData, _slingShotInitPosition);
@@ -202,6 +202,9 @@ namespace Player
         {
             ON_CHARACTER_DEATH(this);
             _pooler.Push(CharacterModel.Type, CharacterView);
+            _addSubscription.Dispose();
+            _removeSubscription.Dispose();
+            _replaceSubscription.Dispose();
         }
 
         public ReactiveStats GetCharacterStats()
@@ -271,6 +274,7 @@ namespace Player
             //_uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
             //                                Effector.GetPreInteractionEffects(),
             //                                Effector.GetOnEndTurnInteractionEffects());
+            //UpdateEffectsOnUI(Effector.AllEffects.ToList());
         }
 
         public void SwitchState(TypeOfConditionState state)
@@ -318,6 +322,8 @@ namespace Player
         {
             CharacterView.ON_CLICK -= OnClick;
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
+
+            
         }
 
         public void ActivateUI()

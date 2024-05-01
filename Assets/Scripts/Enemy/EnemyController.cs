@@ -43,6 +43,11 @@ namespace Enemy
         private ICharacterUIFactory _characterUIFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
+
+        private IDisposable _addSubscription;
+        private IDisposable _removeSubscription;
+        private IDisposable _replaceSubscription;
+
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         private CharacterUIPooler _characterUIPooler;
@@ -113,7 +118,11 @@ namespace Enemy
             NavMeshObstacle.carving = true;
             NavMeshObstacle.carveOnlyStationary = true;
 
-            Effector.AllEffects.ObserveCountChanged().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            _addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+
+            _removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+
+            _replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
         }
 
         public void DoUpdate()
@@ -128,6 +137,9 @@ namespace Enemy
             _slingShotInitPosition = point;
             Debug.Log($"-----|{CharacterModel.Type}|-----");
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
+
+            Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
+            Effector.PrintEffects(Effector.AllEffects.ToList());
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
             Effector.PrintEffects(Effector.GetPreInteractionEffects());
@@ -203,6 +215,10 @@ namespace Enemy
         {
             ON_CHARACTER_DEATH?.Invoke(this);
             _pooler.Push(CharacterModel.Type, CharacterView);
+
+            _addSubscription.Dispose();
+            _removeSubscription.Dispose();
+            _replaceSubscription.Dispose();
         }
 
         public bool CheckIfMoving()
@@ -265,6 +281,7 @@ namespace Enemy
             //_uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
             //                                Effector.GetPreInteractionEffects(),
             //                                Effector.GetOnEndTurnInteractionEffects());
+            //UpdateEffectsOnUI(Effector.AllEffects.ToList());
         }
 
         public void SwitchState(TypeOfConditionState state)

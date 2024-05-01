@@ -627,6 +627,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scrollbar: {fileID: 5835056329488872430}
   _effectsPanel: {fileID: 7025935958618596123}
+  _skillsBTNs: {fileID: 3261200251579295946}
 --- !u!1 &5205203271790699128
 GameObject:
   m_ObjectHideFlags: 0

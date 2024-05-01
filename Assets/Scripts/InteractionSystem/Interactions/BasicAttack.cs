@@ -10,7 +10,7 @@ namespace Interactions
         {
             _effects = new()
             {
-                new FireEffect(2),
+                new FireEffect(3),
             };
 
         }

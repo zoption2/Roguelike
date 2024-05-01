@@ -1,8 +1,10 @@
 using CharactersStats;
 using Interactions;
 using Pool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -16,6 +18,7 @@ public class CharacterUIViewmodel
     private IUIFactory _factory;
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
+    private IDisposable activateDisposable;
 
     public void Init(CharacterUIModel model, IUIFactory uIFactory, CharacterUIView uIView)
     {
@@ -25,6 +28,27 @@ public class CharacterUIViewmodel
         _uIView = uIView;
         _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
         //ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
+    }
+
+    public void ActivateSkillsBTNs()
+    {
+        activateDisposable = Observable.Timer(TimeSpan.FromSeconds(0.2f))
+            .Subscribe(_ =>
+            {
+                GameObject skillsPanel = _uIView.GetSkillsPanel();
+                skillsPanel.SetActive(!skillsPanel.activeSelf);
+            });
+    }
+
+    public void DeactivateSkillsBTNs()
+    {
+        if (activateDisposable != null)
+        {
+            activateDisposable.Dispose();
+            activateDisposable = null;
+        }
+
+        _uIView.GetSkillsPanel().SetActive(false);
     }
 
     public void UpdateStats(ReactiveStats stats)
@@ -41,22 +65,31 @@ public class CharacterUIViewmodel
         {
             EffectType effectType = effect.GetEffectType();
 
-            if (!_visualizedEffects.ContainsKey(effectType))
+            if (effect.Duration > 0)
             {
-                IEffectIconView icon = _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
-                _visualizedEffects.Add(effectType, icon);
+                if (_visualizedEffects.ContainsKey(effectType))
+                {
+                    Debug.LogError(effect.Duration);
+                    _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
+                }
+                else
+                {
+                    IEffectIconView icon = _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
+                    _visualizedEffects.Add(effectType, icon);
+                    _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
+                }
             }
-
-            _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
         }
 
-        var keysToRemove = _visualizedEffects.Keys.Except(displayedEffects.Select(e => e.GetEffectType())).ToList();
+        var keysToRemove = _visualizedEffects.Keys.Where(key => !displayedEffects.Any(e => e.GetEffectType() == key && e.Duration > 0)).ToList();
+
         foreach (var key in keysToRemove)
         {
             _factory.RemoveEffectIcon(key, _visualizedEffects[key]);
             _visualizedEffects.Remove(key);
         }
     }
+
 
     public void Submit()
     {
