@@ -15,7 +15,7 @@ public class CharacterUIViewmodel
 
     private IUIFactory _factory;
     private CharacterUIView _uIView;
-    private Dictionary<EffectType, IMyPoolable> _visualizedEffects;
+    private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
 
     public void Init(CharacterUIModel model, IUIFactory uIFactory, CharacterUIView uIView)
     {
@@ -23,7 +23,7 @@ public class CharacterUIViewmodel
         ReactiveHealth = model.ReactiveHealth;
         _factory = uIFactory;
         _uIView = uIView;
-        _visualizedEffects = new Dictionary<EffectType, IMyPoolable>();
+        _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
         //ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
     }
 
@@ -35,33 +35,26 @@ public class CharacterUIViewmodel
 
     public void VisualiseEffects(List<IEffect> displayedEffects)
     {
-        EffectType effectType;
         GridLayoutGroup effectPanel = _uIView.GetEffectsPanel();
 
         foreach (var effect in displayedEffects)
         {
-            effectType = effect.GetEffectType();
+            EffectType effectType = effect.GetEffectType();
 
             if (!_visualizedEffects.ContainsKey(effectType))
             {
-                IMyPoolable icon = _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
+                IEffectIconView icon = _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
                 _visualizedEffects.Add(effectType, icon);
             }
+
+            _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
         }
 
-        List<EffectType> keysToRemove = new List<EffectType>();
-        foreach (var effectInVisualized in _visualizedEffects)
+        var keysToRemove = _visualizedEffects.Keys.Except(displayedEffects.Select(e => e.GetEffectType())).ToList();
+        foreach (var key in keysToRemove)
         {
-            if (!displayedEffects.Any(e => e.GetEffectType() == effectInVisualized.Key))
-            {
-                _factory.RemoveEffectIcon(effectInVisualized.Key, effectInVisualized.Value);
-                keysToRemove.Add(effectInVisualized.Key);
-            }
-        }
-
-        foreach (var keyToRemove in keysToRemove)
-        {
-            _visualizedEffects.Remove(keyToRemove);
+            _factory.RemoveEffectIcon(key, _visualizedEffects[key]);
+            _visualizedEffects.Remove(key);
         }
     }
 

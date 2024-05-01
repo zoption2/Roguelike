@@ -9,6 +9,8 @@ using UnityEngine.EventSystems;
 using Zenject;
 using UnityEngine.AI;
 using BehaviourTree;
+using UniRx;
+using System.Linq;
 
 namespace Player
 {
@@ -115,6 +117,19 @@ namespace Player
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
             ON_STOP_MOVEMENT += CheckForEndOfState;
             SlingShotPooler.Init();
+
+            Effector.AllEffects.ObserveAdd().Subscribe((CollectionAddEvent<IEffect> effectEvent) =>
+            {
+                Debug.Log($"Added effect: {effectEvent.Value.GetType().Name}");
+            });
+
+            Effector.AllEffects.ObserveRemove().Subscribe((CollectionRemoveEvent<IEffect> removeEvent) =>
+            {
+                Debug.Log($"Removed effect: {removeEvent.Value.GetType().Name}");
+            });
+
+            Effector.AllEffects.ObserveCountChanged().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+
         }
 
         public void DoUpdate()
@@ -130,6 +145,9 @@ namespace Player
 
             Debug.Log($"-----|{CharacterModel.Type}|-----");
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
+
+            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
+            Effector.PrintEffects(Effector.AllEffects.ToList());
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
             Effector.PrintEffects(Effector.GetPreInteractionEffects());
@@ -253,7 +271,6 @@ namespace Player
             //_uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
             //                                Effector.GetPreInteractionEffects(),
             //                                Effector.GetOnEndTurnInteractionEffects());
-
         }
 
         public void SwitchState(TypeOfConditionState state)
@@ -311,6 +328,11 @@ namespace Player
         public void DisableUI()
         {
             _UIView.gameObject.SetActive(false);
+        }
+
+        public void UpdateEffectsOnUI(List<IEffect> displayedEffects)
+        {
+            _uIViewmodel.VisualiseEffects(displayedEffects);
         }
     }
 }

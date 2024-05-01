@@ -4,8 +4,8 @@ using Zenject;
 
 public interface IUIFactory
 {
-    public IMyPoolable CreateEffectIcon(EffectType type, Vector3 position, Transform parent);
-    public void RemoveEffectIcon(EffectType type, IMyPoolable myPoolable);
+    public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent);
+    public void RemoveEffectIcon(EffectType type, IEffectIconView myPoolable);
 }
 
 public class UIFactory : IUIFactory
@@ -20,13 +20,13 @@ public class UIFactory : IUIFactory
         _pooler.Init();
     }
 
-    public IMyPoolable CreateEffectIcon(EffectType type, Vector3 position, Transform parent)
+    public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent)
     {
-        IMyPoolable effectIcon = _pooler.Pull<IMyPoolable>(type, position, Quaternion.identity, parent);
+        IEffectIconView effectIcon = _pooler.Pull<IEffectIconView>(type, position, Quaternion.identity, parent);
         return effectIcon;
     }
 
-    public void RemoveEffectIcon(EffectType type, IMyPoolable myPoolable)
+    public void RemoveEffectIcon(EffectType type, IEffectIconView myPoolable)
     {
         _pooler.Push(type, myPoolable);
     }

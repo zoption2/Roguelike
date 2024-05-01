@@ -1,6 +1,8 @@
 using CharactersStats;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using System.Linq;
 
 namespace Interactions
 {
@@ -14,7 +16,8 @@ namespace Interactions
         List<IEffect> GetPreInteractionEffects();
         List<IEffect> GetOnStartTurnInteractionEffects();
         List<IEffect> GetOnEndTurnInteractionEffects();
-        List<IEffect> GetAllEffects();
+        ReactiveCollection<IEffect> AllEffects { get; set; }
+        ReactiveCollection<IEffect> GetAllEffects();
         void PrintEffects(List<IEffect> effects);
     }
     public class EffectProcessor : IEffectProcessor
@@ -22,13 +25,19 @@ namespace Interactions
         List<IEffect> _preInteractionEffects = new();
         List<IEffect> _onStartTurnEffects = new();
         List<IEffect> _onEndTurnEffects = new();
-        List<IEffect> _allEffects = new List<IEffect>();
+        public ReactiveCollection<IEffect> AllEffects { get; set; }
 
         private CharacterUIViewmodel _viewModel;
 
         public void Init(CharacterUIViewmodel viewModel)
         {
             _viewModel = viewModel;
+            //AllEffects = new();
+        }
+
+        public EffectProcessor()
+        {
+            AllEffects = new ReactiveCollection<IEffect>();
         }
 
         public void AddEffects(List<IEffect> effects)
@@ -50,10 +59,16 @@ namespace Interactions
                     ReplaceOrAddEffect(effect, _onEndTurnEffects);
                 }
 
-                _allEffects.RemoveAll(e => e.GetType() == effect.GetType()); 
-                _allEffects.Add(effect);
+                int existingIndex = AllEffects.IndexOf(effect);
+                if (existingIndex != -1)
+                {
+                    AllEffects[existingIndex] = effect;
+                }
+                else
+                {
+                    AllEffects.Add(effect);
+                }
             }
-            _allEffects.RemoveAll(e => e.Duration <= 0);
         }
 
         private List<IEffect> ReplaceOrAddEffect(IEffect effect, List<IEffect> effectList)
@@ -70,9 +85,9 @@ namespace Interactions
             return effectList;
         }
 
-        public List<IEffect> GetAllEffects()
+        public ReactiveCollection<IEffect> GetAllEffects()
         {
-            return _allEffects;
+            return AllEffects;
         }
 
         public List<IEffect> GetPreInteractionEffects()
@@ -89,7 +104,7 @@ namespace Interactions
             return _onEndTurnEffects;
         }
 
-        public ReactiveStats ProcessStatsBeforeInteraction(ReactiveStats stats) 
+        public ReactiveStats ProcessStatsBeforeInteraction(ReactiveStats stats)
         {
             ReactiveStats statsCopy = new ReactiveStats();
 
@@ -99,11 +114,11 @@ namespace Interactions
             statsCopy.LaunchPower.Value = stats.LaunchPower.Value;
             statsCopy.Velocity.Value = stats.Velocity.Value;
 
-            _viewModel.VisualiseEffects(_allEffects);
+            //_viewModel.VisualiseEffects(_allEffects);
 
             if (_preInteractionEffects.Count > 0)
             {
-                for (int i = 0; i < _preInteractionEffects.Count; i++)
+                for (int i = _preInteractionEffects.Count - 1; i >= 0; i--)
                 {
                     if (_preInteractionEffects[i].Duration > 0)
                     {
@@ -111,20 +126,23 @@ namespace Interactions
                     }
                     else
                     {
-                        _preInteractionEffects.Remove(_preInteractionEffects[i]);
+                        //AllEffects.Remove(_preInteractionEffects[i]);
+                        AllEffects.RemoveAt(i);
+                        _preInteractionEffects.RemoveAt(i);
                     }
                 }
             }
             return statsCopy;
         }
 
+
         public void ProcessEffectsOnStart(ReactiveStats stats)
         {
-            _viewModel.VisualiseEffects(_allEffects);
+            //_viewModel.VisualiseEffects(_allEffects);
 
             if (_onStartTurnEffects.Count > 0)
             {
-                for (int i = 0; i < _onStartTurnEffects.Count; i++)
+                for (int i = _onStartTurnEffects.Count - 1; i >= 0; i--)
                 {
                     if (_onStartTurnEffects[i].Duration > 0)
                     {
@@ -132,19 +150,22 @@ namespace Interactions
                     }
                     else
                     {
-                        _onStartTurnEffects.Remove(_onStartTurnEffects[i]);
+                        //AllEffects.Remove(_onStartTurnEffects[i]);
+                        AllEffects.RemoveAt(i);
+                        _onStartTurnEffects.RemoveAt(i);
                     }
                 }
             }
         }
 
+
         public void ProcessEffectsOnEnd(ReactiveStats stats)
         {
-            _viewModel.VisualiseEffects(_allEffects);
+            //_viewModel.VisualiseEffects(_allEffects);
 
             if (_onEndTurnEffects.Count > 0)
             {
-                for (int i = 0; i < _onEndTurnEffects.Count; i++)
+                for (int i = _onEndTurnEffects.Count - 1; i >= 0; i--)
                 {
                     if (_onEndTurnEffects[i].Duration > 0)
                     {
@@ -152,11 +173,16 @@ namespace Interactions
                     }
                     else
                     {
-                        _onEndTurnEffects.Remove(_onEndTurnEffects[i]);
+                        //AllEffects.Remove(_onEndTurnEffects[i]);
+                        AllEffects.RemoveAt(i);
+                        _onEndTurnEffects.RemoveAt(i);
                     }
                 }
             }
         }
+
+
+
 
         //////////////////////////////////////////////////
         public void PrintEffects(List<IEffect> effects)

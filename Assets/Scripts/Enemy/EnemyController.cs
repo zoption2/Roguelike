@@ -9,6 +9,8 @@ using CharactersStats;
 using Zenject;
 using Gameplay;
 using UnityEngine.AI;
+using UniRx;
+using System.Linq;
 
 namespace Enemy
 {
@@ -110,6 +112,8 @@ namespace Enemy
             NavMeshObstacle = CharacterView.NavMeshObstacle;
             NavMeshObstacle.carving = true;
             NavMeshObstacle.carveOnlyStationary = true;
+
+            Effector.AllEffects.ObserveCountChanged().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
         }
 
         public void DoUpdate()
@@ -308,6 +312,11 @@ namespace Enemy
         public void DisableUI()
         {
             _UIView.gameObject.SetActive(false);
+        }
+
+        public void UpdateEffectsOnUI(List<IEffect> displayedEffects)
+        {
+            _uIViewmodel.VisualiseEffects(displayedEffects);
         }
     }
 }
