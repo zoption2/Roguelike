@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 using Zenject;
 using UnityEngine.AI;
 using BehaviourTree;
-using UniRx;
 using System.Linq;
 
 namespace Player
@@ -48,6 +47,7 @@ namespace Player
         private DiContainer _container;
         private NavMeshObstacle _navMeshObstacle;
         private CharacterUIViewmodel _uIViewmodel;
+        private ReactiveList<IEffect> _allEffects;
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterUIFactory _characterUIFactory;
@@ -97,6 +97,8 @@ namespace Player
             var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
+            _allEffects = CharacterModel.GetAllEffects();
+
             CharacterView = characterView;
             CharacterView.Init(this);
 
@@ -106,10 +108,12 @@ namespace Player
             _UIView = characterUIView;
             _pooler = characterPooler;
 
-            _uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats, _uIFactory, _UIView);
+            //_uIViewmodel = _characterUIFactory.CreateViewModel(CharacterModel, _uIFactory, _UIView);
+            _uIViewmodel = new CharacterUIViewmodel();
+            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView);
 
             _UIView.Init(CharacterView, _uIViewmodel);
-            Effector.Init(_uIViewmodel);
+            Effector.Init(_uIViewmodel, _allEffects);
 
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
@@ -122,11 +126,11 @@ namespace Player
             ON_STOP_MOVEMENT += CheckForEndOfState;
             SlingShotPooler.Init();
 
-            _addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            //_addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
-            _removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            //_removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
-            _replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            //_replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
         }
 
@@ -146,7 +150,7 @@ namespace Player
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
             Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
-            Effector.PrintEffects(Effector.AllEffects.ToList());
+            Effector.PrintEffects(_allEffects.Value);
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
             Effector.PrintEffects(Effector.GetPreInteractionEffects());

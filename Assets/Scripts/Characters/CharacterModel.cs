@@ -1,4 +1,5 @@
 using CharactersStats;
+using Interactions;
 using System;
 using System.Collections.Generic;
 
@@ -7,8 +8,7 @@ public class CharacterModel : CharacterModelBase
 {
     public CharacterType Type;
     public List<InteractionType> Abilities;
-
-    private OriginStats _originStats;
+    private ReactiveList<IEffect> _allEffects;
 
     public int Health, Damage, Speed;
     public float LaunchPower, Velocity;
@@ -22,11 +22,25 @@ public class CharacterModel : CharacterModelBase
         LaunchPower = _launchPower;
         Velocity = _velocity;
 
+        _allEffects = new ReactiveList<IEffect>();
+
+        _allEffects.Value = new List<IEffect>();
+
         Abilities = new List<InteractionType>
         {
             InteractionType.BasicAttack,
             InteractionType.Knight_HeavyAttack
         };
+    }
+
+    public void SetHealth(int value)
+    {
+        _reactiveStats.Health.Value = value;
+    }
+
+    public ReactiveList<IEffect> GetAllEffects()
+    {
+        return _allEffects; 
     }
 }
 

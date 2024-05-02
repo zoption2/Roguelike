@@ -4,7 +4,6 @@ using Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -13,17 +12,17 @@ public class CharacterUIViewmodel
 {
     public ReactiveInt ReactiveHealth;
 
-    private CharacterUIModel _model;
+    private CharacterModel _model;
 
     private IUIFactory _factory;
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
     private IDisposable activateDisposable;
 
-    public void Init(CharacterUIModel model, IUIFactory uIFactory, CharacterUIView uIView)
+    public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView)
     {
         _model = model;
-        ReactiveHealth = model.ReactiveHealth;
+        ReactiveHealth = model.GetReactiveStats().Health;
         _factory = uIFactory;
         _uIView = uIView;
         _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
@@ -32,12 +31,12 @@ public class CharacterUIViewmodel
 
     public void ActivateSkillsBTNs()
     {
-        activateDisposable = Observable.Timer(TimeSpan.FromSeconds(0.2f))
-            .Subscribe(_ =>
-            {
-                GameObject skillsPanel = _uIView.GetSkillsPanel();
-                skillsPanel.SetActive(!skillsPanel.activeSelf);
-            });
+        //activateDisposable = Observable.Timer(TimeSpan.FromSeconds(0.2f))
+        //    .Subscribe(_ =>
+        //    {
+        //        GameObject skillsPanel = _uIView.GetSkillsPanel();
+        //        skillsPanel.SetActive(!skillsPanel.activeSelf);
+        //    });
     }
 
     public void DeactivateSkillsBTNs()
@@ -60,6 +59,8 @@ public class CharacterUIViewmodel
     public void VisualiseEffects(List<IEffect> displayedEffects)
     {
         GridLayoutGroup effectPanel = _uIView.GetEffectsPanel();
+
+        if (displayedEffects == null) return;
 
         foreach (var effect in displayedEffects)
         {

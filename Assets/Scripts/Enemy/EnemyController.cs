@@ -9,8 +9,6 @@ using CharactersStats;
 using Zenject;
 using Gameplay;
 using UnityEngine.AI;
-using UniRx;
-using System.Linq;
 
 namespace Enemy
 {
@@ -37,6 +35,7 @@ namespace Enemy
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
         private CharacterUIView _UIView;
+        private ReactiveList<IEffect> _allEffects;
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
@@ -92,6 +91,8 @@ namespace Enemy
             var stats = CharacterModel.GetStats();
             ModifiableStats = stats.ToReactive();
 
+            _allEffects = CharacterModel.GetAllEffects();
+
             CharacterView = characterView;
             CharacterView.Init(this);
 
@@ -103,11 +104,12 @@ namespace Enemy
             _UIView = characterUIView;
             _pooler = characterPooler;
 
-            _uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats, _uIFactory, _UIView);
-
+            //_uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats, _uIFactory, _UIView);
+            _uIViewmodel = new CharacterUIViewmodel();
+            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView);
 
             _UIView.Init(CharacterView, _uIViewmodel);
-            Effector.Init(_uIViewmodel);
+            Effector.Init(_uIViewmodel, _allEffects);
 
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
@@ -118,11 +120,11 @@ namespace Enemy
             NavMeshObstacle.carving = true;
             NavMeshObstacle.carveOnlyStationary = true;
 
-            _addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            //_addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
-            _removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            //_removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
-            _replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
+            //_replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
         }
 
         public void DoUpdate()
@@ -139,7 +141,7 @@ namespace Enemy
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
             Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
-            Effector.PrintEffects(Effector.AllEffects.ToList());
+            Effector.PrintEffects(_allEffects.Value);
 
             Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
             Effector.PrintEffects(Effector.GetPreInteractionEffects());

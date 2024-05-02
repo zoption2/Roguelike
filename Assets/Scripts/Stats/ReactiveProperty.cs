@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 namespace CharactersStats
@@ -72,6 +73,19 @@ namespace CharactersStats
         }
 
         public ReactiveFloat(float value)
+        {
+            this.value = value;
+        }
+    }
+
+    public class ReactiveList<T> : ReactiveProperty<List<T>>
+    {
+        public ReactiveList()
+        {
+
+        }
+
+        public ReactiveList(List<T> value)
         {
             this.value = value;
         }

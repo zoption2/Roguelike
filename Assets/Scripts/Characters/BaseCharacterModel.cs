@@ -11,7 +11,8 @@ public abstract class CharacterModelBase : ICharacterModel
     protected int _health;
     protected int _speed;
     protected float _launchPower;
-    private OriginStats _stats;
+    protected OriginStats _originStats;
+    protected ReactiveStats _reactiveStats;
 
     public CharacterModelBase(OriginStats originStats)
     {
@@ -20,11 +21,19 @@ public abstract class CharacterModelBase : ICharacterModel
         _speed = originStats.Speed;
         _launchPower = originStats.LaunchPower;
         _velocity = originStats.Velocity;
-        _stats = originStats;
+        _originStats = originStats;
+        _reactiveStats = _originStats.ToReactive();
     }
 
     public OriginStats GetStats()
     {
-        return _stats;
+        return _originStats;
     }
+
+    public ReactiveStats GetReactiveStats()
+    {
+        return _reactiveStats;
+    }
+
+
 }
