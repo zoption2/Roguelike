@@ -73,8 +73,9 @@ namespace BehaviourTree
             NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
             navObstacle.enabled = false;
             navAgent.enabled = true;
+            
 
-            bool pathIsFound = _characterController.NavMeshAgent.CalculatePath(target.position, path);
+            bool pathIsFound = navAgent.CalculatePath(target.position, path);
             bool couldReachPoint = false;
             if (pathIsFound)
             {
@@ -82,6 +83,9 @@ namespace BehaviourTree
                 Debug.DrawLine(GetCharacterPosition(), point, Color.yellow, 3f);
                 couldReachPoint = CouldReach(point);
             }
+            Debug.Log("path is found: " + pathIsFound);
+            Debug.Log("could reach: " + couldReachPoint);
+
             if (!_characterController.IsStunned && couldReachPoint)
             {
                 SetPath(path);
@@ -93,8 +97,8 @@ namespace BehaviourTree
                 Debug.Log("CAN'T MOVE");
                 _blackboard.SetData(_moveKey, false);
             }
-            _characterController.NavMeshAgent.enabled = false;
-            _characterController.NavMeshObstacle.enabled = true;
+            navAgent.enabled = false;
+            navObstacle.enabled = true;
         }
 
         public Vector3 GetCharacterPosition()

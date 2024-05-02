@@ -21,10 +21,12 @@ public abstract class Ability : IAbility
 
     public void TickReload()
     {
-        if(TurnsLeftToReload > 0)
+        if (TurnsLeftToReload > 0)
+        {
             TurnsLeftToReload--;
-        Debug.Log(TurnsLeftToReload + " turns left till reload of " + this);
-        if (TurnsLeftToReload == 0)
+            Debug.Log(TurnsLeftToReload + " turns left till reload of " + this);
+        }
+        if (TurnsLeftToReload == 0 && ReadyForUse==false)
         {
             ReadyForUse = true;
             Debug.Log(this + " has reloaded!");
