@@ -1,9 +1,11 @@
 using CharactersStats;
+using System;
 
 namespace Interactions
 {
     public interface IEffect
     {
+        public event Action ON_DURATION_CHANGED;
         void UseEffect(ReactiveStats stats);
         EffectType GetEffectType();
         int Duration { get; set; }

@@ -88,6 +88,7 @@ namespace Interactions
                 }
             }
             effectList.Value.Add(effect);
+            SubscribeToEffectValues(_allEffects);
             return effectList;
         }
 
@@ -150,6 +151,20 @@ namespace Interactions
                     }
                 }
             }
+            
+        }
+
+        private void SubscribeToEffectValues(ReactiveList<IEffect> effects)
+        {
+            foreach (IEffect effect in effects.Value)
+            {
+                effect.ON_DURATION_CHANGED -= HandleDurationChanged;
+                effect.ON_DURATION_CHANGED += HandleDurationChanged;
+            }
+        }
+
+        private void HandleDurationChanged()
+        {
             _viewModel.VisualiseEffects(_allEffects.Value);
         }
 

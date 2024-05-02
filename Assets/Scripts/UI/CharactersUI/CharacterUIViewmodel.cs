@@ -4,6 +4,7 @@ using Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -18,6 +19,8 @@ public class CharacterUIViewmodel
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
     private IDisposable activateDisposable;
+    GameObject skillsPanel;
+    private bool isActivated = false;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView)
     {
@@ -26,28 +29,28 @@ public class CharacterUIViewmodel
         _factory = uIFactory;
         _uIView = uIView;
         _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
+        skillsPanel = _uIView.GetSkillsPanel();
         //ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
     }
 
-    public void ActivateSkillsBTNs()
+    public async void ActivateSkillsBTNs()
     {
-        //activateDisposable = Observable.Timer(TimeSpan.FromSeconds(0.2f))
-        //    .Subscribe(_ =>
-        //    {
-        //        GameObject skillsPanel = _uIView.GetSkillsPanel();
-        //        skillsPanel.SetActive(!skillsPanel.activeSelf);
-        //    });
+        isActivated = !isActivated; 
+        await Task.Delay(200);
+        if (isActivated)
+        {
+            skillsPanel.SetActive(true);
+        }
+        else
+        {
+            skillsPanel.SetActive(false);
+        }
     }
 
     public void DeactivateSkillsBTNs()
     {
-        if (activateDisposable != null)
-        {
-            activateDisposable.Dispose();
-            activateDisposable = null;
-        }
-
-        _uIView.GetSkillsPanel().SetActive(false);
+        isActivated = false;
+        skillsPanel.SetActive(false);
     }
 
     public void UpdateStats(ReactiveStats stats)

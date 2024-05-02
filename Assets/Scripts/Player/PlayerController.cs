@@ -108,7 +108,6 @@ namespace Player
             _UIView = characterUIView;
             _pooler = characterPooler;
 
-            //_uIViewmodel = _characterUIFactory.CreateViewModel(CharacterModel, _uIFactory, _UIView);
             _uIViewmodel = new CharacterUIViewmodel();
             _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView);
 
@@ -125,12 +124,6 @@ namespace Player
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
             ON_STOP_MOVEMENT += CheckForEndOfState;
             SlingShotPooler.Init();
-
-            //_addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
-
-            //_removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
-
-            //_replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
 
         }
 
