@@ -83,7 +83,6 @@ namespace BehaviourTree
             if (pathIsFound)
             {
                 Vector3 point = FindWaypointToObserveTarget(path, target);
-                Debug.DrawLine(GetCharacterPosition(), point, Color.yellow, 3f);
                 couldReachPoint = CouldReach(point);
             }
             Debug.Log("path is found: " + pathIsFound);

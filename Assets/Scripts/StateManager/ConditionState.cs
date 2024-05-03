@@ -235,7 +235,6 @@ public class EnemyActiveState : ActiveState, IConditionState
         NavMeshPath path = _characterController.Path;
 
         Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path, target);
-        Debug.DrawLine(enemy.position, waypoint, Color.green,3f);
 
         Vector2 direction = waypoint - enemy.position;
         _characterController.CharacterView.ChangeDirection(direction);
