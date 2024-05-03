@@ -86,7 +86,6 @@ namespace BehaviourTree
                 couldReachPoint = CouldReach(point);
             }
             Debug.Log("path is found: " + pathIsFound);
-            Debug.Log("path waypoints: " + path.corners.Length);
             Debug.Log("could reach: " + couldReachPoint);
 
             if (!_characterController.IsStunned && couldReachPoint)
@@ -142,15 +141,12 @@ namespace BehaviourTree
             Vector3 waypoint = path.corners[0];
             foreach (Vector3 point in path.corners)
             {
-                //Debug.Log("just waypoint:" + point);
                 if (SphereCastHitTheTarget(target, point) && PathToPointIsClear(point) && point != path.corners[0])
                 {
-                    //Debug.Log("waypoint for attacking:" + point);
                     return point;
                 }
                 else if (PathToPointIsClear(point) && CouldReach(point) && point != path.corners[0])
                 {
-                    //Debug.Log("waypoint:" + waypoint + "is being reassigned by point:"+ point);
                     waypoint = point;
                 }
             }

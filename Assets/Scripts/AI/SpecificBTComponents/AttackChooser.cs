@@ -27,7 +27,6 @@ namespace BehaviourTree
             foreach (IAbility abilityType in availableAbilities)
             {
                 Debug.Log(abilityType + "   multiplier: " + abilityType.GetLaunchModifier());
-                Debug.DrawLine(DefaultBT.GetCharacterPosition(), target.position, Color.red, 4);
                 bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, DefaultBT.GetCharacterPosition(), abilityType.GetLaunchModifier());
                 Debug.Log("Attack would reach target: " + attackWouldReachTarget);
                 if (attackWouldReachTarget)
