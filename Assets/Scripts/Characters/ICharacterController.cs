@@ -26,6 +26,8 @@ public interface ICharacterController
     public NavMeshPath Path { get; set; }
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
+
+    public void UpdateHealthBar();
     public CharacterType GetCharacterType();
     public Transform GetTransform();
     public Rigidbody GetRigidbody();

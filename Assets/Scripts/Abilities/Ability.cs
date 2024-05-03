@@ -1,9 +1,10 @@
+using CharactersStats;
 using Interactions;
 using UnityEngine;
 
 public abstract class Ability : IAbility
 {
-    public int ReloadTime { get; }
+    public ReactiveInt ReloadTime { get; }
     public IInteraction Interaction { get; }
     public bool ReadyForUse { get; private set; }
     public int TurnsLeftToReload { get; private set; }
@@ -16,7 +17,7 @@ public abstract class Ability : IAbility
         ReadyForUse = true;
         TurnsLeftToReload = 0;
         Interaction = interaction;
-        ReloadTime = reloadTime;
+        ReloadTime.Value = reloadTime;
         _launchModifier = launchMod;
         Type = type;
     }
@@ -37,7 +38,7 @@ public abstract class Ability : IAbility
 
     public void SetForReload()
     {
-        TurnsLeftToReload = ReloadTime;
+        TurnsLeftToReload = ReloadTime.Value;
         if (TurnsLeftToReload > 0)
         {
             ReadyForUse = false;

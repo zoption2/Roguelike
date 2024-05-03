@@ -55,6 +55,8 @@ namespace Gameplay
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
 
+            _characterController.UpdateHealthBar();
+
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
         }
@@ -100,6 +102,7 @@ namespace Gameplay
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
 
+            _characterController.UpdateHealthBar();
             
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
             //Debug.Log("Exited enemy turn state");

@@ -1,10 +1,11 @@
+using CharactersStats;
 using Interactions;
 
 
 public interface IAbility 
 {
     public bool ReadyForUse { get;}
-    public int ReloadTime { get; }
+    public ReactiveInt ReloadTime { get; }
     public int TurnsLeftToReload { get;}
     public IInteraction Interaction { get;}
     public AbilityType Type { get;}

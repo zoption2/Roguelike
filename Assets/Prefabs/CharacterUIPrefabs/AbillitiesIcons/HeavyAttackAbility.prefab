@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6961216943911297986}
   - component: {fileID: 6134202499502154277}
   m_Layer: 0
-  m_Name: SpecialAbility
+  m_Name: HeavyAttackAbility
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -19,7 +19,7 @@ public class CharacterUIViewmodel
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
     private IDisposable activateDisposable;
-    GameObject skillsPanel;
+    GameObject _abilityBTNs;
     private bool isActivated = false;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView)
@@ -29,8 +29,9 @@ public class CharacterUIViewmodel
         _factory = uIFactory;
         _uIView = uIView;
         _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
-        skillsPanel = _uIView.GetSkillsPanel();
+        _abilityBTNs = _uIView.GetAbilityBTNs();
         //ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
+        VisualiseAbilities();
     }
 
     public async void ActivateSkillsBTNs()
@@ -39,24 +40,37 @@ public class CharacterUIViewmodel
         await Task.Delay(200);
         if (isActivated)
         {
-            skillsPanel.SetActive(true);
+            _abilityBTNs.SetActive(true);
         }
         else
         {
-            skillsPanel.SetActive(false);
+            _abilityBTNs.SetActive(false);
         }
     }
 
     public void DeactivateSkillsBTNs()
     {
         isActivated = false;
-        skillsPanel.SetActive(false);
+        _abilityBTNs.SetActive(false);
     }
 
     public void UpdateStats(ReactiveStats stats)
     {
         ReactiveHealth = stats.Health;
         _model.SetHealth(ReactiveHealth.Value);
+    }
+
+    public void VisualiseAbilities()
+    {
+        GridLayoutGroup abilityPanel = _uIView.GetAbilityPanel();
+
+        List<IAbility> abilities = _model.Abilities;
+
+        foreach(var ability in abilities)
+        {
+            AbilityType type = ability.Type;
+            IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, abilityPanel.transform.position, abilityPanel.transform);
+        }
     }
 
     public void VisualiseEffects(List<IEffect> displayedEffects)

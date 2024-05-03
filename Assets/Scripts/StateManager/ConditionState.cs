@@ -473,6 +473,17 @@ public class StunState : IConditionState
 
     public void ApplyInteraction(IInteraction interaction)
     {
+        List<IEffect> effects = interaction.GetEffects();
+        if (effects != null && effects.Count > 0)
+        {
+            foreach (IEffect effect in effects)
+            {
+                _characterController.Effector.AddEffects(effects);
+            }
+        }
+        ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
+        _characterController.ModifiableStats = _characterController.InteractionCalculator.CalculateInteractionResult(_characterController.ModifiableStats, interactionResult);
+        _characterController.AnalizeCondition();
     }
 
     public IInteraction GetInteraction(InteractionType interactionType)

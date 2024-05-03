@@ -18,6 +18,9 @@ public class ContextInstaller : MonoInstaller
     private CharacterPrefabHolder _characterPrefabHolder;
 
     [SerializeField]
+    private UIAbilitiesPrefabHolder _uIAbilitiesPrefabHolder;
+
+    [SerializeField]
     private CharacterUIPrefabHolder _characterUIPrefabHolder;
 
     [SerializeField]
@@ -96,6 +99,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<EffectPooler>().To<EffectPooler>().AsSingle();
         Container.Bind<CharacterUIPooler>().To<CharacterUIPooler>().AsSingle();
         Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
+        Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
     }
 
     public void BindFactories()
@@ -119,6 +123,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<BuffPrefabHolder>().FromInstance(_buffPrefabHolder).AsSingle();
         Container.Bind<EffectPrefabHolder>().FromInstance(_effectPrefabHolder).AsSingle();
         Container.Bind<NavigationPrefabHolder>().FromInstance(_navPrefabHolder).AsSingle();
+        Container.Bind<UIAbilitiesPrefabHolder>().FromInstance(_uIAbilitiesPrefabHolder).AsSingle();
     }
 
     public void BindModelHolders()

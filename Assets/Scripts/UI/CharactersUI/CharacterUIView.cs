@@ -12,7 +12,8 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 {
     [SerializeField] private Scrollbar _scrollbar;
     [SerializeField] private GridLayoutGroup _effectsPanel;
-    [SerializeField] private GameObject _skillsBTNs;
+    [SerializeField] private GridLayoutGroup _abilityPanel;
+    [SerializeField] private GameObject _abilityBTNs;
 
     private ICharacterView _characterView;
     private CharacterUIViewmodel _viewmodel;
@@ -50,35 +51,16 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
     public void ChangeHealthBarOnEndTurn()
     {
         float currentSize = _scrollbar.size;
+        RectTransform rt = _scrollbar.GetComponent<RectTransform>();
 
-        RectTransform scrollbarRectTransform = _scrollbar.GetComponent<RectTransform>();
-        Vector2 newSizeDelta = scrollbarRectTransform.sizeDelta;
-        newSizeDelta.x = currentSize * _maxHealth;
+        Vector2 newSizeDelta = rt.sizeDelta;
 
-        _scrollbar.size = 1f;
+        float pixelWidth = currentSize * rt.rect.width;
 
-        StartCoroutine(LerpWidth(scrollbarRectTransform, newSizeDelta.x, _transitionDuration));
+        newSizeDelta.x = pixelWidth;
+
+        rt.sizeDelta = newSizeDelta;
     }
-
-    private IEnumerator LerpWidth(RectTransform rectTransform, float targetWidth, float duration)
-    {
-        float initialWidth = rectTransform.sizeDelta.x;
-        float timeElapsed = 0f;
-
-        while (timeElapsed < duration)
-        {
-            timeElapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(timeElapsed / duration);
-            float newWidth = Mathf.Lerp(initialWidth, targetWidth, t);
-
-            rectTransform.sizeDelta = new Vector2(newWidth, rectTransform.sizeDelta.y);
-
-            yield return null;
-        }
-
-        rectTransform.sizeDelta = new Vector2(targetWidth, rectTransform.sizeDelta.y);
-    }
-
 
 
     public GridLayoutGroup GetEffectsPanel()
@@ -86,9 +68,14 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
         return _effectsPanel;
     }
 
-    public GameObject GetSkillsPanel()
+    public GridLayoutGroup GetAbilityPanel()
     {
-        return _skillsBTNs;
+        return _abilityPanel;
+    }
+
+    public GameObject GetAbilityBTNs()
+    {
+        return _abilityBTNs;
     }
 
     public void OnCreate()

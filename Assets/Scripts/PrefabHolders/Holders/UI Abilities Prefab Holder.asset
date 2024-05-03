@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ac45e9dd82a1648bdec3761f52ff01, type: 3}
+  m_Name: UI Abilities Prefab Holder
+  m_EditorClassIdentifier: 
+  _prefabs:
+  - Key: 0
+    Value: {fileID: 5882390599834112184, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
+  - Key: 1
+    Value: {fileID: 1055021620984264437, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
+  - Key: 2
+    Value: {fileID: 5031415635377583403, guid: bdbd791a82a74374892dbe9254759837, type: 3}

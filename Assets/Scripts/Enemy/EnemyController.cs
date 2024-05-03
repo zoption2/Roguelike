@@ -319,5 +319,10 @@ namespace Enemy
         {
             _uIViewmodel.VisualiseEffects(displayedEffects);
         }
+
+        public void UpdateHealthBar()
+        {
+            //_uIViewmodel.UpdateHealthBar();
+        }
     }
 }
