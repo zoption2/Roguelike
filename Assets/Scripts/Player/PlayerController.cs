@@ -27,6 +27,7 @@ namespace Player
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
+        public IAbility CurrentAbility { get; set; }
         public CharacterView CharacterView { get; set; }
         public CharacterModel CharacterModel { get; set; }
         public SlingshotPooler SlingShotPooler { get; set; }
@@ -40,6 +41,7 @@ namespace Player
         public IDefaultBehaviourTree DefaultBehaviourTree { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IAnalyzer Analyzer { get; set; }
+        public NavMeshPath Path { get; set; }
 
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
@@ -91,6 +93,7 @@ namespace Player
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             DefaultBehaviourTree.InitTree(this);
+            DefaultBehaviourTree.SetAbilities(playerModel.Abilities);
 
             CharacterModel = playerModel;
 
@@ -164,11 +167,6 @@ namespace Player
             }
         }
 
-        public void Launch(Vector2 direction)
-        {
-            _currentState.LaunchYourself(direction);
-        }
-
         public IInteraction GetInteraction()
         {
             return _currentState.GetInteraction(InteractionType.Knight_HeavyAttack);
@@ -228,11 +226,6 @@ namespace Player
 
         public void Tick()
         {
-        }
-
-        public void SkipTurn()
-        {
-            ON_STOP_MOVEMENT?.Invoke();
         }
 
         public bool CheckIfMoving()

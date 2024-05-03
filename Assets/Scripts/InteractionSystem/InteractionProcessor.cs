@@ -13,7 +13,7 @@ namespace Interactions
         {
             var stats = new ReactiveStats();
 
-            interaction.Interacte(stats);
+            interaction.Interact(stats);
 
             return stats;
         }

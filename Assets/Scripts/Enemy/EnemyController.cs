@@ -23,6 +23,7 @@ namespace Enemy
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
+        public IAbility CurrentAbility { get; set; }
         public IAnalyzer Analyzer { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
@@ -36,6 +37,7 @@ namespace Enemy
         public NavMeshAgent NavMeshAgent { get; set; }
         private CharacterUIView _UIView;
         private ReactiveList<IEffect> _allEffects;
+        public NavMeshPath Path { get; set; }
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
@@ -85,6 +87,7 @@ namespace Enemy
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
             DefaultBehaviourTree.InitTree(this);
+            DefaultBehaviourTree.SetAbilities(characterModel.Abilities);
 
             CharacterModel = characterModel;
 
@@ -130,8 +133,6 @@ namespace Enemy
         public void DoUpdate()
         {
             _currentState.DoUpdate();
-
-            
         }
 
         public void OnClick(Transform point, PointerEventData eventData)
@@ -161,8 +162,16 @@ namespace Enemy
         }
         public IInteraction GetInteraction()
         {
-
-            return _currentState.GetInteraction(InteractionType.BasicAttack);
+            if(CurrentAbility != null)
+            {
+                IInteraction interaction = CurrentAbility.Interaction;
+                interaction.SetStats(ModifiableStats);
+                return interaction;
+            }
+            else
+            {
+                return _currentState.GetInteraction(InteractionType.None);
+            }
         }
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
@@ -200,16 +209,6 @@ namespace Enemy
             _currentState.AddEffects(effects);
             _uIViewmodel.VisualiseEffects(_allEffects.Value);
         }
-        public void Launch(Vector2 direction)
-        {
-            _currentState.LaunchYourself(direction);
-        }
-
-        public void LaunchToPoint(Vector3 point)
-        {
-            _currentState.LaunchYourselfToPoint(point);
-        }
-
         public void CheckForEndOfState()
         {
             _characterScenarioContext.CheckIfAllStopped();
@@ -243,11 +242,6 @@ namespace Enemy
         public void Tick()
         {
             DefaultBehaviourTree.TickTree();
-        }
-
-        public void SkipTurn()
-        {
-            ON_STOP_MOVEMENT?.Invoke();
         }
 
         public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)

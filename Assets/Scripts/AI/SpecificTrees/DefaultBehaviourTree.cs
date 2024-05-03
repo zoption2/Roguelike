@@ -1,5 +1,7 @@
+using Interactions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,12 +11,18 @@ namespace BehaviourTree
     {
         public Transform GetTarget();
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target);
-        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint);
+        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float multiplier = 1);
         public Vector3 GetCharacterPosition();
+        public void SetAbilities(List<IAbility> abilities);
+        public void SetCurrentAbility(IAbility ability);
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
         private string _attackKey = "CanAttack", _moveKey = "CanMove", _targetKey ="Target";
+
+        private AttackChooser _attackChooser;
+
+        private List<IAbility> _abilities;
         protected override Node SetupRootNode()
         {
             Node rootNode = new Selector( new List<Node>
@@ -41,12 +49,11 @@ namespace BehaviourTree
         {
             return (Transform)_blackboard.GetData(_targetKey);
         }
-        protected override void UpdateBlackboard()
+        protected override void UpdateData()
         {
             FindTarget();
             if(GetTarget() != null)
             {
-                
                 CheckIfCanAttack();
                 CheckIfCanMove();   
             }
@@ -55,32 +62,45 @@ namespace BehaviourTree
                 _blackboard.SetData(_attackKey, false);
                 _blackboard.SetData(_moveKey, false);
             }
+            TickAbilities();
         }
 
         private void CheckIfCanMove()
         {
             Transform target = GetTarget();
             NavMeshPath path = new NavMeshPath();
-            _characterController.NavMeshObstacle.enabled = false;
-            _characterController.NavMeshAgent.enabled = true;
-            bool pathIsFound = _characterController.NavMeshAgent.CalculatePath(target.position, path);
+            NavMeshAgent navAgent = _characterController.NavMeshAgent;
+            NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
+            navObstacle.enabled = false;
+            navAgent.enabled = true;
+
+            float offset = 0.5f;
+            Vector3 position = new Vector3(target.position.x,target.position.y, target.position.z + offset);
+
+            bool pathIsFound = navAgent.CalculatePath(position, path);
             bool couldReachPoint = false;
+
             if (pathIsFound)
             {
-                couldReachPoint = CouldReach(FindWaypointToObserveTarget(path, target));
+                Vector3 point = FindWaypointToObserveTarget(path, target);
+                couldReachPoint = CouldReach(point);
             }
+            Debug.Log("path is found: " + pathIsFound);
+            Debug.Log("could reach: " + couldReachPoint);
 
             if (!_characterController.IsStunned && couldReachPoint)
             {
+                SetPath(path);
+                Debug.Log("Can Move");
                 _blackboard.SetData(_moveKey, true);
             } 
             else
             {
+                Debug.Log("CAN'T MOVE");
                 _blackboard.SetData(_moveKey, false);
             }
-            _characterController.NavMeshAgent.enabled = false;
-            _characterController.NavMeshObstacle.enabled = true;
-            
+            navAgent.enabled = false;
+            navObstacle.enabled = true;
         }
 
         public Vector3 GetCharacterPosition()
@@ -91,12 +111,14 @@ namespace BehaviourTree
         {
             Transform  target = GetTarget();
             Vector3 characterPosition = GetCharacterPosition();
-            if (SphereCastHitTheTarget(target, characterPosition) && !_characterController.IsStunned)
+            if (_attackChooser.ChooseAbility() != null && !_characterController.IsStunned)
             {
+                Debug.Log("Can Attack");
                 _blackboard.SetData(_attackKey, true);
             }
             else
             {
+                Debug.Log("!!!CAN'T Attack!!!");
                 _blackboard.SetData(_attackKey, false);
             }
 
@@ -104,9 +126,7 @@ namespace BehaviourTree
 
         protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
         {
-            LayerMask mask = LayerMask.GetMask("Default", "Enemy", "Player");
-            //Vector3 characterPosition = GetCharacterPosition();
-            //startingPoint.z = characterPosition.z;
+            LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
             Vector3 direction = target - startingPoint;
             direction.z = 0;
             direction.Normalize();
@@ -118,7 +138,7 @@ namespace BehaviourTree
 
         public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target)
         {
-            Vector3 waypoint = path.corners[1];
+            Vector3 waypoint = path.corners[0];
             foreach (Vector3 point in path.corners)
             {
                 if (SphereCastHitTheTarget(target, point) && PathToPointIsClear(point) && point != path.corners[0])
@@ -146,12 +166,12 @@ namespace BehaviourTree
                 return false;
             }
         }
-        protected bool CouldReach(Vector2 point)
+        protected bool CouldReach(Vector3 point)
         {
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
             float dragConstant = _characterController.GetRigidbody().drag;
             float maxDistance = launchPower / dragConstant;
-            float distance = Vector2.Distance(point, GetCharacterPosition());
+            float distance = Vector3.Distance(point, GetCharacterPosition());
             if(distance > maxDistance)
             {
                 return false;
@@ -160,21 +180,19 @@ namespace BehaviourTree
                 return true;
         }
 
-        public bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint)
+        public bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint, float multiplier = 1)
         {
             float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
             float dragConstant = _characterController.GetRigidbody().drag;
-            float maxDistance = launchPower / dragConstant;
+            float maxDistance = (launchPower / dragConstant) * multiplier;
             
             RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
             Transform hitTransform = hit.transform;
-
             if (hitTransform != null &&  hitTransform.childCount > 0)
             {
                 hitTransform = hit.transform.GetChild(0);
             }
-            //Debug.LogWarning("Hit: " + hitTransform.gameObject.name);
-            //Debug.LogWarning("Target: " + target.gameObject.name);
+
             if (hitTransform != null && hitTransform == target)
             {
                 return true;
@@ -208,6 +226,31 @@ namespace BehaviourTree
             {
                 _blackboard.SetData(_targetKey, null);
             }
+        }
+
+        public void SetAbilities(List<IAbility> abilities)
+        {
+            _abilities = abilities;
+            _attackChooser = new AttackChooser(this, _abilities);
+        }
+
+        private void TickAbilities()
+        {
+            foreach(IAbility ability in _abilities)
+            {
+                ability.TickReload();
+            }
+        }
+
+        public void SetCurrentAbility(IAbility ability)
+        {
+            _characterController.CurrentAbility = ability;
+            Debug.LogWarning("Now using: " +  ability);
+        }
+
+        public void SetPath(NavMeshPath path)
+        {
+            _characterController.Path = path;
         }
     }
 }

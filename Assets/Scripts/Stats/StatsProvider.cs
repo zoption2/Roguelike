@@ -3,6 +3,7 @@ using Player;
 using Enemy;
 using UnityEngine;
 using SaveSystem;
+using System.Collections.Generic;
 
 namespace CharactersStats
 {
@@ -10,19 +11,18 @@ namespace CharactersStats
     {
         public OriginStats GetPlayerStats(CharacterType playerType);
         public OriginStats GetEnemyStats(CharacterType enemyType);
+        public List<AbilityType> GetCharacterAbilitiesTypes(CharacterType characterType);
     }
 
     public class StatsProvider : IStatsProvider
     {
-        private DefaultPlayerModelHolder _defaultModelHolder;
+        private DefaultCharacterModelHolder _defaultModelHolder;
         private IDataService _dataService;
-
-        private DefaultEnemyModelHolder _defaultEnemyModelHolder;
 
         public OriginStats GetPlayerStats(CharacterType playerType)
         {
             OriginStats stats;
-            stats = _dataService.PlayerStats.GetStats(playerType);
+            stats = _dataService.PlayerData.GetStats(playerType);
             if (stats == null)
             {
                 stats = _defaultModelHolder.GetDefaultStats(playerType);
@@ -34,16 +34,20 @@ namespace CharactersStats
         {
             OriginStats stats;
 
-            stats = _defaultEnemyModelHolder.GetDefaultStats(enemyType);
+            stats = _defaultModelHolder.GetDefaultStats(enemyType);
 
             return stats;
         }
 
-        public StatsProvider(DefaultPlayerModelHolder defaultModelHolder, IDataService dataService, DefaultEnemyModelHolder defaultEnemyModelHolder)
+        public List<AbilityType> GetCharacterAbilitiesTypes(CharacterType characterType)
+        {
+            return _defaultModelHolder.GetAllAbilitiesTypes(characterType);
+        }
+
+        public StatsProvider(DefaultCharacterModelHolder defaultModelHolder, IDataService dataService)
         {
             _defaultModelHolder = defaultModelHolder;
             _dataService = dataService;
-            _defaultEnemyModelHolder = defaultEnemyModelHolder;
         }
     }
 }

@@ -8,28 +8,38 @@ namespace Interactions
     public abstract class InteractionBase : IInteraction
     {
         protected int _damage;
-        protected bool _readyForUse;
-        protected int _reloadTime;
+        protected int _damageMultiplayer;
         protected List<IEffect> _effects;
         protected IMovable _movable;
 
-        public InteractionBase(
-            int damage)
-        { 
-            _damage = damage;
-            _movable = new Bounce();
-        }
-        public bool CouldUseAbility()
+        public InteractionBase(int damage)
         {
-            return _readyForUse;
+            _damage = damage;
+            _damageMultiplayer = 1;
+            _movable = new Bounce();
         }
         public int GetDamage()
         {
-            return _damage;
+            return _damage * _damageMultiplayer;
         }
-        public abstract ReactiveStats Interacte(ReactiveStats stats);
-        public abstract List<IEffect> GetEffects();
-        public abstract IMovable GetBump();
+
+        public void SetStats(ReactiveStats stats)
+        {
+            _damage = stats.Damage.Value;
+        }
+        public ReactiveStats Interact(ReactiveStats stats)
+        {
+            return InteractWithStats(stats);
+        }
+        public abstract ReactiveStats InteractWithStats(ReactiveStats stats);
+        public  List<IEffect> GetEffects()
+        {
+            return _effects;
+        }
+        public IMovable GetBump()
+        {
+            return _movable;
+        }
     }
 }
 

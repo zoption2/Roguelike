@@ -69,7 +69,7 @@ namespace UI
             RectTrans = rectTransform;
             _requiredPlayers = requiredPlayersNumber;
             List<CharacterType> availablePlayers = new List<CharacterType>();
-            availablePlayers = _dataService.PlayerStats.GetAvailablePlayers();
+            availablePlayers = _dataService.PlayerData.GetAvailablePlayers();
             if (availablePlayers != null)
             {
                 foreach (CharacterType CharacterType in availablePlayers)

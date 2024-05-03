@@ -4,7 +4,6 @@ using Interactions;
 using SlingShotLogic;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -31,6 +30,7 @@ public abstract class ActiveState
     protected ICharacterController _characterController;
     protected ISlingShot _slingShot;
     protected int _milisecondsDelay = 3000;
+    protected float _launchMultiplier = 1;
 
     public ActiveState(ICharacterController characterController)
     {
@@ -54,7 +54,12 @@ public abstract class ActiveState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.05f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        {
+            _characterController.IsMoving = false;
+            _characterController.HandleStopMovement();
+        }
+        else if (_characterController.GetVelocity().magnitude == 0 && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -68,11 +73,15 @@ public abstract class ActiveState
 
     public virtual void LaunchYourself(Vector2 direction)
     {
-        //float dragConstant = _characterController.CharacterView.Rigidbody.drag;
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
-        Vector2 forceVector = direction * launchPower;
+        Vector2 forceVector = direction * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
+    }
+
+    public void LaunchProjectile(Vector2 direction)
+    {
+
     }
 
     public IInteraction GetInteraction(InteractionType interactionType)
@@ -160,10 +169,8 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector2 direction)
     {
-        //base.Launch(direction);
-
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-        Vector2 forceVector = direction * launchPower;
+        Vector2 forceVector = direction * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= LaunchYourself;
@@ -199,9 +206,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         float dragConstant = _characterController.GetRigidbody().drag;
         
         float multiplier = Mathf.Clamp(distance * dragConstant, minLaunchPower, maxLaunchPower);
-        //Debug.Log("multiplier: " + multiplier * dragConstant);
-        Vector2 initialVelocity = direction * multiplier; //* dragConstant;
-        //Debug.Log("InitialVelocityMove: " + initialVelocity.magnitude);
+        Vector2 initialVelocity = direction * multiplier;
         _characterController.GetRigidbody().AddForce(initialVelocity, ForceMode.VelocityChange);
     }
 
@@ -209,35 +214,37 @@ public class EnemyActiveState : ActiveState, IConditionState
     {
         Transform target = _characterController.DefaultBehaviourTree.GetTarget();
         Transform enemy = _characterController.GetTransform();
-        Vector2 direction = enemy.position - target.position;
-        _characterController.CharacterView.ChangeDirection(-direction);
-        LaunchYourself(direction * -1);
+        Vector2 direction = target.position - enemy.position;
+        _characterController.CharacterView.ChangeDirection(direction);
+        IAbility currentAbility = _characterController.CurrentAbility;
+        _launchMultiplier = currentAbility.GetLaunchModifier();
+        LaunchYourself(direction);
+        //if(currentAbility.GetUseType() == TypeOfUse.MeleeUse)
+        //{
+        //}
+        //else
+        //{
+        //    LaunchProjectile(direction);
+        //}
+        currentAbility.UseAbility();
     }
 
     public async void Move()
     {
-        NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
         IDefaultBehaviourTree defaultBehaviourTree = _characterController.DefaultBehaviourTree;
-        navObstacle.enabled = false;
-        await Task.Delay(_milisecondsDelay / 10);
-
         Transform target = defaultBehaviourTree.GetTarget();
-
         Transform enemy = _characterController.GetTransform();
-
-        _characterController.NavMeshAgent.enabled = true;
-        _characterController.NavMeshAgent.SetDestination(target.position);
         await Task.Delay(_milisecondsDelay / 10);
 
-        NavMeshPath path = _characterController.NavMeshAgent.path;
+        NavMeshPath path = _characterController.Path;
 
         Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path, target);
-        _characterController.NavMeshAgent.enabled = false;
-        Vector2 direction = enemy.position - waypoint;
-        _characterController.CharacterView.ChangeDirection(-direction);
+
+        Vector2 direction = waypoint - enemy.position;
+        _characterController.CharacterView.ChangeDirection(direction);
+        await Task.Delay(_milisecondsDelay / 10);
 
         LaunchYourselfToPoint(waypoint);
-        navObstacle.enabled = true;
     }
 }
 
@@ -261,7 +268,12 @@ public class InactiveState : IConditionState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.05f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        {
+            _characterController.IsMoving = false;
+            _characterController.HandleStopMovement();
+        }
+        else if(_characterController.GetVelocity().magnitude == 0 && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -270,7 +282,6 @@ public class InactiveState : IConditionState
         if (_characterController.IsMoving)
         {
             ViewRotation();
-            
         }
     }
 
@@ -448,7 +459,7 @@ public class StunState : IConditionState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetVelocity().magnitude < 0.2f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();

@@ -33,10 +33,7 @@ public class ContextInstaller : MonoInstaller
     private SlingShotPrefabHolder _slingShotPrefabHolder;
 
     [SerializeField]
-    private DefaultPlayerModelHolder _defaultPlayerModelHolder;
-
-    [SerializeField]
-    private DefaultEnemyModelHolder _defaultEnemyModelHolder;
+    private DefaultCharacterModelHolder _defaultCharacterModelHolder;
 
     [SerializeField]
     private EffectPrefabHolder _effectPrefabHolder;
@@ -110,6 +107,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<INavigationFactory>().To<NavigationFactory>().AsSingle();
         Container.Bind<ICharacterUIFactory>().To<CharacterUIFactory>().AsSingle();
         Container.Bind<IUIFactory>().To<UIFactory>().AsSingle();
+        Container.Bind<IAbilityFactory>().To<AbilityFactory>().AsSingle();
     }
 
     public void BindPrefabHolders()
@@ -125,8 +123,7 @@ public class ContextInstaller : MonoInstaller
 
     public void BindModelHolders()
     {
-        Container.Bind<DefaultPlayerModelHolder>().FromInstance(_defaultPlayerModelHolder).AsSingle();
-        Container.Bind<DefaultEnemyModelHolder>().FromInstance(_defaultEnemyModelHolder).AsSingle();
+        Container.Bind<DefaultCharacterModelHolder>().FromInstance(_defaultCharacterModelHolder).AsSingle();
         Container.Bind<ICharacterPanelModel>().To<CharacterPanelModel>().AsTransient();
     }
 

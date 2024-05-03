@@ -46,6 +46,23 @@ public enum InteractionType
     None = 0,
     BasicAttack = 1,
     Knight_HeavyAttack = 2,
+    SuperMegaHeavyAttack = 3,
+}
+
+public enum AbilityType
+{
+    BasicAttackAbility = 0,
+    HeavyAttackAbility = 1,
+    MegaHeavyAttackAbility = 2,
+}
+
+public enum TypeOfUse
+{
+    None = 0,
+    MeleeUse = 1,
+    RangedUse = 2,
+    AreaUse = 3,
+    ImmediateUse = 4,
 }
 
 public enum EffectType

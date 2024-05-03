@@ -1,6 +1,8 @@
 ﻿using CharactersStats;
 using Gameplay;
+using Interactions;
 using Pool;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -13,14 +15,17 @@ public abstract class CharacterFactory<TController>
     protected CharacterUIPooler _characterUIPooler;
     protected CharacterModel _characterModel;
     protected OriginStats _stats;
+    protected List<IAbility> _abilities;
     protected CharacterType _type;
     protected IMyPoolable _poolable;
+    protected IAbilityFactory _abilityFactory;
 
     public CharacterFactory(
         DiContainer container,
         IStatsProvider statsProvider,
+        CharacterUIPooler characterUIPooler,
         CharacterPooler pooler,
-        CharacterUIPooler characterUIPooler)
+         IAbilityFactory abilityFactory)
     {
         _container = container;
         _statsProvider = statsProvider;
@@ -28,6 +33,7 @@ public abstract class CharacterFactory<TController>
         _characterUIPooler = characterUIPooler;
         _characterPooler.Init();
         _characterUIPooler.Init();
+        _abilityFactory = abilityFactory;
     }
 
     protected virtual TController CreateCharacter(Transform point, CharacterType type)
@@ -35,9 +41,13 @@ public abstract class CharacterFactory<TController>
         TController controller = GetNewController();
 
         RawMapper mapper = new RawMapper();
-
+        
         _stats = GetStats(type);
-        _characterModel = new CharacterModel(_stats, type);
+        ReactiveStats reactiveStats = _stats.ToReactive();
+        List<AbilityType> abilityTypes = GetAbilitiesTypes(type);
+        _abilities = CreateAbilities(abilityTypes, reactiveStats);
+        
+        _characterModel = new CharacterModel(_stats, type, _abilities);
         mapper.Speed = _stats.Speed;
 
         _poolable = _characterPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
@@ -54,7 +64,17 @@ public abstract class CharacterFactory<TController>
         return controller;
     }
 
+    protected List<IAbility> CreateAbilities(List<AbilityType> types,ReactiveStats stats)
+    {
+        List<IAbility> abilities = new List<IAbility>();
+        foreach (AbilityType type in types)
+        {
+            abilities.Add(_abilityFactory.CreateAbility(type, stats));
+        }
+        return abilities;
+    }
     protected abstract OriginStats GetStats(CharacterType type);
+    protected abstract List<AbilityType> GetAbilitiesTypes(CharacterType type);
 
     protected TController GetNewController()
     {

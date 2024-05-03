@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e99f54c751c4fc949bfb35c401ded36f, type: 3}
-  m_Name: Summoner
+  m_Name: Barbarian
   m_EditorClassIdentifier: 
-  Type: 102
-  Health: 5
-  Damage: 2
-  Speed: 7
+  Type: 100
+  Health: 15
+  Damage: 5
+  Speed: 6
   LaunchPower: 15
+  Abilities: 0000000002000000

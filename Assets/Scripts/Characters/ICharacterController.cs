@@ -17,11 +17,13 @@ public interface ICharacterController
     public IInteractionDealer InteractionDealer { get; set; }
     public IInteractionCalculator InteractionCalculator { get; set; }
     public IDefaultBehaviourTree DefaultBehaviourTree { get; set; }
+    public IAbility CurrentAbility { get; set; }
     public IAnalyzer Analyzer { get; set; }
     public ReactiveStats ModifiableStats { get; set; }
     public CharacterView CharacterView { get; set; }
     public SlingshotPooler SlingShotPooler { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
+    public NavMeshPath Path { get; set; }
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public CharacterType GetCharacterType();
@@ -36,7 +38,6 @@ public interface ICharacterController
     public void SwitchState(TypeOfConditionState state);
     public void UseEffectsOnEnd();
     public void PushIfDead();
-    public void SkipTurn();
     public void Attack();
     public void Move();
     public void Tick();
