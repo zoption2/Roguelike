@@ -80,7 +80,6 @@ MonoBehaviour:
   characterPanelPrefabHolder: {fileID: 11400000, guid: 30836125a20cc594e89e7635cb1c3f3d, type: 2}
   _defaultScenarioContext: {fileID: 0}
   _slingShotPrefabHolder: {fileID: 11400000, guid: 1566e0d83db1b9349b5de653bb0fd311, type: 2}
-  _defaultPlayerModelHolder: {fileID: 11400000, guid: 8e639817bd91c2b4ab519fa7f1314c5e, type: 2}
-  _defaultEnemyModelHolder: {fileID: 11400000, guid: f1c0fa4d0760b5d4aab70b01e440abae, type: 2}
+  _defaultCharacterModelHolder: {fileID: 11400000, guid: 8e639817bd91c2b4ab519fa7f1314c5e, type: 2}
   _effectPrefabHolder: {fileID: 11400000, guid: 3b6c0fb5697b36648b111203c8d2f388, type: 2}
   _navPrefabHolder: {fileID: 11400000, guid: 31137b7de190d474e91459f7e3879668, type: 2}

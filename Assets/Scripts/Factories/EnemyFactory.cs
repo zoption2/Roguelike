@@ -13,8 +13,7 @@ public interface IEnemyFactory
 }
 public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 {
-    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, CharacterPooler pooler, 
-        IAbilityFactory abilityFactory) : base(container, statsProvider, pooler, abilityFactory)
+    public EnemyFactory(DiContainer container, IStatsProvider statsProvider, CharacterUIPooler characterUIPooler, CharacterPooler pooler, IAbilityFactory abilityFactory) : base(container, statsProvider, characterUIPooler, pooler, abilityFactory)
     {
     }
 

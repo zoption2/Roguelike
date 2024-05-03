@@ -8,7 +8,6 @@ using System.Collections.Generic;
 public class CharacterModel : CharacterModelBase
 {
     public CharacterType Type;
-    public List<InteractionType> Abilities;
     private ReactiveList<IEffect> _allEffects;
 
     public int Health, Damage, Speed;
@@ -28,12 +27,6 @@ public class CharacterModel : CharacterModelBase
         _allEffects = new ReactiveList<IEffect>();
 
         _allEffects.Value = new List<IEffect>();
-
-        Abilities = new List<InteractionType>
-        {
-            InteractionType.BasicAttack,
-            InteractionType.Knight_HeavyAttack
-        };
     }
 
     public void SetHealth(int value)

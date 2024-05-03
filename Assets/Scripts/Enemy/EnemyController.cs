@@ -35,6 +35,7 @@ namespace Enemy
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
+
         private CharacterUIView _UIView;
         private ReactiveList<IEffect> _allEffects;
         public NavMeshPath Path { get; set; }

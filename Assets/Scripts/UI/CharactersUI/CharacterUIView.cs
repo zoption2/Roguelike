@@ -43,7 +43,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
         Debug.LogWarning("Max Health: " + _maxHealth);
         Debug.LogWarning("Current Health: " + newHealth);
         _scrollbar.size = (float)newHealth / _maxHealth;
-        ChangeHealthBarOnEndTurn(_scrollbar.size);
+        //ChangeHealthBarOnEndTurn(_scrollbar.size);
     }
 
     public void ChangeHealthBarOnEndTurn(float newSize)
