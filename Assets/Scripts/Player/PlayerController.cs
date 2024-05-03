@@ -52,13 +52,8 @@ namespace Player
         private ReactiveList<IEffect> _allEffects;
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
-        private ICharacterUIFactory _characterUIFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
-
-        private IDisposable _addSubscription;
-        private IDisposable _removeSubscription;
-        private IDisposable _replaceSubscription;
 
         [Inject]
         public void Construct(
@@ -69,7 +64,6 @@ namespace Player
             IEffectProcessor effector,
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
-            ICharacterUIFactory characterUIFactory,
             IUIFactory uIFactory,
             DiContainer container)
         {
@@ -80,7 +74,6 @@ namespace Player
             Effector = effector;
             InteractionCalculator = interactionFinalizer; 
             _stateFactory = stateFactory; 
-            _characterUIFactory = characterUIFactory;
             _uIFactory = uIFactory;
             _container = container;
         }
@@ -112,7 +105,7 @@ namespace Player
             _pooler = characterPooler;
 
             _uIViewmodel = new CharacterUIViewmodel();
-            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView);
+            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
 
             _UIView.Init(CharacterView, _uIViewmodel);
             Effector.Init(_uIViewmodel, _allEffects);
@@ -127,7 +120,6 @@ namespace Player
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
             ON_STOP_MOVEMENT += CheckForEndOfState;
             SlingShotPooler.Init();
-
         }
 
         public void DoUpdate()
@@ -135,6 +127,12 @@ namespace Player
             _currentState.DoUpdate();
         }
 
+
+        public void SetCurrentAbility(IAbility ability)
+        {
+            CurrentAbility = ability;
+            Debug.LogError(CurrentAbility);
+        }
 
 
         public void OnClick(Transform point, PointerEventData eventData)
@@ -169,7 +167,18 @@ namespace Player
 
         public IInteraction GetInteraction()
         {
-            return _currentState.GetInteraction(InteractionType.Knight_HeavyAttack);
+            
+            if (CurrentAbility != null)
+            {
+                IInteraction interaction = CurrentAbility.Interaction;
+                interaction.SetStats(ModifiableStats);
+                return interaction;
+            }
+            else
+            {
+                return _currentState.GetInteraction(InteractionType.BasicAttack);
+            }
+            //return _currentState.GetInteraction(InteractionType.Knight_HeavyAttack);
         }
 
         public void ApplyInteraction(IInteraction interaction)

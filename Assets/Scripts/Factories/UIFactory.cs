@@ -42,4 +42,5 @@ public class UIFactory : IUIFactory
         IAbilityIconView abilityIcon = _abilityIconPooler.Pull<IAbilityIconView>(type, position, Quaternion.identity, parent);
         return abilityIcon;
     }
+
 }

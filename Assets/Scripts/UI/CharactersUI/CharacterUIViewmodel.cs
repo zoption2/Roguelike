@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Playables;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -15,15 +16,20 @@ public class CharacterUIViewmodel
 
     private CharacterModel _model;
 
+    private ICharacterController _characterController;
+
     private IUIFactory _factory;
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
     private IDisposable activateDisposable;
     GameObject _abilityBTNs;
+    Button[] _buttons;
+    List<IAbility> _abilities;
     private bool isActivated = false;
 
-    public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView)
+    public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
     {
+        _characterController = characterController;
         _model = model;
         ReactiveHealth = model.GetReactiveStats().Health;
         _factory = uIFactory;
@@ -63,15 +69,34 @@ public class CharacterUIViewmodel
     public void VisualiseAbilities()
     {
         GridLayoutGroup abilityPanel = _uIView.GetAbilityPanel();
+        _abilities = _model.Abilities;
 
-        List<IAbility> abilities = _model.Abilities;
-
-        foreach(var ability in abilities)
+        foreach (var ability in _abilities)
         {
             AbilityType type = ability.Type;
             IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, abilityPanel.transform.position, abilityPanel.transform);
+
         }
+
+        _buttons = _abilityBTNs.GetComponentsInChildren<Button>();
+
+
+        for (int i = 0; i < _buttons.Length; i++)
+        {
+            int index = i; 
+            _buttons[i].onClick.AddListener(() => OnAbilityButtonClick(_abilities[index]));
+        }
+
     }
+
+
+    private void OnAbilityButtonClick(IAbility ability)
+    {
+
+        _characterController.SetCurrentAbility(ability);
+    }
+
+
 
     public void VisualiseEffects(List<IEffect> displayedEffects)
     {
@@ -112,9 +137,4 @@ public class CharacterUIViewmodel
         _uIView.ChangeHealthBarOnEndTurn();
     }
 
-
-    public void Submit()
-    {
-        _model.SetHealth(ReactiveHealth.Value);
-    }
 }

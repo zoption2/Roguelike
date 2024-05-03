@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Ability : IAbility
 {
-    public ReactiveInt ReloadTime { get; }
+    public int ReloadTime { get; }
     public IInteraction Interaction { get; }
     public bool ReadyForUse { get; private set; }
     public int TurnsLeftToReload { get; private set; }
@@ -17,7 +17,7 @@ public abstract class Ability : IAbility
         ReadyForUse = true;
         TurnsLeftToReload = 0;
         Interaction = interaction;
-        ReloadTime.Value = reloadTime;
+        ReloadTime = reloadTime;
         _launchModifier = launchMod;
         Type = type;
     }
@@ -38,7 +38,7 @@ public abstract class Ability : IAbility
 
     public void SetForReload()
     {
-        TurnsLeftToReload = ReloadTime.Value;
+        TurnsLeftToReload = ReloadTime;
         if (TurnsLeftToReload > 0)
         {
             ReadyForUse = false;

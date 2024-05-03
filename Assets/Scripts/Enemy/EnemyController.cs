@@ -42,7 +42,6 @@ namespace Enemy
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
-        private ICharacterUIFactory _characterUIFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
 
@@ -65,7 +64,6 @@ namespace Enemy
             IEffectProcessor effector,
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
-            ICharacterUIFactory characterUIFactory,
             IUIFactory uIFactory,
             DiContainer container)
         {
@@ -75,7 +73,6 @@ namespace Enemy
             Effector = effector;
             InteractionCalculator = interactionFinalizer;
             _stateFactory = stateFactory;
-            _characterUIFactory = characterUIFactory;
             _uIFactory = uIFactory;
             _container = container;
         }
@@ -109,7 +106,7 @@ namespace Enemy
             _pooler = characterPooler;
 
             _uIViewmodel = new CharacterUIViewmodel();
-            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView);
+            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
 
             _UIView.Init(CharacterView, _uIViewmodel);
             Effector.Init(_uIViewmodel, _allEffects);
@@ -129,9 +126,16 @@ namespace Enemy
             _currentState.DoUpdate();
         }
 
+        public void SetCurrentAbility(IAbility ability)
+        {
+        }
+
+
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
+            _uIViewmodel.ActivateSkillsBTNs();
+
             Debug.Log($"-----|{CharacterModel.Type}|-----");
             Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
