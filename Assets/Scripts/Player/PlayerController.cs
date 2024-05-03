@@ -198,9 +198,6 @@ namespace Player
         {
             ON_CHARACTER_DEATH(this);
             _pooler.Push(CharacterModel.Type, CharacterView);
-            _addSubscription.Dispose();
-            _removeSubscription.Dispose();
-            _replaceSubscription.Dispose();
         }
 
         public ReactiveStats GetCharacterStats()

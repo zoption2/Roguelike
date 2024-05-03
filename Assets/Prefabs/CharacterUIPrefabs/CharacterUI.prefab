@@ -355,7 +355,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8038877105567986175
 RectTransform:
   m_ObjectHideFlags: 0
@@ -526,7 +526,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &3107652323558774479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -589,7 +589,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_AnchorMin.x
@@ -597,15 +597,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_LocalPosition.x
@@ -637,11 +637,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 1.2499999
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: 5080172038293996667, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -687,7 +687,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_AnchorMin.x
@@ -695,15 +695,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_LocalPosition.x
@@ -735,11 +735,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 2.35
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: 1839199326720025142, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

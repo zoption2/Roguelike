@@ -1,4 +1,5 @@
 using Pool;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 
     private ICharacterView _characterView;
     private CharacterUIViewmodel _viewmodel;
+    private float _transitionDuration = 1f;
 
     private float _maxHealth;
 
@@ -43,7 +45,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
         Debug.LogWarning("Max Health: " + _maxHealth);
         Debug.LogWarning("Current Health: " + newHealth);
         _scrollbar.size = (float)newHealth / _maxHealth;
-        //ChangeHealthBarOnEndTurn(_scrollbar.size);
+        ChangeHealthBarOnEndTurn(_scrollbar.size);
     }
 
     public void ChangeHealthBarOnEndTurn(float newSize)
@@ -51,8 +53,31 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
         RectTransform scrollbarRectTransform = _scrollbar.GetComponent<RectTransform>();
         Vector2 newSizeDelta = scrollbarRectTransform.sizeDelta;
         newSizeDelta.x = newSize * _maxHealth;
-        scrollbarRectTransform.sizeDelta = newSizeDelta;
+
+        _scrollbar.size = 1f;
+
+        StartCoroutine(LerpWidth(scrollbarRectTransform, newSizeDelta.x, _transitionDuration));
     }
+
+    private IEnumerator LerpWidth(RectTransform rectTransform, float targetWidth, float duration)
+    {
+        float initialWidth = rectTransform.sizeDelta.x;
+        float timeElapsed = 0f;
+
+        while (timeElapsed < duration)
+        {
+            timeElapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(timeElapsed / duration);
+            float newWidth = Mathf.Lerp(initialWidth, targetWidth, t);
+
+            rectTransform.sizeDelta = new Vector2(newWidth, rectTransform.sizeDelta.y);
+
+            yield return null;
+        }
+
+        rectTransform.sizeDelta = new Vector2(targetWidth, rectTransform.sizeDelta.y);
+    }
+
 
 
     public GridLayoutGroup GetEffectsPanel()

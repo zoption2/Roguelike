@@ -108,7 +108,6 @@ namespace Enemy
             _UIView = characterUIView;
             _pooler = characterPooler;
 
-            //_uIViewmodel = _characterUIFactory.CreateViewModel(ModifiableStats, _uIFactory, _UIView);
             _uIViewmodel = new CharacterUIViewmodel();
             _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView);
 
@@ -123,12 +122,6 @@ namespace Enemy
             NavMeshObstacle = CharacterView.NavMeshObstacle;
             NavMeshObstacle.carving = true;
             NavMeshObstacle.carveOnlyStationary = true;
-
-            //_addSubscription = Effector.AllEffects.ObserveAdd().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
-
-            //_removeSubscription = Effector.AllEffects.ObserveRemove().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
-
-            //_replaceSubscription = Effector.AllEffects.ObserveReplace().Subscribe(_ => UpdateEffectsOnUI(Effector.AllEffects.ToList()));
         }
 
         public void DoUpdate()
@@ -219,10 +212,6 @@ namespace Enemy
         {
             ON_CHARACTER_DEATH?.Invoke(this);
             _pooler.Push(CharacterModel.Type, CharacterView);
-
-            _addSubscription.Dispose();
-            _removeSubscription.Dispose();
-            _replaceSubscription.Dispose();
         }
 
         public bool CheckIfMoving()

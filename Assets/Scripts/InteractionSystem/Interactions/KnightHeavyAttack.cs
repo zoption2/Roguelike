@@ -16,7 +16,7 @@ namespace Interactions
             };
 
             _movable = new StopAndPush();
-            _damage = 0;
+            //_damage = 0;
         }
 
         public override ReactiveStats InteractWithStats(ReactiveStats stats)
