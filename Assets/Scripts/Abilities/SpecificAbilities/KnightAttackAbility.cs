@@ -2,8 +2,7 @@ using Interactions;
 
 public class KnightAttackAbility : Ability
 {
-    public KnightAttackAbility(IInteraction interaction, int reloadTime, float launchMod) : base(interaction, reloadTime, launchMod)
+    public KnightAttackAbility(IInteraction interaction, int reloadTime, float launchMod, AbilityType type) : base(interaction, reloadTime, launchMod, type)
     {
-
     }
 }

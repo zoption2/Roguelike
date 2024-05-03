@@ -7,6 +7,7 @@ public interface IAbility
     public int ReloadTime { get; }
     public int TurnsLeftToReload { get;}
     public IInteraction Interaction { get;}
+    public AbilityType Type { get;}
     public void UseAbility();
     public void TickReload();
     public void SetForReload();

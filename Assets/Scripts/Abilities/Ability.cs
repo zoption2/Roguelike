@@ -7,16 +7,18 @@ public abstract class Ability : IAbility
     public IInteraction Interaction { get; }
     public bool ReadyForUse { get; private set; }
     public int TurnsLeftToReload { get; private set; }
+    public AbilityType Type { get; }
 
     protected float _launchModifier;
 
-    protected Ability(IInteraction interaction,int reloadTime,float launchMod)
+    protected Ability(IInteraction interaction,int reloadTime,float launchMod,AbilityType type)
     {
         ReadyForUse = true;
         TurnsLeftToReload = 0;
         Interaction = interaction;
         ReloadTime = reloadTime;
         _launchModifier = launchMod;
+        Type = type;
     }
 
     public void TickReload()

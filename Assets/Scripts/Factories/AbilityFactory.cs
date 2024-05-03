@@ -26,15 +26,15 @@ public class AbilityFactory : IAbilityFactory
             case AbilityType.HeavyAttackAbility:
                 interactionType = InteractionType.Knight_HeavyAttack;
                 interaction = _interactionFactory.Create(interactionType, stats);
-                return new KnightAttackAbility(interaction, 2, 1f);
+                return new KnightAttackAbility(interaction, 2, 1f,type);
             case AbilityType.MegaHeavyAttackAbility:
                 interactionType = InteractionType.SuperMegaHeavyAttack;
                 interaction = _interactionFactory.Create(interactionType, stats);
-                return new MegaHeavyAttackAbility(interaction, 5, 0.5f);
+                return new MegaHeavyAttackAbility(interaction, 5, 0.5f, type);
             default:
                 interactionType = InteractionType.BasicAttack;
                 interaction = _interactionFactory.Create(interactionType, stats);
-                return new BasicAttackAbility(interaction, 0, 1f);
+                return new BasicAttackAbility(interaction, 0, 1f, type);
         }
     }
 }
