@@ -214,14 +214,14 @@ public class EnemyActiveState : ActiveState, IConditionState
         _characterController.CharacterView.ChangeDirection(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
         _launchMultiplier = currentAbility.GetLaunchModifier();
-        if(currentAbility.GetUseType() == TypeOfUse.MeleeUse)
-        {
-            LaunchYourself(direction);
-        }
-        else
-        {
-            LaunchProjectile(direction);
-        }
+        LaunchYourself(direction);
+        //if(currentAbility.GetUseType() == TypeOfUse.MeleeUse)
+        //{
+        //}
+        //else
+        //{
+        //    LaunchProjectile(direction);
+        //}
         currentAbility.UseAbility();
     }
 

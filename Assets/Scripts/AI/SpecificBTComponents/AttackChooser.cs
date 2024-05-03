@@ -21,9 +21,13 @@ namespace BehaviourTree
         public IAbility ChooseAbility() 
         {
             List<IAbility> availableAbilities = AllAbilities.Where(x => x.ReadyForUse == true ).ToList();
-            availableAbilities.OrderByDescending(x => x.GetUsefulness() );
+            availableAbilities = availableAbilities.OrderByDescending(x => x.GetUsefulness()).ToList();
             IAbility chosenAttack = null;
             Transform target = DefaultBT.GetTarget();
+            foreach (IAbility abilityType in availableAbilities)
+            {
+                Debug.Log(abilityType + "has damage: " + abilityType.GetUsefulness());
+            }
             foreach (IAbility abilityType in availableAbilities)
             {
                 Debug.Log(abilityType + "   multiplier: " + abilityType.GetLaunchModifier());
