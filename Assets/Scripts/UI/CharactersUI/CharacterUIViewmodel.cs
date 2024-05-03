@@ -93,6 +93,11 @@ public class CharacterUIViewmodel
         }
     }
 
+    public void UpdateHealthBar()
+    {
+        _uIView.ChangeHealthBarOnEndTurn();
+    }
+
 
     public void Submit()
     {
