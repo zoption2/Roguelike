@@ -20,7 +20,7 @@ namespace Interactions
         }
         public int GetDamage()
         {
-            return _damage;
+            return _damage * _damageMultiplayer;
         }
 
         public void SetStats(ReactiveStats stats)
