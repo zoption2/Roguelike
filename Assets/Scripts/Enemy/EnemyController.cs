@@ -192,11 +192,13 @@ namespace Enemy
             _currentState.ApplyInteraction(interaction);
 
             _uIViewmodel.UpdateStats(ModifiableStats);
+            _uIViewmodel.VisualiseEffects(_allEffects.Value);
         }
 
         public void AddEffects(List<IEffect> effects)
         {
             _currentState.AddEffects(effects);
+            _uIViewmodel.VisualiseEffects(_allEffects.Value);
         }
         public void Launch(Vector2 direction)
         {
@@ -280,10 +282,6 @@ namespace Enemy
         {
             //Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
             Analyzer.Analyze(ModifiableStats, Effector);
-            //_uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
-            //                                Effector.GetPreInteractionEffects(),
-            //                                Effector.GetOnEndTurnInteractionEffects());
-            //UpdateEffectsOnUI(Effector.AllEffects.ToList());
         }
 
         public void SwitchState(TypeOfConditionState state)

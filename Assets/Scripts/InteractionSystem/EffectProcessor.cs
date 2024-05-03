@@ -83,7 +83,9 @@ namespace Interactions
             {
                 if (effectList.Value[i].GetType() == effect.GetType())
                 {
+                    effectList.Value[i].ON_DURATION_CHANGED -= HandleDurationChanged;
                     effectList.Value[i] = effect;
+                    effectList.Value[i].ON_DURATION_CHANGED += HandleDurationChanged;
                     return effectList;
                 }
             }
@@ -117,7 +119,20 @@ namespace Interactions
             statsCopy.LaunchPower.Value = stats.LaunchPower.Value;
             statsCopy.Velocity.Value = stats.Velocity.Value;
 
-            ProcessEffects(_preInteractionEffects, stats);
+            if (_preInteractionEffects.Count > 0)
+            {
+                for (int i = _preInteractionEffects.Count - 1; i >= 0; i--)
+                {
+                    if (_preInteractionEffects[i].Duration > 0)
+                    {
+                        _preInteractionEffects[i].UseEffect(stats);
+                    }
+                    else
+                    {
+                        RemoveEffect(_preInteractionEffects[i]);
+                    }
+                }
+            }
 
             return statsCopy;
         }
@@ -125,13 +140,39 @@ namespace Interactions
 
         public void ProcessEffectsOnStart(ReactiveStats stats)
         {
-            ProcessEffects(_onStartTurnEffects, stats);
+            if (_onStartTurnEffects.Count > 0)
+            {
+                for (int i = _onStartTurnEffects.Count - 1; i >= 0; i--)
+                {
+                    if (_onStartTurnEffects[i].Duration > 0)
+                    {
+                        _onStartTurnEffects[i].UseEffect(stats);
+                    }
+                    else
+                    {
+                        RemoveEffect(_onStartTurnEffects[i]);
+                    }
+                }
+            }
         }
 
 
         public void ProcessEffectsOnEnd(ReactiveStats stats)
         {
-            ProcessEffects(_onEndTurnEffects, stats);
+            if (_onEndTurnEffects.Count > 0)
+            {
+                for (int i = _onEndTurnEffects.Count - 1; i >= 0; i--)
+                {
+                    if (_onEndTurnEffects[i].Duration > 0)
+                    {
+                        _onEndTurnEffects[i].UseEffect(stats);
+                    }
+                    else
+                    {
+                        RemoveEffect(_onEndTurnEffects[i]);
+                    }
+                }
+            }
         }
 
         private void ProcessEffects(List<IEffect> effectList, ReactiveStats stats)

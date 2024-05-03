@@ -179,6 +179,7 @@ namespace Player
             _currentState.ApplyInteraction(interaction);
 
             _uIViewmodel.UpdateStats(ModifiableStats);
+            _uIViewmodel.VisualiseEffects(_allEffects.Value);
         }
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
@@ -212,6 +213,7 @@ namespace Player
         public void AddEffects(List<IEffect> effects)
         {
             _currentState.AddEffects(effects);
+            _uIViewmodel.VisualiseEffects(_allEffects.Value);
         }
 
         public void Attack()
@@ -268,10 +270,6 @@ namespace Player
         {
             //Debug.Log("<color=#9C5F62>" + "--|Analyzing condition|-- " + "</color>");
             Analyzer.Analyze(ModifiableStats, Effector);
-            //_uIViewmodel.VisualiseEffects(Effector.GetOnStartTurnInteractionEffects(),
-            //                                Effector.GetPreInteractionEffects(),
-            //                                Effector.GetOnEndTurnInteractionEffects());
-            //UpdateEffectsOnUI(Effector.AllEffects.ToList());
         }
 
         public void SwitchState(TypeOfConditionState state)
@@ -319,8 +317,6 @@ namespace Player
         {
             CharacterView.ON_CLICK -= OnClick;
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
-
-            
         }
 
         public void ActivateUI()

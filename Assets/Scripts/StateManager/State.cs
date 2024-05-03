@@ -52,7 +52,7 @@ namespace Gameplay
         {
             _characterController.IsActive = false;
 
-            _characterController.UseEffectsOnStart();
+            _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
 
             _characters.ON_END_TURN -= _scenario.OnStateEnd;

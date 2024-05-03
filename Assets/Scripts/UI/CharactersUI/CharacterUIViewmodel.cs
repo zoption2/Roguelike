@@ -73,7 +73,6 @@ public class CharacterUIViewmodel
             {
                 if (_visualizedEffects.ContainsKey(effectType))
                 {
-                    Debug.LogError(effect.Duration);
                     _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
                 }
                 else

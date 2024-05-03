@@ -1,4 +1,5 @@
 using CharactersStats;
+using Unity.VisualScripting;
 
 namespace Interactions
 {
@@ -10,6 +11,7 @@ namespace Interactions
             IsOnInteractionStart = false;
             IsPositive = false;
             IsOnTurnStart = true;
+            IsOnTurnEnd = false;
             _effectType = EffectType.FireEffect;
         }
 

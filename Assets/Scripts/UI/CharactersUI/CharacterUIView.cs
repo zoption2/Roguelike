@@ -29,7 +29,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 
         _scrollbar.size = normalizedHealth;
 
-        _viewmodel.ReactiveHealth.Subscribe(ChangeHealth);
+        _viewmodel.ReactiveHealth.Subscribe(ChangeHealthBar);
         
     }
 
@@ -38,12 +38,22 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
         transform.position = _characterView.transform.position;
     }
 
-    private void ChangeHealth(int newHealth)
+    private void ChangeHealthBar(int newHealth)
     {
         Debug.LogWarning("Max Health: " + _maxHealth);
         Debug.LogWarning("Current Health: " + newHealth);
         _scrollbar.size = (float)newHealth / _maxHealth;
+        ChangeHealthBarOnEndTurn(_scrollbar.size);
     }
+
+    public void ChangeHealthBarOnEndTurn(float newSize)
+    {
+        RectTransform scrollbarRectTransform = _scrollbar.GetComponent<RectTransform>();
+        Vector2 newSizeDelta = scrollbarRectTransform.sizeDelta;
+        newSizeDelta.x = newSize * _maxHealth;
+        scrollbarRectTransform.sizeDelta = newSizeDelta;
+    }
+
 
     public GridLayoutGroup GetEffectsPanel()
     {
