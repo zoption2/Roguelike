@@ -172,13 +172,17 @@ namespace Player
             {
                 IInteraction interaction = CurrentAbility.Interaction;
                 interaction.SetStats(ModifiableStats);
+                //CurrentAbility.UseAbility();
+                //if (!CurrentAbility.ReadyForUse)
+                //{
+                //    _uIViewmodel.RevertButtonInteractible(CurrentAbility);
+                //}
                 return interaction;
             }
             else
             {
-                return _currentState.GetInteraction(InteractionType.BasicAttack);
+                return _currentState.GetInteraction(InteractionType.None);
             }
-            //return _currentState.GetInteraction(InteractionType.Knight_HeavyAttack);
         }
 
         public void ApplyInteraction(IInteraction interaction)
