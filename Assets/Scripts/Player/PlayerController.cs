@@ -10,6 +10,7 @@ using Zenject;
 using UnityEngine.AI;
 using BehaviourTree;
 using System.Linq;
+using UnityEditor.Playables;
 
 namespace Player
 {
@@ -50,10 +51,13 @@ namespace Player
         private NavMeshObstacle _navMeshObstacle;
         private CharacterUIViewmodel _uIViewmodel;
         private ReactiveList<IEffect> _allEffects;
+        private IAbility _basicAbility;
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
+
+        private List<IAbility> _abilitiesForReload;
 
         [Inject]
         public void Construct(
@@ -74,7 +78,7 @@ namespace Player
             Effector = effector;
             InteractionCalculator = interactionFinalizer; 
             _stateFactory = stateFactory; 
-            _uIFactory = uIFactory;
+            _uIFactory = uIFactory; 
             _container = container;
         }
 
@@ -120,6 +124,16 @@ namespace Player
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
             ON_STOP_MOVEMENT += CheckForEndOfState;
             SlingShotPooler.Init();
+
+            foreach(var ability in CharacterModel.Abilities)
+            {
+                if(ability is BasicAttackAbility)
+                {
+                    _basicAbility = ability;
+                }
+            }
+
+            CurrentAbility = _basicAbility;
         }
 
         public void DoUpdate()
@@ -140,20 +154,20 @@ namespace Player
             _slingShotInitPosition = point;
             _uIViewmodel.ActivateSkillsBTNs();
 
-            Debug.Log($"-----|{CharacterModel.Type}|-----");
-            Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
+            //Debug.Log($"-----|{CharacterModel.Type}|-----");
+            //Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
-            Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
-            Effector.PrintEffects(_allEffects.Value);
+            //Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
+            //Effector.PrintEffects(_allEffects.Value);
 
-            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
-            Effector.PrintEffects(Effector.GetPreInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
+            //Effector.PrintEffects(Effector.GetPreInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
-            Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
+            //Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
-            Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
+            //Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -165,6 +179,16 @@ namespace Player
             }
         }
 
+        public void ProcessReloadAbility ()
+        {
+            CurrentAbility.UseAbility();
+            if (!CurrentAbility.ReadyForUse)
+            {
+                _uIViewmodel.RevertButtonInteractible(CurrentAbility);
+            }
+            CurrentAbility = _basicAbility;
+        }
+
         public IInteraction GetInteraction()
         {
             
@@ -172,11 +196,7 @@ namespace Player
             {
                 IInteraction interaction = CurrentAbility.Interaction;
                 interaction.SetStats(ModifiableStats);
-                //CurrentAbility.UseAbility();
-                //if (!CurrentAbility.ReadyForUse)
-                //{
-                //    _uIViewmodel.RevertButtonInteractible(CurrentAbility);
-                //}
+                
                 return interaction;
             }
             else
@@ -340,6 +360,30 @@ namespace Player
         public void UpdateHealthBar()
         {
             //_uIViewmodel.UpdateHealthBar();
+        }
+
+        public void ProcessAbilitiesOnStartTurn()
+        {
+            _abilitiesForReload = CharacterModel.Abilities.Where(x => !x.ReadyForUse).ToList();
+            foreach (IAbility ability in CharacterModel.Abilities)
+            {
+                ability.TickReload();
+            }
+            
+        }
+
+        public void ProcessAbilitiesOnEndTurn()
+        {
+            if(_abilitiesForReload.Count > 0)
+            {
+                foreach (IAbility ability in _abilitiesForReload)
+                {
+                    if (ability.ReadyForUse)
+                    {
+                        _uIViewmodel.RevertButtonInteractible(ability);
+                    }
+                }
+            }
         }
     }
 }

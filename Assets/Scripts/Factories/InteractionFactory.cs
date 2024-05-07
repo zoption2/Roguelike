@@ -18,7 +18,7 @@ public class InteractionFactory : IInteractionFactory
             case InteractionType.Knight_HeavyAttack:
                 return new KnightHeavyAttack(stats.Damage.Value, 2);
             case InteractionType.SuperMegaHeavyAttack:
-                return new SuperMegaHeavyAttack(stats.Damage.Value, 4);
+                return new MegaHeavyAttack(stats.Damage.Value, 4);
             default:
                 return new EmptyAttack(0);
         }

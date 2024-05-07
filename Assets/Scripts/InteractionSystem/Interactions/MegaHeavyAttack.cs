@@ -5,15 +5,15 @@ using UnityEngine;
 
 namespace Interactions
 {
-    public class SuperMegaHeavyAttack : InteractionBase
+    public class MegaHeavyAttack : InteractionBase
     {
 
-        public SuperMegaHeavyAttack(int damage, int damageMultiplayer) : base(damage)
+        public MegaHeavyAttack(int damage, int damageMultiplayer) : base(damage)
         {
             _damageMultiplayer = damageMultiplayer;
             _effects = new()
             {
-               
+               new FireEffect(3)
             };
 
             _movable = new StopAndPush();

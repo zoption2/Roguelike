@@ -11,12 +11,14 @@ namespace SlingShotLogic
     {
         public void Init(Vector2 _initPosition, CharacterType type);
         public event Action<Vector2> OnShoot;
+        public event Action OnAbilityUse;
         public event Action<Vector2> OnDirectionChange;
     }
 
     public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
     {
         public event Action<Vector2> OnShoot;
+        public event Action OnAbilityUse;
         public event Action<Vector2> OnDirectionChange;
 
         [SerializeField] GameObject _cursor;
@@ -78,6 +80,7 @@ namespace SlingShotLogic
                 {
                     //_dragDistance = Vector2.Distance(_startPoint, _endPoint);
                     OnShoot?.Invoke(_direction);
+                    OnAbilityUse?.Invoke();
                     _slingShotPooler.Push(_type, this);
                 }
             }

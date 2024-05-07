@@ -45,10 +45,6 @@ namespace Enemy
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
 
-        private IDisposable _addSubscription;
-        private IDisposable _removeSubscription;
-        private IDisposable _replaceSubscription;
-
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         private CharacterUIPooler _characterUIPooler;
@@ -136,20 +132,20 @@ namespace Enemy
             _slingShotInitPosition = point;
             _uIViewmodel.ActivateSkillsBTNs();
 
-            Debug.Log($"-----|{CharacterModel.Type}|-----");
-            Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
+            //Debug.Log($"-----|{CharacterModel.Type}|-----");
+            //Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
 
-            Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
-            Effector.PrintEffects(_allEffects.Value);
+            //Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
+            //Effector.PrintEffects(_allEffects.Value);
 
-            Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
-            Effector.PrintEffects(Effector.GetPreInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
+            //Effector.PrintEffects(Effector.GetPreInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
-            Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
+            //Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
 
-            Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
-            Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
+            //Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
+            //Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
         }
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -327,6 +323,18 @@ namespace Enemy
         public void UpdateHealthBar()
         {
             //_uIViewmodel.UpdateHealthBar();
+        }
+
+        public void ProcessReloadAbility()
+        {
+        }
+
+        public void ProcessAbilitiesOnStartTurn()
+        {
+        }
+
+        public void ProcessAbilitiesOnEndTurn()
+        {
         }
     }
 }

@@ -162,6 +162,9 @@ public class PlayerActiveState : ActiveState, IConditionState
         _slingShot.OnShoot -= LaunchYourself;
         _slingShot.OnShoot += LaunchYourself;
 
+        _slingShot.OnAbilityUse -= _characterController.ProcessReloadAbility;
+        _slingShot.OnAbilityUse += _characterController.ProcessReloadAbility;
+
         DragInputModule.dragFocusObject = _slingShot.gameObject;
         eventData.pointerDrag = _slingShot.gameObject;
         eventData.dragging = true;

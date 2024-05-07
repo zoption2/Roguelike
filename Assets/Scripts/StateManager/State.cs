@@ -40,8 +40,12 @@ namespace Gameplay
 
             _characters.ON_END_TURN += _scenario.OnStateEnd;
 
+            
+
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
+
+            _characterController.ProcessAbilitiesOnStartTurn();
 
             //Debug.Log("Entered player turn state");
             if (!_characters.Players.Contains(_characterController))
@@ -54,6 +58,8 @@ namespace Gameplay
 
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
+
+            _characterController.ProcessAbilitiesOnEndTurn();
 
             _characterController.UpdateHealthBar();
 

@@ -67,6 +67,11 @@ public abstract class CharacterFactory<TController>
     protected List<IAbility> CreateAbilities(List<AbilityType> types,ReactiveStats stats)
     {
         List<IAbility> abilities = new List<IAbility>();
+
+        if (!types.Contains(AbilityType.BasicAttackAbility))
+        {
+            abilities.Add(_abilityFactory.CreateAbility(AbilityType.BasicAttackAbility, stats));
+        }
         foreach (AbilityType type in types)
         {
             abilities.Add(_abilityFactory.CreateAbility(type, stats));

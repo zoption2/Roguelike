@@ -12,7 +12,7 @@ namespace Interactions
     {
         public ReactiveStats CalculateInteractionResult(ReactiveStats modifiableStats, ReactiveStats interactionResult)
         {
-            Debug.Log("Reactive stats inside calculator before: " + modifiableStats.Health.Value);
+            //Debug.Log("Reactive stats inside calculator before: " + modifiableStats.Health.Value);
 
             modifiableStats.Speed.Value -= Mathf.Abs(interactionResult.Speed.Value);
             modifiableStats.Health.Value -= Mathf.Abs(interactionResult.Health.Value);
@@ -20,7 +20,7 @@ namespace Interactions
             modifiableStats.LaunchPower.Value -= Mathf.Abs(interactionResult.LaunchPower.Value);
             modifiableStats.Velocity.Value -= Mathf.Abs(interactionResult.Velocity.Value);
 
-            Debug.Log("Reactive stats inside calculator after: " + modifiableStats.Health.Value);
+            //Debug.Log("Reactive stats inside calculator after: " + modifiableStats.Health.Value);
 
             return modifiableStats;
         }

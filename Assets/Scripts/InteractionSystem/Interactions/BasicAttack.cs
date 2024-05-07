@@ -11,7 +11,6 @@ namespace Interactions
             _damageMultiplayer = 1;
             _effects = new()
             {
-                new FireEffect(3),
             };
 
         }
