@@ -25,6 +25,7 @@ public class CharacterUIViewmodel
     GameObject _abilityBTNs;
     Button[] _buttons;
     List<IAbility> _abilities;
+    List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
@@ -37,6 +38,8 @@ public class CharacterUIViewmodel
         _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
         _abilityBTNs = _uIView.GetAbilityBTNs();
         //ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
+        _abilities = _model.Abilities;
+        _abilityIcons = new List<IAbilityIconView>();
         VisualiseAbilities();
     }
 
@@ -51,6 +54,14 @@ public class CharacterUIViewmodel
         else
         {
             _abilityBTNs.SetActive(false);
+        }
+    }
+
+    public void UpdateReloadIndicators()
+    {
+        foreach (IAbilityIconView abilityIcon in _abilityIcons)
+        {
+            abilityIcon.UpdateReloadIndicators();
         }
     }
 
@@ -69,13 +80,15 @@ public class CharacterUIViewmodel
     public void VisualiseAbilities()
     {
         GridLayoutGroup abilityPanel = _uIView.GetAbilityPanel();
-        _abilities = _model.Abilities;
+        
 
         foreach (var ability in _abilities)
         {
             AbilityType type = ability.Type;
             IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, abilityPanel.transform.position, abilityPanel.transform);
+            abilityIcon.Init(ability);
 
+            _abilityIcons.Add(abilityIcon);//
         }
 
         _buttons = _abilityBTNs.GetComponentsInChildren<Button>();

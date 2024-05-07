@@ -369,7 +369,7 @@ namespace Player
             {
                 ability.TickReload();
             }
-            
+            _uIViewmodel.UpdateReloadIndicators();
         }
 
         public void ProcessAbilitiesOnEndTurn()
@@ -384,6 +384,7 @@ namespace Player
                     }
                 }
             }
+            
         }
     }
 }
