@@ -94,6 +94,7 @@ namespace Gameplay
 
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
+            _characterController.ProcessAbilitiesOnStartTurn();
 
             //Debug.Log("Entered enemy turn state");
             _characterController.Tick();

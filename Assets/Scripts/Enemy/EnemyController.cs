@@ -9,6 +9,7 @@ using CharactersStats;
 using Zenject;
 using Gameplay;
 using UnityEngine.AI;
+using System.Linq;
 
 namespace Enemy
 {
@@ -331,6 +332,11 @@ namespace Enemy
 
         public void ProcessAbilitiesOnStartTurn()
         {
+            foreach (IAbility ability in CharacterModel.Abilities)
+            {
+                ability.TickReload();
+            }
+            _uIViewmodel.UpdateReloadIndicators();
         }
 
         public void ProcessAbilitiesOnEndTurn()

@@ -145,7 +145,7 @@ namespace Player
         public void SetCurrentAbility(IAbility ability)
         {
             CurrentAbility = ability;
-            Debug.LogError(CurrentAbility);
+            //Debug.LogError(CurrentAbility);
         }
 
 
@@ -179,16 +179,6 @@ namespace Player
             }
         }
 
-        public void ProcessReloadAbility ()
-        {
-            CurrentAbility.UseAbility();
-            if (!CurrentAbility.ReadyForUse)
-            {
-                _uIViewmodel.RevertButtonInteractible(CurrentAbility);
-            }
-            CurrentAbility = _basicAbility;
-        }
-
         public IInteraction GetInteraction()
         {
             
@@ -196,7 +186,6 @@ namespace Player
             {
                 IInteraction interaction = CurrentAbility.Interaction;
                 interaction.SetStats(ModifiableStats);
-                
                 return interaction;
             }
             else
@@ -360,6 +349,16 @@ namespace Player
         public void UpdateHealthBar()
         {
             //_uIViewmodel.UpdateHealthBar();
+        }
+
+        public void ProcessReloadAbility()
+        {
+            CurrentAbility.UseAbility();
+            if (!CurrentAbility.ReadyForUse)
+            {
+                _uIViewmodel.RevertButtonInteractible(CurrentAbility);
+            }
+            CurrentAbility = _basicAbility;
         }
 
         public void ProcessAbilitiesOnStartTurn()

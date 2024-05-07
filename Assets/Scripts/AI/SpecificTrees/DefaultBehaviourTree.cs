@@ -62,7 +62,6 @@ namespace BehaviourTree
                 _blackboard.SetData(_attackKey, false);
                 _blackboard.SetData(_moveKey, false);
             }
-            TickAbilities();
         }
 
         private void CheckIfCanMove()
@@ -232,14 +231,6 @@ namespace BehaviourTree
         {
             _abilities = abilities;
             _attackChooser = new AttackChooser(this, _abilities);
-        }
-
-        private void TickAbilities()
-        {
-            foreach(IAbility ability in _abilities)
-            {
-                ability.TickReload();
-            }
         }
 
         public void SetCurrentAbility(IAbility ability)
