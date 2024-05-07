@@ -11,7 +11,6 @@ namespace Gameplay
     public interface IGameplayService
     {
         void Init(TypeOfScenario type, IScenarioContext context);
-
         public IPlayerFactory _playerFactory { get; }
         public IEnemyFactory _enemyFactory { get; }
         public IStatsProvider _statsProvider { get; }
@@ -20,11 +19,8 @@ namespace Gameplay
     {
         public IPlayerFactory _playerFactory { get; }
         public IEnemyFactory _enemyFactory { get; }
-
         public IStatsProvider _statsProvider { get; }
-
         public IScenarioFactory _scenarioFactory { get; }
-
         public IScenario ScenarioType;
 
         public GameplayService(IStatsProvider statsProvider,IScenarioFactory scenarioFactory,IPlayerFactory playerFactory, IEnemyFactory enemyFactory)

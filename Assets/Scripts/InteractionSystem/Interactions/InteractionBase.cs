@@ -1,7 +1,5 @@
 using CharactersStats;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Interactions
 {
@@ -18,6 +16,7 @@ namespace Interactions
             _damageMultiplayer = 1;
             _movable = new Bounce();
         }
+
         public int GetDamage()
         {
             return _damage * _damageMultiplayer;
@@ -27,6 +26,7 @@ namespace Interactions
         {
             _damage = stats.Damage.Value;
         }
+
         public ReactiveStats Interact(ReactiveStats stats)
         {
             return InteractWithStats(stats);

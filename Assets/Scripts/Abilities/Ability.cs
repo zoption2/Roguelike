@@ -1,4 +1,3 @@
-using CharactersStats;
 using Interactions;
 using UnityEngine;
 

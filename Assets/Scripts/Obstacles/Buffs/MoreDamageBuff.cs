@@ -1,7 +1,6 @@
 using Interactions;
 using Obstacles;
 using Pool;
-using Prefab;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -9,6 +8,7 @@ using Zenject;
 public class MoreDamageObstacle : MonoBehaviour, IBuff, IMyPoolable
 {
     public BuffType Type = BuffType.MoreDamage;
+
     public void OnCreate()
     {
     }

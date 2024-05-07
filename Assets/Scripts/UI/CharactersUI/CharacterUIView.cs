@@ -1,5 +1,4 @@
 using Pool;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +16,6 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 
     private ICharacterView _characterView;
     private CharacterUIViewmodel _viewmodel;
-    private float _transitionDuration = 1f;
 
     private float _maxHealth;
 

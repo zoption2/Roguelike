@@ -11,7 +11,6 @@ public interface ICharacterController
     public bool IsActive { get; set; }
     public bool IsStunned { get; set; }
     public bool IsMoving { get; set; }
-    
     public IEffectProcessor Effector { get; set; }
     public IInteractionProcessor InteractionProcessor { get; set; }
     public IInteractionDealer InteractionDealer { get; set; }
@@ -26,10 +25,8 @@ public interface ICharacterController
     public NavMeshPath Path { get; set; }
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
-
     public void ProcessReloadAbility();
     public void ProcessAbilitiesOnStartTurn();
-
     public void ProcessAbilitiesOnEndTurn();
     public void SetCurrentAbility(IAbility ability);
     public void UpdateHealthBar();
@@ -51,7 +48,6 @@ public interface ICharacterController
     public bool CheckIfMoving();
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public void HandleStopMovement();
-
 
     public event OnCharacterDeath ON_CHARACTER_DEATH;
     public event OnStopMovement ON_STOP_MOVEMENT;

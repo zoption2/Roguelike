@@ -1,32 +1,28 @@
 using CharactersStats;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 namespace Interactions
 {
     public interface IEffectProcessor
     {
-        void Init(CharacterUIViewmodel viewModel, ReactiveList<IEffect> allEffects);
-        void AddEffects(List<IEffect> effects);
-        ReactiveStats ProcessStatsBeforeInteraction(ReactiveStats stats);
-        void ProcessEffectsOnStart(ReactiveStats stats);
-        void ProcessEffectsOnEnd(ReactiveStats stats);
-        List<IEffect> GetPreInteractionEffects();
-        List<IEffect> GetOnStartTurnInteractionEffects();
-        List<IEffect> GetOnEndTurnInteractionEffects();
-        //ReactiveCollection<IEffect> AllEffects { get; set; }
-        //ReactiveCollection<IEffect> GetAllEffects();
-        void PrintEffects(List<IEffect> effects);
+        public void Init(CharacterUIViewmodel viewModel, ReactiveList<IEffect> allEffects);
+        public void AddEffects(List<IEffect> effects);
+        public void ProcessEffectsOnStart(ReactiveStats stats);
+        public void ProcessEffectsOnEnd(ReactiveStats stats);
+        public void PrintEffects(List<IEffect> effects);
+        public ReactiveStats ProcessStatsBeforeInteraction(ReactiveStats stats);
+        public List<IEffect> GetPreInteractionEffects();
+        public List<IEffect> GetOnStartTurnInteractionEffects();
+        public List<IEffect> GetOnEndTurnInteractionEffects();  
     }
     public class EffectProcessor : IEffectProcessor
     {
         List<IEffect> _preInteractionEffects = new();
         List<IEffect> _onStartTurnEffects = new();
         List<IEffect> _onEndTurnEffects = new();
-        //public ReactiveCollection<IEffect> AllEffects { get; set; }
-        private ReactiveList<IEffect> _allEffects;
 
+        private ReactiveList<IEffect> _allEffects;
         private CharacterUIViewmodel _viewModel;
 
         public void Init(CharacterUIViewmodel viewModel, ReactiveList<IEffect> allEffects)
@@ -34,11 +30,6 @@ namespace Interactions
             _viewModel = viewModel;
             _allEffects = allEffects;
         }
-
-        //public EffectProcessor()
-        //{
-        //    AllEffects = new ReactiveCollection<IEffect>();
-        //}
 
         public void AddEffects(List<IEffect> effects)
         {
@@ -173,26 +164,6 @@ namespace Interactions
                     }
                 }
             }
-        }
-
-        private void ProcessEffects(List<IEffect> effectList, ReactiveStats stats)
-        {
-            
-            if (effectList.Count > 0)
-            {
-                for (int i = effectList.Count - 1; i >= 0; i--)
-                {
-                    if (effectList[i].Duration > 0)
-                    {
-                        effectList[i].UseEffect(stats);
-                    }
-                    else
-                    {
-                        RemoveEffect(effectList[i]);
-                    }
-                }
-            }
-            
         }
 
         private void SubscribeToEffectValues(ReactiveList<IEffect> effects)

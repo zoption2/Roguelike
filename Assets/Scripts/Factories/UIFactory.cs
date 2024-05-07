@@ -1,4 +1,3 @@
-using Pool;
 using UnityEngine;
 using Zenject;
 
@@ -6,13 +5,11 @@ public interface IUIFactory
 {
     public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent);
     public void RemoveEffectIcon(EffectType type, IEffectIconView myPoolable);
-
     public IAbilityIconView CreateAbilityIcon(AbilityType type, Vector3 position, Transform parent);
 }
 
 public class UIFactory : IUIFactory
 {
-    
     private EffectPooler _effectPooler;
     private AbilityIconPooler _abilityIconPooler;
 
@@ -42,5 +39,4 @@ public class UIFactory : IUIFactory
         IAbilityIconView abilityIcon = _abilityIconPooler.Pull<IAbilityIconView>(type, position, Quaternion.identity, parent);
         return abilityIcon;
     }
-
 }

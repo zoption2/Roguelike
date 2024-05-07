@@ -8,25 +8,25 @@ using System.Collections.Generic;
 
 public interface IMovable
 {
-    void ApplyForce(IInteractible provider, IInteractible handler);
+    public void ApplyForce(IInteractible provider, IInteractible handler);
 }
 public interface IInteractible
 {
-    void StartInteraction(IInteractible interactible);
-    IControllerInputs ControllerInputs { get; set; }
+    public void StartInteraction(IInteractible interactible);
+    public IControllerInputs ControllerInputs { get; set; }
     public Rigidbody GetRigidbody();
     public Vector3 GetLastVelocity();
-    Vector3 GetVelocity();
+    public Vector3 GetVelocity();
 }
 public interface ICharacterView
 {
-    Transform transform { get; }
+    public Transform transform { get; }
     public void Init(IControllerInputs controllerInputs);
     public void ChangeDirection(Vector2 direction);
     public Rigidbody GetRigidbody();
 
-    event Action<Transform, PointerEventData> ON_CLICK;
-    event Action<PointerEventData> ON_BEGINDRAG;
+    public event Action<Transform, PointerEventData> ON_CLICK;
+    public event Action<PointerEventData> ON_BEGINDRAG;
     
 }
 
@@ -74,8 +74,6 @@ public class CharacterView : MonoBehaviour,
         }
 
         ControllerInputs.DoUpdate();
-
-
     }
 
     public Vector3 GetLastVelocity()

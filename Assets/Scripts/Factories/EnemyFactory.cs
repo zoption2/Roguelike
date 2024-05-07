@@ -1,8 +1,6 @@
 using CharactersStats;
 using Enemy;
-using Interactions;
 using Pool;
-using Prefab;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;

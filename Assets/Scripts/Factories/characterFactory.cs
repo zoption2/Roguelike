@@ -1,6 +1,5 @@
 ﻿using CharactersStats;
 using Gameplay;
-using Interactions;
 using Pool;
 using System.Collections.Generic;
 using UnityEngine;

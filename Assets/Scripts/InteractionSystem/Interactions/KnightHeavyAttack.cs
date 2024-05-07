@@ -1,6 +1,4 @@
 using CharactersStats;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Interactions
 {
@@ -12,11 +10,9 @@ namespace Interactions
             _effects = new()
             {
                 new StunEffect(2),
-                //new FireEffect(2),
             };
 
             _movable = new StopAndPush();
-            //_damage = 0;
         }
 
         public override ReactiveStats InteractWithStats(ReactiveStats stats)

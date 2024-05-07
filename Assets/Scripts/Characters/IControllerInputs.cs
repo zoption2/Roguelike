@@ -5,13 +5,13 @@ using System.Collections.Generic;
 public interface IControllerInputs
 {
     public bool IsMoving { get; set; }
-    ReactiveStats GetCharacterStats();
-    IInteraction GetInteraction();
-    IConditionState GetCurrentConditionState();
-    void ApplyInteraction(IInteraction interactions);
+    public ReactiveStats GetCharacterStats();
+    public IInteraction GetInteraction();
+    public IConditionState GetCurrentConditionState();
+    public void ApplyInteraction(IInteraction interactions);
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer);
-    void AddEffects(List<IEffect> effects);
-    bool GetActiveStatus();
+    public void AddEffects(List<IEffect> effects);
+    public bool GetActiveStatus();
     public void DoUpdate();
     public void PushCharacterUI();
 

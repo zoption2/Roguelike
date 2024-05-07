@@ -1,5 +1,4 @@
 using CharactersStats;
-using UnityEngine;
 
 namespace Interactions
 {
