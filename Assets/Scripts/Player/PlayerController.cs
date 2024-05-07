@@ -181,17 +181,7 @@ namespace Player
 
         public IInteraction GetInteraction()
         {
-            
-            if (CurrentAbility != null)
-            {
-                IInteraction interaction = CurrentAbility.Interaction;
-                interaction.SetStats(ModifiableStats);
-                return interaction;
-            }
-            else
-            {
-                return _currentState.GetInteraction(InteractionType.None);
-            }
+            return _currentState.GetInteraction();
         }
 
         public void ApplyInteraction(IInteraction interaction)

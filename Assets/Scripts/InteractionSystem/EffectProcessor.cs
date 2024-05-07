@@ -125,7 +125,7 @@ namespace Interactions
                 {
                     if (_preInteractionEffects[i].Duration > 0)
                     {
-                        _preInteractionEffects[i].UseEffect(stats);
+                        _preInteractionEffects[i].UseEffect(statsCopy);
                     }
                     else
                     {

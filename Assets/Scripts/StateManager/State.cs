@@ -94,7 +94,6 @@ namespace Gameplay
 
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
-            _characterController.ProcessAbilitiesOnStartTurn();
 
             //Debug.Log("Entered enemy turn state");
             _characterController.Tick();
@@ -108,7 +107,8 @@ namespace Gameplay
 
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
-
+            
+            _characterController.ProcessAbilitiesOnEndTurn();
             _characterController.UpdateHealthBar();
             
             _characters.ON_END_TURN -= _scenario.OnStateEnd;

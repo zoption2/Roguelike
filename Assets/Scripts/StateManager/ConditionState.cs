@@ -12,7 +12,7 @@ public interface IConditionState
 {
     public void OnEnter();
     public void OnExit();
-    public IInteraction GetInteraction(InteractionType interactionType);
+    public IInteraction GetInteraction();
     public void ApplyInteraction(IInteraction interaction);
     public void LaunchYourself(Vector2 direction);
     public void AddEffects(List<IEffect> effects);
@@ -84,16 +84,27 @@ public abstract class ActiveState
 
     }
 
-    public IInteraction GetInteraction(InteractionType interactionType)
+    public IInteraction GetInteraction()
     {
-        
         ReactiveStats statsWithBonus = _characterController.Effector.ProcessStatsBeforeInteraction(_characterController.ModifiableStats);
-        _characterController.InteractionDealer.Init(statsWithBonus);
-        IInteraction interaction = _characterController.InteractionDealer.UseInteraction(interactionType);
+        IInteraction result = null;
+
+        if (_characterController.CurrentAbility != null)
+        {
+            IInteraction interaction = _characterController.CurrentAbility.Interaction;
+            interaction.SetStats(statsWithBonus);
+            result = interaction;
+        }
+
+        return result;
+
+        //ReactiveStats statsWithBonus = _characterController.Effector.ProcessStatsBeforeInteraction(_characterController.ModifiableStats);
+        //_characterController.InteractionDealer.Init(statsWithBonus);
+        //IInteraction interaction = _characterController.InteractionDealer.UseInteraction(interactionType);
         //!!!
-        statsWithBonus = _characterController.Effector.ProcessStatsBeforeInteraction(_characterController.ModifiableStats);
+        //statsWithBonus = _characterController.Effector.ProcessStatsBeforeInteraction(_characterController.ModifiableStats);
         //!!!
-        return interaction;
+        //return interaction;
     }
 
     public void AddEffects(List<IEffect> effects)
@@ -288,7 +299,7 @@ public class InactiveState : IConditionState
         }
     }
 
-    public IInteraction GetInteraction(InteractionType interactionType)
+    public IInteraction GetInteraction()
     {
         IInteraction interaction = _characterController.InteractionDealer.UseInteraction(InteractionType.None);
         return interaction;
@@ -384,7 +395,7 @@ public class DeadState : IConditionState
     {
     }
 
-    public IInteraction GetInteraction(InteractionType interactionType)
+    public IInteraction GetInteraction()
     {
         IInteraction interaction = _characterController.InteractionDealer.UseInteraction(InteractionType.None);
         return interaction;
@@ -489,7 +500,7 @@ public class StunState : IConditionState
         _characterController.AnalizeCondition();
     }
 
-    public IInteraction GetInteraction(InteractionType interactionType)
+    public IInteraction GetInteraction()
     {
         IInteraction interaction = _characterController.InteractionDealer.UseInteraction(InteractionType.None);
         return interaction;

@@ -157,6 +157,7 @@ namespace Enemy
         }
         public IInteraction GetInteraction()
         {
+            //Change it!
             if(CurrentAbility != null)
             {
                 IInteraction interaction = CurrentAbility.Interaction;
@@ -165,7 +166,7 @@ namespace Enemy
             }
             else
             {
-                return _currentState.GetInteraction(InteractionType.None);
+                return _currentState.GetInteraction();
             }
         }
 
@@ -332,15 +333,16 @@ namespace Enemy
 
         public void ProcessAbilitiesOnStartTurn()
         {
+            
+        }
+
+        public void ProcessAbilitiesOnEndTurn()
+        {
             foreach (IAbility ability in CharacterModel.Abilities)
             {
                 ability.TickReload();
             }
             _uIViewmodel.UpdateReloadIndicators();
-        }
-
-        public void ProcessAbilitiesOnEndTurn()
-        {
         }
     }
 }
