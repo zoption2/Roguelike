@@ -18,6 +18,7 @@ public class CharacterUIViewmodel
     private IUIFactory _factory;
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
+    private GridLayoutGroup _abilityPanel;
     private GameObject _abilityBTNs;
     private Image _activeIndicator;
     private Button[] _buttons;
@@ -25,6 +26,8 @@ public class CharacterUIViewmodel
     private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
     private bool _isActive = false;
+
+    private Vector3 _previousPanelPosition;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
     {
@@ -38,6 +41,7 @@ public class CharacterUIViewmodel
         _abilities = _model.Abilities;
         _abilityIcons = new List<IAbilityIconView>();
         _activeIndicator = _uIView.GetActiveIndicator();
+        _abilityPanel = _uIView.GetAbilityPanel();
         VisualiseAbilities();
     }
 
@@ -48,6 +52,7 @@ public class CharacterUIViewmodel
         if (isActivated)
         {
             _abilityBTNs.SetActive(true);
+            ChangeAbilityPanelPos();
         }
         else
         {
@@ -81,15 +86,75 @@ public class CharacterUIViewmodel
         _model.SetHealth(ReactiveHealth.Value);
     }
 
+    private void ChangeAbilityPanelPos()
+    {
+        
+        // Отримання розмірів панелі
+        RectTransform panelRect = _abilityPanel.GetComponent<RectTransform>();
+        Vector2 panelSize = panelRect.sizeDelta;
+
+        // Отримання розмірів камери
+        Camera mainCamera = Camera.main;
+        float cameraHeight = 2f * mainCamera.orthographicSize;
+        float cameraWidth = cameraHeight * mainCamera.aspect;
+
+        // Отримання меж камери
+        float cameraHalfWidth = cameraWidth / 2f;
+        float cameraHalfHeight = mainCamera.orthographicSize;
+
+        // Позиція панелі
+        Vector3 panelPosition = _abilityPanel.transform.position;
+        float panelHalfWidth = panelSize.x / 2f;
+        float panelHalfHeight = panelSize.y / 2f;
+
+        // Розрахунок відстані панелі від камери
+        Vector3 panelDistanceFromCamera = mainCamera.transform.position - panelPosition;
+        float horizontalDistanceFromCamera = Mathf.Abs(Vector3.Dot(panelDistanceFromCamera, mainCamera.transform.right));
+        float verticalDistanceFromCamera = Mathf.Abs(Vector3.Dot(panelDistanceFromCamera, mainCamera.transform.up));
+
+        // Перевірка, чи виходить панель за межі камери на 20% і більше
+        bool isHorizontalOutOfCamera = horizontalDistanceFromCamera - panelHalfWidth > cameraHalfWidth;
+        bool isVerticalOutOfCamera = verticalDistanceFromCamera - panelHalfHeight > cameraHalfHeight;
+
+        float newX = panelPosition.x;
+        float newY = panelPosition.y;
+
+        _abilityPanel.transform.position = new Vector3(0, 0, panelPosition.z);
+
+        if (isVerticalOutOfCamera)
+        {
+            newY += 1.25f; // Змінюємо позицію по Y вгору
+        }
+
+        float distanceToRightEdge = cameraWidth - panelPosition.x;
+        float distanceToLeftEdge = panelPosition.x;
+
+        // Переміщення панелі в більш віддалену від краю сторону
+        if (distanceToRightEdge > distanceToLeftEdge) // Панель ближче до правого краю
+        {
+            newX += 2.55f; // Змінюємо позицію по X направо
+        }
+        else // Панель ближче до лівого краю
+        {
+            newX -= 2.55f; // Змінюємо позицію по X наліво
+        }
+
+
+        // Змінення позиції панелі
+        _abilityPanel.transform.position = new Vector3(newX, newY, panelPosition.z);
+    }
+
+
+
+
+
     public void VisualiseAbilities()
     {
-        GridLayoutGroup abilityPanel = _uIView.GetAbilityPanel();
         
-
         foreach (var ability in _abilities)
         {
             AbilityType type = ability.Type;
-            IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, abilityPanel.transform.position, abilityPanel.transform);
+            IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, _abilityPanel.transform.position, _abilityPanel.transform);
             abilityIcon.Init(ability);
 
             _abilityIcons.Add(abilityIcon);

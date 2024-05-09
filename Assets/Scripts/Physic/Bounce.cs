@@ -16,8 +16,16 @@ public class Bounce : IMovable
         _handlerVelocity = handler.GetVelocity();
         _handlerVelocity.z = 0;
 
-        _handlerRb.velocity = _providerVelocity;
-
-        _providerRb.velocity = -_providerVelocity;
+        if (_providerRb.velocity.magnitude < 1 && _handlerRb.velocity.magnitude == 0)
+        {
+            // Надати зворотний імпульс _providerRb
+            _providerRb.velocity *= -2f;
+        }
+        else
+        {
+            // Продовжити виконання звичайного відскоку
+            _handlerRb.velocity = _providerVelocity;
+            _providerRb.velocity = -_providerVelocity;
+        }
     }
 }

@@ -194,6 +194,7 @@ namespace Player
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
         {
+            //викликає опрацювання удару у об'єкту, з яким зіткнувся
             if(IsMoving)
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);

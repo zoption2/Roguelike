@@ -138,7 +138,15 @@ public abstract class ActiveState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
+        if (_characterController.GetRigidbody().velocity.magnitude > 1)
+        {
+            bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
+        } else
+        {
+            bumpFromDealer = new Bounce();
+            bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
+        }
+        
     }
 }
 
