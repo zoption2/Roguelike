@@ -40,7 +40,7 @@ namespace Gameplay
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
 
-            _characterController.ProcessAbilitiesOnStartTurn();
+            _characterController.ProcessOnStartTurn();
 
 
             if (!_characters.Players.Contains(_characterController) || _characterController.IsStunned)
@@ -56,7 +56,7 @@ namespace Gameplay
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
 
-            _characterController.ProcessAbilitiesOnEndTurn();
+            _characterController.ProcessOnEndTurn();
 
             _characterController.UpdateHealthBar();
 
@@ -92,6 +92,8 @@ namespace Gameplay
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
 
+            _characterController.ProcessOnStartTurn();
+
             _characterController.Tick();
 
             if (!_characters.Enemies.Contains(_characterController))
@@ -105,7 +107,8 @@ namespace Gameplay
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
             
-            _characterController.ProcessAbilitiesOnEndTurn();
+            _characterController.ProcessOnEndTurn();
+
             _characterController.UpdateHealthBar();
             
             _characters.ON_END_TURN -= _scenario.OnStateEnd;

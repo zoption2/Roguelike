@@ -26,8 +26,8 @@ public interface ICharacterController
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public void ProcessReloadAbility();
-    public void ProcessAbilitiesOnStartTurn();
-    public void ProcessAbilitiesOnEndTurn();
+    public void ProcessOnStartTurn();
+    public void ProcessOnEndTurn();
     public void SetCurrentAbility(IAbility ability);
     public void UpdateHealthBar();
     public CharacterType GetCharacterType();

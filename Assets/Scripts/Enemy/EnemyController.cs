@@ -328,13 +328,14 @@ namespace Enemy
         {
         }
 
-        public void ProcessAbilitiesOnStartTurn()
+        public void ProcessOnStartTurn()
         {
-            
+            _uIViewmodel.ToggleActiveIndicator();
         }
 
-        public void ProcessAbilitiesOnEndTurn()
+        public void ProcessOnEndTurn()
         {
+            _uIViewmodel.ToggleActiveIndicator();
             foreach (IAbility ability in CharacterModel.Abilities)
             {
                 ability.TickReload();

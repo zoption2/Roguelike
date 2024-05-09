@@ -19,10 +19,12 @@ public class CharacterUIViewmodel
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
     private GameObject _abilityBTNs;
+    private Image _activeIndicator;
     private Button[] _buttons;
     private List<IAbility> _abilities;
     private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
+    private bool _isActive = false;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
     {
@@ -35,6 +37,7 @@ public class CharacterUIViewmodel
         _abilityBTNs = _uIView.GetAbilityBTNs();
         _abilities = _model.Abilities;
         _abilityIcons = new List<IAbilityIconView>();
+        _activeIndicator = _uIView.GetActiveIndicator();
         VisualiseAbilities();
     }
 
@@ -50,6 +53,12 @@ public class CharacterUIViewmodel
         {
             _abilityBTNs.SetActive(false);
         }
+    }
+
+    public void ToggleActiveIndicator()
+    {
+        _isActive = !_isActive; 
+        _activeIndicator.gameObject.SetActive(_isActive); 
     }
 
     public void UpdateReloadIndicators()
