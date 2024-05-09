@@ -27,12 +27,10 @@ public abstract class Ability : IAbility
         if (TurnsLeftToReload > 0)
         {
             TurnsLeftToReload--;
-            Debug.Log(TurnsLeftToReload + " turns left till reload of " + this);
         }
         if (TurnsLeftToReload == 0 && ReadyForUse==false)
         {
             ReadyForUse = true;
-            Debug.Log(this + " has reloaded!");
         }
     }
 
@@ -42,7 +40,6 @@ public abstract class Ability : IAbility
         if (TurnsLeftToReload > 0)
         {
             ReadyForUse = false;
-            Debug.Log(this + " is now reloading. It will be reloading for " + TurnsLeftToReload + " turns");
         }
     }
 

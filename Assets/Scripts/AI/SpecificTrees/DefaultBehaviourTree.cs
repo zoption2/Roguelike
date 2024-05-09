@@ -236,7 +236,6 @@ namespace BehaviourTree
         public void SetCurrentAbility(IAbility ability)
         {
             _characterController.CurrentAbility = ability;
-            Debug.LogWarning("Now using: " +  ability);
         }
 
         public void SetPath(NavMeshPath path)
