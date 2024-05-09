@@ -349,8 +349,9 @@ namespace Player
             }
         }
 
-        public void ProcessAbilitiesOnStartTurn()
+        public void ProcessOnStartTurn()
         {
+            _uIViewmodel.ToggleActiveIndicator();
             _abilitiesForReload = CharacterModel.Abilities.Where(x => !x.ReadyForUse).ToList();
             foreach (IAbility ability in CharacterModel.Abilities)
             {
@@ -360,9 +361,10 @@ namespace Player
             CurrentAbility = _basicAbility;
         }
 
-        public void ProcessAbilitiesOnEndTurn()
+        public void ProcessOnEndTurn()
         {
-            if(_abilitiesForReload.Count > 0)
+            _uIViewmodel.ToggleActiveIndicator();
+            if (_abilitiesForReload.Count > 0)
             {
                 foreach (IAbility ability in _abilitiesForReload)
                 {

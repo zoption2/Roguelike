@@ -13,6 +13,7 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
     [SerializeField] private GridLayoutGroup _effectsPanel;
     [SerializeField] private GridLayoutGroup _abilityPanel;
     [SerializeField] private GameObject _abilityBTNs;
+    [SerializeField] private Image _activeIndicator;
 
     private ICharacterView _characterView;
     private CharacterUIViewmodel _viewmodel;
@@ -74,6 +75,11 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
     public GameObject GetAbilityBTNs()
     {
         return _abilityBTNs;
+    }
+
+    public Image GetActiveIndicator()
+    {
+        return _activeIndicator;
     }
 
     public void OnCreate()
