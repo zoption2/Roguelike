@@ -42,8 +42,11 @@ namespace Gameplay
 
             _characterController.ProcessAbilitiesOnStartTurn();
 
-            if (!_characters.Players.Contains(_characterController))
+
+            if (!_characters.Players.Contains(_characterController) || _characterController.IsStunned)
+            {
                 _scenario.OnStateEnd();
+            }
         }
 
         public void OnExit()

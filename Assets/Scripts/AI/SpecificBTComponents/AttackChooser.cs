@@ -7,13 +7,13 @@ using UnityEngine;
 namespace BehaviourTree
 {
     
-    public class AttackChooser
+    public class AbilityChooser
     {
         public List<IAbility> AllAbilities { get; set; }
         public IDefaultBehaviourTree DefaultBT { get;}
 
 
-        public AttackChooser(IDefaultBehaviourTree defaultBehaviourTree, List<IAbility> allAbilities)
+        public AbilityChooser(IDefaultBehaviourTree defaultBehaviourTree, List<IAbility> allAbilities)
         {
             DefaultBT = defaultBehaviourTree;
             AllAbilities = allAbilities;
@@ -22,12 +22,8 @@ namespace BehaviourTree
         {
             List<IAbility> availableAbilities = AllAbilities.Where(x => x.ReadyForUse == true ).ToList();
             availableAbilities = availableAbilities.OrderByDescending(x => x.GetUsefulness()).ToList();
-            IAbility chosenAttack = null;
+            IAbility chosenAbility = null;
             Transform target = DefaultBT.GetTarget();
-            foreach (IAbility abilityType in availableAbilities)
-            {
-                Debug.Log(abilityType + "has damage: " + abilityType.GetUsefulness());
-            }
             foreach (IAbility abilityType in availableAbilities)
             {
                 Debug.Log(abilityType + "   multiplier: " + abilityType.GetLaunchModifier());
@@ -35,13 +31,13 @@ namespace BehaviourTree
                 Debug.Log("Attack would reach target: " + attackWouldReachTarget);
                 if (attackWouldReachTarget)
                 {
-                    chosenAttack = abilityType;
-                    Debug.Log("enemy choosed " + chosenAttack);
-                    DefaultBT.SetCurrentAbility(chosenAttack);
-                    return chosenAttack;
+                    chosenAbility = abilityType;
+                    Debug.Log("enemy choosed " + chosenAbility);
+                    DefaultBT.SetCurrentAbility(chosenAbility);
+                    return chosenAbility;
                 }
             }
-            return chosenAttack;
+            return chosenAbility;
         }
     }
 }

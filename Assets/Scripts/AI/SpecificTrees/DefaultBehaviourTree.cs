@@ -18,7 +18,7 @@ namespace BehaviourTree
     {
         private string _attackKey = "CanAttack", _moveKey = "CanMove", _targetKey ="Target";
 
-        private AttackChooser _attackChooser;
+        private AbilityChooser _attackChooser;
 
         private List<IAbility> _abilities;
         protected override Node SetupRootNode()
@@ -228,7 +228,7 @@ namespace BehaviourTree
         public void SetAbilities(List<IAbility> abilities)
         {
             _abilities = abilities;
-            _attackChooser = new AttackChooser(this, _abilities);
+            _attackChooser = new AbilityChooser(this, _abilities);
         }
 
         public void SetCurrentAbility(IAbility ability)

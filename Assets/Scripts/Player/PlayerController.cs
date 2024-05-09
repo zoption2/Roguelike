@@ -143,7 +143,7 @@ namespace Player
         public void SetCurrentAbility(IAbility ability)
         {
             CurrentAbility = ability;
-            //Debug.LogError(CurrentAbility);
+            Debug.LogWarning(CurrentAbility);
         }
 
 

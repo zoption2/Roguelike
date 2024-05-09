@@ -269,6 +269,7 @@ public class InactiveState : IConditionState
             _characterController.GetRigidbody().velocity = _characterController.GetVelocity().normalized * _characterController.CharacterView.MaxVelocity;
         }
 
+
         if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
             _characterController.IsMoving = true;
@@ -463,7 +464,12 @@ public class StunState : IConditionState
         {
             _characterController.IsMoving = true;
         }
-        else if (_characterController.GetVelocity().magnitude < 0.1f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        else if (_characterController.GetVelocity().magnitude < 0.05f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
+        {
+            _characterController.IsMoving = false;
+            _characterController.HandleStopMovement();
+        }
+        else if(_characterController.GetVelocity().magnitude == 0 && _characterController.IsMoving)
         {
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
@@ -535,7 +541,7 @@ public class StunState : IConditionState
     public void OnExit()
     {
         _characterController.IsStunned = false;
-        //Debug.Log("<color=#FFFFF>" + "--|Exit Stun Condition State|-- " + "</color>");
+        Debug.Log("<color=#FFFFF>" + "--|Exit Stun Condition State|-- " + "</color>");
     }
 
     public void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
