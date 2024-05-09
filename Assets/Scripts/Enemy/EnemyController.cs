@@ -128,7 +128,16 @@ namespace Enemy
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
-            if (!IsActive)
+            bool isPlayerTurn = true;
+            foreach(ICharacterController enemy in _characterScenarioContext.Enemies)
+            {
+                if(enemy.IsActive)
+                {
+                    isPlayerTurn = false;
+                    break;
+                }
+            }
+            if (isPlayerTurn)
             {
                 _uIViewmodel.ActivateSkillsBTNs();
             }
