@@ -13,7 +13,6 @@ namespace UI
     
     public class CharacterPanelView : MonoBehaviour, ICharacterPanelView, IMyPoolable
     {
-        
         public CharacterModel Model { get; private set; }
         [field: SerializeField] public CharacterType CharacterType { get; set; }
         private Toggle _toggle;

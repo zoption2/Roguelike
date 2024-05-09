@@ -86,4 +86,7 @@ public enum UIType
 
 }
 
-
+public enum NavigationType
+{
+    Default,
+}

@@ -2,8 +2,6 @@ using Enemy;
 using Player;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-
 
 namespace Gameplay
 {
@@ -45,6 +43,7 @@ namespace Gameplay
                     break;
                 }
             }
+
             if(controller is IPlayerController)
             {
                 _scenarioContext.Players.Remove((IPlayerController)controller);

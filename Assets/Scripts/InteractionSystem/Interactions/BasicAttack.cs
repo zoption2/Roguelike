@@ -1,6 +1,4 @@
 using CharactersStats;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Interactions 
 {

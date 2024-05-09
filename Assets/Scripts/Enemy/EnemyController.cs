@@ -9,7 +9,6 @@ using CharactersStats;
 using Zenject;
 using Gameplay;
 using UnityEngine.AI;
-using System.Linq;
 
 namespace Enemy
 {
@@ -36,21 +35,19 @@ namespace Enemy
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
-
-        private CharacterUIView _UIView;
-        private ReactiveList<IEffect> _allEffects;
         public NavMeshPath Path { get; set; }
+        public NavMeshObstacle NavMeshObstacle { get; set; }
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
-
+        private CharacterUIView _UIView;
+        private ReactiveList<IEffect> _allEffects;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         private CharacterUIPooler _characterUIPooler;
         private CharacterUIViewmodel _uIViewmodel;
-        public NavMeshObstacle NavMeshObstacle { get; set; }
         private DiContainer _container;
 
         [Inject]
@@ -157,6 +154,7 @@ namespace Enemy
         }
         public IInteraction GetInteraction()
         {
+            //Change it!
             if(CurrentAbility != null)
             {
                 IInteraction interaction = CurrentAbility.Interaction;
@@ -165,7 +163,7 @@ namespace Enemy
             }
             else
             {
-                return _currentState.GetInteraction(InteractionType.None);
+                return _currentState.GetInteraction();
             }
         }
 
@@ -332,15 +330,16 @@ namespace Enemy
 
         public void ProcessAbilitiesOnStartTurn()
         {
+            
+        }
+
+        public void ProcessAbilitiesOnEndTurn()
+        {
             foreach (IAbility ability in CharacterModel.Abilities)
             {
                 ability.TickReload();
             }
             _uIViewmodel.UpdateReloadIndicators();
-        }
-
-        public void ProcessAbilitiesOnEndTurn()
-        {
         }
     }
 }

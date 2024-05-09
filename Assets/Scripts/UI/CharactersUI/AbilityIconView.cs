@@ -25,15 +25,28 @@ public class AbilityIconView : MonoBehaviour, IAbilityIconView
     public void UpdateReloadIndicators()
     {
         int currentTurnsLeftToReload = _ability.TurnsLeftToReload;
+        int maxReloadTime = _ability.ReloadTime;
 
+        if(maxReloadTime > 0)
+        {
+            float reloadPercentage = (float)(currentTurnsLeftToReload + 1) / maxReloadTime;
+            _reloadIndicator.fillAmount = reloadPercentage;
+        }
+        
         _reloadText.text = (currentTurnsLeftToReload + 1).ToString();
 
         bool sameAsPrevious = currentTurnsLeftToReload == _previousTurnsLeftToReload;
 
         _previousTurnsLeftToReload = currentTurnsLeftToReload;
 
+
         _reloadText.gameObject.SetActive(!sameAsPrevious || currentTurnsLeftToReload > 0);
+        if(sameAsPrevious)
+        {
+            _reloadIndicator.fillAmount = 0;
+        }
     }
+
 
     public void OnCreate()
     {

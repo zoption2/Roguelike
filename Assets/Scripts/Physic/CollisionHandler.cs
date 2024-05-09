@@ -12,10 +12,9 @@ public interface ICollisionHandler
 public class CollisionHandler : MonoBehaviour, ICollisionHandler
 {
     private CharacterView _characterView;
-
     private Rigidbody _rigidbody;
     private bool _isStoppedInsideTrigger;
-    IControllerInputs _controllerInputs;
+    private IControllerInputs _controllerInputs;
     
     public void Init(IControllerInputs controllerInputs, CharacterView characterView)
     {

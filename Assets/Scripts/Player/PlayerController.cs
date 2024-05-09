@@ -10,7 +10,6 @@ using Zenject;
 using UnityEngine.AI;
 using BehaviourTree;
 using System.Linq;
-using UnityEditor.Playables;
 
 namespace Player
 {
@@ -29,21 +28,21 @@ namespace Player
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
         public IAbility CurrentAbility { get; set; }
-        public CharacterView CharacterView { get; set; }
-        public CharacterModel CharacterModel { get; set; }
-        public SlingshotPooler SlingShotPooler { get; set; }
-        public ReactiveStats ModifiableStats { get; set; }
-        public NavMeshAgent NavMeshAgent { get; set; }
-        public NavMeshObstacle NavMeshObstacle { get; set; }
-        private CharacterUIView _UIView;
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionCalculator { get; set; }
         public IDefaultBehaviourTree DefaultBehaviourTree { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IAnalyzer Analyzer { get; set; }
+        public CharacterView CharacterView { get; set; }
+        public CharacterModel CharacterModel { get; set; }
+        public SlingshotPooler SlingShotPooler { get; set; }
+        public ReactiveStats ModifiableStats { get; set; }
+        public NavMeshAgent NavMeshAgent { get; set; }
+        public NavMeshObstacle NavMeshObstacle { get; set; } 
         public NavMeshPath Path { get; set; }
 
+        private CharacterUIView _UIView;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
         private CharacterUIPooler _characterUIPooler;
@@ -51,13 +50,12 @@ namespace Player
         private NavMeshObstacle _navMeshObstacle;
         private CharacterUIViewmodel _uIViewmodel;
         private ReactiveList<IEffect> _allEffects;
+        private List<IAbility> _abilitiesForReload;
         private IAbility _basicAbility;
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
-
-        private List<IAbility> _abilitiesForReload;
 
         [Inject]
         public void Construct(
@@ -181,17 +179,7 @@ namespace Player
 
         public IInteraction GetInteraction()
         {
-            
-            if (CurrentAbility != null)
-            {
-                IInteraction interaction = CurrentAbility.Interaction;
-                interaction.SetStats(ModifiableStats);
-                return interaction;
-            }
-            else
-            {
-                return _currentState.GetInteraction(InteractionType.None);
-            }
+            return _currentState.GetInteraction();
         }
 
         public void ApplyInteraction(IInteraction interaction)
@@ -208,7 +196,6 @@ namespace Player
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);
             }
-            
         }
 
         public void CheckForEndOfState()

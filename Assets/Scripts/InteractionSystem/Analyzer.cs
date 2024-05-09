@@ -2,7 +2,6 @@ using CharactersStats;
 using Enemy;
 using Interactions;
 using Player;
-using UnityEngine;
 
 public interface IAnalyzer
 {
@@ -17,10 +16,7 @@ public class Analyzer : IAnalyzer
         _controller = controller;
     }
     public void Analyze(ReactiveStats stats, IEffectProcessor effectProcessor)
-    {
-
-        //Debug.Log("Health on start: " + stats.Health.Value);
-        
+    { 
         if (stats.Health.Value <= 0)
         {
             _controller.SwitchState(TypeOfConditionState.DeadState);

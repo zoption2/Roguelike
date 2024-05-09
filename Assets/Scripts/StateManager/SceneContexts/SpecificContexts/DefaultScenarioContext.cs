@@ -1,10 +1,7 @@
 using Enemy;
 using Obstacles;
 using Player;
-using Prefab;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 
@@ -30,12 +27,12 @@ namespace Gameplay
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
-
         public NavMeshSurface NavMeshSurface { get; set; }
         public void CheckIfAllStopped();
 
         public event OnEndTurn ON_END_TURN;
     }
+
     [System.Serializable]
     public class DefaultScenarioContext : MonoBehaviour, ICharacterScenarioContext
     {
@@ -66,13 +63,13 @@ namespace Gameplay
                     return;
                 }
             }
+
             foreach(IEnemyController enemy in Enemies)
             {
                 if (enemy.CheckIfMoving())
                 {
                     return;
-                }
-                    
+                }  
             }
             ON_END_TURN?.Invoke();
         }

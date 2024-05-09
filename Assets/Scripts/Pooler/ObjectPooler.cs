@@ -6,11 +6,11 @@ namespace Pool
 {
     public interface IMyPoolable 
     {
-       GameObject gameObject { get; }
-       Transform transform { get; }
-       void OnCreate();
-       void OnPull();
-       void OnRelease();
+       public GameObject gameObject { get; }
+       public Transform transform { get; }
+       public void OnCreate();
+       public void OnPull();
+       public void OnRelease();
     }
 
     public interface IPool<TEnum>
@@ -30,7 +30,6 @@ namespace Pool
         {
             _poolDictionary = new Dictionary<TEnum, Queue<IMyPoolable>>();
         }
-        
 
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
         {

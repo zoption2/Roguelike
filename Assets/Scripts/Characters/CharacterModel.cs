@@ -1,6 +1,5 @@
 using CharactersStats;
 using Interactions;
-using Prefab;
 using System;
 using System.Collections.Generic;
 

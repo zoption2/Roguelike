@@ -1,6 +1,4 @@
 using CharactersStats;
-using Prefab;
-using UnityEngine;
 using Zenject;
 
 namespace Interactions

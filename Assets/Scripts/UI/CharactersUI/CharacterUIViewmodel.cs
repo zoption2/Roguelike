@@ -1,14 +1,11 @@
 using CharactersStats;
 using Interactions;
-using Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UnityEditor.Playables;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 public class CharacterUIViewmodel
 {
@@ -17,15 +14,14 @@ public class CharacterUIViewmodel
     private CharacterModel _model;
 
     private ICharacterController _characterController;
-
+    private IDisposable activateDisposable;
     private IUIFactory _factory;
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
-    private IDisposable activateDisposable;
-    GameObject _abilityBTNs;
-    Button[] _buttons;
-    List<IAbility> _abilities;
-    List<IAbilityIconView> _abilityIcons;
+    private GameObject _abilityBTNs;
+    private Button[] _buttons;
+    private List<IAbility> _abilities;
+    private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
@@ -37,7 +33,6 @@ public class CharacterUIViewmodel
         _uIView = uIView;
         _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
         _abilityBTNs = _uIView.GetAbilityBTNs();
-        //ReactiveHealth = new ReactiveInt(model.ReactiveHealth.Value);
         _abilities = _model.Abilities;
         _abilityIcons = new List<IAbilityIconView>();
         VisualiseAbilities();
@@ -88,7 +83,7 @@ public class CharacterUIViewmodel
             IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, abilityPanel.transform.position, abilityPanel.transform);
             abilityIcon.Init(ability);
 
-            _abilityIcons.Add(abilityIcon);//
+            _abilityIcons.Add(abilityIcon);
         }
 
         _buttons = _abilityBTNs.GetComponentsInChildren<Button>();

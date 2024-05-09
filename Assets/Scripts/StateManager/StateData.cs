@@ -1,5 +1,4 @@
 using CharactersStats;
-using UnityEngine;
 using Zenject;
 
 namespace Gameplay
