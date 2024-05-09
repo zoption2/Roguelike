@@ -347,7 +347,6 @@ namespace Player
             {
                 _uIViewmodel.RevertButtonInteractible(CurrentAbility);
             }
-            CurrentAbility = _basicAbility;
         }
 
         public void ProcessAbilitiesOnStartTurn()
@@ -358,6 +357,7 @@ namespace Player
                 ability.TickReload();
             }
             _uIViewmodel.UpdateReloadIndicators();
+            CurrentAbility = _basicAbility;
         }
 
         public void ProcessAbilitiesOnEndTurn()
