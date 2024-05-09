@@ -128,7 +128,10 @@ namespace Enemy
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
-            _uIViewmodel.ActivateSkillsBTNs();
+            if (!IsActive)
+            {
+                _uIViewmodel.ActivateSkillsBTNs();
+            }
 
             //Debug.Log($"-----|{CharacterModel.Type}|-----");
             //Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
