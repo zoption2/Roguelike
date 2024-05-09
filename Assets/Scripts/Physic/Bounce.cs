@@ -18,12 +18,10 @@ public class Bounce : IMovable
 
         if (_providerRb.velocity.magnitude < 1 && _handlerRb.velocity.magnitude == 0)
         {
-            // Надати зворотний імпульс _providerRb
             _providerRb.velocity *= -2f;
         }
         else
         {
-            // Продовжити виконання звичайного відскоку
             _handlerRb.velocity = _providerVelocity;
             _providerRb.velocity = -_providerVelocity;
         }
