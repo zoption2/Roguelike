@@ -218,6 +218,14 @@ namespace Enemy
         public void PushIfDead()
         {
             ON_CHARACTER_DEATH?.Invoke(this);
+            Debug.Log("wow");
+            _pooler.Push(CharacterModel.Type, CharacterView);
+            PushCharacterUI();
+        }
+
+        public void JustPush()
+        {
+            Debug.Log("wow");
             _pooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
         }

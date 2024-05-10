@@ -212,9 +212,16 @@ namespace Player
         public void PushIfDead()
         {
             ON_CHARACTER_DEATH(this);
+            Debug.Log("wow");
             _pooler.Push(CharacterModel.Type, CharacterView);
-            
-            
+            PushCharacterUI();
+        }
+
+        public void JustPush()
+        {
+            Debug.Log("wow");
+            _pooler.Push(CharacterModel.Type, CharacterView);
+            PushCharacterUI();
         }
 
         public ReactiveStats GetCharacterStats()

@@ -40,7 +40,7 @@ namespace Pool
             var selectedQueue = _poolDictionary[tag];
             if (selectedQueue.Count > 0)
             {
-                Debug.LogWarning(selectedQueue.Count);
+                Debug.LogWarning("tag :" + tag + "  " + selectedQueue.Count);
                 foreach (var A in  selectedQueue)
                 {
                     Debug.LogWarning(A);
@@ -80,14 +80,18 @@ namespace Pool
         {
             if (_poolDictionary.ContainsKey(tag))
             {
+                Debug.LogWarning("object to push: " + obj);
                 obj.gameObject.SetActive(false);
                 _poolDictionary[tag].Enqueue(obj);
+                Debug.LogWarning("count " + _poolDictionary[tag].Count + "  peek after: " + _poolDictionary[tag].Peek());
                 obj.OnRelease();
             }
             else
             {
+                Debug.LogWarning(" new object to push: " + obj);
                 _poolDictionary.Add(tag, new Queue<IMyPoolable>());
                 _poolDictionary[tag].Enqueue(obj);
+                Debug.LogWarning("peek after: " + _poolDictionary[tag].Peek());
                 obj.gameObject.SetActive(false);
                 obj.OnRelease();
             }
