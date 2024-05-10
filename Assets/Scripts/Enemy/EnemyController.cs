@@ -172,17 +172,7 @@ namespace Enemy
         }
         public IInteraction GetInteraction()
         {
-            //Change it!
-            if(CurrentAbility != null)
-            {
-                IInteraction interaction = CurrentAbility.Interaction;
-                interaction.SetStats(ModifiableStats);
-                return interaction;
-            }
-            else
-            {
-                return _currentState.GetInteraction();
-            }
+            return _currentState.GetInteraction();
         }
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)

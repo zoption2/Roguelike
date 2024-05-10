@@ -70,6 +70,8 @@ namespace UI
             _requiredPlayers = requiredPlayersNumber;
             List<CharacterType> availablePlayers = new List<CharacterType>();
             availablePlayers = _dataService.PlayerData.GetAvailablePlayers();
+            _unSelectedPanels = new List<ICharacterPanelController>();
+            _selectedPanels = new List<ICharacterPanelController>();
             if (availablePlayers != null)
             {
                 foreach (CharacterType CharacterType in availablePlayers)
@@ -77,7 +79,6 @@ namespace UI
                     AddPanel(CharacterType);
                 }
             }
-
         }
         public void AddPanel(CharacterType characterType)
         {

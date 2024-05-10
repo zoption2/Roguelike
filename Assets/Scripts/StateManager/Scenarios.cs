@@ -2,6 +2,8 @@ using Enemy;
 using Player;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Gameplay
 {
@@ -20,6 +22,11 @@ namespace Gameplay
         public BossScenario(IGameplayService fullService, IScenarioContext scenarioContext)
         {
             _gameplayService = fullService;
+        }
+
+        public override void CheckConditonsForEndOfScenario()
+        {
+
         }
     }
 
@@ -51,6 +58,26 @@ namespace Gameplay
             else
             {
                 _scenarioContext.Enemies.Remove((IEnemyController)controller);
+            }
+            CheckConditonsForEndOfScenario();
+        }
+
+        public override void CheckConditonsForEndOfScenario()
+        {
+            string _sceneName = "Menu";
+            bool noPlayers = _scenarioContext.Players.Count == 0;
+            bool noEnemies = _scenarioContext.Enemies.Count == 0;
+            if (noPlayers || noEnemies)
+            {
+                if(noPlayers)
+                {
+                    Debug.LogWarning("You lost!");
+                }
+                else
+                {
+                    Debug.LogWarning("You won!");
+                }
+                SceneManager.LoadScene(_sceneName);
             }
         }
 
@@ -143,6 +170,7 @@ namespace Gameplay
 
 
         public abstract void RenewQueue();
+        public abstract void CheckConditonsForEndOfScenario();
 
         public object GetScenarioContext()
         {
