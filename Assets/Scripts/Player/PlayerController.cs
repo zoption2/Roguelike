@@ -46,7 +46,6 @@ namespace Player
         private CharacterUIView _UIView;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
-        private CharacterUIPooler _uiPooler;
         private CharacterUIPooler _characterUIPooler;
         private DiContainer _container;
         private NavMeshObstacle _navMeshObstacle;
@@ -222,6 +221,7 @@ namespace Player
             Debug.Log("wow");
             _pooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
+            
         }
 
         public ReactiveStats GetCharacterStats()
