@@ -16,6 +16,7 @@ public class Bounce : IMovable
         _handlerVelocity = handler.GetVelocity();
         _handlerVelocity.z = 0;
 
+
         if (_providerRb.velocity.magnitude < 1 && _handlerRb.velocity.magnitude == 0)
         {
             _providerRb.velocity *= -2f;

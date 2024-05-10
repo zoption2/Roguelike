@@ -141,12 +141,12 @@ public abstract class ActiveState
         if (_characterController.GetRigidbody().velocity.magnitude > 1)
         {
             bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
-        } else
+        }
+        else
         {
             bumpFromDealer = new Bounce();
             bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
         }
-        
     }
 }
 

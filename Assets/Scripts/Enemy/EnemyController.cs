@@ -15,6 +15,7 @@ namespace Enemy
     public interface IEnemyController : ICharacterController
     {
         public void OnClick(Transform point, PointerEventData eventData);
+        public void DisactivateAbilityPanel();
     }
     public class EnemyController : IEnemyController, IControllerInputs, IDisposable
     {
@@ -122,6 +123,11 @@ namespace Enemy
 
         public void SetCurrentAbility(IAbility ability)
         {
+        }
+
+        public void DisactivateAbilityPanel()
+        {
+            _uIViewmodel.DeactivateSkillsBTNs();
         }
 
 

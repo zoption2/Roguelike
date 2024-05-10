@@ -10,6 +10,7 @@ using Zenject;
 using UnityEngine.AI;
 using BehaviourTree;
 using System.Linq;
+using Enemy;
 
 namespace Player
 {
@@ -375,7 +376,13 @@ namespace Player
                     }
                 }
             }
-            
+
+            foreach(IEnemyController enemy in _characterScenarioContext.Enemies)
+            {
+                enemy.DisactivateAbilityPanel();
+            }
         }
+
+        
     }
 }

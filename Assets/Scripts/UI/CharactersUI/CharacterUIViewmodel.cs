@@ -18,16 +18,14 @@ public class CharacterUIViewmodel
     private IUIFactory _factory;
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
-    private GridLayoutGroup _abilityPanel;
-    private GameObject _abilityBTNs;
+    private GameObject _abilityPanel;
     private Image _activeIndicator;
     private Button[] _buttons;
     private List<IAbility> _abilities;
     private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
     private bool _isActive = false;
-
-    private Vector3 _previousPanelPosition;
+    private Vector3 _abilityPanelInitPos;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
     {
@@ -37,26 +35,28 @@ public class CharacterUIViewmodel
         _factory = uIFactory;
         _uIView = uIView;
         _visualizedEffects = new Dictionary<EffectType, IEffectIconView>();
-        _abilityBTNs = _uIView.GetAbilityBTNs();
         _abilities = _model.Abilities;
         _abilityIcons = new List<IAbilityIconView>();
         _activeIndicator = _uIView.GetActiveIndicator();
         _abilityPanel = _uIView.GetAbilityPanel();
+        
         VisualiseAbilities();
     }
 
     public async void ActivateSkillsBTNs()
     {
+        ChangeAbilityPanelPos();
         isActivated = !isActivated; 
         await Task.Delay(200);
         if (isActivated)
         {
-            _abilityBTNs.SetActive(true);
-            ChangeAbilityPanelPos();
+            _abilityPanel.SetActive(true);
+            
         }
         else
         {
-            _abilityBTNs.SetActive(false);
+            _abilityPanel.SetActive(false);
+
         }
     }
 
@@ -77,7 +77,7 @@ public class CharacterUIViewmodel
     public void DeactivateSkillsBTNs()
     {
         isActivated = false;
-        _abilityBTNs.SetActive(false);
+        _abilityPanel.SetActive(false);
     }
 
     public void UpdateStats(ReactiveStats stats)
@@ -88,64 +88,48 @@ public class CharacterUIViewmodel
 
     private void ChangeAbilityPanelPos()
     {
-        
-        // Отримання розмірів панелі
         RectTransform panelRect = _abilityPanel.GetComponent<RectTransform>();
         Vector2 panelSize = panelRect.sizeDelta;
 
-        // Отримання розмірів камери
         Camera mainCamera = Camera.main;
         float cameraHeight = 2f * mainCamera.orthographicSize;
         float cameraWidth = cameraHeight * mainCamera.aspect;
 
-        // Отримання меж камери
         float cameraHalfWidth = cameraWidth / 2f;
         float cameraHalfHeight = mainCamera.orthographicSize;
 
-        // Позиція панелі
+        _abilityPanel.transform.localPosition = new Vector3(0, -2, 0);
+
         Vector3 panelPosition = _abilityPanel.transform.position;
+
         float panelHalfWidth = panelSize.x / 2f;
         float panelHalfHeight = panelSize.y / 2f;
 
-        // Розрахунок відстані панелі від камери
         Vector3 panelDistanceFromCamera = mainCamera.transform.position - panelPosition;
         float horizontalDistanceFromCamera = Mathf.Abs(Vector3.Dot(panelDistanceFromCamera, mainCamera.transform.right));
         float verticalDistanceFromCamera = Mathf.Abs(Vector3.Dot(panelDistanceFromCamera, mainCamera.transform.up));
 
-        // Перевірка, чи виходить панель за межі камери на 20% і більше
-        bool isHorizontalOutOfCamera = horizontalDistanceFromCamera - panelHalfWidth > cameraHalfWidth;
         bool isVerticalOutOfCamera = verticalDistanceFromCamera - panelHalfHeight > cameraHalfHeight;
-
-        float newX = panelPosition.x;
-        float newY = panelPosition.y;
-
-        _abilityPanel.transform.position = new Vector3(0, 0, panelPosition.z);
 
         if (isVerticalOutOfCamera)
         {
-            newY += 1.25f; // Змінюємо позицію по Y вгору
+            float newX = panelPosition.x;
+
+            float distanceToRightEdge = cameraHalfWidth - (panelPosition.x + panelHalfWidth);
+            float distanceToLeftEdge = cameraHalfWidth + (panelPosition.x - panelHalfWidth);
+
+            if (distanceToRightEdge > distanceToLeftEdge)
+            {
+                newX += 2.55f;
+            }
+            else
+            {
+                newX -= 2.55f;
+            }
+
+            _abilityPanel.transform.position = new Vector3(newX, panelPosition.y + 1.25f, panelPosition.z);
         }
-
-        float distanceToRightEdge = cameraWidth - panelPosition.x;
-        float distanceToLeftEdge = panelPosition.x;
-
-        // Переміщення панелі в більш віддалену від краю сторону
-        if (distanceToRightEdge > distanceToLeftEdge) // Панель ближче до правого краю
-        {
-            newX += 2.55f; // Змінюємо позицію по X направо
-        }
-        else // Панель ближче до лівого краю
-        {
-            newX -= 2.55f; // Змінюємо позицію по X наліво
-        }
-
-
-        // Змінення позиції панелі
-        _abilityPanel.transform.position = new Vector3(newX, newY, panelPosition.z);
     }
-
-
-
 
 
     public void VisualiseAbilities()
@@ -160,7 +144,7 @@ public class CharacterUIViewmodel
             _abilityIcons.Add(abilityIcon);
         }
 
-        _buttons = _abilityBTNs.GetComponentsInChildren<Button>();
+        _buttons = _abilityPanel.GetComponentsInChildren<Button>();
 
 
         for (int i = 0; i < _buttons.Length; i++)
