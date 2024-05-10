@@ -46,7 +46,6 @@ namespace Player
         private CharacterUIView _UIView;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
-        private CharacterUIPooler _uiPooler;
         private CharacterUIPooler _characterUIPooler;
         private DiContainer _container;
         private NavMeshObstacle _navMeshObstacle;
@@ -213,7 +212,7 @@ namespace Player
         {
             ON_CHARACTER_DEATH(this);
             _pooler.Push(CharacterModel.Type, CharacterView);
-            
+            PushCharacterUI();
             
         }
 
