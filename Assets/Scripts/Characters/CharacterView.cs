@@ -138,7 +138,7 @@ public class CharacterView : MonoBehaviour,
 
     public void OnRelease()
     {
-        ControllerInputs.PushCharacterUI();
+        //ControllerInputs.PushCharacterUI();
     }
 
     public Rigidbody GetRigidbody()

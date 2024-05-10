@@ -46,6 +46,7 @@ namespace Player
         private CharacterUIView _UIView;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;
+        private CharacterUIPooler _uiPooler;
         private CharacterUIPooler _characterUIPooler;
         private DiContainer _container;
         private NavMeshObstacle _navMeshObstacle;
@@ -57,6 +58,7 @@ namespace Player
         private IStateFactory _stateFactory;
         private ICharacterScenarioContext _characterScenarioContext;
         private IUIFactory _uIFactory;
+        
 
         [Inject]
         public void Construct(
@@ -195,7 +197,7 @@ namespace Player
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
         {
-            //викликає опрацювання удару у об'єкту, з яким зіткнувся
+
             if(IsMoving)
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);
@@ -211,6 +213,8 @@ namespace Player
         {
             ON_CHARACTER_DEATH(this);
             _pooler.Push(CharacterModel.Type, CharacterView);
+            
+            
         }
 
         public ReactiveStats GetCharacterStats()

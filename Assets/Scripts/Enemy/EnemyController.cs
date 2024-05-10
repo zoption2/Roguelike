@@ -219,6 +219,7 @@ namespace Enemy
         {
             ON_CHARACTER_DEATH?.Invoke(this);
             _pooler.Push(CharacterModel.Type, CharacterView);
+            PushCharacterUI();
         }
 
         public bool CheckIfMoving()
