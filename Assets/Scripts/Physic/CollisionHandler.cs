@@ -16,6 +16,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
     private bool _isStoppedInsideTrigger;
     private IControllerInputs _controllerInputs;
     
+    
     public void Init(IControllerInputs controllerInputs, CharacterView characterView)
     {
         _controllerInputs = controllerInputs;

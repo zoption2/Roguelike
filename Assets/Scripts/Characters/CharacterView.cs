@@ -42,6 +42,7 @@ public class CharacterView : MonoBehaviour,
     public event Action<PointerEventData> ON_BEGINDRAG;
     
     [SerializeField] Transform _viewTransform;
+    public ParticleSystem ParticleTestSystem { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; }
