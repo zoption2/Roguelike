@@ -58,7 +58,7 @@ namespace Gameplay
 
             _characterController.ProcessOnEndTurn();
 
-            _characterController.UpdateHealthBar();
+            _characters.ProcessTurnEnd();
 
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
@@ -109,8 +109,8 @@ namespace Gameplay
             
             _characterController.ProcessOnEndTurn();
 
-            _characterController.UpdateHealthBar();
-            
+            _characters.ProcessTurnEnd();
+
             _characters.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
         }

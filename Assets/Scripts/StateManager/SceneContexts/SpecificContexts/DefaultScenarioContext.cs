@@ -30,6 +30,8 @@ namespace Gameplay
         public NavMeshSurface NavMeshSurface { get; set; }
         public void CheckIfAllStopped();
 
+        public void ProcessTurnEnd();
+
         public event OnEndTurn ON_END_TURN;
     }
 
@@ -72,6 +74,19 @@ namespace Gameplay
                 }  
             }
             ON_END_TURN?.Invoke();
+        }
+
+        public void ProcessTurnEnd()
+        {
+            foreach(IPlayerController player in Players)
+            {
+                player.UpdateHealthBar();
+            }
+
+            foreach(IEnemyController enemy in Enemies)
+            {
+                enemy.UpdateHealthBar();
+            }
         }
     }
 }

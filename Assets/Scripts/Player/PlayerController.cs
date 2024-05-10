@@ -339,7 +339,7 @@ namespace Player
 
         public void UpdateHealthBar()
         {
-            //_uIViewmodel.UpdateHealthBar();
+            _uIViewmodel.UpdateHealthBar();
         }
 
         public void ProcessReloadAbility()
@@ -366,6 +366,7 @@ namespace Player
         public void ProcessOnEndTurn()
         {
             _uIViewmodel.ToggleActiveIndicator();
+            
             if (_abilitiesForReload.Count > 0)
             {
                 foreach (IAbility ability in _abilitiesForReload)

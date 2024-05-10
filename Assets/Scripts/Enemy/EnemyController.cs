@@ -339,7 +339,7 @@ namespace Enemy
 
         public void UpdateHealthBar()
         {
-            //_uIViewmodel.UpdateHealthBar();
+            _uIViewmodel.UpdateHealthBar();
         }
 
         public void ProcessReloadAbility()
@@ -354,6 +354,7 @@ namespace Enemy
         public void ProcessOnEndTurn()
         {
             _uIViewmodel.ToggleActiveIndicator();
+            
             foreach (IAbility ability in CharacterModel.Abilities)
             {
                 ability.TickReload();
