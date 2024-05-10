@@ -1,6 +1,7 @@
 using Pool;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public interface ICharacterUIView
 {
@@ -51,9 +52,10 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 
     public void ChangeHealthBarOnEndTurn()
     {
-        _redBar.value = _greenBar.value;
+        float endValue = _greenBar.value;
+        float duration = 0.5f;
+        _redBar.DOValue(endValue, duration);
     }
-
 
     public GridLayoutGroup GetEffectsPanel()
     {
