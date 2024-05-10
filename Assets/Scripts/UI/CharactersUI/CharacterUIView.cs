@@ -1,6 +1,7 @@
 using Pool;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public interface ICharacterUIView
 {
@@ -9,10 +10,10 @@ public interface ICharacterUIView
 
 public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 {
-    [SerializeField] private Scrollbar _scrollbar;
+    [SerializeField] private Slider _greenBar;
+    [SerializeField] private Slider _redBar;
     [SerializeField] private GridLayoutGroup _effectsPanel;
     [SerializeField] private GameObject _abilityPanel;
-    [SerializeField] private GameObject _abilityBTNs;
     [SerializeField] private Image _activeIndicator;
 
     private ICharacterView _characterView;
@@ -27,9 +28,11 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 
         _maxHealth = _viewmodel.ReactiveHealth.Value;
 
-        float normalizedHealth = _viewmodel.ReactiveHealth.Value / _maxHealth;
+        _redBar.maxValue = _maxHealth;
+        _greenBar.maxValue = _maxHealth;
 
-        _scrollbar.size = normalizedHealth;
+        _redBar.value = _maxHealth;
+        _greenBar.value = _maxHealth;
 
         _viewmodel.ReactiveHealth.Subscribe(ChangeHealthBar);
         
@@ -44,23 +47,15 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
     {
         Debug.LogWarning("Max Health: " + _maxHealth);
         Debug.LogWarning("Current Health: " + newHealth);
-        _scrollbar.size = (float)newHealth / _maxHealth;
+        _greenBar.value = newHealth;
     }
 
     public void ChangeHealthBarOnEndTurn()
     {
-        float currentSize = _scrollbar.size;
-        RectTransform rt = _scrollbar.GetComponent<RectTransform>();
-
-        Vector2 newSizeDelta = rt.sizeDelta;
-
-        float pixelWidth = currentSize * rt.rect.width;
-
-        newSizeDelta.x = pixelWidth;
-
-        rt.sizeDelta = newSizeDelta;
+        float endValue = _greenBar.value;
+        float duration = 0.5f;
+        _redBar.DOValue(endValue, duration);
     }
-
 
     public GridLayoutGroup GetEffectsPanel()
     {
@@ -70,11 +65,6 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
     public GameObject GetAbilityPanel()
     {
         return _abilityPanel;
-    }
-
-    public GameObject GetAbilityBTNs()
-    {
-        return _abilityBTNs;
     }
 
     public Image GetActiveIndicator()

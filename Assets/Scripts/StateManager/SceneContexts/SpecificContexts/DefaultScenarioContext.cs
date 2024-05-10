@@ -2,7 +2,9 @@ using Enemy;
 using Obstacles;
 using Player;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.AI.Navigation;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay
@@ -29,6 +31,8 @@ namespace Gameplay
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
         public void CheckIfAllStopped();
+
+        public void ProcessTurnEnd();
 
         public event OnEndTurn ON_END_TURN;
     }
@@ -72,6 +76,20 @@ namespace Gameplay
                 }  
             }
             ON_END_TURN?.Invoke();
+        }
+
+        ////////////////////
+        public void ProcessTurnEnd()
+        {
+            foreach(IPlayerController player in Players)
+            {
+                player.UpdateHealthBar();
+            }
+
+            foreach(IEnemyController enemy in Enemies)
+            {
+                enemy.UpdateHealthBar();
+            }
         }
     }
 }

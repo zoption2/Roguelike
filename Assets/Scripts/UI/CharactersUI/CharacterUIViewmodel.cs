@@ -1,6 +1,5 @@
 using CharactersStats;
 using Interactions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +13,6 @@ public class CharacterUIViewmodel
     private CharacterModel _model;
 
     private ICharacterController _characterController;
-    private IDisposable activateDisposable;
     private IUIFactory _factory;
     private CharacterUIView _uIView;
     private Dictionary<EffectType, IEffectIconView> _visualizedEffects;
@@ -25,7 +23,6 @@ public class CharacterUIViewmodel
     private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
     private bool _isActive = false;
-    private Vector3 _abilityPanelInitPos;
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
     {
@@ -106,7 +103,7 @@ public class CharacterUIViewmodel
         float panelHalfHeight = panelSize.y / 2f;
 
         Vector3 panelDistanceFromCamera = mainCamera.transform.position - panelPosition;
-        float horizontalDistanceFromCamera = Mathf.Abs(Vector3.Dot(panelDistanceFromCamera, mainCamera.transform.right));
+       
         float verticalDistanceFromCamera = Mathf.Abs(Vector3.Dot(panelDistanceFromCamera, mainCamera.transform.up));
 
         bool isVerticalOutOfCamera = verticalDistanceFromCamera - panelHalfHeight > cameraHalfHeight;
