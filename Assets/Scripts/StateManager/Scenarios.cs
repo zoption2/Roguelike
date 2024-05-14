@@ -1,5 +1,6 @@
 using Enemy;
 using Player;
+using Pool;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -33,12 +34,17 @@ namespace Gameplay
     public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenario
     {
         private List<CookedMapper> _turnsOrder;
-        public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory)
+        private CharacterPooler _characterPooler;
+        private CharacterUIPooler _characterUIPooler;
+        public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory, CharacterPooler characterPooler,
+            CharacterUIPooler characterUIPooler)
         {
             _gameplayService = gameplayService;
             _queueOfStates = new Queue<IState>();
             _turnsOrder = new List<CookedMapper>();
             _stateFactory = stateFactory;
+            _characterPooler = characterPooler;
+            _characterUIPooler = characterUIPooler;
         }
         public void EraseCharacter(ICharacterController controller)
         {
@@ -61,6 +67,13 @@ namespace Gameplay
             }
             CheckConditonsForEndOfScenario();
         }
+        
+        private void CleanPoolers()
+        {
+            _characterPooler.CleanPool();
+            _characterUIPooler.CleanPool();
+            Debug.LogWarning("cleaned poolers!");
+        }
 
         public override void CheckConditonsForEndOfScenario()
         {
@@ -69,22 +82,23 @@ namespace Gameplay
             bool noEnemies = _scenarioContext.Enemies.Count == 0;
             if (noPlayers || noEnemies)
             {
-                if(noPlayers)
-                {
-                    foreach(ICharacterController enemy in _scenarioContext.Enemies)
-                    {
-                        enemy.JustPush();
-                    }
-                    Debug.LogWarning("You lost!");
-                }
-                else
-                {
-                    foreach (ICharacterController player in _scenarioContext.Players)
-                    {
-                        player.JustPush();
-                    }
-                    Debug.LogWarning("You won!");
-                }
+                //if(noPlayers)
+                //{
+                //    foreach(ICharacterController enemy in _scenarioContext.Enemies)
+                //    {
+                //        enemy.JustPush();
+                //    }
+                //    Debug.LogWarning("You lost!");
+                //}
+                //else
+                //{
+                //    foreach (ICharacterController player in _scenarioContext.Players)
+                //    {
+                //        player.JustPush();
+                //    }
+                //    Debug.LogWarning("You won!");
+                //}
+                CleanPoolers();
                 SceneManager.LoadScene(_sceneName);
             }
         }

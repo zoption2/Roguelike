@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -16,6 +17,7 @@ namespace Pool
     public interface IPool<TEnum>
     {
         public void Init();
+        public void CleanPool();
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         public void Push(TEnum tag, IMyPoolable obj);
     }
@@ -31,6 +33,10 @@ namespace Pool
             _poolDictionary = new Dictionary<TEnum, Queue<IMyPoolable>>();
         }
 
+        public void CleanPool()
+        {
+            _poolDictionary.Clear();
+        }
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
         {
             if (!_poolDictionary.ContainsKey(tag))
@@ -40,6 +46,7 @@ namespace Pool
             var selectedQueue = _poolDictionary[tag];
             if (selectedQueue.Count > 0)
             {
+                Debug.LogWarning("this is " + this);
                 Debug.LogWarning("tag :" + tag + "  " + selectedQueue.Count);
                 foreach (var A in  selectedQueue)
                 {
