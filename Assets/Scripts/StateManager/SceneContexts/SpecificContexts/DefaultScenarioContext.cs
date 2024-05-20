@@ -2,9 +2,7 @@ using Enemy;
 using Obstacles;
 using Player;
 using System.Collections.Generic;
-using System.Threading;
 using Unity.AI.Navigation;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Gameplay
