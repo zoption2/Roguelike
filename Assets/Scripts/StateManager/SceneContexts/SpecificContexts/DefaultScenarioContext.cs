@@ -20,10 +20,19 @@ namespace Gameplay
         public Transform spawnPoint;
         public CharacterType enemyType;
     }
+
+    [System.Serializable]
+    public class Triggers
+    {
+        public Transform spawnPoint;
+        public TriggerType trigerType;
+    }
+
     public interface ICharacterScenarioContext : IScenarioContext
     {
         public List<IPlayerController> Players { get;  set; }
         public List<IEnemyController> Enemies { get; set; }
+        public List<Triggers> CompleatedRoomTriggers { get; set; }
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
@@ -40,6 +49,7 @@ namespace Gameplay
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
+        [field: SerializeField] public List<Triggers> CompleatedRoomTriggers { get; set; }//
         public NavMeshSurface NavMeshSurface { get; set; }
         [field: SerializeField] public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         [field: SerializeField] public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }

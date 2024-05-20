@@ -77,7 +77,6 @@ namespace Gameplay
 
         public override void CheckConditonsForEndOfScenario()
         {
-            string _sceneName = "Menu";
             bool noPlayers = _scenarioContext.Players.Count == 0;
             bool noEnemies = _scenarioContext.Enemies.Count == 0;
             if (noPlayers || noEnemies)
@@ -98,9 +97,20 @@ namespace Gameplay
                 //    }
                 //    Debug.LogWarning("You won!");
                 //}
-                CleanPoolers();
-                SceneManager.LoadScene(_sceneName);
+                ActivateCompleatedRoomTriggers();
+                //LoadMainMenu();
             }
+        }
+
+        public void LoadMainMenu()
+        {
+            CleanPoolers();
+            SceneManager.LoadScene("Menu");
+        }
+
+        public void ActivateCompleatedRoomTriggers()
+        {
+            Debug.LogError("Room Compleated!!!");
         }
 
         private void SubscribeToDeathOfCharacters()

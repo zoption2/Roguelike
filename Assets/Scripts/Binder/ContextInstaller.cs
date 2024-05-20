@@ -98,7 +98,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<CharacterPanelPooler>().To<CharacterPanelPooler>().AsSingle();
         Container.Bind<EffectPooler>().To<EffectPooler>().AsSingle();
         Container.Bind<CharacterUIPooler>().To<CharacterUIPooler>().AsSingle();
-        Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
+        Container.Bind<TriggerPooler>().To<TriggerPooler>().AsSingle();
         Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
     }
 
@@ -111,6 +111,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<INavigationFactory>().To<NavigationFactory>().AsSingle();
         Container.Bind<IUIFactory>().To<UIFactory>().AsSingle();
         Container.Bind<IAbilityFactory>().To<AbilityFactory>().AsSingle();
+        Container.Bind<ITriggerFactory>().To<TriggerFactory>().AsSingle();
     }
 
     public void BindPrefabHolders()

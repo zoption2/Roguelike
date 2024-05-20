@@ -73,10 +73,11 @@ public enum EffectType
     StunEffect = 3,
 }
 
-public enum BuffType
+public enum TriggerType
 {
     None = 0,
     MoreDamage = 1,
+    Exit = 2,
 }
 
 public enum UIType

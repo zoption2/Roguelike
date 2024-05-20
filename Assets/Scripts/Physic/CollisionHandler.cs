@@ -45,6 +45,11 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
             _isStoppedInsideTrigger = true;
             StartCoroutine(CheckPlayerStopped(buff));
         }
+
+        if (other.gameObject.TryGetComponent(out ICompleatedRoomTrigger trigger))
+        {
+            Debug.LogError("Trigger with exet triger!!");
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -67,11 +72,12 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
                 {
                     List<IEffect> effects = buff.UseBuff();
 
-                    _controllerInputs.AddEffects(effects);
 
+                    _controllerInputs.AddEffects(effects);
                     Debug.Log("<color=#07C3FF>" + buff + " effects were added" + "</color>");
 
-                    buff.DisableBuff();
+
+                    buff.DisableTrigger();
                     _isStoppedInsideTrigger = false;
                     yield break;
                 }

@@ -2,14 +2,14 @@ using Pool;
 using Prefab;
 using UnityEngine;
 
-public class BuffPooler : ObjectPooler<BuffType>
+public class TriggerPooler : ObjectPooler<TriggerType>
 {
     private BuffPrefabHolder _provider;
-    public BuffPooler(BuffPrefabHolder provider)
+    public TriggerPooler(BuffPrefabHolder provider)
     {
         _provider = provider;
     }
-    protected override GameObject GetPrefab(BuffType tag)
+    protected override GameObject GetPrefab(TriggerType tag)
     {
         return _provider.GetPrefab(tag);
     }

@@ -15,3 +15,5 @@ MonoBehaviour:
   _prefabs:
   - Key: 1
     Value: {fileID: 698962433520764838, guid: 1d4bf32b19ad67147a94aa8a5ee42519, type: 3}
+  - Key: 2
+    Value: {fileID: 4192221400248666139, guid: e880c8c5bdba17841b75eeed116ae2ad, type: 3}

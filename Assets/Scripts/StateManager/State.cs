@@ -129,6 +129,8 @@ namespace Gameplay
 
         IStatsProvider _statsProvider;
 
+        ITriggerFactory _triggerFactory;
+
         IPlayerFactory _playerFactory;
 
         IEnemyFactory _enemyFactory;
@@ -139,6 +141,7 @@ namespace Gameplay
         public InitLevelState(IScenario scenario,
             ICharacterScenarioContext context,
             IStatsProvider provider,
+            ITriggerFactory triggerFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
             INavigationFactory navigationFactory)
@@ -146,6 +149,7 @@ namespace Gameplay
             _scenario = scenario;
             _characters = context;
             _statsProvider  = provider;
+            _triggerFactory = triggerFactory;
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;
             _navigationFactory = navigationFactory;
@@ -158,6 +162,16 @@ namespace Gameplay
             OnNavigationCreate();
             _scenario.OnStateEnd();
         }
+
+        //public void OnRoomCreate()
+        //{
+        //    for(int i = 0; i < _characters.CompleatedRoomTriggers.Count; i++)
+        //    {
+        //        _triggerFactory.CreateTrigger()
+        //    }
+        //    _characters.CompleatedRoomTriggers.Add();
+        //}
+
         public void OnNavigationCreate()
         {
             NavMeshSurface navMeshSurface = _navigationFactory.CreateNavigation();

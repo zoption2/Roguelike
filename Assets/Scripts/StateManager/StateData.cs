@@ -11,6 +11,7 @@ namespace Gameplay
     }
     public class StateData : IStateFactory
     {
+        private ITriggerFactory _triggerFactory;
         private IPlayerFactory _playerFactory;
         private IEnemyFactory _enemyFactory;
         private IStatsProvider _statsProvider;
@@ -19,9 +20,10 @@ namespace Gameplay
         private INavigationFactory _navigationFactory;
 
         [Inject]
-        public void Construct(IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
+        public void Construct(ITriggerFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
             INavigationFactory navigationFactory)
         {
+            _triggerFactory = triggerFactory;
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
             _statsProvider = statsProvider;
@@ -40,7 +42,7 @@ namespace Gameplay
             switch (type)
             {
                 case TypeOfState.Init:
-                    state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _playerFactory,
+                    state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _triggerFactory, _playerFactory,
                         _enemyFactory, _navigationFactory);
                     break;
                 case TypeOfState.PlayerTurn:
