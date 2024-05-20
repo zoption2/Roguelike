@@ -1,12 +1,7 @@
-using Cinemachine;
 using Gameplay;
-using Interactions;
 using Obstacles;
 using Pool;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 public class TriggerBase : MonoBehaviour, IMyPoolable
