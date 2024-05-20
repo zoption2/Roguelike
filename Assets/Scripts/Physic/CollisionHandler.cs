@@ -48,7 +48,12 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
 
         if (other.gameObject.TryGetComponent(out ICompleatedRoomTrigger trigger))
         {
-            Debug.LogError("Trigger with exet triger!!");
+           
+            if(trigger.GetActiveStatus())
+            {
+                trigger.UseTrigger();
+            }
+            
         }
     }
 

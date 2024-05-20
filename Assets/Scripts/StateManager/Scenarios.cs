@@ -81,6 +81,13 @@ namespace Gameplay
             bool noEnemies = _scenarioContext.Enemies.Count == 0;
             if (noPlayers || noEnemies)
             {
+                if(noPlayers)
+                {
+                    LoadMainMenu();
+                } else
+                {
+                    ActivateCompleatedRoomTriggers();
+                }
                 //if(noPlayers)
                 //{
                 //    foreach(ICharacterController enemy in _scenarioContext.Enemies)
@@ -97,7 +104,7 @@ namespace Gameplay
                 //    }
                 //    Debug.LogWarning("You won!");
                 //}
-                ActivateCompleatedRoomTriggers();
+                
                 //LoadMainMenu();
             }
         }
@@ -110,7 +117,10 @@ namespace Gameplay
 
         public void ActivateCompleatedRoomTriggers()
         {
-            Debug.LogError("Room Compleated!!!");
+            foreach(var trigger in _scenarioContext.CompleatedRoomTriggers)
+            {
+                trigger.Activate();
+            }
         }
 
         private void SubscribeToDeathOfCharacters()
@@ -188,7 +198,7 @@ namespace Gameplay
 
     public interface IDefaultScenario : IScenario
     {
-
+        public void LoadMainMenu();
     }
 
     public abstract class Scenario<T> : IScenario where T : IScenarioContext

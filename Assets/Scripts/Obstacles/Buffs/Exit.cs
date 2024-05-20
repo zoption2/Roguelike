@@ -1,41 +1,28 @@
+using Cinemachine;
+using Gameplay;
 using Interactions;
 using Obstacles;
 using Pool;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
-public class Exit : MonoBehaviour, ICompleatedRoomTrigger, IMyPoolable
+public class TriggerBase : MonoBehaviour, IMyPoolable
 {
-    [SerializeField] private TriggerType _type;
-    private BoxCollider _collider;
-
-    [Inject]
-    private TriggerPooler _pooler;
-
+    protected BoxCollider _collider;
+    protected bool _isActivated;
     private void Start()
     {
-        _collider = GetComponent<BoxCollider>();
-        _collider.isTrigger = false;
+        //_collider = GetComponent<BoxCollider>();
+        //_collider.isTrigger = false;
     }
 
-    public void ActivateTrigger()
+    public void Activate()
     {
-        Debug.LogWarning("Exit trigger!");
-        _pooler.Init();
+        _isActivated = true;
     }
-
-    public void UseTrigger()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void DisableTrigger()
-    {
-        _pooler.Push(_type, this);
-    }
-
     public void OnCreate()
     {
     }
@@ -47,6 +34,41 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger, IMyPoolable
     public void OnRelease()
     {
     }
+}
 
-    
+public class Exit : TriggerBase, ICompleatedRoomTrigger
+{
+    [SerializeField] private TriggerType _type;
+
+    [Inject]
+    private TriggerPooler _pooler;
+
+    [Inject]
+    private IDefaultScenario _scenario;
+
+    private void Start()
+    {
+        _isActivated = false;
+    }
+
+    public bool GetActiveStatus()
+    {
+        return _isActivated;
+    }
+
+    public void ActivateTrigger()
+    {
+        Debug.LogWarning("Exit trigger!");
+        _pooler.Init();
+    }
+
+    public void UseTrigger()
+    {
+        _scenario.LoadMainMenu();
+    }
+
+    public void DisableTrigger()
+    {
+        _pooler.Push(_type, this);
+    }
 }

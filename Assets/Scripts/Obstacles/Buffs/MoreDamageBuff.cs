@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-public class MoreDamageBuff : MonoBehaviour, IBuff, IMyPoolable
+public class MoreDamageBuff : TriggerBase, IBuff
 {
     [SerializeField] private TriggerType _type;
 
@@ -32,18 +32,4 @@ public class MoreDamageBuff : MonoBehaviour, IBuff, IMyPoolable
     {
         _pooler.Push(_type, this);
     }
-
-    public void OnCreate()
-    {
-    }
-
-    public void OnPull()
-    {
-    }
-
-    public void OnRelease()
-    {
-    }
-
-    
 }

@@ -1170,6 +1170,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034474bd4501a8d41af9a2afc8403568, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <CompleatedRoomTriggers>k__BackingField:
+  - {fileID: 7848901628154276685}
   <TeleportWallEnters>k__BackingField: []
   <PlayerSpawnPoints>k__BackingField:
   - spawnPoint: {fileID: 1928456086}
@@ -1732,6 +1734,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 983166151217122360, guid: e880c8c5bdba17841b75eeed116ae2ad, type: 3}
   m_PrefabInstance: {fileID: 8318559942133634581}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7848901628154276685 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3631736744545235841, guid: e880c8c5bdba17841b75eeed116ae2ad, type: 3}
+  m_PrefabInstance: {fileID: 8318559942133634581}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57293de795392294bbf023c0d5c1df08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8318559942133634581
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1746,7 +1759,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 983166151217122360, guid: e880c8c5bdba17841b75eeed116ae2ad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: -0.6
       objectReference: {fileID: 0}
     - target: {fileID: 983166151217122360, guid: e880c8c5bdba17841b75eeed116ae2ad, type: 3}
       propertyPath: m_LocalPosition.z
