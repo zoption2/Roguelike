@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level_UITestScene.unity
     guid: 4102dc1253017044e9ac7f62e89a4f92
+  - enabled: 1
+    path: Assets/Scenes/Level_AdaptiveScreenTest.unity
+    guid: 75392fd7c66d98049b56467253cb1ab6
   m_configObjects: {}

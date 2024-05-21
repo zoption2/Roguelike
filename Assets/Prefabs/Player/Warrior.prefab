@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 6612742267057689316}
   m_Layer: 7
   m_Name: Warrior
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -306,7 +306,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _viewTransform: {fileID: 6015431970128935106}
-  _particleTestSystem: {fileID: 0}
   MaxVelocity: 50
 --- !u!198 &3343622773524607542
 ParticleSystem:

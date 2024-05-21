@@ -21,13 +21,6 @@ namespace Gameplay
         public CharacterType enemyType;
     }
 
-    [System.Serializable]
-    public class Triggers
-    {
-        public Transform spawnPoint;
-        public TriggerType trigerType;
-    }
-
     public interface ICharacterScenarioContext : IScenarioContext
     {
         public List<IPlayerController> Players { get;  set; }

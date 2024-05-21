@@ -7,8 +7,8 @@ namespace UI
 {
     public class MenuSceneChangingButton : MonoBehaviour
     {
-        private const string _sceneName = "Level_UITestScene";
-        //Level_TestScene Level_1 Level_MovementTest Level_UITestScene
+        private const string _sceneName = "Level_AdaptiveScreenTest";
+        //Level_TestScene Level_1 Level_MovementTest Level_UITestScene Level_AdaptiveScreenTest
         private ICharacterSelector _characterSelector;
 
 
