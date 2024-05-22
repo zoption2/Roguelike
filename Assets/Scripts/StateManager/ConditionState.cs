@@ -25,16 +25,22 @@ public interface IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer);
 }
 
+public delegate void OnStopped();
 public abstract class ActiveState
 {
     protected ICharacterController _characterController;
     protected ISlingShot _slingShot;
     protected int _milisecondsDelay = 3000;
     protected float _launchMultiplier = 1;
+    protected event OnStopped ON_STOPPED;
+    protected NavMeshAgent _navAgent;
+    protected NavMeshObstacle _navObstacle;
 
     public ActiveState(ICharacterController characterController)
     {
         _characterController = characterController;
+        _navAgent = _characterController.NavMeshAgent;
+        _navObstacle = _characterController.NavMeshObstacle;
     }
 
     public void OnEnter()
@@ -67,6 +73,14 @@ public abstract class ActiveState
         if (_characterController.IsMoving)
         {
             ViewRotation();
+        }
+
+        if(_navAgent.enabled && _navAgent.velocity.magnitude == 0 && ON_STOPPED != null)
+        {
+            Debug.Log("!!!!!!!");
+            _navAgent.enabled = false;
+            _navObstacle.enabled = true;
+            ON_STOPPED?.Invoke();
         }
     }
 
@@ -246,18 +260,23 @@ public class EnemyActiveState : ActiveState, IConditionState
     {
         IDefaultBehaviourTree defaultBehaviourTree = _characterController.DefaultBehaviourTree;
         Transform target = defaultBehaviourTree.GetTarget();
-        Transform enemy = _characterController.GetTransform();
+        _navObstacle.enabled = false;
+        
         await Task.Delay(_milisecondsDelay / 10);
+        _navAgent.enabled = true;
 
-        NavMeshPath path = _characterController.Path;
-
-        Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path, target);
-
-        Vector2 direction = waypoint - enemy.position;
-        _characterController.CharacterView.ChangeDirection(direction);
+        _navAgent.SetDestination(target.position);
         await Task.Delay(_milisecondsDelay / 10);
+        if (defaultBehaviourTree.CanAttackAfterMove(_navAgent.path))
+        {
+            ON_STOPPED += Attack;
+        }
+        else
+        {
+            ON_STOPPED += _characterController.HandleStopMovement;
+        }
 
-        LaunchYourselfToPoint(waypoint);
+        //LaunchYourselfToPoint(waypoint);
     }
 }
 

@@ -36,7 +36,6 @@ namespace Enemy
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
-        public NavMeshPath Path { get; set; }
         public NavMeshObstacle NavMeshObstacle { get; set; }
 
         private IConditionState _currentState;

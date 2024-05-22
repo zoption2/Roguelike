@@ -22,7 +22,6 @@ public interface ICharacterController
     public CharacterView CharacterView { get; set; }
     public SlingshotPooler SlingShotPooler { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
-    public NavMeshPath Path { get; set; }
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public void ProcessReloadAbility();
