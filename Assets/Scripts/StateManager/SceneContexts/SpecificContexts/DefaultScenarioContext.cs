@@ -21,13 +21,21 @@ namespace Gameplay
         public CharacterType enemyType;
     }
 
+    [System.Serializable]
+    public class BuffSpawnPointWithType
+    {
+        public Transform spawnPoint;
+        public BuffType buffType;
+    }
+
     public interface ICharacterScenarioContext : IScenarioContext
     {
         public List<IPlayerController> Players { get;  set; }
         public List<IEnemyController> Enemies { get; set; }
-        [SerializeField] public List<TriggerBase> CompleatedRoomTriggers { get; set; }
+        public List<IBuff> Buffs { get; set; }
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
+        public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
         public void CheckIfAllStopped();
@@ -42,12 +50,13 @@ namespace Gameplay
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
-        [field: SerializeField] public List<TriggerBase> CompleatedRoomTriggers { get; set; }//
+        public List<IBuff> Buffs { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
         [field: SerializeField] public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         [field: SerializeField] public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         [field: SerializeField] public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
-        
+        [field: SerializeField] public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
+
         public event OnEndTurn ON_END_TURN;
 
         public DefaultScenarioContext()
@@ -55,8 +64,10 @@ namespace Gameplay
             
             Players = new List<IPlayerController>();
             Enemies = new List<IEnemyController>();
+            Buffs = new List<IBuff>();
             PlayerSpawnPoints = new List<PlayerSpawnPointWithType>();
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
+            BuffSpawnPoints = new List<BuffSpawnPointWithType>();
         }
 
         public void CheckIfAllStopped()

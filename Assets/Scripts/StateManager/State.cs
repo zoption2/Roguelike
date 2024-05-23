@@ -1,6 +1,8 @@
 using CharactersStats;
 using Enemy;
+using Obstacles;
 using Player;
+using System;
 using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -129,7 +131,7 @@ namespace Gameplay
 
         IStatsProvider _statsProvider;
 
-        ITriggerFactory _triggerFactory;
+        IBuffFactory _buffFactory;
 
         IPlayerFactory _playerFactory;
 
@@ -141,7 +143,7 @@ namespace Gameplay
         public InitLevelState(IScenario scenario,
             ICharacterScenarioContext context,
             IStatsProvider provider,
-            ITriggerFactory triggerFactory,
+            IBuffFactory buffFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
             INavigationFactory navigationFactory)
@@ -149,7 +151,7 @@ namespace Gameplay
             _scenario = scenario;
             _characters = context;
             _statsProvider  = provider;
-            _triggerFactory = triggerFactory;
+            _buffFactory = buffFactory;
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;
             _navigationFactory = navigationFactory;
@@ -159,18 +161,10 @@ namespace Gameplay
         {
             OnPlayerCreate();
             OnEnemyCreate();
+            OnBuffCreate();
             OnNavigationCreate();
             _scenario.OnStateEnd();
         }
-
-        //public void OnRoomCreate()
-        //{
-        //    for(int i = 0; i < _characters.CompleatedRoomTriggers.Count; i++)
-        //    {
-        //        _triggerFactory.CreateTrigger()
-        //    }
-        //    _characters.CompleatedRoomTriggers.Add();
-        //}
 
         public void OnNavigationCreate()
         {
@@ -179,11 +173,54 @@ namespace Gameplay
             navMeshSurface.BuildNavMesh();
         }
 
+        public void OnBuffCreate()
+        {
+            var buffTypes = Enum.GetValues(typeof(BuffType)).Cast<BuffType>().Where(t => t != BuffType.None).ToList();
+            var shuffledSpawnPoints = _characters.BuffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
+
+            foreach (var spawnPointWithType in shuffledSpawnPoints)
+            {
+                BuffType buffType = spawnPointWithType.buffType;
+
+                if (buffType != BuffType.None)
+                {
+                    IBuff newBuff = _buffFactory.CreateBuff(spawnPointWithType.spawnPoint, buffType);
+                    _characters.Buffs.Add(newBuff);
+                }
+            }
+
+            foreach (var spawnPointWithType in shuffledSpawnPoints)
+            {
+                BuffType buffType = spawnPointWithType.buffType;
+
+                if (buffType == BuffType.None)
+                {
+                    buffType = buffTypes[UnityEngine.Random.Range(0, buffTypes.Count)];
+
+                    if (_characters.Buffs.Any(b => b.GetBuffType() == buffType))
+                    {
+                        continue;
+                    }
+
+                    IBuff newBuff = _buffFactory.CreateBuff(spawnPointWithType.spawnPoint, buffType);
+                    float probability = newBuff.GetBuffProbability();
+                    if (UnityEngine.Random.value <= probability)
+                    {
+                        _characters.Buffs.Add(newBuff);
+                    }
+                    else
+                    {
+                        newBuff.RemoveBuff();
+                    }
+                }
+            }
+        }
+
         public void OnPlayerCreate()
         {
             PlayerSpawnPointWithType player;
             CharacterType playerType;
-            for (int i=0;i< _characters.PlayerSpawnPoints.Count; i++)
+            for (int i = 0; i < _characters.PlayerSpawnPoints.Count; i++)
             {
                 player = _characters.PlayerSpawnPoints[i];
                 playerType = DataTransfer.TypeCollection[i];
@@ -195,11 +232,35 @@ namespace Gameplay
 
         public void OnEnemyCreate()
         {
-            foreach (EnemySpawnPointWithType enemy in _characters.EnemySpawnPoints)
+            var enemyTypes = Enum.GetValues(typeof(EnemyType)).Cast<EnemyType>().Where(t => t != EnemyType.None).ToList();
+            int enemyCount = UnityEngine.Random.Range(1, _characters.EnemySpawnPoints.Count + 1);
+            var shuffledSpawnPoints = _characters.EnemySpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
+
+            foreach (var spawnPointWithType in shuffledSpawnPoints)
             {
-                IEnemyController newEnemy = _enemyFactory.CreateEnemy(enemy.spawnPoint, enemy.enemyType);
-                newEnemy.SetCharacterContext(_characters);
-                _characters.Enemies.Add(newEnemy);
+                CharacterType enemyType = spawnPointWithType.enemyType;
+
+                if (enemyType != CharacterType.None)
+                {
+                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(spawnPointWithType.spawnPoint, enemyType);
+                    newEnemy.SetCharacterContext(_characters);
+                    _characters.Enemies.Add(newEnemy);
+                }
+            }
+
+            for (int i = 0; i < enemyCount; i++)
+            {
+                var spawnPointWithType = shuffledSpawnPoints[i];
+                CharacterType enemyType = spawnPointWithType.enemyType;
+
+                if (enemyType == CharacterType.None)
+                {
+                    enemyType = (CharacterType)enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count)];
+
+                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(spawnPointWithType.spawnPoint, enemyType);
+                    newEnemy.SetCharacterContext(_characters);
+                    _characters.Enemies.Add(newEnemy);
+                }
             }
         }
 

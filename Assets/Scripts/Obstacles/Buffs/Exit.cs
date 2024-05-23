@@ -1,69 +1,69 @@
-using Gameplay;
-using Obstacles;
-using Pool;
-using UnityEngine;
-using Zenject;
+//using Gameplay;
+//using Obstacles;
+//using Pool;
+//using UnityEngine;
+//using Zenject;
 
-public class TriggerBase : MonoBehaviour, IMyPoolable
-{
-    protected BoxCollider _collider;
-    protected bool _isActivated;
-    private void Start()
-    {
-        //_collider = GetComponent<BoxCollider>();
-        //_collider.isTrigger = false;
-    }
+//public class TriggerBase : MonoBehaviour, IMyPoolable
+//{
+//    protected BoxCollider _collider;
+//    protected bool _isActivated;
+//    private void Start()
+//    {
+//        //_collider = GetComponent<BoxCollider>();
+//        //_collider.isTrigger = false;
+//    }
 
-    public void Activate()
-    {
-        _isActivated = true;
-    }
-    public void OnCreate()
-    {
-    }
+//    public void Activate()
+//    {
+//        _isActivated = true;
+//    }
+//    public void OnCreate()
+//    {
+//    }
 
-    public void OnPull()
-    {
-    }
+//    public void OnPull()
+//    {
+//    }
 
-    public void OnRelease()
-    {
-    }
-}
+//    public void OnRelease()
+//    {
+//    }
+//}
 
-public class Exit : TriggerBase, ICompleatedRoomTrigger
-{
-    [SerializeField] private TriggerType _type;
+//public class Exit : TriggerBase, ICompleatedRoomTrigger
+//{
+//    [SerializeField] private TriggerType _type;
 
-    [Inject]
-    private TriggerPooler _pooler;
+//    [Inject]
+//    private TriggerPooler _pooler;
 
-    [Inject]
-    private IDefaultScenario _scenario;
+//    [Inject]
+//    private IDefaultScenario _scenario;
 
-    private void Start()
-    {
-        _isActivated = false;
-    }
+//    private void Start()
+//    {
+//        _isActivated = false;
+//    }
 
-    public bool GetActiveStatus()
-    {
-        return _isActivated;
-    }
+//    public bool GetActiveStatus()
+//    {
+//        return _isActivated;
+//    }
 
-    public void ActivateTrigger()
-    {
-        Debug.LogWarning("Exit trigger!");
-        _pooler.Init();
-    }
+//    public void ActivateTrigger()
+//    {
+//        Debug.LogWarning("Exit trigger!");
+//        _pooler.Init();
+//    }
 
-    public void UseTrigger()
-    {
-        _scenario.LoadMainMenu();
-    }
+//    public void UseTrigger()
+//    {
+//        _scenario.LoadMainMenu();
+//    }
 
-    public void DisableTrigger()
-    {
-        _pooler.Push(_type, this);
-    }
-}
+//    public void DisableTrigger()
+//    {
+//        _pooler.Push(_type, this);
+//    }
+//}

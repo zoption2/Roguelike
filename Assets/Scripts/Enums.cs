@@ -17,7 +17,7 @@ public enum TypeOfConditionState
 
 public enum CharacterType
 {
-    none = 0,
+    None = 0,
     Warrior = 1,
     Wizard = 2,
     Archer = 3,
@@ -28,7 +28,7 @@ public enum CharacterType
 
 public enum PlayerType
 {
-    none = 0,
+    None = 0,
     Warrior = 1,
     Wizard = 2,
     Archer = 3,
@@ -36,6 +36,7 @@ public enum PlayerType
 
 public enum EnemyType
 {
+    None = 0,
     Barbarian = 100,
     Thrower = 101,
     Summoner = 102,
@@ -73,11 +74,12 @@ public enum EffectType
     StunEffect = 3,
 }
 
-public enum TriggerType
+public enum BuffType
 {
     None = 0,
     MoreDamage = 1,
-    Exit = 2,
+    TestBuff1 = 2,
+    TestBuff2 = 3,
 }
 
 public enum UIType

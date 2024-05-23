@@ -11,7 +11,7 @@ namespace Gameplay
     }
     public class StateData : IStateFactory
     {
-        private ITriggerFactory _triggerFactory;
+        private IBuffFactory _triggerFactory;
         private IPlayerFactory _playerFactory;
         private IEnemyFactory _enemyFactory;
         private IStatsProvider _statsProvider;
@@ -20,7 +20,7 @@ namespace Gameplay
         private INavigationFactory _navigationFactory;
 
         [Inject]
-        public void Construct(ITriggerFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
+        public void Construct(IBuffFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
             INavigationFactory navigationFactory)
         {
             _triggerFactory = triggerFactory;

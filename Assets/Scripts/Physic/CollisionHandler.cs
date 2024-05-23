@@ -82,7 +82,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
                     Debug.Log("<color=#07C3FF>" + buff + " effects were added" + "</color>");
 
 
-                    buff.DisableTrigger();
+                    buff.RemoveBuff();
                     _isStoppedInsideTrigger = false;
                     yield break;
                 }

@@ -117,10 +117,11 @@ namespace Gameplay
 
         public void ActivateCompleatedRoomTriggers()
         {
-            foreach(var trigger in _scenarioContext.CompleatedRoomTriggers)
-            {
-                trigger.Activate();
-            }
+            Debug.LogWarning("Room Cleaned!");
+            //foreach(var trigger in _scenarioContext.CompleatedRoomTriggers)
+            //{
+            //    trigger.Activate();
+            //}
         }
 
         private void SubscribeToDeathOfCharacters()

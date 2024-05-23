@@ -5,21 +5,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-public class MoreDamageBuff : TriggerBase, IBuff
+public class MoreDamageBuff : MonoBehaviour, IBuff, IMyPoolable
 {
-    [SerializeField] private TriggerType _type;
+    [SerializeField] private BuffType _type;
 
-    [Inject]
-    private TriggerPooler _pooler;
+    [SerializeField] private float _probability;
 
-    private void Start()
+    private BuffPooler _pooler;
+
+    public void Init(BuffPooler pooler)
     {
+        _pooler = pooler;
         _pooler.Init();
     }
 
     public List<IEffect> UseBuff()
     {
-        
+        _pooler.Init();
         List<IEffect> effects = new List<IEffect>()
         {
             new MoreDamageEffect(1),
@@ -28,8 +30,30 @@ public class MoreDamageBuff : TriggerBase, IBuff
         return effects;
     }
 
-    public void DisableTrigger()
+    public void RemoveBuff()
     {
         _pooler.Push(_type, this);
+    }
+
+    public void OnCreate()
+    {
+    }
+
+    public void OnPull()
+    {
+    }
+
+    public void OnRelease()
+    {
+    }
+
+    public BuffType GetBuffType()
+    {
+        return _type;
+    }
+
+    public float GetBuffProbability()
+    {
+        return _probability;
     }
 }
