@@ -23,7 +23,6 @@ namespace BehaviourTree
             List<IAbility> availableAbilities = AllAbilities.Where(x => x.ReadyForUse == true ).ToList();
             availableAbilities = availableAbilities.OrderByDescending(x => x.GetUsefulness()).ToList();
             IAbility chosenAbility = null;
-            Debug.Log("starting point : " + startingPoint);
             Transform target = DefaultBT.GetTarget();
             foreach (IAbility abilityType in availableAbilities)
             {

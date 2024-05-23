@@ -106,6 +106,8 @@ namespace Enemy
             Effector.Init(_uIViewmodel, _allEffects);
 
             NavMeshAgent = CharacterView.NavMeshAgent;
+            NavMeshAgent.updateUpAxis = false;
+            NavMeshAgent.updateRotation = false;
             NavMeshAgent.enabled = false;
             CharacterView.ON_CLICK += OnClick;
             ON_STOP_MOVEMENT += CheckForEndOfState;

@@ -74,8 +74,12 @@ public abstract class ActiveState
         {
             ViewRotation();
         }
+        else if (_navAgent.enabled && _navAgent.velocity.magnitude != 0)
+        {
+            AdjustRotationForNavAgent();
+        }
 
-        if(_navAgent.enabled && _navAgent.velocity.magnitude == 0 && ON_STOPPED != null)
+        if (_navAgent.enabled && _navAgent.velocity.magnitude == 0 && ON_STOPPED != null)
         {
             Debug.Log("!!!!!!!");
             _navAgent.enabled = false;
@@ -125,11 +129,24 @@ public abstract class ActiveState
 
     public void ViewRotation()
     {
+        Transform character = _characterController.GetTransform();
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        character.rotation = Quaternion.Slerp(character.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    public void AdjustRotationForNavAgent()
+    {
+        Transform character = _characterController.GetTransform();
+        float rotationSpeed = 1f;
+
+        Vector3 direction = (_navAgent.steeringTarget - character.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+
+        character.rotation = Quaternion.Slerp(character.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 
     public void OnExit()
@@ -263,7 +280,9 @@ public class EnemyActiveState : ActiveState, IConditionState
         _navObstacle.enabled = false;
         
         await Task.Delay(_milisecondsDelay / 10);
-        _navAgent.enabled = true;
+        Transform enemy = _characterController.GetTransform();
+        Quaternion rot = enemy.rotation;
+        _navAgent.enabled = true;        
 
         _navAgent.SetDestination(target.position);
         await Task.Delay(_milisecondsDelay / 10);
@@ -275,8 +294,6 @@ public class EnemyActiveState : ActiveState, IConditionState
         {
             ON_STOPPED += _characterController.HandleStopMovement;
         }
-
-        //LaunchYourselfToPoint(waypoint);
     }
 }
 
