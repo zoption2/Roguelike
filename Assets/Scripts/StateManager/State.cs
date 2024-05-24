@@ -204,6 +204,7 @@ namespace Gameplay
 
                     IBuff newBuff = _buffFactory.CreateBuff(spawnPointWithType.spawnPoint, buffType);
                     float probability = newBuff.GetBuffProbability();
+
                     if (UnityEngine.Random.value <= probability)
                     {
                         _characters.Buffs.Add(newBuff);
