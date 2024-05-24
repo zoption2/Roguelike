@@ -140,7 +140,7 @@ public abstract class ActiveState
     public void AdjustRotationForNavAgent()
     {
         Transform character = _characterController.GetTransform();
-        float rotationSpeed = 1f;
+        float rotationSpeed = 2f;
 
         Vector3 direction = (_navAgent.steeringTarget - character.position).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;

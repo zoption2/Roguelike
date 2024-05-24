@@ -171,6 +171,14 @@ namespace BehaviourTree
                 {
                     if (ChooseAbility(corners[i], remainingDistance) != null)
                     {
+                        direction = corners[i] - corners[i - 1];
+                        distanceToTarget = Vector3.Distance(corners[i], targetPosition);
+                        endPoint = corners[i];
+                        if (distanceToTarget < minStoppingDistance)
+                        {
+                            endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
+                        }
+                        navAgent.SetDestination(endPoint);
                         return true;
                     }
                 }
