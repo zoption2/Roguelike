@@ -134,7 +134,7 @@ namespace BehaviourTree
             float maxDistance = GetMaxLaunchDistance();
             float walkedDistance = 0f;
             float remainingDistance = 0f;
-            float stoppingDistance = 0f;
+            float distanceToTarget = 0f;
 
             Vector3[] corners = path.corners;
             Vector2 direction;
@@ -158,19 +158,19 @@ namespace BehaviourTree
                     divider = direction.magnitude / remainingDistance;
                     neededVector = direction / divider;
                     endPoint = corners[i-1] + neededVector;
-                    
-                    stoppingDistance = Vector3.Distance(endPoint, targetPosition);
-                    navAgent.stoppingDistance = Mathf.Max(stoppingDistance, minStoppingDistance);
+                    distanceToTarget = Vector3.Distance(endPoint, targetPosition);
+                    if (distanceToTarget < minStoppingDistance)
+                    {
+                        endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
+                    }
+                    navAgent.SetDestination(endPoint);
                     return false;
                 }
 
                 if (remainingDistance >= Vector3.Distance(corners[i], targetPosition))
                 {
-                    ChooseAbility(corners[i], remainingDistance);
-                    if (_characterController.CurrentAbility != null)
+                    if (ChooseAbility(corners[i], remainingDistance) != null)
                     {
-                        stoppingDistance = Vector3.Distance(corners[i], targetPosition);
-                        navAgent.stoppingDistance = Mathf.Max(stoppingDistance, minStoppingDistance);
                         return true;
                     }
                 }
