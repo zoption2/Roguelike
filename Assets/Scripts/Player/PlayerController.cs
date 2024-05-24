@@ -41,8 +41,6 @@ namespace Player
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
         public NavMeshObstacle NavMeshObstacle { get; set; } 
-        public NavMeshPath Path { get; set; }
-
         private CharacterUIView _UIView;
         private Transform _slingShotInitPosition;
         private CharacterPooler _pooler;

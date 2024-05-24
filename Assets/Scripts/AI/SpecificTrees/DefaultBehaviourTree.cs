@@ -8,11 +8,12 @@ namespace BehaviourTree
     public interface IDefaultBehaviourTree : IBehaviourTree
     {
         public Transform GetTarget();
-        public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target);
-        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float multiplier = 1);
+        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float abilityMultiplier = 1,
+            float remainingDistance = -1f);
         public Vector3 GetCharacterPosition();
         public void SetAbilities(List<IAbility> abilities);
         public void SetCurrentAbility(IAbility ability);
+        public bool CanAttackAfterMove(NavMeshPath path);
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
@@ -64,30 +65,15 @@ namespace BehaviourTree
 
         private void CheckIfCanMove()
         {
-            Transform target = GetTarget();
-            NavMeshPath path = new NavMeshPath();
-            NavMeshAgent navAgent = _characterController.NavMeshAgent;
-            NavMeshObstacle navObstacle = _characterController.NavMeshObstacle;
-            navObstacle.enabled = false;
-            navAgent.enabled = true;
+            // check whether enemy could get hit by player after he moves
+            // (whether he will be in direct line of sight)
+            // for that i will need to know the end point and then shoot a raycast from player to the endpoint
+            // maybe i need to use pathIsClear and CouldReach for that
+            // if not than it is okay to move
+            // if after moving he could even attack the player than definitely can move
 
-            float offset = 0.5f;
-            Vector3 position = new Vector3(target.position.x,target.position.y, target.position.z + offset);
-
-            bool pathIsFound = navAgent.CalculatePath(position, path);
-            bool couldReachPoint = false;
-
-            if (pathIsFound)
+            if (!_characterController.IsStunned)
             {
-                Vector3 point = FindWaypointToObserveTarget(path, target);
-                couldReachPoint = CouldReach(point);
-            }
-            Debug.Log("path is found: " + pathIsFound);
-            Debug.Log("could reach: " + couldReachPoint);
-
-            if (!_characterController.IsStunned && couldReachPoint)
-            {
-                SetPath(path);
                 Debug.Log("Can Move");
                 _blackboard.SetData(_moveKey, true);
             } 
@@ -96,8 +82,6 @@ namespace BehaviourTree
                 Debug.Log("CAN'T MOVE");
                 _blackboard.SetData(_moveKey, false);
             }
-            navAgent.enabled = false;
-            navObstacle.enabled = true;
         }
 
         public Vector3 GetCharacterPosition()
@@ -108,7 +92,7 @@ namespace BehaviourTree
         {
             Transform  target = GetTarget();
             Vector3 characterPosition = GetCharacterPosition();
-            if (_attackChooser.ChooseAbility() != null && !_characterController.IsStunned)
+            if (ChooseAbility(characterPosition) != null && !_characterController.IsStunned)
             {
                 Debug.Log("Can Attack");
                 _blackboard.SetData(_attackKey, true);
@@ -132,23 +116,68 @@ namespace BehaviourTree
             Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
             return hit;
         }
-
-        public Vector3 FindWaypointToObserveTarget(NavMeshPath path, Transform target)
+        protected float GetMaxLaunchDistance()
         {
-            Vector3 waypoint = path.corners[0];
-            foreach (Vector3 point in path.corners)
+            float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
+            float dragConstant = _characterController.GetRigidbody().drag;
+            float maxDistance = launchPower / dragConstant;
+            return maxDistance;
+        }
+        public bool CanAttackAfterMove(NavMeshPath path)
+        {
+            Transform target = GetTarget();
+            NavMeshAgent navAgent = _characterController.NavMeshAgent;
+            float offset = 0.5f;
+            float minStoppingDistance=2f;
+            Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z + offset);
+
+            float maxDistance = GetMaxLaunchDistance();
+            float walkedDistance = 0f;
+            float remainingDistance = 0f;
+            float stoppingDistance = 0f;
+
+            Vector3[] corners = path.corners;
+            Vector2 direction;
+            Vector3 neededVector;
+            Vector3 endPoint;
+
+            float divider;
+
+            Debug.Log("Distance between enemy and target: " + Vector3.Distance(target.position, GetCharacterPosition()));
+            for(int i = 1; i < corners.Length; i++)
             {
-                if (SphereCastHitTheTarget(target, point) && PathToPointIsClear(point) && point != path.corners[0])
+                if (walkedDistance + Vector3.Distance(corners[i - 1], corners[i]) < maxDistance)
                 {
-                    return point;
+                    walkedDistance += Vector3.Distance(corners[i - 1], corners[i]);
+                    remainingDistance = maxDistance - walkedDistance;
                 }
-                else if (PathToPointIsClear(point) && CouldReach(point) && point != path.corners[0])
+                else
                 {
-                    waypoint = point;
+                    direction = corners[i] - corners[i-1];
+                    remainingDistance = maxDistance - walkedDistance;
+                    divider = direction.magnitude / remainingDistance;
+                    neededVector = direction / divider;
+                    endPoint = corners[i-1] + neededVector;
+                    
+                    stoppingDistance = Vector3.Distance(endPoint, targetPosition);
+                    navAgent.stoppingDistance = Mathf.Max(stoppingDistance, minStoppingDistance);
+                    return false;
+                }
+
+                if (remainingDistance >= Vector3.Distance(corners[i], targetPosition))
+                {
+                    ChooseAbility(corners[i], remainingDistance);
+                    if (_characterController.CurrentAbility != null)
+                    {
+                        stoppingDistance = Vector3.Distance(corners[i], targetPosition);
+                        navAgent.stoppingDistance = Mathf.Max(stoppingDistance, minStoppingDistance);
+                        return true;
+                    }
                 }
             }
-            return waypoint;
+            return false;
         }
+
         protected bool PathToPointIsClear(Vector3 point)
         {
             Vector3 character = GetCharacterPosition();
@@ -163,26 +192,17 @@ namespace BehaviourTree
                 return false;
             }
         }
-        protected bool CouldReach(Vector3 point)
-        {
-            float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-            float dragConstant = _characterController.GetRigidbody().drag;
-            float maxDistance = launchPower / dragConstant;
-            float distance = Vector3.Distance(point, GetCharacterPosition());
-            if(distance > maxDistance)
-            {
-                return false;
-            }
-            else
-                return true;
-        }
 
-        public bool SphereCastHitTheTarget(Transform target,Vector3 startingPoint, float multiplier = 1)
+        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float abilityMultiplier = 1,
+            float remainingDistance = -1f)
         {
-            float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-            float dragConstant = _characterController.GetRigidbody().drag;
-            float maxDistance = (launchPower / dragConstant) * multiplier;
-            
+            float maxDistance = GetMaxLaunchDistance() * abilityMultiplier;
+
+            if(remainingDistance > 0)
+            {
+                maxDistance = Mathf.Min(maxDistance, remainingDistance);
+            }
+
             RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
             Transform hitTransform = hit.transform;
             if (hitTransform != null &&  hitTransform.childCount > 0)
@@ -231,14 +251,14 @@ namespace BehaviourTree
             _attackChooser = new AbilityChooser(this, _abilities);
         }
 
+        public IAbility ChooseAbility(Vector3 startingPoint, float remainingDistance = -1f)
+        {
+            return _attackChooser.ChooseAbility(startingPoint, remainingDistance);
+        }
+
         public void SetCurrentAbility(IAbility ability)
         {
             _characterController.CurrentAbility = ability;
-        }
-
-        public void SetPath(NavMeshPath path)
-        {
-            _characterController.Path = path;
         }
     }
 }

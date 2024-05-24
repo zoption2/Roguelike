@@ -25,16 +25,22 @@ public interface IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer);
 }
 
+public delegate void OnStopped();
 public abstract class ActiveState
 {
     protected ICharacterController _characterController;
     protected ISlingShot _slingShot;
     protected int _milisecondsDelay = 3000;
     protected float _launchMultiplier = 1;
+    protected event OnStopped ON_STOPPED;
+    protected NavMeshAgent _navAgent;
+    protected NavMeshObstacle _navObstacle;
 
     public ActiveState(ICharacterController characterController)
     {
         _characterController = characterController;
+        _navAgent = _characterController.NavMeshAgent;
+        _navObstacle = _characterController.NavMeshObstacle;
     }
 
     public void OnEnter()
@@ -67,6 +73,18 @@ public abstract class ActiveState
         if (_characterController.IsMoving)
         {
             ViewRotation();
+        }
+        else if (_navAgent.enabled && _navAgent.velocity.magnitude != 0)
+        {
+            AdjustRotationForNavAgent();
+        }
+
+        if (_navAgent.enabled && _navAgent.velocity.magnitude == 0 && ON_STOPPED != null)
+        {
+            Debug.Log("!!!!!!!");
+            _navAgent.enabled = false;
+            _navObstacle.enabled = true;
+            ON_STOPPED?.Invoke();
         }
     }
 
@@ -111,11 +129,24 @@ public abstract class ActiveState
 
     public void ViewRotation()
     {
+        Transform character = _characterController.GetTransform();
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        character.rotation = Quaternion.Slerp(character.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    public void AdjustRotationForNavAgent()
+    {
+        Transform character = _characterController.GetTransform();
+        float rotationSpeed = 1f;
+
+        Vector3 direction = (_navAgent.steeringTarget - character.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+
+        character.rotation = Quaternion.Slerp(character.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 
     public void OnExit()
@@ -246,18 +277,23 @@ public class EnemyActiveState : ActiveState, IConditionState
     {
         IDefaultBehaviourTree defaultBehaviourTree = _characterController.DefaultBehaviourTree;
         Transform target = defaultBehaviourTree.GetTarget();
+        _navObstacle.enabled = false;
+        
+        await Task.Delay(_milisecondsDelay / 10);
         Transform enemy = _characterController.GetTransform();
+        Quaternion rot = enemy.rotation;
+        _navAgent.enabled = true;        
+
+        _navAgent.SetDestination(target.position);
         await Task.Delay(_milisecondsDelay / 10);
-
-        NavMeshPath path = _characterController.Path;
-
-        Vector3 waypoint = defaultBehaviourTree.FindWaypointToObserveTarget(path, target);
-
-        Vector2 direction = waypoint - enemy.position;
-        _characterController.CharacterView.ChangeDirection(direction);
-        await Task.Delay(_milisecondsDelay / 10);
-
-        LaunchYourselfToPoint(waypoint);
+        if (defaultBehaviourTree.CanAttackAfterMove(_navAgent.path))
+        {
+            ON_STOPPED += Attack;
+        }
+        else
+        {
+            ON_STOPPED += _characterController.HandleStopMovement;
+        }
     }
 }
 
