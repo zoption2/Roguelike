@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public interface IControllerInputs
 {
     public bool IsMoving { get; set; }
+    public bool IsActive { get; set; }
     public ReactiveStats GetCharacterStats();
     public IInteraction GetInteraction();
     public IConditionState GetCurrentConditionState();

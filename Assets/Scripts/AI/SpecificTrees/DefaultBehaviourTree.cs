@@ -143,7 +143,6 @@ namespace BehaviourTree
 
             float divider;
 
-            Debug.Log("Distance between enemy and target: " + Vector3.Distance(target.position, GetCharacterPosition()));
             for(int i = 1; i < corners.Length; i++)
             {
                 if (walkedDistance + Vector3.Distance(corners[i - 1], corners[i]) < maxDistance)

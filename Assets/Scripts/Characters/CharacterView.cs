@@ -91,7 +91,7 @@ public class CharacterView : MonoBehaviour,
     {
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-        transform.rotation = targetRotation;
+        _viewTransform.rotation = targetRotation;
     }
 
     public void StartInteraction(IInteractible interactible)
@@ -100,9 +100,8 @@ public class CharacterView : MonoBehaviour,
         var handlerType = interactible.ControllerInputs.GetType();
 
         IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
-        IMovable bump = interactionFromDealer.GetBump();
-
-        if (!dealerType.Equals(handlerType))
+        
+        if (!dealerType.Equals(handlerType) || interactionFromDealer != null)
         {
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
         }
@@ -111,6 +110,7 @@ public class CharacterView : MonoBehaviour,
             return;
         }
 
+        IMovable bump = interactionFromDealer.GetBump();
         ControllerInputs.ApplyBump(interactible, bump);
     }
 

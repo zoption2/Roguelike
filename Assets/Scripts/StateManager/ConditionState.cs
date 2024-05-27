@@ -81,7 +81,6 @@ public abstract class ActiveState
 
         if (_navAgent.enabled && _navAgent.velocity.magnitude == 0 && ON_STOPPED != null)
         {
-            Debug.Log("!!!!!!!");
             _navAgent.enabled = false;
             _navObstacle.enabled = true;
             ON_STOPPED?.Invoke();
