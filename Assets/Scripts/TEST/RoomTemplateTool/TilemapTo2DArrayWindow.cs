@@ -38,6 +38,13 @@ public class TilemapTo2DArrayWindow : EditorWindow
 
     private TemplatePlacebleElements templatePlacebleElementsSO;
 
+    private bool showInitialOptions = true;
+    private bool createNewArray = false;
+    private bool createFromTilemap = false;
+
+    private int arrayWidth = 0;
+    private int arrayHeight = 0;
+
     [MenuItem("Tools/Tilemap to 2D Array")]
     public static void ShowWindow()
     {
@@ -64,6 +71,63 @@ public class TilemapTo2DArrayWindow : EditorWindow
 
     private void OnGUI()
     {
+        if (showInitialOptions)
+        {
+            ShowInitialOptions();
+        }
+        else if (createNewArray)
+        {
+            ShowNewArrayOptions();
+        }
+        else if (createFromTilemap)
+        {
+            ShowTilemapOptions();
+        }
+        else
+        {
+            ShowMainGUI();
+        }
+    }
+
+    private void ShowInitialOptions()
+    {
+        GUILayout.Label("Choose an option", EditorStyles.boldLabel);
+
+        if (GUILayout.Button("Create New Array"))
+        {
+            createNewArray = true;
+            showInitialOptions = false;
+        }
+
+        if (GUILayout.Button("Create Array from Tilemap"))
+        {
+            createFromTilemap = true;
+            showInitialOptions = false;
+        }
+    }
+
+    private void ShowNewArrayOptions()
+    {
+        GUILayout.Label("Enter Array Size", EditorStyles.boldLabel);
+
+        arrayWidth = EditorGUILayout.IntField("Width", arrayWidth);
+        arrayHeight = EditorGUILayout.IntField("Height", arrayHeight);
+
+        if (GUILayout.Button("Create Array"))
+        {
+            CreateEmptyArray();
+            createNewArray = false;
+        }
+
+        if (GUILayout.Button("Back"))
+        {
+            createNewArray = false;
+            showInitialOptions = true;
+        }
+    }
+
+    private void ShowTilemapOptions()
+    {
         GUILayout.Label("Select Tilemap", EditorStyles.boldLabel);
 
         selectedTilemap = EditorGUILayout.ObjectField("Tilemap", selectedTilemap, typeof(Tilemap), true) as Tilemap;
@@ -71,8 +135,18 @@ public class TilemapTo2DArrayWindow : EditorWindow
         if (selectedTilemap != null && GUILayout.Button("Generate Template"))
         {
             GenerateArrayFromTilemap();
+            createFromTilemap = false;
         }
 
+        if (GUILayout.Button("Back"))
+        {
+            createFromTilemap = false;
+            showInitialOptions = true;
+        }
+    }
+
+    private void ShowMainGUI()
+    {
         GUILayout.Space(10);
 
         if (levelArray != null)
@@ -164,6 +238,31 @@ public class TilemapTo2DArrayWindow : EditorWindow
             }
             GUILayout.EndHorizontal();
         }
+    }
+
+    private void CreateEmptyArray()
+    {
+        if (arrayWidth <= 0 || arrayHeight <= 0)
+        {
+            Debug.LogError("Width and Height must be greater than 0.");
+            return;
+        }
+
+        levelArray = new TemplateElement[arrayWidth, arrayHeight];
+        cellColors = new Color[arrayWidth, arrayHeight];
+        isEditableArray = new bool[arrayWidth, arrayHeight];
+
+        for (int x = 0; x < arrayWidth; x++)
+        {
+            for (int y = 0; y < arrayHeight; y++)
+            {
+                levelArray[x, y] = TemplateElement.Empty;
+                cellColors[x, y] = Color.white;
+                isEditableArray[x, y] = true;
+            }
+        }
+
+        Debug.Log($"Created empty array of size {arrayWidth}x{arrayHeight}.");
     }
 
     private void DisplayArrayEditor()
@@ -314,7 +413,6 @@ public class TilemapTo2DArrayWindow : EditorWindow
         GUILayout.EndVertical();
     }
 
-
     private void AddNewObject()
     {
         TemplatePlacebleElements.TemplatePlacebleElement newObj = new TemplatePlacebleElements.TemplatePlacebleElement();
@@ -324,7 +422,6 @@ public class TilemapTo2DArrayWindow : EditorWindow
 
         placeableObjects.Add(newObj);
 
-        // Update the ScriptableObject
         if (templatePlacebleElementsSO != null)
         {
             templatePlacebleElementsSO.PlacebleElements.Add(newObj);
@@ -333,7 +430,6 @@ public class TilemapTo2DArrayWindow : EditorWindow
             Debug.Log($"Added new object: {newObj.Name}, Type: {newObj.Type}, Color: {newObj.Color}");
         }
     }
-
 
     private void OnSceneGUI()
     {
@@ -406,5 +502,4 @@ public class TilemapTo2DArrayWindow : EditorWindow
         EditorUtility.SetDirty(roomTemplateSO);
         AssetDatabase.SaveAssets();
     }
-
 }

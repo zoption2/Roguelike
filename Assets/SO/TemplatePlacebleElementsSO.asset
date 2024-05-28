@@ -19,6 +19,3 @@ MonoBehaviour:
   - Name: Enemy
     Color: {r: 0.9528302, g: 0.16629584, b: 0.16629584, a: 1}
     Type: 3
-  - Name: DLKSDLFK
-    Color: {r: 0.23066425, g: 1, b: 0, a: 1}
-    Type: 2

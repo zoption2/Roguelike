@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c3e2ed3f663d1b4c8db7269837fc2a4, type: 3}
   m_Name: RoomTemplateSO
   m_EditorClassIdentifier: 
-  Templates:
-  - name: Cool template
-    id: 1
+  Templates: []
