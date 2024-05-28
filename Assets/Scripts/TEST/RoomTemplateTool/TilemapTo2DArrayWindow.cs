@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 [System.Serializable]
 public class PlaceableObject
@@ -22,7 +21,7 @@ public class TilemapTo2DArrayWindow : EditorWindow
     private Vector2 scrollPosition;
     private TemplateElement tileTypes;
 
-    private List<PlaceableObject> placeableObjects = new List<PlaceableObject>();
+    private List<TemplatePlacebleElements.TemplatePlacebleElement> placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>();
     private int selectedObjectIndex = -1;
 
     private string newObjectName = "";
@@ -30,17 +29,37 @@ public class TilemapTo2DArrayWindow : EditorWindow
     private TemplateElement newObjectType = TemplateElement.Empty;
 
     private float zoomScale = 1f;
-
+    private Vector2 mousePositionLastFrame;
     private bool isLeftMouseDown = false;
 
     private string newRecordName = "";
     private bool DisplayNewTemplateRecordFields = false;
+    private bool displayNewObjectFields = false;
 
+    private TemplatePlacebleElements templatePlacebleElementsSO;
 
     [MenuItem("Tools/Tilemap to 2D Array")]
     public static void ShowWindow()
     {
         GetWindow<TilemapTo2DArrayWindow>("Tilemap to 2D Array");
+    }
+
+    private void OnEnable()
+    {
+        templatePlacebleElementsSO = AssetDatabase.LoadAssetAtPath<TemplatePlacebleElements>("Assets/SO/TemplatePlacebleElementsSO.asset");
+        if (templatePlacebleElementsSO != null)
+        {
+            placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>(templatePlacebleElementsSO.PlacebleElements);
+            Debug.Log($"Loaded {placeableObjects.Count} placeable objects from SO.");
+            foreach (var obj in placeableObjects)
+            {
+                Debug.Log($"Object: {obj.Name}, Type: {obj.Type}, Color: {obj.Color}");
+            }
+        }
+        else
+        {
+            Debug.LogError("Failed to load TemplatePlacebleElements SO.");
+        }
     }
 
     private void OnGUI()
@@ -53,6 +72,8 @@ public class TilemapTo2DArrayWindow : EditorWindow
         {
             GenerateArrayFromTilemap();
         }
+
+        GUILayout.Space(10);
 
         if (levelArray != null)
         {
@@ -73,28 +94,50 @@ public class TilemapTo2DArrayWindow : EditorWindow
             EditorGUILayout.EndHorizontal();
         }
 
-        GUILayout.Label("Elements to build", EditorStyles.boldLabel);
-        DisplayPlaceableObjects();
+        GUILayout.Space(10);
 
         GUILayout.Label("Selected element", EditorStyles.boldLabel);
         if (selectedObjectIndex != -1)
         {
-            EditorGUILayout.LabelField("Name: " + placeableObjects[selectedObjectIndex].name);
-            EditorGUILayout.LabelField("Type: " + placeableObjects[selectedObjectIndex].type);
-            EditorGUILayout.LabelField("Color: " + placeableObjects[selectedObjectIndex].color);
+            EditorGUILayout.LabelField("Type: " + placeableObjects[selectedObjectIndex].Type);
+            EditorGUILayout.LabelField("Color: " + placeableObjects[selectedObjectIndex].Color);
         }
 
-        GUILayout.Label("Add New Object", EditorStyles.boldLabel);
-        newObjectName = EditorGUILayout.TextField("Name", newObjectName);
-        newObjectType = (TemplateElement)EditorGUILayout.Popup("Type", (int)newObjectType, System.Enum.GetNames(typeof(TemplateElement)));
+        GUILayout.Space(10);
 
+        GUILayout.Label("Elements to build", EditorStyles.boldLabel);
+        DisplayPlaceableObjects();
 
-        newObjectColor = EditorGUILayout.ColorField("Color", newObjectColor);
-
-        if (GUILayout.Button("Add Object"))
+        if (!displayNewObjectFields)
         {
-            AddNewObject();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Add New Object"))
+            {
+                displayNewObjectFields = true;
+            }
+            GUILayout.EndHorizontal();
         }
+        else
+        {
+            newObjectName = EditorGUILayout.TextField("Name", newObjectName);
+            newObjectType = (TemplateElement)EditorGUILayout.Popup("Type", (int)newObjectType, System.Enum.GetNames(typeof(TemplateElement)));
+            newObjectColor = EditorGUILayout.ColorField("Color", newObjectColor);
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Add Object"))
+            {
+                AddNewObject();
+                displayNewObjectFields = false;
+            }
+            if (GUILayout.Button("Cancel"))
+            {
+                displayNewObjectFields = false;
+            }
+            GUILayout.EndHorizontal();
+        }
+
+        GUILayout.Space(10);
 
         if (!DisplayNewTemplateRecordFields)
         {
@@ -108,14 +151,19 @@ public class TilemapTo2DArrayWindow : EditorWindow
             GUILayout.Label("New Template Record", EditorStyles.boldLabel);
             newRecordName = EditorGUILayout.TextField("Name", newRecordName);
 
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Create Template Record"))
             {
                 CreateNewRecordInSO(newRecordName, levelArray);
                 DisplayNewTemplateRecordFields = false;
                 newRecordName = "";
             }
+            if (GUILayout.Button("Cancel"))
+            {
+                DisplayNewTemplateRecordFields = false;
+            }
+            GUILayout.EndHorizontal();
         }
-
     }
 
     private void DisplayArrayEditor()
@@ -139,10 +187,10 @@ public class TilemapTo2DArrayWindow : EditorWindow
                     if (selectedObjectIndex != -1)
                     {
                         TemplateElement previousType = levelArray[x, y];
-                        levelArray[x, y] = placeableObjects[selectedObjectIndex].type;
+                        levelArray[x, y] = placeableObjects[selectedObjectIndex].Type;
                         TemplateElement newType = levelArray[x, y];
                         Debug.Log($"Cell changed from {previousType} to {newType}");
-                        cellColors[x, y] = placeableObjects[selectedObjectIndex].color;
+                        cellColors[x, y] = placeableObjects[selectedObjectIndex].Color;
                     }
                 }
                 GUI.backgroundColor = Color.white;
@@ -243,31 +291,49 @@ public class TilemapTo2DArrayWindow : EditorWindow
     {
         GUILayout.BeginVertical(GUI.skin.box);
 
-        for (int i = 0; i < placeableObjects.Count; i++)
+        if (placeableObjects.Count == 0)
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(placeableObjects[i].name);
-            GUILayout.Label(placeableObjects[i].type.ToString());
-            GUILayout.Label(placeableObjects[i].color.ToString());
-            if (GUILayout.Button("Select"))
+            GUILayout.Label("No placeable objects found in ScriptableObject.");
+        }
+        else
+        {
+            foreach (var obj in placeableObjects)
             {
-                selectedObjectIndex = i;
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(obj.Name);
+                GUILayout.Label(obj.Type.ToString());
+                GUILayout.Label(obj.Color.ToString());
+                if (GUILayout.Button("Select"))
+                {
+                    selectedObjectIndex = placeableObjects.IndexOf(obj);
+                }
+                GUILayout.EndHorizontal();
             }
-            GUILayout.EndHorizontal();
         }
 
         GUILayout.EndVertical();
     }
 
+
     private void AddNewObject()
     {
-        PlaceableObject newObj = new PlaceableObject();
-        newObj.name = newObjectName;
-        newObj.color = newObjectColor;
-        newObj.type = newObjectType;
+        TemplatePlacebleElements.TemplatePlacebleElement newObj = new TemplatePlacebleElements.TemplatePlacebleElement();
+        newObj.Name = newObjectName;
+        newObj.Color = newObjectColor;
+        newObj.Type = newObjectType;
 
         placeableObjects.Add(newObj);
+
+        // Update the ScriptableObject
+        if (templatePlacebleElementsSO != null)
+        {
+            templatePlacebleElementsSO.PlacebleElements.Add(newObj);
+            EditorUtility.SetDirty(templatePlacebleElementsSO);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"Added new object: {newObj.Name}, Type: {newObj.Type}, Color: {newObj.Color}");
+        }
     }
+
 
     private void OnSceneGUI()
     {
@@ -280,6 +346,13 @@ public class TilemapTo2DArrayWindow : EditorWindow
         {
             case EventType.ScrollWheel:
                 HandleZoom(currentEvent.delta.y);
+                break;
+            case EventType.MouseDown:
+                if (currentEvent.button == 0)
+                {
+                    isLeftMouseDown = true;
+                    mousePositionLastFrame = currentEvent.mousePosition;
+                }
                 break;
             case EventType.MouseUp:
                 if (currentEvent.button == 0)
