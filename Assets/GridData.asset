@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 4a6189c3cb11ff74ea9dc4ee97f07848, type: 3}
   m_Name: GridData
-  m_EditorClassIdentifier: Assembly-CSharp::GridData
-  rows: 0
-  columns: 0
+  m_EditorClassIdentifier: 
+  rows: 23
+  columns: 12

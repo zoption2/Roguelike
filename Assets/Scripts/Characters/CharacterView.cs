@@ -101,7 +101,7 @@ public class CharacterView : MonoBehaviour,
 
         IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
         
-        if (!dealerType.Equals(handlerType) || interactionFromDealer != null)
+        if (!dealerType.Equals(handlerType) && interactionFromDealer != null)
         {
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
         }

@@ -94,7 +94,7 @@ public enum NavigationType
     Default,
 }
 
-public enum RoomType
+public enum RoomType // 
 {
     None = 0,
 
@@ -110,4 +110,16 @@ public enum RoomType
     RoomWithOneExit_variantTwo = 61,
     RoomWithOneExit_variantThree = 62,
     RoomWithOneExit_variantFour = 63,
+}
+
+public enum TemplateElement
+{
+    None = 0,
+    Empty = 1,
+    Player = 2,
+    Enemy = 3,
+    Buff = 4,
+    DefaultWall = 5,
+    ReflectionWall = 6,
+
 }
