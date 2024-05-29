@@ -10,6 +10,7 @@ public class RoomTemplateSO : ScriptableObject
     {
         [HideInInspector] public string name;
         public int id;
+        public string DateAdded;
         public TemplateElement[,] TemplateElement;
     }
 

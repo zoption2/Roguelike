@@ -4,14 +4,6 @@ using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 using System.Linq;
 
-[System.Serializable]
-public class PlaceableObject
-{
-    public string name;
-    public Color color;
-    public TemplateElement type;
-}
-
 public class TilemapTo2DArrayWindow : EditorWindow
 {
     private Tilemap selectedTilemap;
@@ -19,7 +11,6 @@ public class TilemapTo2DArrayWindow : EditorWindow
     private Color[,] cellColors;
     private bool[,] isEditableArray;
     private Vector2 scrollPosition;
-    private TemplateElement tileTypes;
 
     private List<TemplatePlacebleElements.TemplatePlacebleElement> placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>();
     private int selectedObjectIndex = -1;
@@ -29,8 +20,6 @@ public class TilemapTo2DArrayWindow : EditorWindow
     private TemplateElement newObjectType = TemplateElement.Empty;
 
     private float zoomScale = 1f;
-    private Vector2 mousePositionLastFrame;
-    private bool isLeftMouseDown = false;
 
     private string newRecordName = "";
     private bool DisplayNewTemplateRecordFields = false;
@@ -41,19 +30,30 @@ public class TilemapTo2DArrayWindow : EditorWindow
     private bool showInitialOptions = true;
     private bool createNewArray = false;
     private bool createFromTilemap = false;
+    private bool editExistingTemplate = false;
 
     private int arrayWidth = 0;
     private int arrayHeight = 0;
 
-    [MenuItem("Tools/Tilemap to 2D Array")]
+    private GUIStyle headerStyle;
+    private GUIStyle buttonStyle;
+
+    private RoomTemplateSO roomTemplateSO;
+    private List<RoomTemplateSO.Template> templates = new List<RoomTemplateSO.Template>();
+    private int selectedTemplateIndex = -1;
+
+    [MenuItem("Tools/Template Builder")]
     public static void ShowWindow()
     {
-        GetWindow<TilemapTo2DArrayWindow>("Tilemap to 2D Array");
+        var window = GetWindow<TilemapTo2DArrayWindow>("Template Builder");
+        window.minSize = new Vector2(300, 400);
     }
 
     private void OnEnable()
     {
         templatePlacebleElementsSO = AssetDatabase.LoadAssetAtPath<TemplatePlacebleElements>("Assets/SO/TemplatePlacebleElementsSO.asset");
+        roomTemplateSO = AssetDatabase.LoadAssetAtPath<RoomTemplateSO>("Assets/SO/RoomTemplateSO.asset");
+
         if (templatePlacebleElementsSO != null)
         {
             placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>(templatePlacebleElementsSO.PlacebleElements);
@@ -67,10 +67,35 @@ public class TilemapTo2DArrayWindow : EditorWindow
         {
             Debug.LogError("Failed to load TemplatePlacebleElements SO.");
         }
+
+        if (roomTemplateSO != null)
+        {
+            templates = roomTemplateSO.Templates;
+            Debug.Log($"Loaded {templates.Count} templates from SO.");
+        }
+        else
+        {
+            Debug.LogError("Failed to load RoomTemplateSO.");
+        }
     }
+
+    
 
     private void OnGUI()
     {
+        if (headerStyle == null)
+        {
+            headerStyle = new GUIStyle(GUI.skin.label);
+            headerStyle.fontSize = 20;
+            headerStyle.alignment = TextAnchor.MiddleCenter;
+        }
+
+        if (buttonStyle == null)
+        {
+            buttonStyle = new GUIStyle(GUI.skin.button);
+            buttonStyle.fontSize = 14;
+        }
+
         if (showInitialOptions)
         {
             ShowInitialOptions();
@@ -83,6 +108,10 @@ public class TilemapTo2DArrayWindow : EditorWindow
         {
             ShowTilemapOptions();
         }
+        else if (editExistingTemplate)
+        {
+            ShowEditTemplateOptions();
+        }
         else
         {
             ShowMainGUI();
@@ -91,19 +120,34 @@ public class TilemapTo2DArrayWindow : EditorWindow
 
     private void ShowInitialOptions()
     {
-        GUILayout.Label("Choose an option", EditorStyles.boldLabel);
+        GUILayout.Space(20);
+        GUILayout.Label("TEMPLATE BUILDER", headerStyle, GUILayout.Height(40));
 
-        if (GUILayout.Button("Create New Array"))
+        GUILayout.FlexibleSpace();
+
+        if (GUILayout.Button("Empty Template", buttonStyle, GUILayout.Height(50)))
         {
             createNewArray = true;
             showInitialOptions = false;
         }
 
-        if (GUILayout.Button("Create Array from Tilemap"))
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Template From Tilemap", buttonStyle, GUILayout.Height(50)))
         {
             createFromTilemap = true;
             showInitialOptions = false;
         }
+
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Edit Existing Template", buttonStyle, GUILayout.Height(50)))
+        {
+            editExistingTemplate = true;
+            showInitialOptions = false;
+        }
+
+        GUILayout.FlexibleSpace();
     }
 
     private void ShowNewArrayOptions()
@@ -113,17 +157,18 @@ public class TilemapTo2DArrayWindow : EditorWindow
         arrayWidth = EditorGUILayout.IntField("Width", arrayWidth);
         arrayHeight = EditorGUILayout.IntField("Height", arrayHeight);
 
+        EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Create Array"))
         {
             CreateEmptyArray();
             createNewArray = false;
         }
-
         if (GUILayout.Button("Back"))
         {
             createNewArray = false;
             showInitialOptions = true;
         }
+        EditorGUILayout.EndHorizontal();
     }
 
     private void ShowTilemapOptions()
@@ -132,17 +177,59 @@ public class TilemapTo2DArrayWindow : EditorWindow
 
         selectedTilemap = EditorGUILayout.ObjectField("Tilemap", selectedTilemap, typeof(Tilemap), true) as Tilemap;
 
+        EditorGUILayout.BeginHorizontal();
         if (selectedTilemap != null && GUILayout.Button("Generate Template"))
         {
             GenerateArrayFromTilemap();
             createFromTilemap = false;
         }
-
         if (GUILayout.Button("Back"))
         {
             createFromTilemap = false;
             showInitialOptions = true;
         }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void ShowEditTemplateOptions()
+    {
+        GUILayout.Label("Select Template to Edit", EditorStyles.boldLabel);
+
+        if (templates.Count == 0)
+        {
+            GUILayout.Label("No available templates to edit", EditorStyles.label);
+        }
+        else
+        {
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            for (int i = 0; i < templates.Count; i++)
+            {
+                var template = templates[i];
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label($"{template.name} (Added: {template.DateAdded})", EditorStyles.label);
+                if (GUILayout.Button("Select"))
+                {
+                    selectedTemplateIndex = i;
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndScrollView();
+        }
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Edit Template"))
+        {
+            if (selectedTemplateIndex >= 0 && selectedTemplateIndex < templates.Count)
+            {
+                LoadTemplate(templates[selectedTemplateIndex]);
+            }
+        }
+        if (GUILayout.Button("Back"))
+        {
+            editExistingTemplate = false;
+            showInitialOptions = true;
+        }
+        EditorGUILayout.EndHorizontal();
     }
 
     private void ShowMainGUI()
@@ -218,6 +305,10 @@ public class TilemapTo2DArrayWindow : EditorWindow
             if (GUILayout.Button("Add New Template Record"))
             {
                 DisplayNewTemplateRecordFields = true;
+                if (selectedTemplateIndex >= 0 && selectedTemplateIndex < templates.Count)
+                {
+                    newRecordName = templates[selectedTemplateIndex].name;
+                }
             }
         }
         else
@@ -228,7 +319,7 @@ public class TilemapTo2DArrayWindow : EditorWindow
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Create Template Record"))
             {
-                CreateNewRecordInSO(newRecordName, levelArray);
+                CreateOrUpdateRecordInSO(newRecordName, levelArray);
                 DisplayNewTemplateRecordFields = false;
                 newRecordName = "";
             }
@@ -239,6 +330,7 @@ public class TilemapTo2DArrayWindow : EditorWindow
             GUILayout.EndHorizontal();
         }
     }
+
 
     private void CreateEmptyArray()
     {
@@ -431,75 +523,74 @@ public class TilemapTo2DArrayWindow : EditorWindow
         }
     }
 
-    private void OnSceneGUI()
+    private void CreateOrUpdateRecordInSO(string name, TemplateElement[,] levelArray)
     {
-        ProcessEvent(Event.current);
-    }
-
-    private void ProcessEvent(Event currentEvent)
-    {
-        switch (currentEvent.type)
-        {
-            case EventType.ScrollWheel:
-                HandleZoom(currentEvent.delta.y);
-                break;
-            case EventType.MouseDown:
-                if (currentEvent.button == 0)
-                {
-                    isLeftMouseDown = true;
-                    mousePositionLastFrame = currentEvent.mousePosition;
-                }
-                break;
-            case EventType.MouseUp:
-                if (currentEvent.button == 0)
-                {
-                    isLeftMouseDown = false;
-                }
-                break;
-            case EventType.MouseDrag:
-                if (isLeftMouseDown)
-                {
-                    HandlePan(currentEvent.delta);
-                }
-                break;
-        }
-    }
-
-    private void HandleZoom(float delta)
-    {
-        zoomScale += delta * 0.01f;
-        zoomScale = Mathf.Clamp(zoomScale, 0.1f, 10f);
-        SceneView.RepaintAll();
-    }
-
-    private void HandlePan(Vector2 delta)
-    {
-        scrollPosition -= delta / zoomScale;
-        SceneView.RepaintAll();
-    }
-
-    private void CreateNewRecordInSO(string name, TemplateElement[,] levelArray)
-    {
-        RoomTemplateSO roomTemplateSO = AssetDatabase.LoadAssetAtPath<RoomTemplateSO>("Assets/SO/RoomTemplateSO.asset");
-
         if (roomTemplateSO == null)
         {
             Debug.LogError("RoomTemplateSO not found at path: Assets/SO/RoomTemplateSO.asset");
             return;
         }
 
-        int id = 1;
-        if (roomTemplateSO.Templates.Count > 0)
-            id = roomTemplateSO.Templates.Max(t => t.id) + 1;
+        var existingTemplate = roomTemplateSO.Templates.FirstOrDefault(t => t.name == name);
+        if (existingTemplate != null)
+        {
+            existingTemplate.TemplateElement = levelArray;
+            existingTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            Debug.Log($"Updated existing template: {name}");
+        }
+        else
+        {
+            int id = 1;
+            if (roomTemplateSO.Templates.Count > 0)
+                id = roomTemplateSO.Templates.Max(t => t.id) + 1;
 
-        RoomTemplateSO.Template newTemplate = new RoomTemplateSO.Template();
-        newTemplate.name = name;
-        newTemplate.id = id;
-        newTemplate.TemplateElement = levelArray;
+            RoomTemplateSO.Template newTemplate = new RoomTemplateSO.Template();
+            newTemplate.name = name;
+            newTemplate.id = id;
+            newTemplate.TemplateElement = levelArray;
+            newTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-        roomTemplateSO.Templates.Add(newTemplate);
+            roomTemplateSO.Templates.Add(newTemplate);
+            Debug.Log($"Added new template: {name}");
+        }
 
         EditorUtility.SetDirty(roomTemplateSO);
         AssetDatabase.SaveAssets();
+    }
+
+
+    private void LoadTemplate(RoomTemplateSO.Template template)
+    {
+        levelArray = template.TemplateElement;
+        cellColors = new Color[levelArray.GetLength(0), levelArray.GetLength(1)];
+        isEditableArray = new bool[levelArray.GetLength(0), levelArray.GetLength(1)];
+
+        for (int x = 0; x < levelArray.GetLength(0); x++)
+        {
+            for (int y = 0; y < levelArray.GetLength(1); y++)
+            {
+                var elementType = levelArray[x, y];
+                if (elementType == TemplateElement.None)
+                {
+                    cellColors[x, y] = Color.black;
+                }
+                else
+                {
+                    var placeableObject = placeableObjects.FirstOrDefault(obj => obj.Type == elementType);
+                    if (placeableObject != null)
+                    {
+                        cellColors[x, y] = placeableObject.Color;
+                    }
+                    else
+                    {
+                        cellColors[x, y] = Color.white;
+                    }
+                }
+                isEditableArray[x, y] = true;
+            }
+        }
+
+        editExistingTemplate = false;
+        showInitialOptions = false;
     }
 }
