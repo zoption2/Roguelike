@@ -4,10 +4,13 @@ using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 using System.Linq;
 
-public class TilemapTo2DArrayWindow : EditorWindow
+public class TemplateBuilder : EditorWindow
 {
+    #region Fields
     private Tilemap selectedTilemap;
     private TemplateElement[,] levelArray;
+    private TemplateElement[,] originalLevelArray;
+
     private Color[,] cellColors;
     private bool[,] isEditableArray;
     private Vector2 scrollPosition;
@@ -42,13 +45,16 @@ public class TilemapTo2DArrayWindow : EditorWindow
     private List<RoomTemplateSO.Template> templates = new List<RoomTemplateSO.Template>();
     private int selectedTemplateIndex = -1;
 
+    #endregion
+
     [MenuItem("Tools/Template Builder")]
     public static void ShowWindow()
     {
-        var window = GetWindow<TilemapTo2DArrayWindow>("Template Builder");
+        var window = GetWindow<TemplateBuilder>("Template Builder");
         window.minSize = new Vector2(300, 400);
     }
 
+    #region GUI 
     private void OnEnable()
     {
         templatePlacebleElementsSO = AssetDatabase.LoadAssetAtPath<TemplatePlacebleElements>("Assets/SO/TemplatePlacebleElementsSO.asset");
@@ -78,8 +84,6 @@ public class TilemapTo2DArrayWindow : EditorWindow
             Debug.LogError("Failed to load RoomTemplateSO.");
         }
     }
-
-    
 
     private void OnGUI()
     {
@@ -331,7 +335,9 @@ public class TilemapTo2DArrayWindow : EditorWindow
         }
     }
 
+    #endregion
 
+    #region MainWindowLogic
     private void CreateEmptyArray()
     {
         if (arrayWidth <= 0 || arrayHeight <= 0)
@@ -418,25 +424,15 @@ public class TilemapTo2DArrayWindow : EditorWindow
                 Vector3Int cellPosition = new Vector3Int(bounds.xMin + x, bounds.yMin + y, 0);
                 TileBase tile = selectedTilemap.GetTile(cellPosition);
 
-                if (x >= 0 && x < width && y >= 0 && y < height)
+                if (tile != null)
                 {
-                    if (tile != null)
-                    {
-                        levelArray[x, y] = DetermineTileType(tile);
-                        Debug.Log(levelArray[x, y]);
-                        cellColors[x, y] = Color.white;
-                        isEditableArray[x, y] = true;
-                    }
-                    else
-                    {
-                        levelArray[x, y] = 0;
-                        cellColors[x, y] = Color.black;
-                        isEditableArray[x, y] = false;
-                    }
+                    levelArray[x, y] = DetermineTileType(tile);
+                    cellColors[x, y] = tile is Tile concreteTile ? concreteTile.color : Color.white;
+                    isEditableArray[x, y] = true;
                 }
                 else
                 {
-                    levelArray[x, y] = 0;
+                    levelArray[x, y] = TemplateElement.None;
                     cellColors[x, y] = Color.black;
                     isEditableArray[x, y] = false;
                 }
@@ -522,7 +518,6 @@ public class TilemapTo2DArrayWindow : EditorWindow
             Debug.Log($"Added new object: {newObj.Name}, Type: {newObj.Type}, Color: {newObj.Color}");
         }
     }
-
     private void CreateOrUpdateRecordInSO(string name, TemplateElement[,] levelArray)
     {
         if (roomTemplateSO == null)
@@ -531,24 +526,34 @@ public class TilemapTo2DArrayWindow : EditorWindow
             return;
         }
 
-        var existingTemplate = roomTemplateSO.Templates.FirstOrDefault(t => t.name == name);
-        if (existingTemplate != null)
+        var existingTemplate = selectedTemplateIndex >= 0 && selectedTemplateIndex < templates.Count
+                                ? templates[selectedTemplateIndex]
+                                : null;
+
+        if (existingTemplate != null && name == existingTemplate.name)
         {
-            existingTemplate.TemplateElement = levelArray;
+            existingTemplate.TemplateElement = (TemplateElement[,])levelArray.Clone();
             existingTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             Debug.Log($"Updated existing template: {name}");
         }
         else
         {
-            int id = 1;
-            if (roomTemplateSO.Templates.Count > 0)
-                id = roomTemplateSO.Templates.Max(t => t.id) + 1;
+            var sameNameTemplate = roomTemplateSO.Templates.FirstOrDefault(t => t.name == name);
+            if (sameNameTemplate != null)
+            {
+                Debug.LogError($"Template with name {name} already exists. Choose a different name.");
+                return;
+            }
 
-            RoomTemplateSO.Template newTemplate = new RoomTemplateSO.Template();
-            newTemplate.name = name;
-            newTemplate.id = id;
-            newTemplate.TemplateElement = levelArray;
-            newTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            int id = roomTemplateSO.Templates.Count > 0 ? roomTemplateSO.Templates.Max(t => t.id) + 1 : 1;
+
+            RoomTemplateSO.Template newTemplate = new RoomTemplateSO.Template
+            {
+                name = name,
+                id = id,
+                TemplateElement = (TemplateElement[,])levelArray.Clone(),
+                DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            };
 
             roomTemplateSO.Templates.Add(newTemplate);
             Debug.Log($"Added new template: {name}");
@@ -558,16 +563,33 @@ public class TilemapTo2DArrayWindow : EditorWindow
         AssetDatabase.SaveAssets();
     }
 
-
     private void LoadTemplate(RoomTemplateSO.Template template)
     {
-        levelArray = template.TemplateElement;
-        cellColors = new Color[levelArray.GetLength(0), levelArray.GetLength(1)];
-        isEditableArray = new bool[levelArray.GetLength(0), levelArray.GetLength(1)];
-
-        for (int x = 0; x < levelArray.GetLength(0); x++)
+        if (template == null || template.TemplateElement == null)
         {
-            for (int y = 0; y < levelArray.GetLength(1); y++)
+            Debug.LogError("Template or TemplateElement is null.");
+            return;
+        }
+
+        levelArray = template.TemplateElement;
+        int rows = levelArray.GetLength(0);
+        int cols = levelArray.GetLength(1);
+        originalLevelArray = new TemplateElement[rows, cols];
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
+            {
+                originalLevelArray[x, y] = levelArray[x, y];
+            }
+        }
+
+        cellColors = new Color[rows, cols];
+        isEditableArray = new bool[rows, cols];
+
+        for (int x = 0; x < rows; x++)
+        {
+            for (int y = 0; y < cols; y++)
             {
                 var elementType = levelArray[x, y];
                 if (elementType == TemplateElement.None)
@@ -593,4 +615,7 @@ public class TilemapTo2DArrayWindow : EditorWindow
         editExistingTemplate = false;
         showInitialOptions = false;
     }
+
+
+    #endregion
 }
