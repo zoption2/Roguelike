@@ -5,6 +5,7 @@ using Interactions;
 using Pool;
 using UnityEngine;
 using UnityEngine.AI;
+using Abilities;
 
 public interface ICharacterController
 {

@@ -1,8 +1,12 @@
 using Interactions;
 
-public class KnightAttackAbility : Ability
+namespace Abilities
 {
-    public KnightAttackAbility(IInteraction interaction, int reloadTime, float launchMod, AbilityType type) : base(interaction, reloadTime, launchMod, type)
+    public class KnightAttackAbility : Ability
     {
+        public KnightAttackAbility(IInteraction interaction, int reloadTime, float launchMod, AbilityType type) : base(interaction, reloadTime, launchMod, type)
+        {
+
+        }
     }
 }

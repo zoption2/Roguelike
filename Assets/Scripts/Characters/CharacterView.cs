@@ -14,6 +14,7 @@ public interface IInteractible
 {
     public void StartInteraction(IInteractible interactible);
     public IControllerInputs ControllerInputs { get; set; }
+    public Vector2 Normal {  get; set; }
     public Rigidbody GetRigidbody();
     public Vector3 GetLastVelocity();
     public Vector3 GetVelocity();
@@ -46,6 +47,8 @@ public class CharacterView : MonoBehaviour,
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; }
+    public Vector2 Normal { get; set; }
+
     public float MaxVelocity = 50f;
     private Rigidbody _rigidbody;
     private CollisionHandler _collisionHandler;

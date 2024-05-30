@@ -9,6 +9,8 @@ using CharactersStats;
 using Zenject;
 using Gameplay;
 using UnityEngine.AI;
+using Abilities;
+
 
 namespace Enemy
 {

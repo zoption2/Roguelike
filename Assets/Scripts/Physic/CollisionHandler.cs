@@ -34,6 +34,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
 
         if (collision.gameObject.TryGetComponent(out IInteractible interactible))
         {
+            _characterView.Normal = collision.GetContact(0).normal;
             _characterView.StartInteraction(interactible);
         }
     }

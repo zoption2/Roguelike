@@ -1,36 +1,37 @@
 using CharactersStats;
 using Interactions;
 
-public interface IAbilityFactory
+namespace Abilities
 {
-    IAbility CreateAbility(AbilityType type, ReactiveStats stats);
-}
-
-public class AbilityFactory : IAbilityFactory
-{
-    private IInteractionFactory _interactionFactory;
-    public AbilityFactory(IInteractionFactory interactionFactory)
+    public interface IAbilityFactory
     {
-        _interactionFactory = interactionFactory;
+        IAbility CreateAbility(AbilityType type, ReactiveStats stats);
     }
-    public IAbility CreateAbility(AbilityType type, ReactiveStats stats)
+
+    public class AbilityFactory : IAbilityFactory
     {
-        InteractionType interactionType;
-        IInteraction interaction;
-        switch (type)
+        private IInteractionFactory _interactionFactory;
+        private AbilityHolder _abilityHolder;
+        public AbilityFactory(IInteractionFactory interactionFactory, AbilityHolder abilityHolder)
         {
-            case AbilityType.HeavyAttackAbility:
-                interactionType = InteractionType.Knight_HeavyAttack;
-                interaction = _interactionFactory.Create(interactionType, stats);
-                return new KnightAttackAbility(interaction, 2, 1f,type);
-            case AbilityType.MegaHeavyAttackAbility:
-                interactionType = InteractionType.SuperMegaHeavyAttack;
-                interaction = _interactionFactory.Create(interactionType, stats);
-                return new MegaHeavyAttackAbility(interaction, 5, 0.5f, type);
-            default:
-                interactionType = InteractionType.BasicAttack;
-                interaction = _interactionFactory.Create(interactionType, stats);
-                return new BasicAttackAbility(interaction, 0, 1f, type);
+            _interactionFactory = interactionFactory;
+            _abilityHolder = abilityHolder;
+        }
+        public IAbility CreateAbility(AbilityType type, ReactiveStats stats)
+        {
+            AbilityMapper mapper = _abilityHolder.GetAbilityData(type);
+            IInteraction interaction = _interactionFactory.Create(mapper.InteractionType, stats);
+            switch (type)
+            {
+                case AbilityType.HeavyAttackAbility:
+                    return new KnightAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+                case AbilityType.MegaHeavyAttackAbility:
+                    return new MegaHeavyAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+                case AbilityType.ArrowShootAbility:
+                    return new ArrowShootAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+                default:
+                    return new BasicAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+            }
         }
     }
 }

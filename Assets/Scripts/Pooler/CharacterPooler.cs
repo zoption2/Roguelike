@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Pool
 {
-
     public class CharacterPooler : ObjectPooler<CharacterType>
     {
         private CharacterPrefabHolder _provider;

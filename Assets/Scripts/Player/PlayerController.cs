@@ -11,6 +11,8 @@ using UnityEngine.AI;
 using BehaviourTree;
 using System.Linq;
 using Enemy;
+using Abilities;
+
 
 namespace Player
 {
@@ -194,7 +196,6 @@ namespace Player
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
         {
-
             if(IsMoving)
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
+using Abilities;
+
 
 public interface IConditionState
 {
@@ -92,7 +94,7 @@ public abstract class ActiveState
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
         Vector2 forceVector = direction * launchPower * _launchMultiplier;
-        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
+        _characterController.GetRigidbody().velocity = forceVector;
     }
 
     public void LaunchProjectile(Vector2 direction)
@@ -174,7 +176,7 @@ public abstract class ActiveState
         }
         else
         {
-            bumpFromDealer = new Bounce();
+            bumpFromDealer = new ReflectionBounce();
             bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
         }
     }
@@ -357,7 +359,7 @@ public class InactiveState : IConditionState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        IMovable bump = new Bounce();
+        IMovable bump = new ReflectionBounce();
         bump.ApplyForce(_characterController.CharacterView, interactible);
     }
 
@@ -547,7 +549,7 @@ public class StunState : IConditionState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        IMovable bump = new Bounce();
+        IMovable bump = new ReflectionBounce();
         bump.ApplyForce(_characterController.CharacterView, interactible);
     }
 

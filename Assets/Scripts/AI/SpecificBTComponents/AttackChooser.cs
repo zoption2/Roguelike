@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Abilities;
+
 
 namespace BehaviourTree
 {
@@ -26,13 +28,10 @@ namespace BehaviourTree
             Transform target = DefaultBT.GetTarget();
             foreach (IAbility abilityType in availableAbilities)
             {
-                Debug.Log(abilityType + "   multiplier: " + abilityType.GetLaunchModifier());
                 bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, startingPoint, abilityType.GetLaunchModifier(),remainingDistance);
-                Debug.Log("Attack would reach target: " + attackWouldReachTarget);
                 if (attackWouldReachTarget)
                 {
                     chosenAbility = abilityType;
-                    Debug.Log("enemy choosed " + chosenAbility);
                     DefaultBT.SetCurrentAbility(chosenAbility);
                     return chosenAbility;
                 }

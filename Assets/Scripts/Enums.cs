@@ -55,6 +55,7 @@ public enum AbilityType
     BasicAttackAbility = 0,
     HeavyAttackAbility = 1,
     MegaHeavyAttackAbility = 2,
+    ArrowShootAbility = 3,
 }
 
 public enum TypeOfUse
@@ -91,7 +92,7 @@ public enum UIType
 
 public enum NavigationType
 {
-    Default,
+    Default = 0,
 }
 
 public enum RoomType
@@ -110,4 +111,10 @@ public enum RoomType
     RoomWithOneExit_variantTwo = 61,
     RoomWithOneExit_variantThree = 62,
     RoomWithOneExit_variantFour = 63,
+}
+
+public enum ProjectileType
+{
+    None= 0,
+    Arrow =1,
 }
