@@ -15,6 +15,6 @@ MonoBehaviour:
   Key: 3
   InteractionType: 2
   ProjectileType: 1
-  ReloadTime: 0
+  ReloadTime: 2
   LaunchModifier: 1
   RicochetCount: 2

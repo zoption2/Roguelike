@@ -140,8 +140,6 @@ namespace Gameplay
 
         INavigationFactory _navigationFactory;
 
-        ProjectilePooler _projectilePooler;
-
 
         public InitLevelState(IScenario scenario,
             ICharacterScenarioContext context,

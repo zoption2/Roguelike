@@ -32,7 +32,7 @@ namespace Abilities
             {
                 TurnsLeftToReload--;
             }
-            if (TurnsLeftToReload == 0 && ReadyForUse == false)
+            else if (TurnsLeftToReload == 0 && ReadyForUse == false)
             {
                 ReadyForUse = true;
             }
@@ -49,13 +49,11 @@ namespace Abilities
 
         public int GetUsefulness()
         {
-            //For now we will think that the more damage skill gives the more useful it is
             return Interaction.GetDamage();
         }
 
         public void UseAbility()
         {
-            // do something and then set for reload
             SetForReload();
         }
 

@@ -26,10 +26,10 @@ namespace BehaviourTree
             availableAbilities = availableAbilities.OrderByDescending(x => x.GetUsefulness()).ToList();
             IAbility chosenAbility = null;
             Transform target = DefaultBT.GetTarget();
+            bool attackWouldReachTarget;
+
             foreach (IAbility abilityType in availableAbilities)
             {
-                bool attackWouldReachTarget;
-
                 if (abilityType.ProjectileType== ProjectileType.None)
                     attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, startingPoint, abilityType.GetLaunchModifier(), remainingDistance);
                 else
@@ -42,6 +42,7 @@ namespace BehaviourTree
                     return chosenAbility;
                 }
             }
+
             DefaultBT.SetCurrentAbility(chosenAbility);
             return chosenAbility;
         }

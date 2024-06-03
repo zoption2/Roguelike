@@ -94,24 +94,6 @@ namespace Gameplay
                 {
                     ActivateCompleatedRoomTriggers();
                 }
-                //if(noPlayers)
-                //{
-                //    foreach(ICharacterController enemy in _scenarioContext.Enemies)
-                //    {
-                //        enemy.JustPush();
-                //    }
-                //    Debug.LogWarning("You lost!");
-                //}
-                //else
-                //{
-                //    foreach (ICharacterController player in _scenarioContext.Players)
-                //    {
-                //        player.JustPush();
-                //    }
-                //    Debug.LogWarning("You won!");
-                //}
-                
-                //LoadMainMenu();
             }
         }
 
