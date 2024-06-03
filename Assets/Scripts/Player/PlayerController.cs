@@ -12,6 +12,7 @@ using BehaviourTree;
 using System.Linq;
 using Enemy;
 using Abilities;
+using Projectiles;
 
 
 namespace Player
@@ -145,7 +146,7 @@ namespace Player
         public void SetCurrentAbility(IAbility ability)
         {
             CurrentAbility = ability;
-            Debug.LogWarning(CurrentAbility);
+            Debug.LogWarning(CurrentAbility + "  " + CurrentAbility.ProjectileType);
         }
 
 
@@ -196,7 +197,11 @@ namespace Player
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
         {
-            if(IsMoving)
+            if (interactible is IProjectile)
+            {
+                _currentState.ApplyBump(interactible, bumpFromDealer);
+            }
+            else if (IsMoving)
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);
             }
@@ -257,6 +262,11 @@ namespace Player
         public Transform GetTransform()
         {
             return CharacterView.GetTransform();
+        }
+
+        public Transform GetProjectileSpawn()
+        {
+            return CharacterView.GetProjectileSpawn();
         }
 
         public bool GetActiveStatus()

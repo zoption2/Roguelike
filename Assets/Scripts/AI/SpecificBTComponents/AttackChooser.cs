@@ -28,7 +28,13 @@ namespace BehaviourTree
             Transform target = DefaultBT.GetTarget();
             foreach (IAbility abilityType in availableAbilities)
             {
-                bool attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, startingPoint, abilityType.GetLaunchModifier(),remainingDistance);
+                bool attackWouldReachTarget;
+
+                if (abilityType.ProjectileType== ProjectileType.None)
+                    attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, startingPoint, abilityType.GetLaunchModifier(), remainingDistance);
+                else
+                    attackWouldReachTarget = DefaultBT.RemoteSphereCastHitTarget(target,startingPoint);
+
                 if (attackWouldReachTarget)
                 {
                     chosenAbility = abilityType;

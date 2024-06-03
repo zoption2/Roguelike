@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Abilities;
+using Unity.VisualScripting;
 
 
 namespace BehaviourTree
@@ -12,10 +13,12 @@ namespace BehaviourTree
         public Transform GetTarget();
         public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float abilityMultiplier = 1,
             float remainingDistance = -1f);
+        public bool RemoteSphereCastHitTarget(Transform target, Vector3 startingPoint);
         public Vector3 GetCharacterPosition();
         public void SetAbilities(List<IAbility> abilities);
         public void SetCurrentAbility(IAbility ability);
         public bool CanAttackAfterMove(NavMeshPath path);
+        
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
@@ -67,13 +70,6 @@ namespace BehaviourTree
 
         private void CheckIfCanMove()
         {
-            // check whether enemy could get hit by player after he moves
-            // (whether he will be in direct line of sight)
-            // for that i will need to know the end point and then shoot a raycast from player to the endpoint
-            // maybe i need to use pathIsClear and CouldReach for that
-            // if not than it is okay to move
-            // if after moving he could even attack the player than definitely can move
-
             if (!_characterController.IsStunned)
             {
                 Debug.Log("Can Move");
@@ -107,13 +103,13 @@ namespace BehaviourTree
 
         }
 
-        protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
+        protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint,float castRadius = 0.5f)
         {
             LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
             Vector3 direction = target - startingPoint;
             direction.z = 0;
             direction.Normalize();
-            float radius = 0.5f;
+            float radius = castRadius;
             RaycastHit hit;
             Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
             return hit;
@@ -200,6 +196,22 @@ namespace BehaviourTree
             {
                 return false;
             }
+        }
+        public bool RemoteSphereCastHitTarget(Transform target, Vector3 startingPoint)
+        {
+            RaycastHit hit = ShootSphereCastToTarget(target.position, Mathf.Infinity, startingPoint,0.2f);
+            Transform hitTransform = hit.transform;
+            if (hitTransform != null && hitTransform.childCount > 0)
+            {
+                hitTransform = hit.transform.GetChild(0);
+            }
+
+            if (hitTransform != null && hitTransform == target)
+            {
+                return true;
+            }
+            else
+                return false;
         }
 
         public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float abilityMultiplier = 1,

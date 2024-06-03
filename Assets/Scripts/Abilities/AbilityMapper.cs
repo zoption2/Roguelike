@@ -13,5 +13,6 @@ namespace Abilities
         public ProjectileType ProjectileType;
         public int ReloadTime;
         public float LaunchModifier;
+        public int RicochetCount;
     }
 }

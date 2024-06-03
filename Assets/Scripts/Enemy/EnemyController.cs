@@ -10,6 +10,7 @@ using Zenject;
 using Gameplay;
 using UnityEngine.AI;
 using Abilities;
+using Projectiles;
 
 
 namespace Enemy
@@ -180,7 +181,11 @@ namespace Enemy
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
         {
-            if (IsMoving)
+            if(interactible is IProjectile)
+            {
+                _currentState.ApplyBump(interactible, bumpFromDealer);
+            }
+            else if (IsMoving)
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);
             }
@@ -260,6 +265,11 @@ namespace Enemy
         public Transform GetTransform()
         {
             return CharacterView.GetTransform();
+        }
+
+        public Transform GetProjectileSpawn()
+        {
+            return CharacterView.GetProjectileSpawn();
         }
 
         public bool GetActiveStatus()

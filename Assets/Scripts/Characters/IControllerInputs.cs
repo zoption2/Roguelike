@@ -16,5 +16,5 @@ public interface IControllerInputs
     public void DoUpdate();
     public void PushCharacterUI();
 
-
+    public void HandleStopMovement();
 }

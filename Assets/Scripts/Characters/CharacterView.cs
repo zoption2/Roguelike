@@ -43,6 +43,7 @@ public class CharacterView : MonoBehaviour,
     public event Action<PointerEventData> ON_BEGINDRAG;
     
     [SerializeField] Transform _viewTransform;
+    [SerializeField] Transform _projectileSpawn;
     public ParticleSystem ParticleTestSystem { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
@@ -141,7 +142,7 @@ public class CharacterView : MonoBehaviour,
 
     public void OnRelease()
     {
-        //ControllerInputs.PushCharacterUI();
+
     }
 
     public Rigidbody GetRigidbody()
@@ -152,6 +153,11 @@ public class CharacterView : MonoBehaviour,
     public Transform GetTransform()
     {
         return _viewTransform;
+    }
+
+    public Transform GetProjectileSpawn()
+    {
+        return _projectileSpawn;
     }
 }
 

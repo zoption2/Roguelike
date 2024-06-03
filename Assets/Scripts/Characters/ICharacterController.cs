@@ -32,6 +32,7 @@ public interface ICharacterController
     public void UpdateHealthBar();
     public CharacterType GetCharacterType();
     public Transform GetTransform();
+    public Transform GetProjectileSpawn();
     public Rigidbody GetRigidbody();
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler, CharacterUIView uIView);
     public Vector3 GetVelocity();

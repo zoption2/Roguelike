@@ -2,6 +2,7 @@ using CharactersStats;
 using Enemy;
 using Obstacles;
 using Player;
+using Pool;
 using System;
 using System.Linq;
 using Unity.AI.Navigation;
@@ -138,6 +139,8 @@ namespace Gameplay
         IEnemyFactory _enemyFactory;
 
         INavigationFactory _navigationFactory;
+
+        ProjectilePooler _projectilePooler;
 
 
         public InitLevelState(IScenario scenario,

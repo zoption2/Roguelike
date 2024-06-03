@@ -46,12 +46,6 @@ namespace Pool
             var selectedQueue = _poolDictionary[tag];
             if (selectedQueue.Count > 0)
             {
-                Debug.LogWarning("this is " + this);
-                Debug.LogWarning("tag :" + tag + "  " + selectedQueue.Count);
-                foreach (var A in  selectedQueue)
-                {
-                    Debug.LogWarning(A);
-                }
                 IMyPoolable resultObject = _poolDictionary[tag].Dequeue();
                 resultObject.gameObject.transform.position = position;
                 resultObject.gameObject.transform.rotation = rotation;

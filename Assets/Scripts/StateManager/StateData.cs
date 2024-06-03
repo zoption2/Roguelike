@@ -1,4 +1,5 @@
 using CharactersStats;
+using Pool;
 using Zenject;
 
 namespace Gameplay
@@ -18,16 +19,19 @@ namespace Gameplay
         private IScenario _scenarioInstance;
         private ICharacterScenarioContext _context;
         private INavigationFactory _navigationFactory;
+        private ProjectilePooler _projectilePooler;
 
         [Inject]
         public void Construct(IBuffFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
-            INavigationFactory navigationFactory)
+            INavigationFactory navigationFactory, ProjectilePooler projectilePooler)
         {
             _triggerFactory = triggerFactory;
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
             _statsProvider = statsProvider;
             _navigationFactory = navigationFactory;
+            _projectilePooler = projectilePooler;
+            _projectilePooler.Init();
         }
 
         public void Init(IScenario scenarioInstance, ICharacterScenarioContext context)
@@ -70,10 +74,10 @@ namespace Gameplay
                     state = new StunState(controller);
                     break;
                 case TypeOfConditionState.PlayerActiveState:
-                    state = new PlayerActiveState(controller);
+                    state = new PlayerActiveState(controller,_projectilePooler);
                     break;
                 case TypeOfConditionState.EnemyActiveState:
-                    state = new EnemyActiveState(controller);
+                    state = new EnemyActiveState(controller, _projectilePooler);
                     break;
             }
             return state;

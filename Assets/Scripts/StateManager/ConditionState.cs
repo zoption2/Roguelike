@@ -8,6 +8,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using Abilities;
+using Zenject;
+using Pool;
+using Projectiles;
 
 
 public interface IConditionState
@@ -37,12 +40,14 @@ public abstract class ActiveState
     protected event OnStopped ON_STOPPED;
     protected NavMeshAgent _navAgent;
     protected NavMeshObstacle _navObstacle;
+    protected ProjectilePooler _projectilePooler;
 
-    public ActiveState(ICharacterController characterController)
+    public ActiveState(ICharacterController characterController,ProjectilePooler projectilePooler)
     {
         _characterController = characterController;
         _navAgent = _characterController.NavMeshAgent;
         _navObstacle = _characterController.NavMeshObstacle;
+        _projectilePooler = projectilePooler;
     }
 
     public void OnEnter()
@@ -88,18 +93,37 @@ public abstract class ActiveState
             ON_STOPPED?.Invoke();
         }
     }
-
-    public virtual void LaunchYourself(Vector2 direction)
+    protected Vector2 GetForceVector(Vector2 direction)
     {
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
+        IAbility currentAbility = _characterController.CurrentAbility;
+        _launchMultiplier = currentAbility.GetLaunchModifier();
         Vector2 forceVector = direction * launchPower * _launchMultiplier;
+        return forceVector;
+    }
+
+    public virtual void LaunchYourself(Vector2 direction)
+    {
+        Vector2 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().velocity = forceVector;
     }
 
-    public void LaunchProjectile(Vector2 direction)
+    public virtual void LaunchProjectile(Vector2 direction)
     {
-
+        Vector2 forceVector = GetForceVector(direction);
+        IAbility currentAbility = _characterController.CurrentAbility;
+        Transform transform = _characterController.GetTransform();
+        Transform spawn = _characterController.GetProjectileSpawn();
+        IMyPoolable projectilePoolable = _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
+        Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
+        if (projectile.ControllerInputs == null)
+        {
+            projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
+            
+        }
+        projectile.SetRicochetCount(currentAbility.RicochetCount);
+        projectile.GetRigidbody().velocity = forceVector;
     }
 
     public IInteraction GetInteraction()
@@ -184,7 +208,8 @@ public abstract class ActiveState
 
 public class PlayerActiveState : ActiveState, IConditionState
 {
-    public PlayerActiveState(ICharacterController characterController) : base(characterController)
+    public PlayerActiveState(ICharacterController characterController, ProjectilePooler projectilePooler)
+        : base(characterController, projectilePooler)
     {
     }
 
@@ -200,9 +225,17 @@ public class PlayerActiveState : ActiveState, IConditionState
 
         _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
         _slingShot.OnDirectionChange += _characterController.CharacterView.ChangeDirection;
-
-        _slingShot.OnShoot -= LaunchYourself;
-        _slingShot.OnShoot += LaunchYourself;
+        IAbility currentAbility = _characterController.CurrentAbility;
+        if(currentAbility.ProjectileType == ProjectileType.None)
+        {
+            _slingShot.OnShoot -= LaunchYourself;
+            _slingShot.OnShoot += LaunchYourself;
+        }
+        else
+        {
+            _slingShot.OnShoot -= LaunchProjectile;
+            _slingShot.OnShoot += LaunchProjectile;
+        }
 
         _slingShot.OnAbilityUse -= _characterController.ProcessReloadAbility;
         _slingShot.OnAbilityUse += _characterController.ProcessReloadAbility;
@@ -214,11 +247,16 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector2 direction)
     {
-        float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-        Vector2 forceVector = direction * launchPower * _launchMultiplier;
+        Vector2 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= LaunchYourself;
+    }
+
+    public override void LaunchProjectile(Vector2 direction)
+    {
+        base.LaunchProjectile(direction);
+        _slingShot.OnShoot -= LaunchProjectile;
     }
 
 
@@ -237,7 +275,8 @@ public class PlayerActiveState : ActiveState, IConditionState
 
 public class EnemyActiveState : ActiveState, IConditionState
 {
-    public EnemyActiveState(ICharacterController characterController) : base(characterController)
+    public EnemyActiveState(ICharacterController characterController, ProjectilePooler projectilePooler)
+        : base(characterController, projectilePooler)
     {
     }
 
@@ -263,14 +302,15 @@ public class EnemyActiveState : ActiveState, IConditionState
         _characterController.CharacterView.ChangeDirection(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
         _launchMultiplier = currentAbility.GetLaunchModifier();
-        LaunchYourself(direction);
-        //if(currentAbility.GetUseType() == TypeOfUse.MeleeUse)
-        //{
-        //}
-        //else
-        //{
-        //    LaunchProjectile(direction);
-        //}
+        
+        if(currentAbility.ProjectileType == ProjectileType.None)
+        {
+            LaunchYourself(direction);
+        }
+        else
+        {
+            LaunchProjectile(direction);
+        }
         currentAbility.UseAbility();
     }
 
@@ -360,7 +400,14 @@ public class InactiveState : IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
         IMovable bump = new ReflectionBounce();
-        bump.ApplyForce(_characterController.CharacterView, interactible);
+        if (interactible is IProjectile)
+        {
+            bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
+        }
+        else
+        {
+            bump.ApplyForce(_characterController.CharacterView, interactible);
+        }
     }
 
     public void OnEnter()
@@ -550,7 +597,14 @@ public class StunState : IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
         IMovable bump = new ReflectionBounce();
-        bump.ApplyForce(_characterController.CharacterView, interactible);
+        if (interactible is IProjectile)
+        {
+            bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
+        }
+        else
+        {
+            bump.ApplyForce(_characterController.CharacterView, interactible);
+        }
     }
 
     public void LaunchYourself(Vector2 direction)

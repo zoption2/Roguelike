@@ -7,6 +7,7 @@ namespace Abilities
         public bool ReadyForUse { get; }
         public int ReloadTime { get; }
         public int TurnsLeftToReload { get; }
+        public int RicochetCount {  get; }
         public IInteraction Interaction { get; }
         public AbilityType Type { get; }
         public ProjectileType ProjectileType { get; }

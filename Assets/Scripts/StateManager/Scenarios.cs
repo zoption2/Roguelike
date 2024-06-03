@@ -36,8 +36,10 @@ namespace Gameplay
         private List<CookedMapper> _turnsOrder;
         private CharacterPooler _characterPooler;
         private CharacterUIPooler _characterUIPooler;
+        private ProjectilePooler _projectilePooler;
+        private EffectPooler _effectPooler;
         public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory, CharacterPooler characterPooler,
-            CharacterUIPooler characterUIPooler)
+            CharacterUIPooler characterUIPooler,ProjectilePooler projectilePooler, EffectPooler effectPooler)
         {
             _gameplayService = gameplayService;
             _queueOfStates = new Queue<IState>();
@@ -45,6 +47,8 @@ namespace Gameplay
             _stateFactory = stateFactory;
             _characterPooler = characterPooler;
             _characterUIPooler = characterUIPooler;
+            _projectilePooler = projectilePooler;
+            _effectPooler = effectPooler;
         }
         public void EraseCharacter(ICharacterController controller)
         {
@@ -72,6 +76,8 @@ namespace Gameplay
         {
             _characterPooler.CleanPool();
             _characterUIPooler.CleanPool();
+            _projectilePooler.CleanPool();
+            _effectPooler.CleanPool();
             Debug.LogWarning("cleaned poolers!");
         }
 

@@ -5,6 +5,7 @@ namespace Abilities
     public abstract class Ability : IAbility
     {
         public int ReloadTime { get; }
+        public int RicochetCount { get; }
         public IInteraction Interaction { get; }
         public bool ReadyForUse { get; private set; }
         public int TurnsLeftToReload { get; private set; }
@@ -13,7 +14,7 @@ namespace Abilities
 
         protected float _launchModifier;
 
-        protected Ability(IInteraction interaction, int reloadTime, float launchMod, AbilityType type)
+        protected Ability(IInteraction interaction, int reloadTime, float launchMod, AbilityType type,ProjectileType projectileType, int ricochetCount)
         {
             ReadyForUse = true;
             TurnsLeftToReload = 0;
@@ -21,7 +22,8 @@ namespace Abilities
             ReloadTime = reloadTime;
             _launchModifier = launchMod;
             Type = type;
-            ProjectileType = ProjectileType.None;
+            ProjectileType = projectileType;
+            RicochetCount = ricochetCount;
         }
 
         public void TickReload()

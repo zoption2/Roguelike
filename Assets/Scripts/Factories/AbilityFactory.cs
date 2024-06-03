@@ -24,13 +24,13 @@ namespace Abilities
             switch (type)
             {
                 case AbilityType.HeavyAttackAbility:
-                    return new KnightAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+                    return new KnightAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type,mapper.ProjectileType,mapper.RicochetCount);
                 case AbilityType.MegaHeavyAttackAbility:
-                    return new MegaHeavyAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+                    return new MegaHeavyAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type, mapper.ProjectileType, mapper.RicochetCount);
                 case AbilityType.ArrowShootAbility:
-                    return new ArrowShootAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+                    return new ArrowShootAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type, mapper.ProjectileType, mapper.RicochetCount);
                 default:
-                    return new BasicAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type);
+                    return new BasicAttackAbility(interaction, mapper.ReloadTime, mapper.LaunchModifier, type, mapper.ProjectileType, mapper.RicochetCount);
             }
         }
     }
