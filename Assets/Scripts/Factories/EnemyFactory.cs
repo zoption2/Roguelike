@@ -7,7 +7,7 @@ using Zenject;
 
 public interface IEnemyFactory
 {
-    public IEnemyController CreateEnemy(Transform point, CharacterType type);
+    public IEnemyController CreateEnemy(Vector3 position, Transform parent, CharacterType type);
 }
 public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 {
@@ -25,8 +25,8 @@ public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
         return _statsProvider.GetCharacterAbilitiesTypes(type);
     }
 
-    public IEnemyController CreateEnemy(Transform point, CharacterType type)
+    public IEnemyController CreateEnemy(Vector3 position, Transform parent, CharacterType type)
     {
-        return base.CreateCharacter(point, type);
+        return base.CreateCharacter(position, parent, type);
     }
 }

@@ -139,6 +139,8 @@ namespace Gameplay
 
         INavigationFactory _navigationFactory;
 
+        IRoomBuilder _roomBuilder;
+
 
         public InitLevelState(IScenario scenario,
             ICharacterScenarioContext context,
@@ -146,7 +148,9 @@ namespace Gameplay
             IBuffFactory buffFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
-            INavigationFactory navigationFactory)
+            INavigationFactory navigationFactory,
+            IRoomBuilder roomBuilder
+            )
         {
             _scenario = scenario;
             _characters = context;
@@ -155,6 +159,7 @@ namespace Gameplay
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;
             _navigationFactory = navigationFactory;
+            _roomBuilder = roomBuilder;
         }
 
         public void OnEnter()
@@ -164,6 +169,7 @@ namespace Gameplay
             OnBuffCreate();
             OnNavigationCreate();
             _scenario.OnStateEnd();
+            _roomBuilder.BuildRoom();
         }
 
         public void OnNavigationCreate()
@@ -184,7 +190,7 @@ namespace Gameplay
 
                 if (buffType != BuffType.None)
                 {
-                    IBuff newBuff = _buffFactory.CreateBuff(spawnPointWithType.spawnPoint, buffType);
+                    IBuff newBuff = _buffFactory.CreateBuff(spawnPointWithType.spawnPoint.position, spawnPointWithType.spawnPoint, buffType);
                     _characters.Buffs.Add(newBuff);
                 }
             }
@@ -202,7 +208,7 @@ namespace Gameplay
                         continue;
                     }
 
-                    IBuff newBuff = _buffFactory.CreateBuff(spawnPointWithType.spawnPoint, buffType);
+                    IBuff newBuff = _buffFactory.CreateBuff(spawnPointWithType.spawnPoint.position, spawnPointWithType.spawnPoint, buffType);
                     float probability = newBuff.GetBuffProbability();
 
                     if (UnityEngine.Random.value <= probability)
@@ -225,7 +231,7 @@ namespace Gameplay
             {
                 player = _characters.PlayerSpawnPoints[i];
                 playerType = DataTransfer.TypeCollection[i];
-                IPlayerController newPlayer = _playerFactory.CreatePlayer(player.spawnPoint, playerType);
+                IPlayerController newPlayer = _playerFactory.CreatePlayer(player.spawnPoint.position, player.spawnPoint, playerType);
                 newPlayer.SetCharacterContext(_characters);
                 _characters.Players.Add(newPlayer);
             }
@@ -233,36 +239,40 @@ namespace Gameplay
 
         public void OnEnemyCreate()
         {
-            var enemyTypes = Enum.GetValues(typeof(EnemyType)).Cast<EnemyType>().Where(t => t != EnemyType.None).ToList();
-            int enemyCount = UnityEngine.Random.Range(1, _characters.EnemySpawnPoints.Count + 1);
-            var shuffledSpawnPoints = _characters.EnemySpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
-
-            foreach (var spawnPointWithType in shuffledSpawnPoints)
+            if(_characters.EnemySpawnPoints.Count != 0)
             {
-                CharacterType enemyType = spawnPointWithType.enemyType;
+                var enemyTypes = Enum.GetValues(typeof(EnemyType)).Cast<EnemyType>().Where(t => t != EnemyType.None).ToList();
+                int enemyCount = UnityEngine.Random.Range(1, _characters.EnemySpawnPoints.Count + 1);
+                var shuffledSpawnPoints = _characters.EnemySpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
 
-                if (enemyType != CharacterType.None)
+                foreach (var spawnPointWithType in shuffledSpawnPoints)
                 {
-                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(spawnPointWithType.spawnPoint, enemyType);
-                    newEnemy.SetCharacterContext(_characters);
-                    _characters.Enemies.Add(newEnemy);
+                    CharacterType enemyType = spawnPointWithType.enemyType;
+
+                    if (enemyType != CharacterType.None)
+                    {
+                        IEnemyController newEnemy = _enemyFactory.CreateEnemy(spawnPointWithType.spawnPoint.position, spawnPointWithType.spawnPoint, enemyType);
+                        newEnemy.SetCharacterContext(_characters);
+                        _characters.Enemies.Add(newEnemy);
+                    }
+                }
+
+                for (int i = 0; i < enemyCount; i++)
+                {
+                    var spawnPointWithType = shuffledSpawnPoints[i];
+                    CharacterType enemyType = spawnPointWithType.enemyType;
+
+                    if (enemyType == CharacterType.None)
+                    {
+                        enemyType = (CharacterType)enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count)];
+
+                        IEnemyController newEnemy = _enemyFactory.CreateEnemy(spawnPointWithType.spawnPoint.position, spawnPointWithType.spawnPoint, enemyType);
+                        newEnemy.SetCharacterContext(_characters);
+                        _characters.Enemies.Add(newEnemy);
+                    }
                 }
             }
-
-            for (int i = 0; i < enemyCount; i++)
-            {
-                var spawnPointWithType = shuffledSpawnPoints[i];
-                CharacterType enemyType = spawnPointWithType.enemyType;
-
-                if (enemyType == CharacterType.None)
-                {
-                    enemyType = (CharacterType)enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count)];
-
-                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(spawnPointWithType.spawnPoint, enemyType);
-                    newEnemy.SetCharacterContext(_characters);
-                    _characters.Enemies.Add(newEnemy);
-                }
-            }
+            
         }
 
         public void OnExit()

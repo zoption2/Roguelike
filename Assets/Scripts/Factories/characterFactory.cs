@@ -35,7 +35,7 @@ public abstract class CharacterFactory<TController>
         _abilityFactory = abilityFactory;
     }
 
-    protected virtual TController CreateCharacter(Transform point, CharacterType type)
+    protected virtual TController CreateCharacter(Vector3 position, Transform parent, CharacterType type)
     {
         TController controller = GetNewController();
 
@@ -49,10 +49,10 @@ public abstract class CharacterFactory<TController>
         _characterModel = new CharacterModel(_stats, type, _abilities);
         mapper.Speed = _stats.Speed;
 
-        _poolable = _characterPooler.Pull<IMyPoolable>(type, point.position, point.rotation, point.parent);
+        _poolable = _characterPooler.Pull<IMyPoolable>(type, position, parent.rotation, parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();
 
-        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, point.position, point.rotation, point.parent);
+        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, parent.rotation, parent);
         CharacterUIView characterUIView = _poolable.gameObject.GetComponent<CharacterUIView>();
 
         controller.Init(_characterModel, characterView, _characterPooler, characterUIView);

@@ -20,7 +20,7 @@ public class TemplateBuilder : EditorWindow
 
     private string newObjectName = "";
     private Color newObjectColor = Color.white;
-    private TemplateElement newObjectType = TemplateElement.Empty;
+    private TemplateElement newObjectType = TemplateElement.Ground;
 
     private float zoomScale = 1f;
 
@@ -410,7 +410,7 @@ public class TemplateBuilder : EditorWindow
         {
             for (int y = 0; y < arrayHeight; y++)
             {
-                levelArray[x, y] = TemplateElement.Empty;
+                levelArray[x, y] = TemplateElement.Ground;
                 cellColors[x, y] = Color.white;
                 isEditableArray[x, y] = true;
             }
@@ -526,7 +526,7 @@ public class TemplateBuilder : EditorWindow
     {
         string tileName = tile.name.ToLower();
         if (tileName.Contains("ground"))
-            return TemplateElement.Empty;
+            return TemplateElement.Ground;
         return TemplateElement.None;
     }
 

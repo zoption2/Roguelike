@@ -8,7 +8,7 @@ using Zenject;
 
 public interface IPlayerFactory
 {
-    public IPlayerController CreatePlayer(Transform point, CharacterType type);
+    public IPlayerController CreatePlayer(Vector3 position, Transform parent, CharacterType type);
 }
 
 public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
@@ -27,8 +27,8 @@ public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
         return _statsProvider.GetCharacterAbilitiesTypes(type);
     }
 
-    public IPlayerController CreatePlayer(Transform point, CharacterType type)
+    public IPlayerController CreatePlayer(Vector3 position, Transform parent, CharacterType type)
     {
-        return base.CreateCharacter(point, type);
+        return base.CreateCharacter(position, parent, type);
     }
 }

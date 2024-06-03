@@ -235,8 +235,14 @@ namespace Gameplay
             {
                 RenewQueue();
             }
-            IState state = _queueOfStates.Dequeue();
-            SwitchState(state);
+
+            if (_queueOfStates.Count != 0)///
+            {
+                IState state = _queueOfStates.Dequeue();
+                SwitchState(state);
+            }
+            
+            
         }
         public void SwitchState(IState state)
         {

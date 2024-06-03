@@ -14,6 +14,7 @@ public class RoomTemplateSO : ScriptableObject
         [HideInInspector] public int rows;
         [HideInInspector] public int cols;
         [HideInInspector] public List<TemplateElement> TemplateElementsFlat;
+        [HideInInspector] public List<Vector3> CoordinatesFlat;
 
         public TemplateElement[,] TemplateElement
         {
@@ -34,13 +35,31 @@ public class RoomTemplateSO : ScriptableObject
                 rows = value.GetLength(0);
                 cols = value.GetLength(1);
                 TemplateElementsFlat = new List<TemplateElement>(rows * cols);
+                CoordinatesFlat = new List<Vector3>(rows * cols);
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
                     {
                         TemplateElementsFlat.Add(value[i, j]);
+                        CoordinatesFlat.Add(new Vector3(i, j, 0));
                     }
                 }
+            }
+        }
+
+        public Vector3[,] Coordinates
+        {
+            get
+            {
+                Vector3[,] array = new Vector3[rows, cols];
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        array[i, j] = CoordinatesFlat[i * cols + j];
+                    }
+                }
+                return array;
             }
         }
     }

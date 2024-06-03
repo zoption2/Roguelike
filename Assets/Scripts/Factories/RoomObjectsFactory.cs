@@ -1,0 +1,26 @@
+using Prefab;
+using UnityEngine;
+using Zenject;
+
+public interface IRoomObjectsFactory
+{
+    void Build(Vector3 position, Transform parent, RoomObjectType type);
+    public void Init();
+}
+
+public class RoomObjectsFactory : IRoomObjectsFactory
+{
+    [Inject]
+    private RoomObjectsPrefabHolder _prefabHolder;
+
+    public void Init()
+    {
+    }
+
+    public void Build(Vector3 position, Transform parent, RoomObjectType type)
+    {
+        var prefab = _prefabHolder.GetPrefab(type);
+
+        GameObject.Instantiate(prefab, position, Quaternion.identity, parent);
+    }
+}

@@ -115,11 +115,19 @@ public enum RoomType //
 public enum TemplateElement
 {
     None = 0,
-    Empty = 1,
+    Ground = 1,
     Player = 2,
     Enemy = 3,
     Buff = 4,
     DefaultWall = 5,
     ReflectionWall = 6,
 
+}
+
+public enum RoomObjectType
+{
+    None = 0,
+    Floor = 1,
+    DefaultWall = 5,
+    ReflectionWall = 6,
 }

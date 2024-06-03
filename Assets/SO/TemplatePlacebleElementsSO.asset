@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: TemplatePlacebleElementsSO
   m_EditorClassIdentifier: 
   PlacebleElements:
-  - Name: Buff
-    Color: {r: 0, g: 0.046190023, b: 1, a: 1}
-    Type: 4
   - Name: Player
-    Color: {r: 0.008410451, g: 0.5943396, b: 0.06007521, a: 1}
+    Color: {r: 0.10617697, g: 1, b: 0, a: 1}
     Type: 2
   - Name: Default Wall
-    Color: {r: 1, g: 0.875397, b: 0, a: 1}
+    Color: {r: 1, g: 0.8173368, b: 0, a: 1}
     Type: 5
+  - Name: Enemy
+    Color: {r: 1, g: 0.12061543, b: 0, a: 1}
+    Type: 3
+  - Name: Buff
+    Color: {r: 0, g: 0.09511185, b: 1, a: 1}
+    Type: 4

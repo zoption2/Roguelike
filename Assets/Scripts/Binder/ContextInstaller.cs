@@ -15,7 +15,13 @@ public class ContextInstaller : MonoInstaller
 {
     #region SerializeFields
     [SerializeField]
+    private RoomTemplateSO _roomTemplateSO;
+
+    [SerializeField]
     private CharacterPrefabHolder _characterPrefabHolder;
+
+    [SerializeField]
+    private RoomObjectsPrefabHolder _roomObjectsPrefabHolder;
 
     [SerializeField]
     private UIAbilitiesPrefabHolder _uIAbilitiesPrefabHolder;
@@ -112,6 +118,9 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IUIFactory>().To<UIFactory>().AsSingle();
         Container.Bind<IAbilityFactory>().To<AbilityFactory>().AsSingle();
         Container.Bind<IBuffFactory>().To<BuffFactory>().AsSingle();
+        Container.Bind<IRoomObjectsFactory>().To<RoomObjectsFactory>().AsSingle();
+
+        Container.Bind<IRoomBuilder>().To<RoomBuilder>().AsSingle();
     }
 
     public void BindPrefabHolders()
@@ -124,6 +133,9 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<EffectPrefabHolder>().FromInstance(_effectPrefabHolder).AsSingle();
         Container.Bind<NavigationPrefabHolder>().FromInstance(_navPrefabHolder).AsSingle();
         Container.Bind<UIAbilitiesPrefabHolder>().FromInstance(_uIAbilitiesPrefabHolder).AsSingle();
+        Container.Bind<RoomObjectsPrefabHolder>().FromInstance(_roomObjectsPrefabHolder).AsSingle();
+
+        Container.Bind<RoomTemplateSO>().FromInstance(_roomTemplateSO).AsSingle();
     }
 
     public void BindModelHolders()

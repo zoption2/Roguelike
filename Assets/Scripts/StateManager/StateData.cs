@@ -18,16 +18,18 @@ namespace Gameplay
         private IScenario _scenarioInstance;
         private ICharacterScenarioContext _context;
         private INavigationFactory _navigationFactory;
+        private IRoomBuilder _roomBuilder;
 
         [Inject]
         public void Construct(IBuffFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
-            INavigationFactory navigationFactory)
+            INavigationFactory navigationFactory, IRoomBuilder roomBuilder)
         {
             _triggerFactory = triggerFactory;
             _enemyFactory = enemyFactory;
             _playerFactory = playerFactory;
             _statsProvider = statsProvider;
             _navigationFactory = navigationFactory;
+            _roomBuilder = roomBuilder; 
         }
 
         public void Init(IScenario scenarioInstance, ICharacterScenarioContext context)
@@ -43,7 +45,7 @@ namespace Gameplay
             {
                 case TypeOfState.Init:
                     state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _triggerFactory, _playerFactory,
-                        _enemyFactory, _navigationFactory);
+                        _enemyFactory, _navigationFactory, _roomBuilder);
                     break;
                 case TypeOfState.PlayerTurn:
                     state = new PlayerTurnState(_scenarioInstance, _context);
