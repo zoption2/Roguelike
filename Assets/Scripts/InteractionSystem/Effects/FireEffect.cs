@@ -19,5 +19,10 @@ namespace Interactions
             Duration--;
             stats.Health.Value -= 2;
         }
+
+        public override EffectBase Clone()
+        {
+            return new FireEffect(this.Duration);
+        }
     }
 }

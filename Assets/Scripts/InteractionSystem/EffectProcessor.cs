@@ -7,7 +7,7 @@ namespace Interactions
     public interface IEffectProcessor
     {
         public void Init(CharacterUIViewmodel viewModel, ReactiveList<IEffect> allEffects);
-        public void AddEffects(List<IEffect> effects);
+        public void AddEffect(IEffect effect);
         public void ProcessEffectsOnStart(ReactiveStats stats);
         public void ProcessEffectsOnEnd(ReactiveStats stats);
         public void PrintEffects(List<IEffect> effects);
@@ -31,10 +31,8 @@ namespace Interactions
             _allEffects = allEffects;
         }
 
-        public void AddEffects(List<IEffect> effects)
+        public void AddEffect(IEffect effect)
         {
-            foreach (IEffect effect in effects)
-            {
                 if (effect.IsOnInteractionStart)
                 {
                     ReplaceOrAddEffect(effect, _preInteractionEffects);
@@ -51,7 +49,6 @@ namespace Interactions
                 }
 
                 ReplaceOrAddEffect(effect, _allEffects);
-            }
         }
 
         private List<IEffect> ReplaceOrAddEffect(IEffect effect, List<IEffect> effectList)

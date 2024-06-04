@@ -17,5 +17,10 @@ namespace Interactions
             Duration--;
             stats.Health.Value -= 20;
         }
+
+        public override EffectBase Clone()
+        {
+            return new PoisonEffect(this.Duration);
+        }
     }
 }

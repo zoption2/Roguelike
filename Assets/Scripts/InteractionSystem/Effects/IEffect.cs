@@ -7,6 +7,7 @@ namespace Interactions
     {
         public event Action ON_DURATION_CHANGED;
         public void UseEffect(ReactiveStats stats);
+        public EffectBase Clone();
         public EffectType GetEffectType();
         public int Duration { get; set; }
         public bool IsPositive { get; set; }

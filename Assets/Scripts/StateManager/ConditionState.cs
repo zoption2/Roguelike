@@ -147,7 +147,8 @@ public abstract class ActiveState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }
@@ -389,7 +390,8 @@ public class InactiveState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
         ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
@@ -421,7 +423,8 @@ public class InactiveState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }
@@ -500,7 +503,8 @@ public class DeadState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }
@@ -580,7 +584,8 @@ public class StunState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
         ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
@@ -623,7 +628,8 @@ public class StunState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }
