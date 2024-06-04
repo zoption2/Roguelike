@@ -34,6 +34,7 @@ public class TemplateBuilder : EditorWindow
     private bool createNewArray = false;
     private bool createFromTilemap = false;
     private bool editExistingTemplate = false;
+    private bool resizeArray = false;
 
     private int arrayWidth = 0;
     private int arrayHeight = 0;
@@ -120,6 +121,10 @@ public class TemplateBuilder : EditorWindow
         else if (editExistingTemplate)
         {
             ShowEditTemplateOptions();
+        }
+        else if (resizeArray)
+        {
+            ShowResizeArrayOptions();
         }
         else
         {
@@ -280,6 +285,27 @@ public class TemplateBuilder : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    private void ShowResizeArrayOptions()
+    {
+        GUILayout.Label("Enter New Array Size", EditorStyles.boldLabel);
+
+        arrayWidth = EditorGUILayout.IntField("New Width", arrayWidth);
+        arrayHeight = EditorGUILayout.IntField("New Height", arrayHeight);
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Resize Array"))
+        {
+            ResizeArray(arrayWidth, arrayHeight);
+            resizeArray = false;
+        }
+        if (GUILayout.Button("Back"))
+        {
+            resizeArray = false;
+            showInitialOptions = false;
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
     private Texture2D MakeTex(int width, int height, Color col)
     {
         Color[] pix = new Color[width * height];
@@ -390,6 +416,13 @@ public class TemplateBuilder : EditorWindow
             }
             GUILayout.EndHorizontal();
         }
+
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Resize Array", GUILayout.Height(50)))
+        {
+            resizeArray = true;
+        }
     }
     #endregion
 
@@ -417,6 +450,44 @@ public class TemplateBuilder : EditorWindow
         }
 
         Debug.Log($"Created empty array of size {arrayWidth}x{arrayHeight}.");
+    }
+
+    private void ResizeArray(int newWidth, int newHeight)
+    {
+        if (newWidth <= 0 || newHeight <= 0)
+        {
+            Debug.LogError("Width and Height must be greater than 0.");
+            return;
+        }
+
+        var newLevelArray = new TemplateElement[newWidth, newHeight];
+        var newCellColors = new Color[newWidth, newHeight];
+        var newIsEditableArray = new bool[newWidth, newHeight];
+
+        for (int x = 0; x < newWidth; x++)
+        {
+            for (int y = 0; y < newHeight; y++)
+            {
+                if (x < levelArray.GetLength(0) && y < levelArray.GetLength(1))
+                {
+                    newLevelArray[x, y] = levelArray[x, y];
+                    newCellColors[x, y] = cellColors[x, y];
+                    newIsEditableArray[x, y] = isEditableArray[x, y];
+                }
+                else
+                {
+                    newLevelArray[x, y] = TemplateElement.Ground;
+                    newCellColors[x, y] = Color.white;
+                    newIsEditableArray[x, y] = true;
+                }
+            }
+        }
+
+        levelArray = newLevelArray;
+        cellColors = newCellColors;
+        isEditableArray = newIsEditableArray;
+
+        Debug.Log($"Resized array to {newWidth}x{newHeight}.");
     }
 
     private void DisplayArrayEditor()
@@ -659,7 +730,6 @@ public class TemplateBuilder : EditorWindow
         AssetDatabase.SaveAssets();
     }
 
-
     private string ArrayToString(TemplateElement[,] array)
     {
         int rows = array.GetLength(0);
@@ -741,7 +811,6 @@ public class TemplateBuilder : EditorWindow
             selectedTemplateIndex = -1;
         }
     }
-
 
     #endregion
 }

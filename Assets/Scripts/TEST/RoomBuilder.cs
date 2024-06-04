@@ -40,7 +40,7 @@ public class RoomBuilder : IRoomBuilder
 
     public void BuildRoom()
     {
-        RoomTemplateSO.Template template = _roomTemplateSO.Templates.FirstOrDefault(t => t.name == "BUILD TEST");
+        RoomTemplateSO.Template template = _roomTemplateSO.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
         if (template == null)
         {
             Debug.LogError("Template not found");
