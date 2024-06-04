@@ -45,6 +45,7 @@ namespace Projectiles
 
         public void PushToPool()
         {
+            Debug.Log("pushed projectile to pool");
             _pooler.Push(ProjectileType, this);
         }
 
@@ -67,14 +68,10 @@ namespace Projectiles
             if (!dealerType.Equals(handlerType) && interactionFromDealer != null)
             {
                 interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
-                Debug.Log("really had interaction");
 
             }
             else
             {
-                Debug.Log(dealerType + " and " + handlerType);
-                Debug.Log("interaction from dealer: " + interactionFromDealer);
-                Debug.Log("Had NO interaction");
                 return;
             }
 

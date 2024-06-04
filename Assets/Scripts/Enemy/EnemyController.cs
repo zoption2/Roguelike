@@ -198,6 +198,7 @@ namespace Enemy
         public void Dispose()
         {
             CharacterView.ON_CLICK -= OnClick;
+            ON_STOP_MOVEMENT -= CheckForEndOfState;
         }
 
         public ReactiveStats GetCharacterStats()

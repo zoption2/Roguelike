@@ -57,10 +57,9 @@ namespace Projectiles
             if (collision.gameObject.TryGetComponent(out IInteractible interactible))
             {
                 _projectile.Normal = collision.GetContact(0).normal;
-                _projectile.StartInteraction(interactible);
-                Debug.Log("Had interaction");
-                InteractibleIsAlive = interactible.GetRigidbody().gameObject.activeInHierarchy;
                 _projectile.PushToPool();
+                _projectile.StartInteraction(interactible);
+                InteractibleIsAlive = interactible.GetRigidbody().gameObject.activeInHierarchy;
             }
 
             if (!InteractibleIsAlive)

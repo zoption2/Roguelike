@@ -52,7 +52,8 @@ namespace Gameplay
         }
         public void EraseCharacter(ICharacterController controller)
         {
-            //controller.ON_CHARACTER_DEATH -= EraseCharacter;
+            controller.ON_CHARACTER_DEATH -= EraseCharacter;
+            controller.Dispose();
             foreach (CookedMapper mapper in _turnsOrder)
             {
                 if (mapper.Controller == controller)
@@ -77,8 +78,8 @@ namespace Gameplay
         {
             _characterPooler.CleanPool();
             _characterUIPooler.CleanPool();
-            _projectilePooler.CleanPool();
             _effectPooler.CleanPool();
+            _projectilePooler.CleanPool();
             Debug.LogWarning("cleaned poolers!");
         }
 
@@ -86,15 +87,19 @@ namespace Gameplay
         {
             bool noPlayers = _scenarioContext.Players.Count == 0;
             bool noEnemies = _scenarioContext.Enemies.Count == 0;
-            if (noPlayers || noEnemies)
+
+            if (noPlayers)
             {
-                if(noPlayers)
+                foreach (ICharacterController enemy in _scenarioContext.Enemies)
                 {
-                    LoadMainMenu();
-                } else if(noEnemies)
-                {
-                    ActivateCompleatedRoomTriggers();
+                    enemy.ON_CHARACTER_DEATH -= EraseCharacter;
+                    enemy.Dispose();
                 }
+                LoadMainMenu();
+            }
+            else if (noEnemies)
+            {
+                ActivateCompleatedRoomTriggers();
             }
         }
 

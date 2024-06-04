@@ -214,6 +214,7 @@ namespace Player
 
         public void PushIfDead()
         {
+            Debug.Log("pushed player to pool!");
             _pooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
             ON_CHARACTER_DEATH?.Invoke(this);
@@ -296,7 +297,7 @@ namespace Player
         {
             IConditionState newState = _stateFactory.CreateConditionState(state, this);
 
-            if (!_currentState.Equals(newState))
+            if (_currentState.GetType() != newState.GetType())
             {
                 _currentState?.OnExit();
                 _currentState = newState;
@@ -337,6 +338,7 @@ namespace Player
         {
             CharacterView.ON_CLICK -= OnClick;
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
+            ON_STOP_MOVEMENT -= CheckForEndOfState;
         }
 
         public void ActivateUI()
