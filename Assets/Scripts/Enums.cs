@@ -94,23 +94,6 @@ public enum NavigationType
     Default,
 }
 
-public enum RoomType // 
-{
-    None = 0,
-
-    RoomWithFourExits_variantOne = 1,
-    RoomWithFourExits_variantTwo = 2,
-
-    RoomWithThreeExits_variantOne = 20,
-
-    RoomWithTwoExits_variantOne = 40,
-    RoomWithTwoExits_variantTwo = 41,
-
-    RoomWithOneExit_variantOne = 60,
-    RoomWithOneExit_variantTwo = 61,
-    RoomWithOneExit_variantThree = 62,
-    RoomWithOneExit_variantFour = 63,
-}
 
 public enum TemplateElement
 {

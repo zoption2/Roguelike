@@ -119,8 +119,6 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IAbilityFactory>().To<AbilityFactory>().AsSingle();
         Container.Bind<IBuffFactory>().To<BuffFactory>().AsSingle();
         Container.Bind<IRoomObjectsFactory>().To<RoomObjectsFactory>().AsSingle();
-
-        Container.Bind<IRoomBuilder>().To<RoomBuilder>().AsSingle();
     }
 
     public void BindPrefabHolders()

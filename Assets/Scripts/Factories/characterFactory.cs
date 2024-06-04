@@ -49,10 +49,10 @@ public abstract class CharacterFactory<TController>
         _characterModel = new CharacterModel(_stats, type, _abilities);
         mapper.Speed = _stats.Speed;
 
-        _poolable = _characterPooler.Pull<IMyPoolable>(type, position, parent.rotation, parent);
+        _poolable = _characterPooler.Pull<IMyPoolable>(type, position, Quaternion.identity, parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();
-
-        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, parent.rotation, parent);
+        //
+        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, Quaternion.Euler(90, 0, 0), parent);
         CharacterUIView characterUIView = _poolable.gameObject.GetComponent<CharacterUIView>();
 
         controller.Init(_characterModel, characterView, _characterPooler, characterUIView);

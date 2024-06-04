@@ -192,7 +192,7 @@ public class PlayerActiveState : ActiveState, IConditionState
 
         Vector3 fixedInitPosition = new Vector3(slingShotInitPosition.position.x, slingShotInitPosition.position.y, slingShotInitPosition.position.z - 1f);
 
-        _slingShot = _characterController.SlingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.identity, slingShotInitPosition.parent);
+        _slingShot = _characterController.SlingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.Euler(90, 0, 0), slingShotInitPosition.parent);
 
         _slingShot.Init(slingShotInitPosition.position, type);
 

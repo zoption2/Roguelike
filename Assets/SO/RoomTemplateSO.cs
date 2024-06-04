@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "RoomTemplateSO", menuName = "ScriptableObjects/RoomTemplateSO", order = 1)]
@@ -41,7 +41,7 @@ public class RoomTemplateSO : ScriptableObject
                     for (int j = 0; j < cols; j++)
                     {
                         TemplateElementsFlat.Add(value[i, j]);
-                        CoordinatesFlat.Add(new Vector3(i, j, 0));
+                        CoordinatesFlat.Add(new Vector3(i, 0, j));
                     }
                 }
             }

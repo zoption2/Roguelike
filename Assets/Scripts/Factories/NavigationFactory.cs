@@ -19,7 +19,7 @@ public class NavigationFactory : INavigationFactory
     public NavMeshSurface CreateNavigation()
     {
         GameObject prefab = _navigationPrefabHolder.GetPrefab(NavigationType.Default);
-        GameObject navObj = GameObject.Instantiate(prefab, Vector3.zero,prefab.transform.rotation);
+        GameObject navObj = GameObject.Instantiate(prefab, Vector3.zero, prefab.transform.rotation);
         NavMeshSurface navigation = navObj.GetComponent<NavMeshSurface>();
         return navigation;
     }

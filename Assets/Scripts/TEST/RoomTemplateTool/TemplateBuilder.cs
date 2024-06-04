@@ -36,6 +36,8 @@ public class TemplateBuilder : EditorWindow
     private bool editExistingTemplate = false;
     private bool resizeArray = false;
 
+    private bool isMousePressed = false;
+
     private int arrayWidth = 0;
     private int arrayHeight = 0;
 
@@ -104,6 +106,17 @@ public class TemplateBuilder : EditorWindow
         {
             buttonStyle = new GUIStyle(GUI.skin.button);
             buttonStyle.fontSize = 14;
+        }
+
+        Event e = Event.current;
+
+        if (e.type == EventType.MouseDown && e.button == 0)
+        {
+            isMousePressed = true;
+        }
+        else if (e.type == EventType.MouseUp && e.button == 0)
+        {
+            isMousePressed = false;
         }
 
         if (showInitialOptions)
@@ -506,7 +519,7 @@ public class TemplateBuilder : EditorWindow
 
                 Color buttonColor = cellColors[x, y];
                 GUI.backgroundColor = buttonColor;
-                if (GUI.Button(rect, GUIContent.none))
+                if (GUI.Button(rect, GUIContent.none) || (isMousePressed && rect.Contains(Event.current.mousePosition)))
                 {
                     if (selectedObjectIndex != -1)
                     {
@@ -525,6 +538,7 @@ public class TemplateBuilder : EditorWindow
 
         GUILayout.EndVertical();
     }
+
 
     private void GenerateArrayFromTilemap()
     {

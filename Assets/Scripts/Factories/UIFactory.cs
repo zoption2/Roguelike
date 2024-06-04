@@ -22,10 +22,10 @@ public class UIFactory : IUIFactory
         _abilityIconPooler = abilityIconPooler;
         _abilityIconPooler.Init();
     }
-
+    //
     public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent)
     {
-        IEffectIconView effectIcon = _effectPooler.Pull<IEffectIconView>(type, position, Quaternion.identity, parent);
+        IEffectIconView effectIcon = _effectPooler.Pull<IEffectIconView>(type, position, Quaternion.Euler(90, 0, 0), parent);
         return effectIcon;
     }
 
@@ -36,7 +36,7 @@ public class UIFactory : IUIFactory
 
     public IAbilityIconView CreateAbilityIcon(AbilityType type, Vector3 position, Transform parent)
     {
-        IAbilityIconView abilityIcon = _abilityIconPooler.Pull<IAbilityIconView>(type, position, Quaternion.identity, parent);
+        IAbilityIconView abilityIcon = _abilityIconPooler.Pull<IAbilityIconView>(type, position, Quaternion.Euler(90, 0, 0), parent);
         return abilityIcon;
     }
 }
