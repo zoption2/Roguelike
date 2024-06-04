@@ -216,7 +216,7 @@ namespace Player
         {
             _pooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
-            ON_CHARACTER_DEATH(this);
+            ON_CHARACTER_DEATH?.Invoke(this);
         }
 
         public void JustPush()

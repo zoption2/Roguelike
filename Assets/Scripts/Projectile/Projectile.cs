@@ -67,9 +67,14 @@ namespace Projectiles
             if (!dealerType.Equals(handlerType) && interactionFromDealer != null)
             {
                 interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
+                Debug.Log("really had interaction");
+
             }
             else
             {
+                Debug.Log(dealerType + " and " + handlerType);
+                Debug.Log("interaction from dealer: " + interactionFromDealer);
+                Debug.Log("Had NO interaction");
                 return;
             }
 
@@ -86,7 +91,17 @@ namespace Projectiles
                 _lastVelocities.Dequeue();
             }
 
-            ControllerInputs.DoUpdate();
+            ViewRotation();
+        }
+
+        public void ViewRotation()
+        {
+            Transform projectile = GetRigidbody().transform;
+            Vector3 velocity = GetVelocity();
+            float rotationSpeed = velocity.magnitude;
+            float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+            projectile.rotation = Quaternion.Slerp(projectile.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
         public Vector3 GetLastVelocity()

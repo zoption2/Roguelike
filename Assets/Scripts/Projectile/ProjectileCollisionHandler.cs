@@ -27,9 +27,14 @@ namespace Projectiles
             _ricochetCount = count;
         }
 
-        private void CheckRichochet()
+        private void CheckRichochet(IWall obstacle)
         {
-            if(_ricochetCount == 0)
+            if (obstacle is StickyWall)
+            {
+                _projectile.ControllerInputs.HandleStopMovement();
+                _projectile.PushToPool();
+            }
+            else if (_ricochetCount == 0)
             {
                 _projectile.ControllerInputs.HandleStopMovement();
                 _projectile.PushToPool();
@@ -44,17 +49,16 @@ namespace Projectiles
 
             if (collision.gameObject.TryGetComponent(out IWall obstacle))
             {
-                CheckRichochet();
+                CheckRichochet(obstacle);
                 Vector3 velocity = _projectile.GetLastVelocity();
                 obstacle.ProcessCollision(collision, _rigidbody, velocity);
-                if(obstacle is StickyWall)
-                    _projectile.PushToPool();
             }
 
             if (collision.gameObject.TryGetComponent(out IInteractible interactible))
             {
                 _projectile.Normal = collision.GetContact(0).normal;
                 _projectile.StartInteraction(interactible);
+                Debug.Log("Had interaction");
                 InteractibleIsAlive = interactible.GetRigidbody().gameObject.activeInHierarchy;
                 _projectile.PushToPool();
             }

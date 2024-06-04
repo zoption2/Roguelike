@@ -148,6 +148,16 @@ namespace BehaviourTree
                 {
                     walkedDistance += Vector3.Distance(corners[i - 1], corners[i]);
                     remainingDistance = maxDistance - walkedDistance;
+                    distanceToTarget = Vector3.Distance(corners[i], targetPosition);
+
+                    if (distanceToTarget < minStoppingDistance)
+                    {
+                        direction = corners[i] - corners[i - 1];
+                        endPoint = corners[i];
+                        endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
+                        navAgent.SetDestination(endPoint);
+                        return false;
+                    }
                 }
                 else
                 {

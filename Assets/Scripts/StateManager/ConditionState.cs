@@ -115,13 +115,11 @@ public abstract class ActiveState
         IAbility currentAbility = _characterController.CurrentAbility;
         Transform transform = _characterController.GetTransform();
         Transform spawn = _characterController.GetProjectileSpawn();
+
         IMyPoolable projectilePoolable = _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
         Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
-        if (projectile.ControllerInputs == null)
-        {
-            projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
-            
-        }
+
+        projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
         projectile.SetRicochetCount(currentAbility.RicochetCount);
         projectile.GetRigidbody().velocity = forceVector;
     }
@@ -229,11 +227,13 @@ public class PlayerActiveState : ActiveState, IConditionState
         IAbility currentAbility = _characterController.CurrentAbility;
         if(currentAbility.ProjectileType == ProjectileType.None)
         {
+            _slingShot.OnShoot -= LaunchProjectile;
             _slingShot.OnShoot -= LaunchYourself;
             _slingShot.OnShoot += LaunchYourself;
         }
         else
         {
+            _slingShot.OnShoot -= LaunchYourself;
             _slingShot.OnShoot -= LaunchProjectile;
             _slingShot.OnShoot += LaunchProjectile;
         }

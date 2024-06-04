@@ -52,6 +52,7 @@ namespace Gameplay
         }
         public void EraseCharacter(ICharacterController controller)
         {
+            //controller.ON_CHARACTER_DEATH -= EraseCharacter;
             foreach (CookedMapper mapper in _turnsOrder)
             {
                 if (mapper.Controller == controller)
@@ -90,7 +91,7 @@ namespace Gameplay
                 if(noPlayers)
                 {
                     LoadMainMenu();
-                } else
+                } else if(noEnemies)
                 {
                     ActivateCompleatedRoomTriggers();
                 }
