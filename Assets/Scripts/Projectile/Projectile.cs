@@ -63,6 +63,7 @@ namespace Projectiles
         {
             var dealerType = ControllerInputs.GetType();
             var handlerType = interactible.ControllerInputs.GetType();
+
             IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
 
             if (!dealerType.Equals(handlerType) && interactionFromDealer != null)

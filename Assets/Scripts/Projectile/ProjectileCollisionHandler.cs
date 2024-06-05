@@ -1,3 +1,4 @@
+using Interactions;
 using Obstacles;
 using System.Collections;
 using System.Collections.Generic;

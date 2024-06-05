@@ -193,7 +193,7 @@ public abstract class ActiveState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        if (_characterController.GetRigidbody().velocity.magnitude > 1)
+        if (_characterController.GetRigidbody().velocity.magnitude > 1 || interactible is IProjectile)
         {
             bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
         }
@@ -402,8 +402,11 @@ public class InactiveState : IConditionState
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
         IMovable bump = new ReflectionBounce();
+
         if (interactible is IProjectile)
         {
+            IInteraction interaction = interactible.ControllerInputs.GetInteraction();
+            bumpFromDealer = interaction.GetBump();
             bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
         }
         else

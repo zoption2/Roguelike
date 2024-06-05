@@ -12,16 +12,16 @@ public class ReflectionBounce : IMovable
     {
         _providerRb = provider.GetRigidbody();
         _handlerRb = handler.GetRigidbody();
-        _providerVelocity = provider.GetVelocity();
+        _providerVelocity = provider.GetLastVelocity();
         _providerVelocity.z = 0;
-        _handlerVelocity = handler.GetVelocity();
+        _handlerVelocity = handler.GetLastVelocity();
         _handlerVelocity.z = 0;
         Vector2 normal;
 
         normal = provider.Normal;
 
         Vector3 reflectedVelocity = Vector3.Reflect(_providerVelocity, normal);
-        _handlerRb.velocity = _providerVelocity;
+        
 
         if (_providerRb.velocity.magnitude < 1 && _handlerRb.velocity.magnitude == 0)
         {
@@ -29,7 +29,8 @@ public class ReflectionBounce : IMovable
         }
         else
         {
-            _providerRb.velocity = reflectedVelocity * 1.5f;
+            _providerRb.velocity = reflectedVelocity;
+            _handlerRb.velocity = _providerVelocity;
         }
     }
 }

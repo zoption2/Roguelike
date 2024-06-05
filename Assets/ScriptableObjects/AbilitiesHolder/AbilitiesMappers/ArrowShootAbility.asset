@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ArrowShootAbility
   m_EditorClassIdentifier: 
   Key: 3
-  InteractionType: 3
+  InteractionType: 4
   ProjectileType: 1
   ReloadTime: 0
   LaunchModifier: 1

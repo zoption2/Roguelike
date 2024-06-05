@@ -1,25 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-
-public class StopAndPush : IMovable
+public class AbsentBounce : IMovable
 {
     private Rigidbody _providerRb;
     private Rigidbody _handlerRb;
-    private Vector3 _providerVelocity;
-    private Vector3 _handlerVelocity;
 
     public void ApplyForce(IInteractible provider, IInteractible handler)
     {
         _providerRb = provider.GetRigidbody();
         _handlerRb = handler.GetRigidbody();
-        _providerVelocity = provider.GetLastVelocity();
-        _providerVelocity.z = 0;
-        _handlerVelocity = handler.GetLastVelocity();
-        _handlerVelocity.z = 0;
 
-        _handlerRb.velocity = _providerVelocity;
-
+        _handlerRb.velocity = Vector3.zero;
+        _handlerRb.angularVelocity = Vector3.zero;
         _providerRb.velocity = Vector3.zero;
         _providerRb.angularVelocity = Vector3.zero;
+
+        provider.ControllerInputs.HandleStopMovement();
     }
 }

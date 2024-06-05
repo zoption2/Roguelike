@@ -48,6 +48,7 @@ public enum InteractionType
     BasicAttack = 1,
     Knight_HeavyAttack = 2,
     SuperMegaHeavyAttack = 3,
+    ArrowWithoutBounceAttack = 4,
 }
 
 public enum AbilityType
