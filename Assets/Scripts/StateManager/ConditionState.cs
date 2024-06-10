@@ -14,7 +14,7 @@ public interface IConditionState
     public void OnExit();
     public IInteraction GetInteraction();
     public void ApplyInteraction(IInteraction interaction);
-    public void LaunchYourself(Vector2 direction);
+    public void LaunchYourself(Vector3 direction);
     public void AddEffects(List<IEffect> effects);
     public void ViewRotation();
     public void DoUpdate();
@@ -87,11 +87,11 @@ public abstract class ActiveState
         }
     }
 
-    public virtual void LaunchYourself(Vector2 direction)
+    public virtual void LaunchYourself(Vector3 direction)
     {
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
-        Vector2 forceVector = direction * launchPower * _launchMultiplier;
+        Vector3 forceVector = new Vector3(direction.x, 0, direction.z) * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
     }
 
@@ -131,8 +131,8 @@ public abstract class ActiveState
         Transform character = _characterController.GetTransform();
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        float angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, angle - 90f, 0f);
         character.rotation = Quaternion.Slerp(character.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
@@ -142,8 +142,8 @@ public abstract class ActiveState
         float rotationSpeed = 2f;
 
         Vector3 direction = (_navAgent.steeringTarget - character.position).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, angle - 90f, 0f);
 
         character.rotation = Quaternion.Slerp(character.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
@@ -190,7 +190,7 @@ public class PlayerActiveState : ActiveState, IConditionState
     {
         CharacterType type = _characterController.GetCharacterType();
 
-        Vector3 fixedInitPosition = new Vector3(slingShotInitPosition.position.x, slingShotInitPosition.position.y, slingShotInitPosition.position.z - 1f);
+        Vector3 fixedInitPosition = new Vector3(slingShotInitPosition.position.x, slingShotInitPosition.position.y, slingShotInitPosition.position.z);
 
         _slingShot = _characterController.SlingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.Euler(90, 0, 0), slingShotInitPosition.parent);
 
@@ -210,10 +210,10 @@ public class PlayerActiveState : ActiveState, IConditionState
         eventData.dragging = true;
     }
 
-    public override void LaunchYourself(Vector2 direction)
+    public override void LaunchYourself(Vector3 direction)
     {
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-        Vector2 forceVector = direction * launchPower * _launchMultiplier;
+        Vector3 forceVector = new Vector3(direction.x, 0, direction.z) * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= LaunchYourself;
@@ -381,8 +381,8 @@ public class InactiveState : IConditionState
     {
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        float angle = Mathf.Atan2(velocity.z, velocity.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, angle - 90f, 0f);
         _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
@@ -391,7 +391,7 @@ public class InactiveState : IConditionState
         //Debug.Log("<color=#C0C8D8>" + "--|Exit InactiveState State|-- " + "</color>");
     }
 
-    public void LaunchYourself(Vector2 direction)
+    public void LaunchYourself(Vector3 direction)
     {
     }
 
@@ -435,7 +435,7 @@ public class DeadState : IConditionState
         return interaction;
     }
 
-    public void LaunchYourself(Vector2 direction)
+    public void LaunchYourself(Vector3 direction)
     {
     }
 
@@ -551,7 +551,7 @@ public class StunState : IConditionState
         bump.ApplyForce(_characterController.CharacterView, interactible);
     }
 
-    public void LaunchYourself(Vector2 direction)
+    public void LaunchYourself(Vector3 direction)
     {
     }
 
@@ -576,8 +576,8 @@ public class StunState : IConditionState
     {
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle + 90f);
+        float angle = Mathf.Atan2(velocity.z, velocity.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, angle + 90f, 0f);
         _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 

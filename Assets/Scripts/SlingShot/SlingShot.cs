@@ -1,42 +1,41 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using System;
 using Pool;
-using Prefab;
 using Zenject;
 
 namespace SlingShotLogic
 {
     public interface ISlingShot : IMyPoolable
     {
-        public void Init(Vector2 _initPosition, CharacterType type);
-        public event Action<Vector2> OnShoot;
+        public void Init(Vector3 _initPosition, CharacterType type); // Змінено на Vector3
+        public event Action<Vector3> OnShoot;
         public event Action OnAbilityUse;
-        public event Action<Vector2> OnDirectionChange;
+        public event Action<Vector3> OnDirectionChange;
     }
 
     public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
     {
-        public event Action<Vector2> OnShoot;
+        public event Action<Vector3> OnShoot;
         public event Action OnAbilityUse;
-        public event Action<Vector2> OnDirectionChange;
+        public event Action<Vector3> OnDirectionChange;
         public bool IsDragging = false;
 
-        [SerializeField] GameObject _cursor;
-        [SerializeField] GameObject _touchZone;
+        [SerializeField] Image _cursor;
+        [SerializeField] Image _touchZone;
 
-        private Vector2 _direction;
-        private Vector2 _startPoint;
-        private Vector2 _endPoint;
+        private Vector3 _direction;
+        private Vector3 _startPoint;
+        private Vector3 _endPoint;
         private Vector3 _touchPositionInWorld;
         private CharacterType _type;
-        private SphereCollider _touchZoneCollider;
 
         [Inject]
         private SlingshotPooler _slingShotPooler;
 
-        public void Init(Vector2 _initPosition, CharacterType type)
-        {  
+        public void Init(Vector3 _initPosition, CharacterType type) // Змінено на Vector3
+        {
             _type = type;
             _startPoint = _initPosition;
         }
@@ -44,30 +43,22 @@ namespace SlingShotLogic
         public void OnDrag(PointerEventData eventData)
         {
             IsDragging = true;
-            _touchPositionInWorld = Camera.main.ScreenToWorldPoint(new Vector3(eventData.position.x, eventData.position.y, gameObject.transform.position.z));
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(_touchZone.rectTransform, eventData.position, Camera.main, out _touchPositionInWorld);
 
-            if (Vector2.Distance(_touchZoneCollider.bounds.center, _touchPositionInWorld) <= _touchZoneCollider.bounds.size.x / 2)
-            {
-                _cursor.transform.position = _touchPositionInWorld;
-                _endPoint = _cursor.transform.position;
-                _direction = _startPoint - _endPoint;
-                OnDirectionChange?.Invoke(_direction);
-            }
-            else
-            {
-                Vector3 clampedPosition = _touchZoneCollider.ClosestPoint(_touchPositionInWorld);
-                _cursor.transform.position = clampedPosition;
-                _endPoint = _cursor.transform.position;
-                _direction = _startPoint - _endPoint;
-                OnDirectionChange?.Invoke(_direction);
-            }
+            _touchPositionInWorld.y = _startPoint.y; // Фіксуємо Y позицію
+
+            Vector3 clampedPosition = ClampToCircle(_touchPositionInWorld, _touchZone.rectTransform, _cursor.rectTransform);
+            _cursor.rectTransform.position = new Vector3(clampedPosition.x, _cursor.rectTransform.position.y, clampedPosition.z);
+            _endPoint = _cursor.rectTransform.position;
+            _direction = _startPoint - _endPoint;
+            OnDirectionChange?.Invoke(_direction);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if(IsDragging )
+            if (IsDragging)
             {
-                if (IsInDeadZone(_touchPositionInWorld))
+                if (IsInDeadZone(_cursor.rectTransform.position, _touchZone.rectTransform))
                 {
                     _slingShotPooler.Push(_type, this);
                 }
@@ -81,26 +72,40 @@ namespace SlingShotLogic
             IsDragging = false;
         }
 
-        private bool IsInDeadZone(Vector2 position)
+        private bool IsInDeadZone(Vector3 position, RectTransform zone)
         {
-            float innerRadius = _touchZoneCollider.bounds.size.x / 3f * 0.3f;
-            return Vector2.Distance(position, _touchZoneCollider.bounds.center) < innerRadius;
+            float innerRadius = zone.rect.width / 3f * 0.3f;
+            return Vector3.Distance(new Vector3(position.x, 0, position.z), new Vector3(zone.position.x, 0, zone.position.z)) < innerRadius;
+        }
+
+        private Vector3 ClampToCircle(Vector3 position, RectTransform zone, RectTransform cursor)
+        {
+            Vector3 zoneCenter = new Vector3(zone.position.x, 0, zone.position.z);
+            Vector3 direction = new Vector3(position.x, 0, position.z) - zoneCenter;
+            float zoneRadius = zone.rect.width / 2;
+            float cursorRadius = cursor.rect.width / 2;
+            float maxDistance = zoneRadius - cursorRadius;
+
+            if (direction.magnitude > maxDistance)
+            {
+                direction = direction.normalized * maxDistance;
+            }
+            return zoneCenter + direction;
         }
 
         public void OnCreate()
         {
-            _touchZoneCollider = _touchZone.GetComponent<SphereCollider>();
+            // Initialization logic
         }
 
         public void OnPull()
         {
-            //Debug.Log("OnPull");
+            // Logic for when the object is pulled from the pool
         }
 
         public void OnRelease()
         {
-            //Debug.Log("OnRelease");
+            // Logic for when the object is released back to the pool
         }
-
     }
 }

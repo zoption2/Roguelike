@@ -22,7 +22,7 @@ public interface ICharacterView
 {
     public Transform transform { get; }
     public void Init(IControllerInputs controllerInputs);
-    public void ChangeDirection(Vector2 direction);
+    public void ChangeDirection(Vector3 direction);
     public Rigidbody GetRigidbody();
 
     public event Action<Transform, PointerEventData> ON_CLICK;
@@ -87,9 +87,9 @@ public class CharacterView : MonoBehaviour,
         return _rigidbody.velocity;
     }
 
-    public void ChangeDirection(Vector2 direction)
+    public void ChangeDirection(Vector3 direction)
     {
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
         _viewTransform.rotation = targetRotation;
     }
