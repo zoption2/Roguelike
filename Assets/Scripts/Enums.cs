@@ -95,7 +95,16 @@ public enum NavigationType
 }
 
 
-public enum TemplateElement
+public enum ExitDirection
+{
+    Left,
+    Right,
+    Top,
+    Bottom
+}
+
+
+public enum TemplateElementType
 {
     None = 0,
     Ground = 1,
@@ -104,6 +113,7 @@ public enum TemplateElement
     Buff = 4,
     DefaultWall = 5,
     ReflectionWall = 6,
+    Exit = 7,
 
 }
 
@@ -113,4 +123,5 @@ public enum RoomObjectType
     Floor = 1,
     DefaultWall = 5,
     ReflectionWall = 6,
+    Exit = 7
 }

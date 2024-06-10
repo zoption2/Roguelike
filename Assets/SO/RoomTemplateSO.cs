@@ -13,14 +13,14 @@ public class RoomTemplateSO : ScriptableObject
         public string DateAdded;
         [HideInInspector] public int rows;
         [HideInInspector] public int cols;
-        [HideInInspector] public List<TemplateElement> TemplateElementsFlat;
+        [HideInInspector] public List<TemplateElementType> TemplateElementsFlat;
         [HideInInspector] public List<Vector3> CoordinatesFlat;
 
-        public TemplateElement[,] TemplateElement
+        public TemplateElementType[,] TemplateElement
         {
             get
             {
-                TemplateElement[,] array = new TemplateElement[rows, cols];
+                TemplateElementType[,] array = new TemplateElementType[rows, cols];
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
@@ -34,7 +34,7 @@ public class RoomTemplateSO : ScriptableObject
             {
                 rows = value.GetLength(0);
                 cols = value.GetLength(1);
-                TemplateElementsFlat = new List<TemplateElement>(rows * cols);
+                TemplateElementsFlat = new List<TemplateElementType>(rows * cols);
                 CoordinatesFlat = new List<Vector3>(rows * cols);
                 for (int i = 0; i < rows; i++)
                 {
@@ -61,6 +61,20 @@ public class RoomTemplateSO : ScriptableObject
                 }
                 return array;
             }
+        }
+
+        [HideInInspector] public TemplateElementType leftExit;
+        [HideInInspector] public TemplateElementType rightExit;
+        [HideInInspector] public TemplateElementType topExit;
+        [HideInInspector] public TemplateElementType bottomExit;
+
+        public bool HasExit(Vector3 direction)
+        {
+            if (direction == Vector3.left && rightExit == TemplateElementType.Exit) return true;
+            if (direction == Vector3.right && leftExit == TemplateElementType.Exit) return true;
+            if (direction == Vector3.up && bottomExit == TemplateElementType.Exit) return true;
+            if (direction == Vector3.down && topExit == TemplateElementType.Exit) return true;
+            return false;
         }
     }
 

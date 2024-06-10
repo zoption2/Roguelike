@@ -34,3 +34,6 @@ MonoBehaviour:
   - Name: Ground
     Color: {r: 1, g: 1, b: 1, a: 1}
     Type: 1
+  - Name: Exit
+    Color: {r: 1, g: 0, b: 0.6894002, a: 1}
+    Type: 7

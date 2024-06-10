@@ -8,8 +8,8 @@ public class TemplateBuilder : EditorWindow
 {
     #region Fields
     private Tilemap selectedTilemap;
-    private TemplateElement[,] levelArray;
-    private TemplateElement[,] originalLevelArray;
+    private TemplateElementType[,] levelArray;
+    private TemplateElementType[,] originalLevelArray;
 
     private Color[,] cellColors;
     private bool[,] isEditableArray;
@@ -20,7 +20,7 @@ public class TemplateBuilder : EditorWindow
 
     private string newObjectName = "";
     private Color newObjectColor = Color.white;
-    private TemplateElement newObjectType = TemplateElement.Ground;
+    private TemplateElementType newObjectType = TemplateElementType.Ground;
 
     private float zoomScale = 1f;
 
@@ -382,7 +382,7 @@ public class TemplateBuilder : EditorWindow
         else
         {
             newObjectName = EditorGUILayout.TextField("Name", newObjectName);
-            newObjectType = (TemplateElement)EditorGUILayout.Popup("Type", (int)newObjectType, System.Enum.GetNames(typeof(TemplateElement)));
+            newObjectType = (TemplateElementType)EditorGUILayout.Popup("Type", (int)newObjectType, System.Enum.GetNames(typeof(TemplateElementType)));
             newObjectColor = EditorGUILayout.ColorField("Color", newObjectColor);
 
             GUILayout.BeginHorizontal();
@@ -448,7 +448,7 @@ public class TemplateBuilder : EditorWindow
             return;
         }
 
-        levelArray = new TemplateElement[arrayWidth, arrayHeight];
+        levelArray = new TemplateElementType[arrayWidth, arrayHeight];
         cellColors = new Color[arrayWidth, arrayHeight];
         isEditableArray = new bool[arrayWidth, arrayHeight];
 
@@ -456,7 +456,7 @@ public class TemplateBuilder : EditorWindow
         {
             for (int y = 0; y < arrayHeight; y++)
             {
-                levelArray[x, y] = TemplateElement.Ground;
+                levelArray[x, y] = TemplateElementType.Ground;
                 cellColors[x, y] = Color.white;
                 isEditableArray[x, y] = true;
             }
@@ -473,7 +473,7 @@ public class TemplateBuilder : EditorWindow
             return;
         }
 
-        var newLevelArray = new TemplateElement[newWidth, newHeight];
+        var newLevelArray = new TemplateElementType[newWidth, newHeight];
         var newCellColors = new Color[newWidth, newHeight];
         var newIsEditableArray = new bool[newWidth, newHeight];
 
@@ -489,7 +489,7 @@ public class TemplateBuilder : EditorWindow
                 }
                 else
                 {
-                    newLevelArray[x, y] = TemplateElement.Ground;
+                    newLevelArray[x, y] = TemplateElementType.Ground;
                     newCellColors[x, y] = Color.white;
                     newIsEditableArray[x, y] = true;
                 }
@@ -523,9 +523,9 @@ public class TemplateBuilder : EditorWindow
                 {
                     if (selectedObjectIndex != -1)
                     {
-                        TemplateElement previousType = levelArray[x, y];
+                        TemplateElementType previousType = levelArray[x, y];
                         levelArray[x, y] = placeableObjects[selectedObjectIndex].Type;
-                        TemplateElement newType = levelArray[x, y];
+                        TemplateElementType newType = levelArray[x, y];
                         Debug.Log($"Cell changed from {previousType} to {newType}");
                         cellColors[x, y] = placeableObjects[selectedObjectIndex].Color;
                     }
@@ -554,7 +554,7 @@ public class TemplateBuilder : EditorWindow
             return;
         }
 
-        levelArray = new TemplateElement[width, height];
+        levelArray = new TemplateElementType[width, height];
         cellColors = new Color[width, height];
         isEditableArray = new bool[width, height];
 
@@ -573,7 +573,7 @@ public class TemplateBuilder : EditorWindow
                 }
                 else
                 {
-                    levelArray[x, y] = TemplateElement.None;
+                    levelArray[x, y] = TemplateElementType.None;
                     cellColors[x, y] = Color.black;
                     isEditableArray[x, y] = false;
                 }
@@ -607,12 +607,12 @@ public class TemplateBuilder : EditorWindow
         return new BoundsInt(minX, minY, 0, maxX - minX + 1, maxY - minY + 1, 1);
     }
 
-    private TemplateElement DetermineTileType(TileBase tile)
+    private TemplateElementType DetermineTileType(TileBase tile)
     {
         string tileName = tile.name.ToLower();
         if (tileName.Contains("ground"))
-            return TemplateElement.Ground;
-        return TemplateElement.None;
+            return TemplateElementType.Ground;
+        return TemplateElementType.None;
     }
 
     private void DisplayPlaceableObjects()
@@ -684,7 +684,7 @@ public class TemplateBuilder : EditorWindow
         }
     }
 
-    private void CreateOrUpdateRecordInSO(string name, TemplateElement[,] levelArray)
+    private void CreateOrUpdateRecordInSO(string name, TemplateElementType[,] levelArray)
     {
         if (roomTemplateSO == null)
         {
@@ -703,11 +703,10 @@ public class TemplateBuilder : EditorWindow
 
         if (existingTemplate != null && name == existingTemplate.name)
         {
-            existingTemplate.TemplateElement = (TemplateElement[,])levelArray.Clone();
+            existingTemplate.TemplateElement = (TemplateElementType[,])levelArray.Clone();
             existingTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            AssignExits(existingTemplate, levelArray);
             Debug.Log($"Updated existing template: {name}");
-            Debug.Log($"Template ID: {existingTemplate.id}, Name: {existingTemplate.name}, Date Added: {existingTemplate.DateAdded}");
-            Debug.Log($"Template Elements: {ArrayToString(existingTemplate.TemplateElement)}");
         }
         else
         {
@@ -724,14 +723,13 @@ public class TemplateBuilder : EditorWindow
             {
                 name = name,
                 id = id,
-                TemplateElement = (TemplateElement[,])levelArray.Clone(),
+                TemplateElement = (TemplateElementType[,])levelArray.Clone(),
                 DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
+            AssignExits(newTemplate, levelArray);
             roomTemplateSO.Templates.Add(newTemplate);
             Debug.Log($"Added new template: {name}");
-            Debug.Log($"Template ID: {newTemplate.id}, Name: {newTemplate.name}, Date Added: {newTemplate.DateAdded}");
-            Debug.Log($"Template Elements: {ArrayToString(newTemplate.TemplateElement)}");
 
             if (existingTemplate != null)
             {
@@ -744,7 +742,64 @@ public class TemplateBuilder : EditorWindow
         AssetDatabase.SaveAssets();
     }
 
-    private string ArrayToString(TemplateElement[,] array)
+    private void AssignExits(RoomTemplateSO.Template template, TemplateElementType[,] levelArray)
+    {
+        template.leftExit = FindExit(levelArray, ExitDirection.Left);
+        template.rightExit = FindExit(levelArray, ExitDirection.Right);
+        template.topExit = FindExit(levelArray, ExitDirection.Top);
+        template.bottomExit = FindExit(levelArray, ExitDirection.Bottom);
+    }
+
+    private TemplateElementType FindExit(TemplateElementType[,] levelArray, ExitDirection direction)
+    {
+        int rows = levelArray.GetLength(0);
+        int cols = levelArray.GetLength(1);
+
+        switch (direction)
+        {
+            case ExitDirection.Left:
+                for (int i = 0; i < rows; i++)
+                {
+                    if (levelArray[i, 0] == TemplateElementType.Exit)
+                    {
+                        return levelArray[i, 0];
+                    }
+                }
+                break;
+            case ExitDirection.Right:
+                for (int i = 0; i < rows; i++)
+                {
+                    if (levelArray[i, cols - 1] == TemplateElementType.Exit)
+                    {
+                        return levelArray[i, cols - 1];
+                    }
+                }
+                break;
+            case ExitDirection.Top:
+                for (int j = 0; j < cols; j++)
+                {
+                    if (levelArray[0, j] == TemplateElementType.Exit)
+                    {
+                        return levelArray[0, j];
+                    }
+                }
+                break;
+            case ExitDirection.Bottom:
+                for (int j = 0; j < cols; j++)
+                {
+                    if (levelArray[rows - 1, j] == TemplateElementType.Exit)
+                    {
+                        return levelArray[rows - 1, j];
+                    }
+                }
+                break;
+        }
+        return TemplateElementType.None;
+    }
+
+
+
+    private string ArrayToString(TemplateElementType[,] array)
     {
         int rows = array.GetLength(0);
         int cols = array.GetLength(1);
@@ -771,7 +826,7 @@ public class TemplateBuilder : EditorWindow
         levelArray = template.TemplateElement;
         int rows = levelArray.GetLength(0);
         int cols = levelArray.GetLength(1);
-        originalLevelArray = new TemplateElement[rows, cols];
+        originalLevelArray = new TemplateElementType[rows, cols];
 
         for (int x = 0; x < rows; x++)
         {
@@ -789,7 +844,7 @@ public class TemplateBuilder : EditorWindow
             for (int y = 0; y < cols; y++)
             {
                 var elementType = levelArray[x, y];
-                if (elementType == TemplateElement.None)
+                if (elementType == TemplateElementType.None)
                 {
                     cellColors[x, y] = Color.black;
                 }

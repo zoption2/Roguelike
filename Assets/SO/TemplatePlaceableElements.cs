@@ -11,7 +11,7 @@ public class TemplatePlacebleElements : ScriptableObject
     {
         public string Name;
         public Color Color;
-        public TemplateElement Type;
+        public TemplateElementType Type;
     }
 
     [SerializeField]
