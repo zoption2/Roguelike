@@ -95,18 +95,19 @@ public abstract class ActiveState
     }
 
 
-    protected Vector2 GetForceVector(Vector2 direction)
+    protected Vector3 GetForceVector(Vector3 direction)
     {
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
         IAbility currentAbility = _characterController.CurrentAbility;
         _launchMultiplier = currentAbility.GetLaunchModifier();
-        Vector2 forceVector = direction * launchPower * _launchMultiplier;
+        Vector3 forceVector = direction * launchPower * _launchMultiplier;
         return forceVector;
     }
 
     public virtual void LaunchYourself(Vector3 direction)
     {
+        Debug.Log(" base direction: " + direction);
         Vector3 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().velocity = forceVector;
     }
@@ -159,7 +160,7 @@ public abstract class ActiveState
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
         float angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, angle - 90f, 0f);
+        Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
         character.rotation = Quaternion.Slerp(character.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
@@ -170,7 +171,7 @@ public abstract class ActiveState
 
         Vector3 direction = (_navAgent.steeringTarget - character.position).normalized;
         float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, angle - 90f, 0f);
+        Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
 
         character.rotation = Quaternion.Slerp(character.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
@@ -250,8 +251,9 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector3 direction)
     {
-        Vector2 forceVector = GetForceVector(direction);
-        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
+        Debug.Log(" player direction: " + direction);
+        Vector3 forceVector = GetForceVector(direction);
+        _characterController.GetRigidbody().velocity = forceVector;
 
         _slingShot.OnShoot -= LaunchYourself;
     }
@@ -301,7 +303,8 @@ public class EnemyActiveState : ActiveState, IConditionState
     {
         Transform target = _characterController.DefaultBehaviourTree.GetTarget();
         Transform enemy = _characterController.GetTransform();
-        Vector2 direction = target.position - enemy.position;
+        Vector3 direction = target.position - enemy.position;
+        direction.y = 0f;
         _characterController.CharacterView.ChangeDirection(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
         _launchMultiplier = currentAbility.GetLaunchModifier();
@@ -324,18 +327,21 @@ public class EnemyActiveState : ActiveState, IConditionState
         _navObstacle.enabled = false;
         
         await Task.Delay(_milisecondsDelay / 10);
-        Transform enemy = _characterController.GetTransform();
-        Quaternion rot = enemy.rotation;
         _navAgent.enabled = true;        
 
         _navAgent.SetDestination(target.position);
+        Debug.Log("target position: " + target.position);
+        Debug.Log("path corners count: " + _navAgent.path.corners.Length);
+        Debug.Log("path corner[0]: " + _navAgent.path.corners[0]);
         await Task.Delay(_milisecondsDelay / 10);
         if (defaultBehaviourTree.CanAttackAfterMove(_navAgent.path))
         {
+            Debug.Log("can attack after movement");
             ON_STOPPED += Attack;
         }
         else
         {
+            Debug.Log("CAN'T attack after movement");
             ON_STOPPED += _characterController.HandleStopMovement;
         }
     }
@@ -438,8 +444,8 @@ public class InactiveState : IConditionState
     {
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(velocity.z, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, angle - 90f, 0f);
+        float angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
         _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
@@ -643,8 +649,8 @@ public class StunState : IConditionState
     {
         Vector3 velocity = _characterController.GetVelocity();
         float rotationSpeed = velocity.magnitude;
-        float angle = Mathf.Atan2(velocity.z, velocity.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, angle + 90f, 0f);
+        float angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
         _characterController.GetRigidbody().rotation = Quaternion.Slerp(_characterController.GetRigidbody().rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 

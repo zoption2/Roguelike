@@ -97,8 +97,8 @@ namespace Projectiles
             Transform projectile = GetRigidbody().transform;
             Vector3 velocity = GetVelocity();
             float rotationSpeed = velocity.magnitude;
-            float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+            float angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, angle, 0);
             projectile.rotation = Quaternion.Slerp(projectile.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 

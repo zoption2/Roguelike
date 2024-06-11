@@ -54,6 +54,7 @@ namespace BehaviourTree
         {
             return (Transform)_blackboard.GetData(_targetKey);
         }
+
         protected override void UpdateData()
         {
             FindTarget();
@@ -89,7 +90,6 @@ namespace BehaviourTree
         }
         protected void CheckIfCanAttack()
         {
-            Transform  target = GetTarget();
             Vector3 characterPosition = GetCharacterPosition();
             if (ChooseAbility(characterPosition) != null && !_characterController.IsStunned)
             {
@@ -108,11 +108,11 @@ namespace BehaviourTree
         {
             LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
             Vector3 direction = target - startingPoint;
-            direction.z = 0;
+            direction.y = 0;
             direction.Normalize();
-            float radius = castRadius;
+
             RaycastHit hit;
-            Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
+            Physics.SphereCast(startingPoint, castRadius, direction, out hit, distance, mask);
             return hit;
         }
         protected float GetMaxLaunchDistance()
@@ -126,9 +126,8 @@ namespace BehaviourTree
         {
             Transform target = GetTarget();
             NavMeshAgent navAgent = _characterController.NavMeshAgent;
-            float offset = 0.5f;
             float minStoppingDistance=2f;
-            Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z + offset);
+            Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z );
 
             float maxDistance = GetMaxLaunchDistance();
             float walkedDistance = 0f;
@@ -156,6 +155,8 @@ namespace BehaviourTree
                         endPoint = corners[i];
                         endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
                         navAgent.SetDestination(endPoint);
+                        Debug.Log("(if too close) path corners count: " + navAgent.path.corners.Length);
+                        Debug.Log("path corner[0]: " + navAgent.path.corners[0]);
                         return false;
                     }
                 }
@@ -174,6 +175,8 @@ namespace BehaviourTree
                     }
 
                     navAgent.SetDestination(endPoint);
+                    Debug.Log("(if can't get close enough) path corners count: " + navAgent.path.corners.Length);
+                    Debug.Log("path corner[0]: " + navAgent.path.corners[0]);
                     return false;
                 }
 
