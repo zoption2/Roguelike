@@ -94,12 +94,7 @@ public abstract class ActiveState
         }
     }
 
-    public virtual void LaunchYourself(Vector3 direction)
-    {
-        float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-        direction.Normalize();
-        Vector3 forceVector = new Vector3(direction.x, 0, direction.z) * launchPower * _launchMultiplier;
-        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
+
     protected Vector2 GetForceVector(Vector2 direction)
     {
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
@@ -110,15 +105,15 @@ public abstract class ActiveState
         return forceVector;
     }
 
-    public virtual void LaunchYourself(Vector2 direction)
+    public virtual void LaunchYourself(Vector3 direction)
     {
-        Vector2 forceVector = GetForceVector(direction);
+        Vector3 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().velocity = forceVector;
     }
 
-    public virtual void LaunchProjectile(Vector2 direction)
+    public virtual void LaunchProjectile(Vector3 direction)
     {
-        Vector2 forceVector = GetForceVector(direction);
+        Vector3 forceVector = GetForceVector(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
         Transform transform = _characterController.GetTransform();
         Transform spawn = _characterController.GetProjectileSpawn();
@@ -261,7 +256,7 @@ public class PlayerActiveState : ActiveState, IConditionState
         _slingShot.OnShoot -= LaunchYourself;
     }
 
-    public override void LaunchProjectile(Vector2 direction)
+    public override void LaunchProjectile(Vector3 direction)
     {
         base.LaunchProjectile(direction);
         _slingShot.OnShoot -= LaunchProjectile;

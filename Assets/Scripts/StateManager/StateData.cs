@@ -1,6 +1,7 @@
 using CharactersStats;
 using Pool;
 using Zenject;
+using Projectiles;
 
 namespace Gameplay
 {
@@ -21,6 +22,7 @@ namespace Gameplay
         private ICharacterScenarioContext _context;
         private INavigationFactory _navigationFactory;
         private RoomTemplateSO _roomTemplate;
+        private ProjectilePooler _projectilePooler;
 
         [Inject]
         public void Construct(IBuffFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
@@ -50,7 +52,7 @@ namespace Gameplay
             {
                 case TypeOfState.Init:
                     state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _triggerFactory, _playerFactory,
-                        _enemyFactory, _navigationFactory, _roomObjectsFactory, _roomTemplate);
+                        _enemyFactory, _navigationFactory);
                     break;
                 case TypeOfState.PlayerTurn:
                     state = new PlayerTurnState(_scenarioInstance, _context);
