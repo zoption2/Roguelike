@@ -32,7 +32,7 @@ public class LevelBuilder : ILevelBuilder
 
     public int EnemyCount { get; set; } = 2;
     public int BuffCount { get; set; } = 2;
-    public int RoomCount { get; set; } = 5;
+    public int RoomCount { get; set; } = 1;
 
     private Dictionary<string, RoomTemplateSO.Template> _templatesByName;
     private List<RoomTemplateSO.Template> _templates;
@@ -106,7 +106,6 @@ public class LevelBuilder : ILevelBuilder
         _roomConnections = new List<RoomConnection>();
         RoomTemplateSO.Template mainRoom = _templatesByName["MainRoom"];
         SetupMainRoomExits(mainRoom);
-        _roomConnections.Add(new RoomConnection { Room = mainRoom, Position = Vector3.zero, ConnectedExits = new List<Vector3> { Vector3.right, Vector3.down } });
 
         for (int i = 0; i < RoomCount - 1; i++)
         {
@@ -125,33 +124,23 @@ public class LevelBuilder : ILevelBuilder
 
     private void SetupMainRoomExits(RoomTemplateSO.Template mainRoom)
     {
-        // Randomly determine the number of exits (between 1 and 4)
         int exitCount = UnityEngine.Random.Range(1, 5);
 
-        List<Vector3> exits = new List<Vector3>
-        {
-            mainRoom.leftExit == TemplateElementType.Exit ? new Vector3(0, 0, -1) : Vector3.zero,
-            mainRoom.rightExit == TemplateElementType.Exit ? new Vector3(0, 0, 1) : Vector3.zero,
-            mainRoom.topExit == TemplateElementType.Exit ? new Vector3(1, 0, 0) : Vector3.zero,
-            mainRoom.bottomExit == TemplateElementType.Exit ? new Vector3(-1, 0, 0) : Vector3.zero
-        };
-
-        exits = exits.Where(e => e != Vector3.zero).OrderBy(x => UnityEngine.Random.value).Take(exitCount).ToList();
-
-        foreach (var exit in exits)
-        {
-            // Set the exit type in the main room template
-            if (exit == new Vector3(0, 0, -1))
-                mainRoom.leftExit = TemplateElementType.Exit;
-            else if (exit == new Vector3(0, 0, 1))
-                mainRoom.rightExit = TemplateElementType.Exit;
-            else if (exit == new Vector3(1, 0, 0))
-                mainRoom.topExit = TemplateElementType.Exit;
-            else if (exit == new Vector3(-1, 0, 0))
-                mainRoom.bottomExit = TemplateElementType.Exit;
-        }
+        RoomTemplateSO.Template mainRoomClone = CloneRoomTemplate(mainRoom);
+        SetUnusedExitsToWalls(mainRoomClone, exitCount);
 
         Debug.Log($"Main room exits set: {exitCount} exits");
+
+        _roomConnections.Add(new RoomConnection
+        {
+            Room = mainRoomClone,
+            Position = Vector3.zero,
+            ConnectedExits = GetRoomExits(mainRoomClone)
+        });
+
+        var elements = mainRoomClone.TemplateElement;
+        int rows = elements.GetLength(0);
+        int cols = elements.GetLength(1);
     }
 
     private bool TryAddRoom()
@@ -165,7 +154,7 @@ public class LevelBuilder : ILevelBuilder
         }
 
         var randomOpenConnection = openConnections[UnityEngine.Random.Range(0, openConnections.Count)];
-        var direction = randomOpenConnection.ConnectedExits[0]; // беремо перший відкритий вихід
+        var direction = randomOpenConnection.ConnectedExits[0];
         var matchingExitDirection = GetOppositeDirection(direction);
 
         var availableTemplates = _templates
@@ -178,16 +167,30 @@ public class LevelBuilder : ILevelBuilder
             return false;
         }
 
-        var newRoomTemplate = availableTemplates[UnityEngine.Random.Range(0, availableTemplates.Count)];
-        var newRoomPosition = randomOpenConnection.Position + direction;
+        var newRoomTemplate = CloneRoomTemplate(availableTemplates[UnityEngine.Random.Range(0, availableTemplates.Count)]);
+        SetUnusedExitsToWalls(newRoomTemplate, GetRequiredExitsCount());
+
+        var newRoomPosition = randomOpenConnection.Position + direction + GetOffsetForExit(newRoomTemplate, matchingExitDirection);
 
         randomOpenConnection.ConnectExit(direction);
-        _roomConnections.Add(new RoomConnection { Room = newRoomTemplate, Position = newRoomPosition, ConnectedExits = new List<Vector3> { matchingExitDirection } });
+        _roomConnections.Add(new RoomConnection
+        {
+            Room = newRoomTemplate,
+            Position = newRoomPosition,
+            ConnectedExits = GetRoomExits(newRoomTemplate, matchingExitDirection)
+        });
 
-        Debug.Log($"Room '{newRoomTemplate.name}' added at position {newRoomPosition}");
+        Debug.Log($"Room '{newRoomTemplate.name}' added at position {newRoomPosition} and connected to {randomOpenConnection.Room.name} at position {randomOpenConnection.Position} with exit {direction}");
+
         return true;
     }
 
+    private int GetRequiredExitsCount()
+    {
+        int remainingRooms = RoomCount - _roomConnections.Count;
+        int remainingExits = _roomConnections.Sum(rc => rc.OpenExitsCount);
+        return Math.Min(remainingRooms, remainingExits);
+    }
 
     private Vector3 GetOppositeDirection(Vector3 direction)
     {
@@ -196,6 +199,93 @@ public class LevelBuilder : ILevelBuilder
         if (direction == Vector3.up) return Vector3.down;
         if (direction == Vector3.down) return Vector3.up;
         return Vector3.zero;
+    }
+
+    private Vector3 GetOffsetForExit(RoomTemplateSO.Template template, Vector3 exitDirection)
+    {
+        if (exitDirection == Vector3.left && template.rightExit == TemplateElementType.Exit)
+            return new Vector3(template.TemplateElement.GetLength(1), 0, 0);
+        if (exitDirection == Vector3.right && template.leftExit == TemplateElementType.Exit)
+            return new Vector3(-template.TemplateElement.GetLength(1), 0, 0);
+        if (exitDirection == Vector3.up && template.bottomExit == TemplateElementType.Exit)
+            return new Vector3(0, 0, -template.TemplateElement.GetLength(0));
+        if (exitDirection == Vector3.down && template.topExit == TemplateElementType.Exit)
+            return new Vector3(0, 0, template.TemplateElement.GetLength(0));
+        return Vector3.zero;
+    }
+
+    private void SetUnusedExitsToWalls(RoomTemplateSO.Template roomTemplate, int exitCount)
+    {
+        List<Vector3> allExits = new List<Vector3>();
+        if (roomTemplate.leftExit == TemplateElementType.Exit) allExits.Add(Vector3.left);
+        if (roomTemplate.rightExit == TemplateElementType.Exit) allExits.Add(Vector3.right);
+        if (roomTemplate.topExit == TemplateElementType.Exit) allExits.Add(Vector3.up);
+        if (roomTemplate.bottomExit == TemplateElementType.Exit) allExits.Add(Vector3.down);
+
+        Debug.Log($"All available exits: {allExits.Count}");
+
+        if (exitCount > allExits.Count)
+        {
+            Debug.LogError("Exit count is greater than available exits");
+            exitCount = allExits.Count;
+        }
+
+        List<Vector3> selectedExits = allExits.OrderBy(x => UnityEngine.Random.value).Take(exitCount).ToList();
+        Debug.Log($"Selected exits count: {selectedExits.Count}");
+
+        roomTemplate.leftExit = selectedExits.Contains(Vector3.left) ? TemplateElementType.Exit : TemplateElementType.DefaultWall;
+        roomTemplate.rightExit = selectedExits.Contains(Vector3.right) ? TemplateElementType.Exit : TemplateElementType.DefaultWall;
+        roomTemplate.topExit = selectedExits.Contains(Vector3.up) ? TemplateElementType.Exit : TemplateElementType.DefaultWall;
+        roomTemplate.bottomExit = selectedExits.Contains(Vector3.down) ? TemplateElementType.Exit : TemplateElementType.DefaultWall;
+
+        var templateElements = roomTemplate.TemplateElement;
+        int rows = templateElements.GetLength(0);
+        int cols = templateElements.GetLength(1);
+
+        if (roomTemplate.leftExit == TemplateElementType.DefaultWall)
+        {
+            templateElements[rows / 2, 0] = TemplateElementType.DefaultWall;
+        }
+        if (roomTemplate.rightExit == TemplateElementType.DefaultWall)
+        {
+            templateElements[rows / 2, cols - 1] = TemplateElementType.DefaultWall;
+        }
+        if (roomTemplate.topExit == TemplateElementType.DefaultWall)
+        {
+            templateElements[0, cols / 2] = TemplateElementType.DefaultWall;
+        }
+        if (roomTemplate.bottomExit == TemplateElementType.DefaultWall)
+        {
+            templateElements[rows - 1, cols / 2] = TemplateElementType.DefaultWall;
+        }
+
+        roomTemplate.TemplateElement = templateElements;
+
+        Debug.Log($"Exits updated. Total exits: {selectedExits.Count}");
+        foreach (var exit in selectedExits)
+        {
+            Debug.Log($"Selected exit: {exit}");
+        }
+    }
+
+    private RoomTemplateSO.Template CloneRoomTemplate(RoomTemplateSO.Template original)
+    {
+        var clone = new RoomTemplateSO.Template
+        {
+            name = original.name,
+            id = original.id,
+            DateAdded = original.DateAdded,
+            rows = original.rows,
+            cols = original.cols,
+            TemplateElementsFlat = new List<TemplateElementType>(original.TemplateElementsFlat),
+            CoordinatesFlat = new List<Vector3>(original.CoordinatesFlat),
+            leftExit = original.leftExit,
+            rightExit = original.rightExit,
+            topExit = original.topExit,
+            bottomExit = original.bottomExit
+        };
+
+        return clone;
     }
 
     private void BuildRoom(RoomTemplateSO.Template template, Vector3 position)
@@ -231,12 +321,6 @@ public class LevelBuilder : ILevelBuilder
             }
         }
 
-        //CreatePlayers(playersParent);
-        //CreateEnemies(enemiesParent);
-        //CreateBuffs(buffsParent);
-
-        OnNavigationCreate();
-
         Debug.Log($"Room '{template.name}' built at position {position}");
     }
 
@@ -256,48 +340,14 @@ public class LevelBuilder : ILevelBuilder
         navMeshSurface.BuildNavMesh();
     }
 
-    private void CreateBuffs(Transform parent)
+    private List<Vector3> GetRoomExits(RoomTemplateSO.Template room, Vector3 matchedExit = default)
     {
-        var buffTypes = Enum.GetValues(typeof(BuffType)).Cast<BuffType>().Where(t => t != BuffType.None).ToList();
-        var shuffledSpawnPoints = _buffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
-
-        int buffsToSpawn = Math.Min(BuffCount, shuffledSpawnPoints.Count);
-
-        for (int i = 0; i < buffsToSpawn; i++)
-        {
-            Vector3 spawnPosition = shuffledSpawnPoints[i];
-            BuffType buffType = buffTypes[UnityEngine.Random.Range(0, buffTypes.Count)];
-            _buffFactory.CreateBuff(spawnPosition, parent, buffType);
-        }
-    }
-
-    private void CreatePlayers(Transform parent)
-    {
-        for (int i = 0; i < _playerSpawnPoints.Count; i++)
-        {
-            Vector3 position = _playerSpawnPoints[i];
-            CharacterType playerType = DataTransfer.TypeCollection[i];
-            IPlayerController newPlayer = _playerFactory.CreatePlayer(position, parent, playerType);
-            newPlayer.SetCharacterContext(_characters);
-            _characters.Players.Add(newPlayer);
-        }
-    }
-
-    private void CreateEnemies(Transform parent)
-    {
-        var enemyTypes = Enum.GetValues(typeof(EnemyType)).Cast<EnemyType>().Where(t => t != EnemyType.None).ToList();
-        var shuffledSpawnPoints = _enemySpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
-
-        int enemiesToSpawn = Math.Min(EnemyCount, shuffledSpawnPoints.Count);
-
-        for (int i = 0; i < enemiesToSpawn; i++)
-        {
-            Vector3 spawnPosition = shuffledSpawnPoints[i];
-            CharacterType enemyType = (CharacterType)enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count)];
-            IEnemyController newEnemy = _enemyFactory.CreateEnemy(spawnPosition, parent, enemyType);
-            newEnemy.SetCharacterContext(_characters);
-            _characters.Enemies.Add(newEnemy);
-        }
+        List<Vector3> exits = new List<Vector3>();
+        if (room.leftExit == TemplateElementType.Exit && matchedExit != Vector3.right) exits.Add(Vector3.left);
+        if (room.rightExit == TemplateElementType.Exit && matchedExit != Vector3.left) exits.Add(Vector3.right);
+        if (room.topExit == TemplateElementType.Exit && matchedExit != Vector3.down) exits.Add(Vector3.up);
+        if (room.bottomExit == TemplateElementType.Exit && matchedExit != Vector3.up) exits.Add(Vector3.down);
+        return exits;
     }
 
     private class RoomConnection
@@ -324,5 +374,4 @@ public class LevelBuilder : ILevelBuilder
             return false;
         }
     }
-
 }

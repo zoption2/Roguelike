@@ -61,6 +61,19 @@ public class RoomTemplateSO : ScriptableObject
                 }
                 return array;
             }
+            set
+            {
+                rows = value.GetLength(0);
+                cols = value.GetLength(1);
+                CoordinatesFlat = new List<Vector3>(rows * cols);
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        CoordinatesFlat.Add(value[i, j]);
+                    }
+                }
+            }
         }
 
         [HideInInspector] public TemplateElementType leftExit;

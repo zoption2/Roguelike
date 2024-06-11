@@ -9,7 +9,7 @@ namespace SlingShotLogic
 {
     public interface ISlingShot : IMyPoolable
     {
-        public void Init(Vector3 _initPosition, CharacterType type); // Змінено на Vector3
+        public void Init(Vector3 _initPosition, CharacterType type);
         public event Action<Vector3> OnShoot;
         public event Action OnAbilityUse;
         public event Action<Vector3> OnDirectionChange;
@@ -34,7 +34,7 @@ namespace SlingShotLogic
         [Inject]
         private SlingshotPooler _slingShotPooler;
 
-        public void Init(Vector3 _initPosition, CharacterType type) // Змінено на Vector3
+        public void Init(Vector3 _initPosition, CharacterType type)
         {
             _type = type;
             _startPoint = _initPosition;
@@ -45,7 +45,7 @@ namespace SlingShotLogic
             IsDragging = true;
             RectTransformUtility.ScreenPointToWorldPointInRectangle(_touchZone.rectTransform, eventData.position, Camera.main, out _touchPositionInWorld);
 
-            _touchPositionInWorld.y = _startPoint.y; // Фіксуємо Y позицію
+            _touchPositionInWorld.y = _startPoint.y;
 
             Vector3 clampedPosition = ClampToCircle(_touchPositionInWorld, _touchZone.rectTransform, _cursor.rectTransform);
             _cursor.rectTransform.position = new Vector3(clampedPosition.x, _cursor.rectTransform.position.y, clampedPosition.z);
@@ -95,17 +95,14 @@ namespace SlingShotLogic
 
         public void OnCreate()
         {
-            // Initialization logic
         }
 
         public void OnPull()
         {
-            // Logic for when the object is pulled from the pool
         }
 
         public void OnRelease()
         {
-            // Logic for when the object is released back to the pool
         }
     }
 }
