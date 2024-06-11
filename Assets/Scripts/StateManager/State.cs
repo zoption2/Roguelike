@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
+using Zenject.SpaceFighter;
 
 namespace Gameplay
 {
@@ -141,7 +142,7 @@ namespace Gameplay
 
         INavigationFactory _navigationFactory;
 
-        ILevelBuilder _levelBuilder;
+        IRoomBuilder _roomBuilder;
 
         RoomTemplateSO _roomTemplateSO;
 
@@ -158,14 +159,14 @@ namespace Gameplay
             )
         {
             _scenario = scenario;
-            //_characters = context;
+            _characters = context;
             //_statsProvider  = provider;
             //_buffFactory = buffFactory;
             //_playerFactory = playerFactory;
             //_enemyFactory = enemyFactory;
             //_navigationFactory = navigationFactory;
             //_roomBuilder = roomBuilder;
-            _levelBuilder = new LevelBuilder(scenario,
+            _roomBuilder = new RoomBuilder(scenario,
                 context,
                 provider,
                 buffFactory,
@@ -179,16 +180,109 @@ namespace Gameplay
 
         public void OnEnter()
         {
-            
+            _roomBuilder.BuildLevel();
             //OnPlayerCreate();
             //OnEnemyCreate();
             //OnBuffCreate();
-            _levelBuilder.BuildLevel();
             _scenario.OnStateEnd();
             
         }
 
-        
+        public void OnBuffCreate()
+        {
+            var buffTypes = Enum.GetValues(typeof(BuffType)).Cast<BuffType>().Where(t => t != BuffType.None).ToList();
+            var shuffledSpawnPoints = _characters.BuffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
+
+            foreach (var spawnPointWithType in shuffledSpawnPoints)
+            {
+                BuffType buffType = spawnPointWithType.buffType;
+
+                if (buffType != BuffType.None)
+                {
+                    Vector3 newPos = new Vector3(spawnPointWithType.spawnPoint.position.x, spawnPointWithType.spawnPoint.position.y, spawnPointWithType.spawnPoint.position.z);
+                    IBuff newBuff = _buffFactory.CreateBuff(newPos, spawnPointWithType.spawnPoint, buffType);
+                    _characters.Buffs.Add(newBuff);
+                }
+            }
+
+            foreach (var spawnPointWithType in shuffledSpawnPoints)
+            {
+                BuffType buffType = spawnPointWithType.buffType;
+
+                if (buffType == BuffType.None)
+                {
+                    buffType = buffTypes[UnityEngine.Random.Range(0, buffTypes.Count)];
+
+                    if (_characters.Buffs.Any(b => b.GetBuffType() == buffType))
+                    {
+                        continue;
+                    }
+                    Vector3 newPos = new Vector3(spawnPointWithType.spawnPoint.position.x, spawnPointWithType.spawnPoint.position.y, spawnPointWithType.spawnPoint.position.z);
+                    IBuff newBuff = _buffFactory.CreateBuff(newPos, spawnPointWithType.spawnPoint, buffType);
+                    float probability = newBuff.GetBuffProbability();
+
+                    if (UnityEngine.Random.value <= probability)
+                    {
+                        _characters.Buffs.Add(newBuff);
+                    }
+                    else
+                    {
+                        newBuff.RemoveBuff();
+                    }
+                }
+            }
+        }
+
+        public void OnPlayerCreate()
+        {
+            PlayerSpawnPointWithType player;
+            CharacterType playerType;
+            for (int i = 0; i < _characters.PlayerSpawnPoints.Count; i++)
+            {
+                player = _characters.PlayerSpawnPoints[i];
+                playerType = DataTransfer.TypeCollection[i];
+                Vector3 newPos = new Vector3(player.spawnPoint.position.x, player.spawnPoint.position.y, player.spawnPoint.position.z);
+                IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, player.spawnPoint, playerType);
+                newPlayer.SetCharacterContext(_characters);
+                _characters.Players.Add(newPlayer);
+            }
+        }
+
+        public void OnEnemyCreate()
+        {
+            var enemyTypes = Enum.GetValues(typeof(EnemyType)).Cast<EnemyType>().Where(t => t != EnemyType.None).ToList();
+            int enemyCount = UnityEngine.Random.Range(1, _characters.EnemySpawnPoints.Count + 1);
+            var shuffledSpawnPoints = _characters.EnemySpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
+
+            foreach (var spawnPointWithType in shuffledSpawnPoints)
+            {
+                CharacterType enemyType = spawnPointWithType.enemyType;
+
+                if (enemyType != CharacterType.None)
+                {
+                    Vector3 newPos = new Vector3(spawnPointWithType.spawnPoint.position.x, spawnPointWithType.spawnPoint.position.y, spawnPointWithType.spawnPoint.position.z);
+                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, spawnPointWithType.spawnPoint, enemyType);
+                    newEnemy.SetCharacterContext(_characters);
+                    _characters.Enemies.Add(newEnemy);
+                }
+            }
+
+            for (int i = 0; i < enemyCount; i++)
+            {
+                var spawnPointWithType = shuffledSpawnPoints[i];
+                CharacterType enemyType = spawnPointWithType.enemyType;
+
+                if (enemyType == CharacterType.None)
+                {
+                    enemyType = (CharacterType)enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count)];
+
+                    Vector3 newPos = new Vector3(spawnPointWithType.spawnPoint.position.x, spawnPointWithType.spawnPoint.position.y, spawnPointWithType.spawnPoint.position.z);
+                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, spawnPointWithType.spawnPoint, enemyType);
+                    newEnemy.SetCharacterContext(_characters);
+                    _characters.Enemies.Add(newEnemy);
+                }
+            }
+        }
 
         public void OnExit()
         {

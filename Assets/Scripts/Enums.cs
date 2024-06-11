@@ -121,6 +121,9 @@ public enum RoomObjectType
 {
     None = 0,
     Floor = 1,
+    Player = 2,
+    Enemy = 3,
+    Buff = 4,
     DefaultWall = 5,
     ReflectionWall = 6,
     Exit = 7
