@@ -7,7 +7,7 @@ namespace Interactions
     public interface IEffectProcessor
     {
         public void Init(CharacterUIViewmodel viewModel, ReactiveList<IEffect> allEffects);
-        public void AddEffects(List<IEffect> effects);
+        public void AddEffect(IEffect effect);
         public void ProcessEffectsOnStart(ReactiveStats stats);
         public void ProcessEffectsOnEnd(ReactiveStats stats);
         public void PrintEffects(List<IEffect> effects);
@@ -31,10 +31,8 @@ namespace Interactions
             _allEffects = allEffects;
         }
 
-        public void AddEffects(List<IEffect> effects)
+        public void AddEffect(IEffect effect)
         {
-            foreach (IEffect effect in effects)
-            {
                 if (effect.IsOnInteractionStart)
                 {
                     ReplaceOrAddEffect(effect, _preInteractionEffects);
@@ -51,7 +49,6 @@ namespace Interactions
                 }
 
                 ReplaceOrAddEffect(effect, _allEffects);
-            }
         }
 
         private List<IEffect> ReplaceOrAddEffect(IEffect effect, List<IEffect> effectList)
@@ -110,20 +107,7 @@ namespace Interactions
             statsCopy.LaunchPower.Value = stats.LaunchPower.Value;
             statsCopy.Velocity.Value = stats.Velocity.Value;
 
-            if (_preInteractionEffects.Count > 0)
-            {
-                for (int i = _preInteractionEffects.Count - 1; i >= 0; i--)
-                {
-                    if (_preInteractionEffects[i].Duration > 0)
-                    {
-                        _preInteractionEffects[i].UseEffect(statsCopy);
-                    }
-                    else
-                    {
-                        RemoveEffect(_preInteractionEffects[i]);
-                    }
-                }
-            }
+            ProcessEffects(stats, _preInteractionEffects);
 
             return statsCopy;
         }
@@ -131,36 +115,28 @@ namespace Interactions
 
         public void ProcessEffectsOnStart(ReactiveStats stats)
         {
-            if (_onStartTurnEffects.Count > 0)
-            {
-                for (int i = _onStartTurnEffects.Count - 1; i >= 0; i--)
-                {
-                    if (_onStartTurnEffects[i].Duration > 0)
-                    {
-                        _onStartTurnEffects[i].UseEffect(stats);
-                    }
-                    else
-                    {
-                        RemoveEffect(_onStartTurnEffects[i]);
-                    }
-                }
-            }
+            ProcessEffects(stats, _onStartTurnEffects);
         }
 
 
         public void ProcessEffectsOnEnd(ReactiveStats stats)
         {
-            if (_onEndTurnEffects.Count > 0)
+            ProcessEffects(stats, _onEndTurnEffects);
+        }
+
+        private void ProcessEffects(ReactiveStats stats, List<IEffect> effects)
+        {
+            if (effects.Count > 0)
             {
-                for (int i = _onEndTurnEffects.Count - 1; i >= 0; i--)
+                for (int i = effects.Count - 1; i >= 0; i--)
                 {
-                    if (_onEndTurnEffects[i].Duration > 0)
+                    if (effects[i].Duration > 0)
                     {
-                        _onEndTurnEffects[i].UseEffect(stats);
+                        effects[i].UseEffect(stats);
                     }
                     else
                     {
-                        RemoveEffect(_onEndTurnEffects[i]);
+                        RemoveEffect(effects[i]);
                     }
                 }
             }

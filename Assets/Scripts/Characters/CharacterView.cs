@@ -14,6 +14,7 @@ public interface IInteractible
 {
     public void StartInteraction(IInteractible interactible);
     public IControllerInputs ControllerInputs { get; set; }
+    public Vector2 Normal {  get; set; }
     public Rigidbody GetRigidbody();
     public Vector3 GetLastVelocity();
     public Vector3 GetVelocity();
@@ -42,10 +43,13 @@ public class CharacterView : MonoBehaviour,
     public event Action<PointerEventData> ON_BEGINDRAG;
     
     [SerializeField] Transform _viewTransform;
+    [SerializeField] Transform _projectileSpawn;
     public ParticleSystem ParticleTestSystem { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; }
+    public Vector2 Normal { get; set; }
+
     public float MaxVelocity = 50f;
     private Rigidbody _rigidbody;
     private CollisionHandler _collisionHandler;
@@ -138,7 +142,7 @@ public class CharacterView : MonoBehaviour,
 
     public void OnRelease()
     {
-        //ControllerInputs.PushCharacterUI();
+
     }
 
     public Rigidbody GetRigidbody()
@@ -149,6 +153,11 @@ public class CharacterView : MonoBehaviour,
     public Transform GetTransform()
     {
         return _viewTransform;
+    }
+
+    public Transform GetProjectileSpawn()
+    {
+        return _projectileSpawn;
     }
 }
 

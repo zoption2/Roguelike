@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using Abilities;
+using Unity.VisualScripting;
+using UnityEngine.UIElements;
+
 
 namespace BehaviourTree
 {
@@ -10,10 +14,12 @@ namespace BehaviourTree
         public Transform GetTarget();
         public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float abilityMultiplier = 1,
             float remainingDistance = -1f);
+        public bool RemoteSphereCastHitTarget(Transform target, Vector3 startingPoint);
         public Vector3 GetCharacterPosition();
         public void SetAbilities(List<IAbility> abilities);
         public void SetCurrentAbility(IAbility ability);
         public bool CanAttackAfterMove(NavMeshPath path);
+        
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
@@ -65,13 +71,6 @@ namespace BehaviourTree
 
         private void CheckIfCanMove()
         {
-            // check whether enemy could get hit by player after he moves
-            // (whether he will be in direct line of sight)
-            // for that i will need to know the end point and then shoot a raycast from player to the endpoint
-            // maybe i need to use pathIsClear and CouldReach for that
-            // if not than it is okay to move
-            // if after moving he could even attack the player than definitely can move
-
             if (!_characterController.IsStunned)
             {
                 Debug.Log("Can Move");
@@ -105,13 +104,13 @@ namespace BehaviourTree
 
         }
 
-        protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint)
+        protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint,float castRadius = 0.5f)
         {
             LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
             Vector3 direction = target - startingPoint;
             direction.z = 0;
             direction.Normalize();
-            float radius = 0.5f;
+            float radius = castRadius;
             RaycastHit hit;
             Physics.SphereCast(startingPoint, radius, direction, out hit, distance, mask);
             return hit;
@@ -135,13 +134,13 @@ namespace BehaviourTree
             float walkedDistance = 0f;
             float remainingDistance = 0f;
             float distanceToTarget = 0f;
+            float divider;
 
             Vector3[] corners = path.corners;
             Vector2 direction;
             Vector3 neededVector;
             Vector3 endPoint;
 
-            float divider;
 
             for(int i = 1; i < corners.Length; i++)
             {
@@ -149,6 +148,16 @@ namespace BehaviourTree
                 {
                     walkedDistance += Vector3.Distance(corners[i - 1], corners[i]);
                     remainingDistance = maxDistance - walkedDistance;
+                    distanceToTarget = Vector3.Distance(corners[i], targetPosition);
+
+                    if (distanceToTarget < minStoppingDistance)
+                    {
+                        direction = corners[i] - corners[i - 1];
+                        endPoint = corners[i];
+                        endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
+                        navAgent.SetDestination(endPoint);
+                        return false;
+                    }
                 }
                 else
                 {
@@ -158,10 +167,12 @@ namespace BehaviourTree
                     neededVector = direction / divider;
                     endPoint = corners[i-1] + neededVector;
                     distanceToTarget = Vector3.Distance(endPoint, targetPosition);
+
                     if (distanceToTarget < minStoppingDistance)
                     {
                         endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
                     }
+
                     navAgent.SetDestination(endPoint);
                     return false;
                 }
@@ -173,10 +184,12 @@ namespace BehaviourTree
                         direction = corners[i] - corners[i - 1];
                         distanceToTarget = Vector3.Distance(corners[i], targetPosition);
                         endPoint = corners[i];
+
                         if (distanceToTarget < minStoppingDistance)
                         {
                             endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
                         }
+
                         navAgent.SetDestination(endPoint);
                         return true;
                     }
@@ -184,37 +197,12 @@ namespace BehaviourTree
             }
             return false;
         }
-
-        protected bool PathToPointIsClear(Vector3 point)
+        
+        protected bool HitTransformIsTarget(Transform hitTransform, Transform target)
         {
-            Vector3 character = GetCharacterPosition();
-            float distance = Vector2.Distance(point,character);
-            RaycastHit hit = ShootSphereCastToTarget(point,distance,character);
-            if(hit.collider == null)
+            if (hitTransform != null && hitTransform.childCount > 0)
             {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float abilityMultiplier = 1,
-            float remainingDistance = -1f)
-        {
-            float maxDistance = GetMaxLaunchDistance() * abilityMultiplier;
-
-            if(remainingDistance > 0)
-            {
-                maxDistance = Mathf.Min(maxDistance, remainingDistance);
-            }
-
-            RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
-            Transform hitTransform = hit.transform;
-            if (hitTransform != null &&  hitTransform.childCount > 0)
-            {
-                hitTransform = hit.transform.GetChild(0);
+                hitTransform = hitTransform.GetChild(0);
             }
 
             if (hitTransform != null && hitTransform == target)
@@ -224,15 +212,42 @@ namespace BehaviourTree
             else
                 return false;
         }
+        public bool RemoteSphereCastHitTarget(Transform target, Vector3 startingPoint)
+        {
+            RaycastHit hit = ShootSphereCastToTarget(target.position, Mathf.Infinity, startingPoint,0.2f);
+            Transform hitTransform = hit.transform;
+            return HitTransformIsTarget(hitTransform, target);
+        }
+
+        public bool SphereCastHitTheTarget(Transform target, Vector3 startingPoint, float abilityMultiplier = 1,
+            float remainingDistance = -1f)
+        {
+
+            float maxDistance = GetMaxLaunchDistance() * abilityMultiplier;
+
+            if(remainingDistance > 0)
+            {
+                maxDistance = Mathf.Min(maxDistance, remainingDistance);
+            }
+
+            RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
+            Transform hitTransform = hit.transform;
+
+            return HitTransformIsTarget(hitTransform, target);
+        }
+
         protected void FindTarget()
         {
             Vector3 characterPosition = _characterController.GetTransform().position;
             List<Transform> allTargets= new List<Transform>();
+
             foreach (ICharacterController characterController in _characterScenarioContext.Players)
             {
                 allTargets.Add(characterController.GetTransform());
             }
+
             allTargets = allTargets.OrderBy(x => Vector3.Distance(x.position,characterPosition)).ToList();
+
             if(allTargets.Count > 0)
             {
                 Transform finalTarget = allTargets[0];

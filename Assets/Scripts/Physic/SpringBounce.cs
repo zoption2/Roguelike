@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Bounce : IMovable
+public class SpringBounce : IMovable
 {
     private Rigidbody _providerRb;
     private Rigidbody _handlerRb;
@@ -11,11 +11,10 @@ public class Bounce : IMovable
     {
         _providerRb = provider.GetRigidbody();
         _handlerRb = handler.GetRigidbody();
-        _providerVelocity = provider.GetVelocity();
+        _providerVelocity = provider.GetLastVelocity();
         _providerVelocity.z = 0;
-        _handlerVelocity = handler.GetVelocity();
+        _handlerVelocity = handler.GetLastVelocity();
         _handlerVelocity.z = 0;
-
 
         if (_providerRb.velocity.magnitude < 1 && _handlerRb.velocity.magnitude == 0)
         {

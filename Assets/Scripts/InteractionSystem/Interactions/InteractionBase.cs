@@ -14,7 +14,7 @@ namespace Interactions
         {
             _damage = damage;
             _damageMultiplayer = 1;
-            _movable = new Bounce();
+            _movable = new ReflectionBounce();
         }
 
         public int GetDamage()

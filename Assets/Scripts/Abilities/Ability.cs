@@ -1,66 +1,65 @@
 using Interactions;
-using UnityEngine;
 
-public abstract class Ability : IAbility
+namespace Abilities
 {
-    public int ReloadTime { get; }
-    public IInteraction Interaction { get; }
-    public bool ReadyForUse { get; private set; }
-    public int TurnsLeftToReload { get; private set; }
-    public AbilityType Type { get; }
-
-    protected float _launchModifier;
-
-    protected Ability(IInteraction interaction,int reloadTime,float launchMod,AbilityType type)
+    public abstract class Ability : IAbility
     {
-        ReadyForUse = true;
-        TurnsLeftToReload = 0;
-        Interaction = interaction;
-        ReloadTime = reloadTime;
-        _launchModifier = launchMod;
-        Type = type;
-    }
+        public int ReloadTime { get; }
+        public int RicochetCount { get; }
+        public IInteraction Interaction { get; }
+        public bool ReadyForUse { get; private set; }
+        public int TurnsLeftToReload { get; private set; }
+        public AbilityType Type { get; }
+        public ProjectileType ProjectileType { get; protected set; }
 
-    public void TickReload()
-    {
-        if (TurnsLeftToReload > 0)
-        {
-            TurnsLeftToReload--;
-        }
-        if (TurnsLeftToReload == 0 && ReadyForUse==false)
+        protected float _launchModifier;
+
+        protected Ability(IInteraction interaction, int reloadTime, float launchMod, AbilityType type,ProjectileType projectileType, int ricochetCount)
         {
             ReadyForUse = true;
+            TurnsLeftToReload = 0;
+            Interaction = interaction;
+            ReloadTime = reloadTime;
+            _launchModifier = launchMod;
+            Type = type;
+            ProjectileType = projectileType;
+            RicochetCount = ricochetCount;
         }
-    }
 
-    public void SetForReload()
-    {
-        TurnsLeftToReload = ReloadTime;
-        if (TurnsLeftToReload > 0)
+        public void TickReload()
         {
-            ReadyForUse = false;
+            if (TurnsLeftToReload > 0)
+            {
+                TurnsLeftToReload--;
+            }
+            else if (TurnsLeftToReload == 0 && ReadyForUse == false)
+            {
+                ReadyForUse = true;
+            }
         }
-    }
 
-    public int GetUsefulness()
-    {
-        //For now we will think that the more damage skill gives the more useful it is
-        return Interaction.GetDamage();
-    }
+        public void SetForReload()
+        {
+            TurnsLeftToReload = ReloadTime;
+            if (TurnsLeftToReload > 0)
+            {
+                ReadyForUse = false;
+            }
+        }
 
-    public void UseAbility()
-    {
-        // do something and then set for reload
-        SetForReload();
-    }
+        public int GetUsefulness()
+        {
+            return Interaction.GetDamage();
+        }
 
-    public TypeOfUse GetUseType()
-    {
-        return TypeOfUse.MeleeUse;
-    }
+        public void UseAbility()
+        {
+            SetForReload();
+        }
 
-    public float GetLaunchModifier()
-    {
-        return _launchModifier;
+        public float GetLaunchModifier()
+        {
+            return _launchModifier;
+        }
     }
 }

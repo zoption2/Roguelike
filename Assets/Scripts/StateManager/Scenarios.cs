@@ -36,8 +36,10 @@ namespace Gameplay
         private List<CookedMapper> _turnsOrder;
         private CharacterPooler _characterPooler;
         private CharacterUIPooler _characterUIPooler;
+        private ProjectilePooler _projectilePooler;
+        private EffectPooler _effectPooler;
         public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory, CharacterPooler characterPooler,
-            CharacterUIPooler characterUIPooler)
+            CharacterUIPooler characterUIPooler,ProjectilePooler projectilePooler, EffectPooler effectPooler)
         {
             _gameplayService = gameplayService;
             _queueOfStates = new Queue<IState>();
@@ -45,9 +47,13 @@ namespace Gameplay
             _stateFactory = stateFactory;
             _characterPooler = characterPooler;
             _characterUIPooler = characterUIPooler;
+            _projectilePooler = projectilePooler;
+            _effectPooler = effectPooler;
         }
         public void EraseCharacter(ICharacterController controller)
         {
+            controller.ON_CHARACTER_DEATH -= EraseCharacter;
+            controller.Dispose();
             foreach (CookedMapper mapper in _turnsOrder)
             {
                 if (mapper.Controller == controller)
@@ -72,6 +78,8 @@ namespace Gameplay
         {
             _characterPooler.CleanPool();
             _characterUIPooler.CleanPool();
+            _effectPooler.CleanPool();
+            _projectilePooler.CleanPool();
             Debug.LogWarning("cleaned poolers!");
         }
 
@@ -79,33 +87,19 @@ namespace Gameplay
         {
             bool noPlayers = _scenarioContext.Players.Count == 0;
             bool noEnemies = _scenarioContext.Enemies.Count == 0;
-            if (noPlayers || noEnemies)
+
+            if (noPlayers)
             {
-                if(noPlayers)
+                foreach (ICharacterController enemy in _scenarioContext.Enemies)
                 {
-                    LoadMainMenu();
-                } else
-                {
-                    ActivateCompleatedRoomTriggers();
+                    enemy.ON_CHARACTER_DEATH -= EraseCharacter;
+                    enemy.Dispose();
                 }
-                //if(noPlayers)
-                //{
-                //    foreach(ICharacterController enemy in _scenarioContext.Enemies)
-                //    {
-                //        enemy.JustPush();
-                //    }
-                //    Debug.LogWarning("You lost!");
-                //}
-                //else
-                //{
-                //    foreach (ICharacterController player in _scenarioContext.Players)
-                //    {
-                //        player.JustPush();
-                //    }
-                //    Debug.LogWarning("You won!");
-                //}
-                
-                //LoadMainMenu();
+                LoadMainMenu();
+            }
+            else if (noEnemies)
+            {
+                ActivateCompleatedRoomTriggers();
             }
         }
 

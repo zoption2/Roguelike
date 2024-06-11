@@ -2,6 +2,8 @@ using CharactersStats;
 using Interactions;
 using System;
 using System.Collections.Generic;
+using Abilities;
+
 
 [Serializable]
 public class CharacterModel : CharacterModelBase

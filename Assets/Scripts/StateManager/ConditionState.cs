@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
+using Abilities;
+using Zenject;
+using Pool;
+using Projectiles;
+
 
 public interface IConditionState
 {
@@ -35,12 +40,14 @@ public abstract class ActiveState
     protected event OnStopped ON_STOPPED;
     protected NavMeshAgent _navAgent;
     protected NavMeshObstacle _navObstacle;
+    protected ProjectilePooler _projectilePooler;
 
-    public ActiveState(ICharacterController characterController)
+    public ActiveState(ICharacterController characterController,ProjectilePooler projectilePooler)
     {
         _characterController = characterController;
         _navAgent = _characterController.NavMeshAgent;
         _navObstacle = _characterController.NavMeshObstacle;
+        _projectilePooler = projectilePooler;
     }
 
     public void OnEnter()
@@ -93,11 +100,35 @@ public abstract class ActiveState
         direction.Normalize();
         Vector3 forceVector = new Vector3(direction.x, 0, direction.z) * launchPower * _launchMultiplier;
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
+    protected Vector2 GetForceVector(Vector2 direction)
+    {
+        float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
+        direction.Normalize();
+        IAbility currentAbility = _characterController.CurrentAbility;
+        _launchMultiplier = currentAbility.GetLaunchModifier();
+        Vector2 forceVector = direction * launchPower * _launchMultiplier;
+        return forceVector;
     }
 
-    public void LaunchProjectile(Vector2 direction)
+    public virtual void LaunchYourself(Vector2 direction)
     {
+        Vector2 forceVector = GetForceVector(direction);
+        _characterController.GetRigidbody().velocity = forceVector;
+    }
 
+    public virtual void LaunchProjectile(Vector2 direction)
+    {
+        Vector2 forceVector = GetForceVector(direction);
+        IAbility currentAbility = _characterController.CurrentAbility;
+        Transform transform = _characterController.GetTransform();
+        Transform spawn = _characterController.GetProjectileSpawn();
+
+        IMyPoolable projectilePoolable = _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
+        Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
+
+        projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
+        projectile.SetRicochetCount(currentAbility.RicochetCount);
+        projectile.GetRigidbody().velocity = forceVector;
     }
 
     public IInteraction GetInteraction()
@@ -121,7 +152,8 @@ public abstract class ActiveState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }
@@ -168,13 +200,13 @@ public abstract class ActiveState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        if (_characterController.GetRigidbody().velocity.magnitude > 1)
+        if (_characterController.GetRigidbody().velocity.magnitude > 1 || interactible is IProjectile)
         {
             bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
         }
         else
         {
-            bumpFromDealer = new Bounce();
+            bumpFromDealer = new ReflectionBounce();
             bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
         }
     }
@@ -182,7 +214,8 @@ public abstract class ActiveState
 
 public class PlayerActiveState : ActiveState, IConditionState
 {
-    public PlayerActiveState(ICharacterController characterController) : base(characterController)
+    public PlayerActiveState(ICharacterController characterController, ProjectilePooler projectilePooler)
+        : base(characterController, projectilePooler)
     {
     }
 
@@ -198,9 +231,19 @@ public class PlayerActiveState : ActiveState, IConditionState
 
         _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
         _slingShot.OnDirectionChange += _characterController.CharacterView.ChangeDirection;
-
-        _slingShot.OnShoot -= LaunchYourself;
-        _slingShot.OnShoot += LaunchYourself;
+        IAbility currentAbility = _characterController.CurrentAbility;
+        if(currentAbility.ProjectileType == ProjectileType.None)
+        {
+            _slingShot.OnShoot -= LaunchProjectile;
+            _slingShot.OnShoot -= LaunchYourself;
+            _slingShot.OnShoot += LaunchYourself;
+        }
+        else
+        {
+            _slingShot.OnShoot -= LaunchYourself;
+            _slingShot.OnShoot -= LaunchProjectile;
+            _slingShot.OnShoot += LaunchProjectile;
+        }
 
         _slingShot.OnAbilityUse -= _characterController.ProcessReloadAbility;
         _slingShot.OnAbilityUse += _characterController.ProcessReloadAbility;
@@ -212,11 +255,16 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector3 direction)
     {
-        float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
-        Vector3 forceVector = new Vector3(direction.x, 0, direction.z) * launchPower * _launchMultiplier;
+        Vector2 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
 
         _slingShot.OnShoot -= LaunchYourself;
+    }
+
+    public override void LaunchProjectile(Vector2 direction)
+    {
+        base.LaunchProjectile(direction);
+        _slingShot.OnShoot -= LaunchProjectile;
     }
 
 
@@ -235,7 +283,8 @@ public class PlayerActiveState : ActiveState, IConditionState
 
 public class EnemyActiveState : ActiveState, IConditionState
 {
-    public EnemyActiveState(ICharacterController characterController) : base(characterController)
+    public EnemyActiveState(ICharacterController characterController, ProjectilePooler projectilePooler)
+        : base(characterController, projectilePooler)
     {
     }
 
@@ -261,14 +310,15 @@ public class EnemyActiveState : ActiveState, IConditionState
         _characterController.CharacterView.ChangeDirection(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
         _launchMultiplier = currentAbility.GetLaunchModifier();
-        LaunchYourself(direction);
-        //if(currentAbility.GetUseType() == TypeOfUse.MeleeUse)
-        //{
-        //}
-        //else
-        //{
-        //    LaunchProjectile(direction);
-        //}
+        
+        if(currentAbility.ProjectileType == ProjectileType.None)
+        {
+            LaunchYourself(direction);
+        }
+        else
+        {
+            LaunchProjectile(direction);
+        }
         currentAbility.UseAbility();
     }
 
@@ -347,7 +397,8 @@ public class InactiveState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
         ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
@@ -357,8 +408,18 @@ public class InactiveState : IConditionState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        IMovable bump = new Bounce();
-        bump.ApplyForce(_characterController.CharacterView, interactible);
+        IMovable bump = new ReflectionBounce();
+
+        if (interactible is IProjectile)
+        {
+            IInteraction interaction = interactible.ControllerInputs.GetInteraction();
+            bumpFromDealer = interaction.GetBump();
+            bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
+        }
+        else
+        {
+            bump.ApplyForce(_characterController.CharacterView, interactible);
+        }
     }
 
     public void OnEnter()
@@ -372,7 +433,8 @@ public class InactiveState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }
@@ -451,7 +513,8 @@ public class DeadState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }
@@ -531,7 +594,8 @@ public class StunState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
         ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
@@ -547,8 +611,15 @@ public class StunState : IConditionState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        IMovable bump = new Bounce();
-        bump.ApplyForce(_characterController.CharacterView, interactible);
+        IMovable bump = new ReflectionBounce();
+        if (interactible is IProjectile)
+        {
+            bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
+        }
+        else
+        {
+            bump.ApplyForce(_characterController.CharacterView, interactible);
+        }
     }
 
     public void LaunchYourself(Vector3 direction)
@@ -567,7 +638,8 @@ public class StunState : IConditionState
         {
             foreach (IEffect effect in effects)
             {
-                _characterController.Effector.AddEffects(effects);
+                IEffect effectCopy = effect.Clone();
+                _characterController.Effector.AddEffect(effectCopy);
             }
         }
     }

@@ -10,6 +10,7 @@ using UI;
 using Interactions;
 using SaveSystem;
 using BehaviourTree;
+using Abilities;
 
 public class ContextInstaller : MonoInstaller
 {
@@ -49,7 +50,13 @@ public class ContextInstaller : MonoInstaller
 
     [SerializeField]
     private NavigationPrefabHolder _navPrefabHolder;
-    
+
+    [SerializeField]
+    private ProjectilePrefabHolder _projectilePrefabHolder;
+
+    [SerializeField]
+    private AbilityHolder _abilityHolder;
+
     #endregion
     public override void InstallBindings()
     {
@@ -106,6 +113,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<CharacterUIPooler>().To<CharacterUIPooler>().AsSingle();
         Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
         Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
+        Container.Bind<ProjectilePooler>().To<ProjectilePooler>().AsSingle();
     }
 
     public void BindFactories()
@@ -134,6 +142,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<RoomObjectsPrefabHolder>().FromInstance(_roomObjectsPrefabHolder).AsSingle();
 
         Container.Bind<RoomTemplateSO>().FromInstance(_roomTemplateSO).AsSingle();
+        Container.Bind<ProjectilePrefabHolder>().FromInstance(_projectilePrefabHolder).AsSingle();
+        Container.Bind<AbilityHolder>().FromInstance(_abilityHolder).AsSingle();
     }
 
     public void BindModelHolders()

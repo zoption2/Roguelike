@@ -19,5 +19,10 @@ namespace Interactions
         {
             Duration--;
         }
+
+        public override EffectBase Clone()
+        {
+            return new StunEffect(this.Duration);
+        }
     }
 }

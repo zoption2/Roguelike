@@ -5,6 +5,7 @@ using Interactions;
 using Pool;
 using UnityEngine;
 using UnityEngine.AI;
+using Abilities;
 
 public interface ICharacterController
 {
@@ -31,6 +32,7 @@ public interface ICharacterController
     public void UpdateHealthBar();
     public CharacterType GetCharacterType();
     public Transform GetTransform();
+    public Transform GetProjectileSpawn();
     public Rigidbody GetRigidbody();
     public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler, CharacterUIView uIView);
     public Vector3 GetVelocity();
@@ -48,6 +50,8 @@ public interface ICharacterController
     public bool CheckIfMoving();
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public void HandleStopMovement();
+
+    public void Dispose();
 
     public event OnCharacterDeath ON_CHARACTER_DEATH;
     public event OnStopMovement ON_STOP_MOVEMENT;

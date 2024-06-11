@@ -4,7 +4,7 @@ using Pool;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-
+using Abilities;
 public abstract class CharacterFactory<TController>
     where TController : ICharacterController
 {

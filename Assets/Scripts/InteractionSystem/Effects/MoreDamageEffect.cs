@@ -19,6 +19,11 @@ namespace Interactions
             Duration--;
             stats.Damage.Value *= 2;
         }
+
+        public override EffectBase Clone()
+        {
+            return new MoreDamageEffect(this.Duration);
+        }
     }
 }
 

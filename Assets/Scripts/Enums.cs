@@ -48,6 +48,7 @@ public enum InteractionType
     BasicAttack = 1,
     Knight_HeavyAttack = 2,
     SuperMegaHeavyAttack = 3,
+    ArrowWithoutBounceAttack = 4,
 }
 
 public enum AbilityType
@@ -55,6 +56,7 @@ public enum AbilityType
     BasicAttackAbility = 0,
     HeavyAttackAbility = 1,
     MegaHeavyAttackAbility = 2,
+    ArrowShootAbility = 3,
 }
 
 public enum TypeOfUse
@@ -91,7 +93,7 @@ public enum UIType
 
 public enum NavigationType
 {
-    Default,
+    Default = 0,
 }
 
 
@@ -124,4 +126,10 @@ public enum RoomObjectType
     DefaultWall = 5,
     ReflectionWall = 6,
     Exit = 7
+}
+
+public enum ProjectileType
+{
+    None= 0,
+    Arrow =1,
 }

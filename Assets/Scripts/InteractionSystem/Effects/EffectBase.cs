@@ -6,7 +6,7 @@ namespace Interactions
     public abstract class EffectBase : IEffect
     {
         protected EffectType _effectType;
-        private int _duration; 
+        protected int _duration;
 
         public int Duration
         {
@@ -37,5 +37,7 @@ namespace Interactions
         {
             ON_DURATION_CHANGED?.Invoke();
         }
+
+        public abstract EffectBase Clone();
     }
 }

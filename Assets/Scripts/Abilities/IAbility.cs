@@ -1,18 +1,21 @@
 using Interactions;
 
-
-public interface IAbility 
+namespace Abilities
 {
-    public bool ReadyForUse { get;}
-    public int ReloadTime { get; }
-    public int TurnsLeftToReload { get;}
-    public IInteraction Interaction { get;}
-    public AbilityType Type { get;}
-    public TypeOfUse GetUseType();
-    public void UseAbility();
-    public void TickReload();
-    public void SetForReload();
-    public int GetUsefulness();
-    public float GetLaunchModifier();
-    
+    public interface IAbility
+    {
+        public bool ReadyForUse { get; }
+        public int ReloadTime { get; }
+        public int TurnsLeftToReload { get; }
+        public int RicochetCount {  get; }
+        public IInteraction Interaction { get; }
+        public AbilityType Type { get; }
+        public ProjectileType ProjectileType { get; }
+        public void UseAbility();
+        public void TickReload();
+        public void SetForReload();
+        public int GetUsefulness();
+        public float GetLaunchModifier();
+
+    }
 }

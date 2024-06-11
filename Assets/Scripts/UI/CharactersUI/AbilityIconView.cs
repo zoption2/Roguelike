@@ -2,7 +2,7 @@ using Pool;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Abilities;
 public interface IAbilityIconView : IMyPoolable
 {
     public void Init(IAbility ability);

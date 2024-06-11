@@ -11,6 +11,9 @@ using UnityEngine.AI;
 using BehaviourTree;
 using System.Linq;
 using Enemy;
+using Abilities;
+using Projectiles;
+
 
 namespace Player
 {
@@ -143,7 +146,7 @@ namespace Player
         public void SetCurrentAbility(IAbility ability)
         {
             CurrentAbility = ability;
-            Debug.LogWarning(CurrentAbility);
+            Debug.LogWarning(CurrentAbility + "  " + CurrentAbility.ProjectileType);
         }
 
 
@@ -194,8 +197,11 @@ namespace Player
 
         public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
         {
-
-            if(IsMoving)
+            if (interactible is IProjectile)
+            {
+                _currentState.ApplyBump(interactible, bumpFromDealer);
+            }
+            else if (IsMoving)
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);
             }
@@ -208,9 +214,10 @@ namespace Player
 
         public void PushIfDead()
         {
+            Debug.Log("pushed player to pool!");
             _pooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
-            ON_CHARACTER_DEATH(this);
+            ON_CHARACTER_DEATH?.Invoke(this);
         }
 
         public void JustPush()
@@ -258,6 +265,11 @@ namespace Player
             return CharacterView.GetTransform();
         }
 
+        public Transform GetProjectileSpawn()
+        {
+            return CharacterView.GetProjectileSpawn();
+        }
+
         public bool GetActiveStatus()
         {
             return IsActive;
@@ -285,7 +297,7 @@ namespace Player
         {
             IConditionState newState = _stateFactory.CreateConditionState(state, this);
 
-            if (!_currentState.Equals(newState))
+            if (_currentState.GetType() != newState.GetType())
             {
                 _currentState?.OnExit();
                 _currentState = newState;
@@ -326,6 +338,7 @@ namespace Player
         {
             CharacterView.ON_CLICK -= OnClick;
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
+            ON_STOP_MOVEMENT -= CheckForEndOfState;
         }
 
         public void ActivateUI()
