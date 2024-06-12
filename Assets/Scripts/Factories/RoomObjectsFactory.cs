@@ -4,7 +4,7 @@ using Zenject;
 
 public interface IRoomObjectsFactory
 {
-    void Build(Vector3 position, Transform parent, RoomObjectType type);
+    GameObject Build(Vector3 position, Transform parent, RoomObjectType type);
     public void Init();
 }
 
@@ -17,10 +17,10 @@ public class RoomObjectsFactory : IRoomObjectsFactory
     {
     }
 
-    public void Build(Vector3 position, Transform parent, RoomObjectType type)
+    public GameObject Build(Vector3 position, Transform parent, RoomObjectType type)
     {
         var prefab = _prefabHolder.GetPrefab(type);
 
-        GameObject.Instantiate(prefab, position, Quaternion.identity, parent);
+        return GameObject.Instantiate(prefab, position, Quaternion.identity, parent);
     }
 }

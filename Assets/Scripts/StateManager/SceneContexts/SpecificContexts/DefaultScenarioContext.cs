@@ -7,25 +7,22 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    [System.Serializable]
     public class PlayerSpawnPointWithType
     {
-        public Transform spawnPoint;
-        public CharacterType playerType;
+        public Vector3 SpawnPoint;
+        public CharacterType Type;
     }
 
-    [System.Serializable]
     public class EnemySpawnPointWithType
     {
-        public Transform spawnPoint;
-        public CharacterType enemyType;
+        public Vector3 SpawnPoint;
+        public CharacterType Type;
     }
 
-    [System.Serializable]
     public class BuffSpawnPointWithType
     {
-        public Transform spawnPoint;
-        public BuffType buffType;
+        public Vector3 SpawnPoint;
+        public BuffType Type;
     }
 
     public interface ICharacterScenarioContext : IScenarioContext
@@ -33,6 +30,7 @@ namespace Gameplay
         public List<IPlayerController> Players { get;  set; }
         public List<IEnemyController> Enemies { get; set; }
         public List<IBuff> Buffs { get; set; }
+        public List<ICompleatedRoomTrigger> CompleatedRoomTriggers { get; set; }
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
@@ -50,12 +48,13 @@ namespace Gameplay
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
+        public List<ICompleatedRoomTrigger> CompleatedRoomTriggers { get; set; }
         public List<IBuff> Buffs { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
-        [field: SerializeField] public List<TeleportWallEnter> TeleportWallEnters { get; set; }
-        [field: SerializeField] public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
-        [field: SerializeField] public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
-        [field: SerializeField] public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
+        public List<TeleportWallEnter> TeleportWallEnters { get; set; }
+        public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
+        public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
+        public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
 
         public event OnEndTurn ON_END_TURN;
 
@@ -65,6 +64,8 @@ namespace Gameplay
             Players = new List<IPlayerController>();
             Enemies = new List<IEnemyController>();
             Buffs = new List<IBuff>();
+            CompleatedRoomTriggers = new List<ICompleatedRoomTrigger>();
+            ////
             PlayerSpawnPoints = new List<PlayerSpawnPointWithType>();
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
             BuffSpawnPoints = new List<BuffSpawnPointWithType>();
@@ -102,6 +103,11 @@ namespace Gameplay
             {
                 enemy.UpdateHealthBar();
             }
+        }
+
+        public void ChangeRoom()
+        {
+
         }
     }
 }

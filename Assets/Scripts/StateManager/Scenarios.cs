@@ -29,6 +29,10 @@ namespace Gameplay
         {
 
         }
+
+        public override void LoadMainMenu()
+        {
+        }
     }
 
     public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenario
@@ -109,7 +113,7 @@ namespace Gameplay
             }
         }
 
-        public void LoadMainMenu()
+        public override void LoadMainMenu()
         {
             CleanPoolers();
             SceneManager.LoadScene("Menu");
@@ -118,10 +122,10 @@ namespace Gameplay
         public void ActivateCompleatedRoomTriggers()
         {
             Debug.LogWarning("Room Cleaned!");
-            //foreach(var trigger in _scenarioContext.CompleatedRoomTriggers)
-            //{
-            //    trigger.Activate();
-            //}
+            foreach (var trigger in _scenarioContext.CompleatedRoomTriggers)
+            {
+                trigger.ActivateTrigger();
+            }
         }
 
         private void SubscribeToDeathOfCharacters()
@@ -185,7 +189,7 @@ namespace Gameplay
                 state.SetCharacter(mapper.Controller);
                 _queueOfStates.Enqueue(state);
             }
-            _scenarioContext.TeleportWallEnters.ForEach(teleportWallEnter => teleportWallEnter.Recharge());///
+            //_scenarioContext.TeleportWallEnters.ForEach(teleportWallEnter => teleportWallEnter.Recharge());///
         }
     }
 
@@ -195,11 +199,12 @@ namespace Gameplay
         public void OnStateEnd();
         public void Init(IScenarioContext context);
         public IGameplayService _gameplayService { get; set; }
+        public void LoadMainMenu();
     }
 
     public interface IDefaultScenario : IScenario
     {
-        public void LoadMainMenu();
+        //public void LoadMainMenu();
     }
 
     public abstract class Scenario<T> : IScenario where T : IScenarioContext
@@ -253,6 +258,8 @@ namespace Gameplay
                 _currentState.OnEnter();
             }
         }
+
+        public abstract void LoadMainMenu();
     }
     public class CookedMapper
     {

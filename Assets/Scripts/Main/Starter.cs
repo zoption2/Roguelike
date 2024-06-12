@@ -18,8 +18,6 @@ namespace Gameplay
 
         public void Start()
         {
-            // Load Level scenario
-            //Level scenario will load a room scenario (roomSetings)
             _gameplayService.Init(TypeOfScenario.Default, _sceneContext);
         }
     }

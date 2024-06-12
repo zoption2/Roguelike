@@ -19,15 +19,9 @@ MonoBehaviour:
   - Name: Default Wall
     Color: {r: 1, g: 0.8173368, b: 0, a: 1}
     Type: 5
-  - Name: Enemy
-    Color: {r: 1, g: 0.12061543, b: 0, a: 1}
-    Type: 3
   - Name: Buff
     Color: {r: 0, g: 0.09511185, b: 1, a: 1}
     Type: 4
-  - Name: Background
-    Color: {r: 1, g: 1, b: 1, a: 1}
-    Type: 0
   - Name: Background
     Color: {r: 0, g: 0, b: 0, a: 1}
     Type: 0
@@ -37,3 +31,12 @@ MonoBehaviour:
   - Name: Exit
     Color: {r: 1, g: 0, b: 0.6894002, a: 1}
     Type: 7
+  - Name: Summoner
+    Color: {r: 1, g: 0, b: 0, a: 1}
+    Type: 102
+  - Name: Thrower
+    Color: {r: 1, g: 0, b: 0, a: 1}
+    Type: 101
+  - Name: Barbarian
+    Color: {r: 1, g: 0, b: 0, a: 1}
+    Type: 100

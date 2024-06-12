@@ -66,6 +66,7 @@ namespace SlingShotLogic
                 {
                     OnShoot?.Invoke(_direction);
                     OnAbilityUse?.Invoke();
+                    Debug.LogWarning(_direction);
                     _slingShotPooler.Push(_type, this);
                 }
             }

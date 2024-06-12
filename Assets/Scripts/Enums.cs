@@ -109,11 +109,13 @@ public enum TemplateElementType
     None = 0,
     Ground = 1,
     Player = 2,
-    Enemy = 3,
-    Buff = 4,
+    RandomBuff = 4,
     DefaultWall = 5,
     ReflectionWall = 6,
     Exit = 7,
+    Barbarian = 100,
+    Thrower = 101,
+    Summoner = 102,
 
 }
 
@@ -122,9 +124,11 @@ public enum RoomObjectType
     None = 0,
     Floor = 1,
     Player = 2,
-    Enemy = 3,
-    Buff = 4,
+    RandomBuff = 4,
     DefaultWall = 5,
     ReflectionWall = 6,
-    Exit = 7
+    Exit = 7,
+    Barbarian = 100,
+    Thrower = 101,
+    Summoner = 102,
 }
