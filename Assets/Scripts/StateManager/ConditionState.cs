@@ -107,7 +107,6 @@ public abstract class ActiveState
 
     public virtual void LaunchYourself(Vector3 direction)
     {
-        Debug.Log(" base direction: " + direction);
         Vector3 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().velocity = forceVector;
     }
@@ -196,15 +195,7 @@ public abstract class ActiveState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        if (_characterController.GetRigidbody().velocity.magnitude > 1 || interactible is IProjectile)
-        {
-            bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
-        }
-        else
-        {
-            bumpFromDealer = new ReflectionBounce();
-            bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
-        }
+        bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
     }
 }
 
@@ -251,7 +242,6 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector3 direction)
     {
-        Debug.Log(" player direction: " + direction);
         Vector3 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().velocity = forceVector;
 
@@ -397,6 +387,7 @@ public class InactiveState : IConditionState
                 _characterController.Effector.AddEffect(effectCopy);
             }
         }
+
         ReactiveStats interactionResult = _characterController.InteractionProcessor.ProcessInteraction(interaction);
         _characterController.ModifiableStats = _characterController.InteractionCalculator.CalculateInteractionResult(_characterController.ModifiableStats, interactionResult);
         _characterController.AnalizeCondition();
@@ -404,18 +395,7 @@ public class InactiveState : IConditionState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        IMovable bump = new ReflectionBounce();
-
-        if (interactible is IProjectile)
-        {
-            IInteraction interaction = interactible.ControllerInputs.GetInteraction();
-            bumpFromDealer = interaction.GetBump();
-            bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
-        }
-        else
-        {
-            bump.ApplyForce(_characterController.CharacterView, interactible);
-        }
+        bumpFromDealer.ApplyForce(_characterController.CharacterView, interactible);
     }
 
     public void OnEnter()
@@ -607,15 +587,7 @@ public class StunState : IConditionState
 
     public void ApplyBump(IInteractible interactible, IMovable bumpFromDealer)
     {
-        IMovable bump = new ReflectionBounce();
-        if (interactible is IProjectile)
-        {
-            bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
-        }
-        else
-        {
-            bump.ApplyForce(_characterController.CharacterView, interactible);
-        }
+        bumpFromDealer.ApplyForce(interactible, _characterController.CharacterView);
     }
 
     public void LaunchYourself(Vector3 direction)

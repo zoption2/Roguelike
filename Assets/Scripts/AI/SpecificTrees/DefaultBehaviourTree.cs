@@ -5,6 +5,8 @@ using UnityEngine.AI;
 using Abilities;
 using Unity.VisualScripting;
 using UnityEngine.UIElements;
+using System.Net;
+using TMPro;
 
 
 namespace BehaviourTree
@@ -122,10 +124,14 @@ namespace BehaviourTree
             float maxDistance = launchPower / dragConstant;
             return maxDistance;
         }
+        protected NavMeshAgent GetAgent()
+        {
+            return _characterController.NavMeshAgent;
+        }
         public bool CanAttackAfterMove(NavMeshPath path)
         {
             Transform target = GetTarget();
-            NavMeshAgent navAgent = _characterController.NavMeshAgent;
+            NavMeshAgent navAgent = GetAgent();
             float minStoppingDistance= 2f;
             Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z );
 
@@ -149,14 +155,8 @@ namespace BehaviourTree
                     remainingDistance = maxDistance - walkedDistance;
                     distanceToTarget = Vector3.Distance(corners[i], targetPosition);
 
-                    if (distanceToTarget < minStoppingDistance)
-                    {
-                        direction = corners[i] - corners[i - 1];
-                        endPoint = corners[i];
-                        endPoint -= direction.normalized * (minStoppingDistance - distanceToTarget);
-                        navAgent.SetDestination(endPoint);
-                        return false;
-                    }
+                    if (CanAttackWithRemainingDistance(corners[i - 1], corners[i], remainingDistance))
+                        return true;
                 }
                 else
                 {
@@ -171,30 +171,41 @@ namespace BehaviourTree
                     {
                         endPoint -= direction.normalized * (minStoppingDistance - distanceToTarget);
                     }
-
                     navAgent.SetDestination(endPoint);
                     return false;
                 }
 
                 if (remainingDistance >= Vector3.Distance(corners[i], targetPosition))
                 {
-                    if (ChooseAbility(corners[i], remainingDistance) != null)
-                    {
-                        direction = corners[i] - corners[i - 1];
-                        distanceToTarget = Vector3.Distance(corners[i], targetPosition);
-                        endPoint = corners[i];
-
-                        if (distanceToTarget < minStoppingDistance)
-                        {
-                            endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
-                        }
-
-                        navAgent.SetDestination(endPoint);
+                    if (CanAttackWithRemainingDistance(corners[i - 1], corners[i], remainingDistance))
                         return true;
-                    }
                 }
             }
             return false;
+        }
+
+        protected bool CanAttackWithRemainingDistance(Vector3 previousPoint ,Vector3 currentPoint,float remainingDistance,float minStoppingDistance = 2f)
+        {
+            Transform target = GetTarget();
+            Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z);
+            NavMeshAgent navAgent = GetAgent();
+
+            if (ChooseAbility(currentPoint, remainingDistance) != null)
+            {
+                Vector3 direction = currentPoint - previousPoint;
+                float distanceToTarget = Vector3.Distance(currentPoint, targetPosition);
+                Vector3 endPoint = currentPoint;
+
+                if (distanceToTarget < minStoppingDistance)
+                {
+                    endPoint -= direction.normalized * (minStoppingDistance - distanceToTarget);
+                }
+                navAgent.SetDestination(endPoint);
+
+                return true;
+            }
+            else
+                return false;
         }
         
         protected bool HitTransformIsTarget(Transform hitTransform, Transform target)

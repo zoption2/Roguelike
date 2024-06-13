@@ -99,7 +99,8 @@ namespace Gameplay
             }
             else if (noEnemies)
             {
-                ActivateCompleatedRoomTriggers();
+                Debug.LogWarning("You Won!");
+                LoadMainMenu();
             }
         }
 

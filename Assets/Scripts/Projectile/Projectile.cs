@@ -22,7 +22,7 @@ namespace Projectiles
         private ProjectilePooler _pooler;
         public IControllerInputs ControllerInputs { get; set; }
         public ProjectileType ProjectileType { get; set; }
-        public Vector2 Normal { get; set; }
+        public Vector3 Normal { get; set; }
         private Queue<Vector3> _lastVelocities = new(2);
 
         private ProjectileCollisionHandler _projectileCollisionHandler;

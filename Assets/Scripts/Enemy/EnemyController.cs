@@ -185,7 +185,7 @@ namespace Enemy
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);
             }
-            else if (IsMoving)
+            else if (IsActive)
             {
                 _currentState.ApplyBump(interactible, bumpFromDealer);
             }

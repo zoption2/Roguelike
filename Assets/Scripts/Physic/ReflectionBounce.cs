@@ -21,7 +21,7 @@ public class ReflectionBounce : IMovable
         normal = provider.Normal;
 
         Vector3 reflectedVelocity = Vector3.Reflect(_providerVelocity, normal);
-        
+
 
         if (_providerRb.velocity.magnitude < 1 && _handlerRb.velocity.magnitude == 0)
         {
