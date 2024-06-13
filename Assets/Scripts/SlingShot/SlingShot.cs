@@ -9,7 +9,7 @@ namespace SlingShotLogic
 {
     public interface ISlingShot : IMyPoolable
     {
-        public void Init(Vector3 _initPosition, CharacterType type);
+        public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance);
         public event Action<Vector3> OnShoot;
         public event Action OnAbilityUse;
         public event Action<Vector3> OnDirectionChange;
@@ -24,6 +24,8 @@ namespace SlingShotLogic
 
         [SerializeField] Image _cursor;
         [SerializeField] Image _touchZone;
+        [SerializeField] RectTransform _pointer;
+        [SerializeField] RectTransform _pointerOrigin;
 
         private Vector3 _direction;
         private Vector3 _startPoint;
@@ -33,11 +35,13 @@ namespace SlingShotLogic
 
         [Inject]
         private SlingshotPooler _slingShotPooler;
+        private float _pointerLenght;
 
-        public void Init(Vector3 _initPosition, CharacterType type)
+        public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance)
         {
             _type = type;
             _startPoint = _initPosition;
+            _pointerLenght = currentLaunchDistance;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -51,6 +55,7 @@ namespace SlingShotLogic
             _cursor.rectTransform.position = new Vector3(clampedPosition.x, _cursor.rectTransform.position.y, clampedPosition.z);
             _endPoint = _cursor.rectTransform.position;
             _direction = _startPoint - _endPoint;
+            ChangePointerDirection(_direction);
             OnDirectionChange?.Invoke(_direction);
         }
 
@@ -91,6 +96,18 @@ namespace SlingShotLogic
                 direction = direction.normalized * maxDistance;
             }
             return zoneCenter + direction;
+        }
+
+        public void ChangePointerDirection(Vector3 direction)
+        {
+            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            //Vector3 currentRotation = _pointerOrigin.eulerAngles;
+            //Quaternion targetRotation = Quaternion.Euler(currentRotation.x, currentRotation.y, angle);
+            //Debug.Log("direction: "+ direction);
+            ////Quaternion targetRotation = Quaternion.LookRotation(direction,Vector3.up);
+
+
+            _pointerOrigin.localEulerAngles = Vector3.forward * -angle;
         }
 
         public void OnCreate()

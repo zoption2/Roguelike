@@ -157,20 +157,15 @@ namespace Player
             {
                 _uIViewmodel.ActivateSkillsBTNs();
             }
-            //Debug.Log($"-----|{CharacterModel.Type}|-----");
-            //Debug.Log("<color=#189C0C>" + "Hp: " + ModifiableStats.Health.Value + "</color>");
+        }
 
-            //Debug.Log("<color=#F4DA64>" + "All effects: " + "</color>");
-            //Effector.PrintEffects(_allEffects.Value);
-
-            //Debug.Log("<color=#F4DA64>" + "Effects Before interaction: " + "</color>");
-            //Effector.PrintEffects(Effector.GetPreInteractionEffects());
-
-            //Debug.Log("<color=#F4DA64>" + "Effects on Start turn: " + "</color>");
-            //Effector.PrintEffects(Effector.GetOnStartTurnInteractionEffects());
-
-            //Debug.Log("<color=#F4DA64>" + "Effects on End turn: " + "</color>");
-            //Effector.PrintEffects(Effector.GetOnEndTurnInteractionEffects());
+        public float GetCurrentLaunchDistance()
+        {
+            float launchPower = ModifiableStats.LaunchPower.Value;
+            float dragConstant = GetRigidbody().drag;
+            float maxDistance = launchPower / dragConstant;
+            float currentLaunchDistance = maxDistance * CurrentAbility.GetLaunchModifier();
+            return currentLaunchDistance;
         }
 
         public void OnBeginDrag(PointerEventData eventData)

@@ -177,7 +177,6 @@ public abstract class ActiveState
 
     public void OnExit()
     {
-        //Debug.Log("<color=#44F44F>" + "--|Exit Active State|-- " + "</color>");
         if(_slingShot != null)
         {
             _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
@@ -214,7 +213,7 @@ public class PlayerActiveState : ActiveState, IConditionState
 
         _slingShot = _characterController.SlingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.Euler(90, 0, 0), slingShotInitPosition.parent);
 
-        _slingShot.Init(slingShotInitPosition.position, type);
+        _slingShot.Init(slingShotInitPosition.position, type,_characterController.GetCurrentLaunchDistance());
 
         _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
         _slingShot.OnDirectionChange += _characterController.CharacterView.ChangeDirection;
