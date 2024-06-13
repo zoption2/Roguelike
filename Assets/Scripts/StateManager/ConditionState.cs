@@ -330,18 +330,13 @@ public class EnemyActiveState : ActiveState, IConditionState
         _navAgent.enabled = true;        
 
         _navAgent.SetDestination(target.position);
-        Debug.Log("target position: " + target.position);
-        Debug.Log("path corners count: " + _navAgent.path.corners.Length);
-        Debug.Log("path corner[0]: " + _navAgent.path.corners[0]);
         await Task.Delay(_milisecondsDelay / 10);
         if (defaultBehaviourTree.CanAttackAfterMove(_navAgent.path))
         {
-            Debug.Log("can attack after movement");
             ON_STOPPED += Attack;
         }
         else
         {
-            Debug.Log("CAN'T attack after movement");
             ON_STOPPED += _characterController.HandleStopMovement;
         }
     }

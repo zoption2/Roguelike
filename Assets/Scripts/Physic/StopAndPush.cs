@@ -13,9 +13,9 @@ public class StopAndPush : IMovable
         _providerRb = provider.GetRigidbody();
         _handlerRb = handler.GetRigidbody();
         _providerVelocity = provider.GetLastVelocity();
-        _providerVelocity.z = 0;
+        _providerVelocity.y = 0;
         _handlerVelocity = handler.GetLastVelocity();
-        _handlerVelocity.z = 0;
+        _handlerVelocity.y = 0;
 
         _handlerRb.velocity = _providerVelocity;
 

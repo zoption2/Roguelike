@@ -126,7 +126,7 @@ namespace BehaviourTree
         {
             Transform target = GetTarget();
             NavMeshAgent navAgent = _characterController.NavMeshAgent;
-            float minStoppingDistance=2f;
+            float minStoppingDistance= 2f;
             Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z );
 
             float maxDistance = GetMaxLaunchDistance();
@@ -136,7 +136,7 @@ namespace BehaviourTree
             float divider;
 
             Vector3[] corners = path.corners;
-            Vector2 direction;
+            Vector3 direction;
             Vector3 neededVector;
             Vector3 endPoint;
 
@@ -153,10 +153,8 @@ namespace BehaviourTree
                     {
                         direction = corners[i] - corners[i - 1];
                         endPoint = corners[i];
-                        endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
+                        endPoint -= direction.normalized * (minStoppingDistance - distanceToTarget);
                         navAgent.SetDestination(endPoint);
-                        Debug.Log("(if too close) path corners count: " + navAgent.path.corners.Length);
-                        Debug.Log("path corner[0]: " + navAgent.path.corners[0]);
                         return false;
                     }
                 }
@@ -171,12 +169,10 @@ namespace BehaviourTree
 
                     if (distanceToTarget < minStoppingDistance)
                     {
-                        endPoint -= (Vector3)direction.normalized * (minStoppingDistance - distanceToTarget);
+                        endPoint -= direction.normalized * (minStoppingDistance - distanceToTarget);
                     }
 
                     navAgent.SetDestination(endPoint);
-                    Debug.Log("(if can't get close enough) path corners count: " + navAgent.path.corners.Length);
-                    Debug.Log("path corner[0]: " + navAgent.path.corners[0]);
                     return false;
                 }
 
