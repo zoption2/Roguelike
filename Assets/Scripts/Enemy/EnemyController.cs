@@ -357,6 +357,11 @@ namespace Enemy
             _uIViewmodel.ToggleActiveIndicator();
         }
 
+        public void RevertReadyUnactiveAbilityButtons()
+        {
+            
+        }
+
         public void ProcessOnEndTurn()
         {
             _uIViewmodel.ToggleActiveIndicator();

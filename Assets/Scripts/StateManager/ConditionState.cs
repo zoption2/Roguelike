@@ -109,6 +109,7 @@ public abstract class ActiveState
     {
         Vector3 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().velocity = forceVector;
+        _characterController.NavMeshAgent.enabled = false;
     }
 
     public virtual void LaunchProjectile(Vector3 direction)
@@ -247,6 +248,7 @@ public class PlayerActiveState : ActiveState, IConditionState
         _characterController.GetRigidbody().velocity = forceVector * slingshotMultiplier;
 
         _slingShot.OnShoot -= LaunchYourself;
+
     }
 
     public override void LaunchProjectile(Vector3 direction)

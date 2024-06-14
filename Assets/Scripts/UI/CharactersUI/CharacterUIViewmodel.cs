@@ -153,15 +153,17 @@ public class CharacterUIViewmodel
         }
     }
 
-    public void RevertButtonInteractible(IAbility ability)
+    public void ChangeButtonInteractible(IAbility ability,bool value)
     {
         int index = _abilities.IndexOf(ability);
-        _buttons[index].interactable = !_buttons[index].interactable;
+        _buttons[index].interactable = value;
     }
 
     private void OnAbilityButtonClick(IAbility ability)
     {
+        _characterController.RevertReadyUnactiveAbilityButtons();
         _characterController.SetCurrentAbility(ability);
+        ChangeButtonInteractible(ability,false);
     }
 
     public void VisualiseEffects(List<IEffect> displayedEffects)

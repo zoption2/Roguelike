@@ -361,7 +361,7 @@ namespace Player
             CurrentAbility.UseAbility();
             if (!CurrentAbility.ReadyForUse)
             {
-                _uIViewmodel.RevertButtonInteractible(CurrentAbility);
+                _uIViewmodel.ChangeButtonInteractible(CurrentAbility,false);
             }
         }
 
@@ -377,6 +377,16 @@ namespace Player
             CurrentAbility = _basicAbility;
         }
 
+        public void RevertReadyUnactiveAbilityButtons()
+        {
+            foreach (IAbility ability in CharacterModel.Abilities)
+            {
+                if (ability.ReadyForUse)
+                {
+                    _uIViewmodel.ChangeButtonInteractible(ability, true);
+                }
+            }
+        }
         public void ProcessOnEndTurn()
         {
             _uIViewmodel.ToggleActiveIndicator();
@@ -387,15 +397,17 @@ namespace Player
                 {
                     if (ability.ReadyForUse)
                     {
-                        _uIViewmodel.RevertButtonInteractible(ability);
+                        _uIViewmodel.ChangeButtonInteractible(ability,true);
                     }
                 }
             }
+
 
             foreach(IEnemyController enemy in _characterScenarioContext.Enemies)
             {
                 enemy.DisactivateAbilityPanel();
             }
+            RevertReadyUnactiveAbilityButtons();
         }
 
         

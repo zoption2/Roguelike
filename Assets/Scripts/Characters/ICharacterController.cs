@@ -52,6 +52,8 @@ public interface ICharacterController
     public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
     public void HandleStopMovement();
 
+    public void RevertReadyUnactiveAbilityButtons();
+
     public void Dispose();
 
     public event OnCharacterDeath ON_CHARACTER_DEATH;

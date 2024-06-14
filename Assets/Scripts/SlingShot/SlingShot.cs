@@ -56,7 +56,6 @@ namespace SlingShotLogic
             _cursor.rectTransform.position = new Vector3(clampedPosition.x, _cursor.rectTransform.position.y, clampedPosition.z);
             _endPoint = _cursor.rectTransform.position;
             _direction = _startPoint - _endPoint;
-            Debug.Log("direction magnitude: " + _direction.magnitude);
             ChangePointerDirection(_direction);
             ChangePointerLength(_direction.magnitude);
             OnDirectionChange?.Invoke(_direction);
