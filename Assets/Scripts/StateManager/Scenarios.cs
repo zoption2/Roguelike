@@ -100,7 +100,7 @@ namespace Gameplay
             else if (noEnemies)
             {
                 Debug.LogWarning("You Won!");
-                LoadMainMenu();
+                //LoadMainMenu();
             }
         }
 

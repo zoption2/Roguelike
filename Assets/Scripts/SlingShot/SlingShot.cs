@@ -35,13 +35,14 @@ namespace SlingShotLogic
 
         [Inject]
         private SlingshotPooler _slingShotPooler;
-        private float _pointerLenght;
+        private float _launchDistance;
+        private const float SLINGSHOT_RADIUS = 2.1f;
 
         public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance)
         {
             _type = type;
             _startPoint = _initPosition;
-            _pointerLenght = currentLaunchDistance;
+            _launchDistance = currentLaunchDistance;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -55,7 +56,9 @@ namespace SlingShotLogic
             _cursor.rectTransform.position = new Vector3(clampedPosition.x, _cursor.rectTransform.position.y, clampedPosition.z);
             _endPoint = _cursor.rectTransform.position;
             _direction = _startPoint - _endPoint;
+            Debug.Log("direction magnitude: " + _direction.magnitude);
             ChangePointerDirection(_direction);
+            ChangePointerLength(_direction.magnitude);
             OnDirectionChange?.Invoke(_direction);
         }
 
@@ -101,13 +104,16 @@ namespace SlingShotLogic
         public void ChangePointerDirection(Vector3 direction)
         {
             float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            //Vector3 currentRotation = _pointerOrigin.eulerAngles;
-            //Quaternion targetRotation = Quaternion.Euler(currentRotation.x, currentRotation.y, angle);
-            //Debug.Log("direction: "+ direction);
-            ////Quaternion targetRotation = Quaternion.LookRotation(direction,Vector3.up);
-
-
             _pointerOrigin.localEulerAngles = Vector3.forward * -angle;
+        }
+
+        public void ChangePointerLength(float directionMagnitude)
+        {
+            float length = _launchDistance * (directionMagnitude / SLINGSHOT_RADIUS);
+            Vector2 size = new Vector2(1, length);
+            Vector2 position = new Vector2(0,length/2);
+            _pointer.sizeDelta =  size;
+            _pointer.anchoredPosition = position;
         }
 
         public void OnCreate()

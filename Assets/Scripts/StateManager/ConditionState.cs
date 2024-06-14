@@ -241,8 +241,10 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector3 direction)
     {
+        float slingshotRadius = 2.1f;
+        float slingshotMultiplier = direction.magnitude / slingshotRadius;
         Vector3 forceVector = GetForceVector(direction);
-        _characterController.GetRigidbody().velocity = forceVector;
+        _characterController.GetRigidbody().velocity = forceVector * slingshotMultiplier;
 
         _slingShot.OnShoot -= LaunchYourself;
     }
