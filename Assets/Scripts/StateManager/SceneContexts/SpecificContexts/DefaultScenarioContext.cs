@@ -43,8 +43,7 @@ namespace Gameplay
         public event OnEndTurn ON_END_TURN;
     }
 
-    [System.Serializable]
-    public class DefaultScenarioContext : MonoBehaviour, ICharacterScenarioContext
+    public class DefaultScenarioContext : ICharacterScenarioContext
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
@@ -60,12 +59,10 @@ namespace Gameplay
 
         public DefaultScenarioContext()
         {
-            
             Players = new List<IPlayerController>();
             Enemies = new List<IEnemyController>();
             Buffs = new List<IBuff>();
             CompleatedRoomTriggers = new List<ICompleatedRoomTrigger>();
-            ////
             PlayerSpawnPoints = new List<PlayerSpawnPointWithType>();
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
             BuffSpawnPoints = new List<BuffSpawnPointWithType>();
@@ -81,25 +78,24 @@ namespace Gameplay
                 }
             }
 
-            foreach(IEnemyController enemy in Enemies)
+            foreach (IEnemyController enemy in Enemies)
             {
                 if (enemy.CheckIfMoving())
                 {
                     return;
-                }  
+                }
             }
             ON_END_TURN?.Invoke();
         }
 
-        ////////////////////
         public void ProcessTurnEnd()
         {
-            foreach(IPlayerController player in Players)
+            foreach (IPlayerController player in Players)
             {
                 player.UpdateHealthBar();
             }
 
-            foreach(IEnemyController enemy in Enemies)
+            foreach (IEnemyController enemy in Enemies)
             {
                 enemy.UpdateHealthBar();
             }
@@ -107,7 +103,7 @@ namespace Gameplay
 
         public void ChangeRoom()
         {
-
         }
     }
 }
+

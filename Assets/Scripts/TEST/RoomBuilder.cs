@@ -200,7 +200,7 @@ public class RoomBuilder : IRoomBuilder
 
     private void CenterCamera()
     {
-        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "MainRoom");
+        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
         if (template == null)
         {
             Debug.LogError("Template not found");
@@ -215,9 +215,12 @@ public class RoomBuilder : IRoomBuilder
         Vector3 topRight = coordinates[rows - 1, cols - 1];
         Vector3 center = (bottomLeft + topRight) / 2;
 
+        Debug.Log($"Camera position before: {Camera.main.transform.position}");
         Camera.main.transform.position = new Vector3(center.x, Camera.main.transform.position.y, center.z);
-        Camera.main.transform.LookAt(center);
+        Camera.main.transform.LookAt(new Vector3(center.x, 0, center.z));
+        Debug.Log($"Camera position after: {Camera.main.transform.position}");
     }
+
 
     private Transform CreateParent(string name, Transform parent)
     {

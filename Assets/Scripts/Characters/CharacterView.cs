@@ -90,7 +90,7 @@ public class CharacterView : MonoBehaviour,
     public void ChangeDirection(Vector3 direction)
     {
         float angle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        Quaternion targetRotation = Quaternion.Euler(0f, angle, 0f);
         _viewTransform.rotation = targetRotation;
     }
 

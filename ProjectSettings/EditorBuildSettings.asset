@@ -27,6 +27,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Level_AdaptiveScreenTest.unity
     guid: 75392fd7c66d98049b56467253cb1ab6
   - enabled: 1
-    path: Assets/Scenes/Level_BuilderTest.unity
+    path: Assets/Scenes/Level_1.unity
     guid: 3bebed7d05e1c174c9b3832d2ad3ecbf
   m_configObjects: {}

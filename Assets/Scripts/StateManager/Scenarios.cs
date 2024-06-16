@@ -20,7 +20,7 @@ namespace Gameplay
 
         }
 
-        public BossScenario(IGameplayService fullService, IScenarioContext scenarioContext)
+        public BossScenario(IGameplayService fullService)
         {
             _gameplayService = fullService;
         }
@@ -116,8 +116,20 @@ namespace Gameplay
         public override void LoadMainMenu()
         {
             CleanPoolers();
+            Camera mainCamera = Camera.main;
+            RemoveFromDontDestroyOnLoad(mainCamera.gameObject);
             SceneManager.LoadScene("Menu");
         }
+
+        private void RemoveFromDontDestroyOnLoad(GameObject obj)
+        {
+            Scene tempScene = SceneManager.CreateScene("TempScene");
+
+            SceneManager.MoveGameObjectToScene(obj, tempScene);
+
+            GameObject.Destroy(obj);
+        }
+
 
         public void ActivateCompleatedRoomTriggers()
         {
