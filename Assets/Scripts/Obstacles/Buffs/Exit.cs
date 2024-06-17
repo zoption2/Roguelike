@@ -1,8 +1,46 @@
-//using Gameplay;
-//using Obstacles;
-//using Pool;
-//using UnityEngine;
-//using Zenject;
+using Gameplay;
+using Obstacles;
+using Pool;
+using UnityEngine;
+using Zenject;
+
+public class Exit : MonoBehaviour, ICompleatedRoomTrigger
+{
+    private bool _isActivated;
+    private BoxCollider _boxCollider;
+    private IScenario _scenario;
+
+    private void Start()
+    {
+        _boxCollider = GetComponent<BoxCollider>();
+    }
+
+    public void Init(IScenario scenario)
+    {
+        _scenario = scenario;
+    }
+
+    public bool GetActiveStatus()
+    {
+        return _isActivated;
+    }
+
+    public void ActivateTrigger()
+    {
+        Debug.LogWarning("Exit trigger!");
+        _boxCollider.isTrigger = true;
+    }
+
+    public void UseTrigger()
+    {
+        _scenario.LoadMainMenu();
+        //_scenario.CreateNewRoomScene(1,2);
+    }
+
+    public void DisableTrigger()
+    {
+    }
+}
 
 //public class TriggerBase : MonoBehaviour, IMyPoolable
 //{

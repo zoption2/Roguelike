@@ -1,0 +1,240 @@
+using CharactersStats;
+using Enemy;
+using Gameplay;
+using Obstacles;
+using Player;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.AI.Navigation;
+using UnityEngine;
+
+public interface IRoomBuilder
+{
+    void BuildLevel();
+    public Transform PlayersParent { get; set; }
+    public Transform EnemiesParent { get; set; }
+    public Transform BuffsParent { get; set; }
+}
+
+public class RoomBuilder : IRoomBuilder
+{
+    public IScenario _scenario { get; }
+    public ICharacterScenarioContext _characters { get; }
+    private IStatsProvider _statsProvider;
+    private IBuffFactory _buffFactory;
+    private IPlayerFactory _playerFactory;
+    private IEnemyFactory _enemyFactory;
+    private INavigationFactory _navigationFactory;
+    private IRoomObjectsFactory _roomObjectsFactory;
+    private RoomTemplateSO _roomTemplate;
+    public Transform PlayersParent { get; set; }
+    public Transform EnemiesParent { get; set; }
+    public Transform BuffsParent { get; set; }
+    public Transform WallsParent { get; set; }
+    public Transform FloorsParent { get; set; }
+
+    public int EnemyCount { get; set; } = 2;
+    public int BuffCount { get; set; } = 2;
+
+    public RoomBuilder(IScenario scenario,
+            ICharacterScenarioContext context,
+            IStatsProvider provider,
+            IBuffFactory buffFactory,
+            IPlayerFactory playerFactory,
+            IEnemyFactory enemyFactory,
+            INavigationFactory navigationFactory,
+            IRoomObjectsFactory roomObjectsFactory,
+            RoomTemplateSO roomTemplate)
+    {
+        _scenario = scenario;
+        _characters = context;
+        _statsProvider = provider;
+        _buffFactory = buffFactory;
+        _playerFactory = playerFactory;
+        _enemyFactory = enemyFactory;
+        _navigationFactory = navigationFactory;
+        _roomObjectsFactory = roomObjectsFactory;
+        _roomTemplate = roomTemplate;
+    }
+
+    public void BuildLevel()
+    {
+        AnalyzeTemplate();
+        BuildRoom();
+        OnNavigationCreate();
+        CenterCamera();
+    }
+
+    private void AnalyzeTemplate()
+    {
+        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
+        if (template == null)
+        {
+            Debug.LogError("Template not found");
+            return;
+        }
+
+        var templateElements = template.TemplateElement;
+        var coordinates = template.Coordinates;
+
+        for (int i = 0; i < templateElements.GetLength(0); i++)
+        {
+            for (int j = 0; j < templateElements.GetLength(1); j++)
+            {
+                TemplateElementType elementType = templateElements[i, j];
+                Vector3 position = coordinates[i, j];
+
+                switch (elementType)
+                {
+                    case TemplateElementType.Player:
+                        _characters.PlayerSpawnPoints.Add(new PlayerSpawnPointWithType { SpawnPoint = position, Type = CharacterType.Warrior });
+                        break;
+
+                    case TemplateElementType.Barbarian:
+                    case TemplateElementType.Summoner:
+                    case TemplateElementType.Thrower:
+                        _characters.EnemySpawnPoints.Add(new EnemySpawnPointWithType { SpawnPoint = position, Type = (CharacterType)elementType });
+                        Debug.Log($"Added enemy spawn point at {position} of type {elementType}");
+                        break;
+
+                    case TemplateElementType.RandomBuff:
+                        _characters.BuffSpawnPoints.Add(new BuffSpawnPointWithType { SpawnPoint = position, Type = (BuffType)elementType });
+                        break;
+                }
+            }
+        }
+
+        Debug.Log($"Analyzed template 'TEST BUILD': PlayerSpawnPoints={_characters.PlayerSpawnPoints.Count}, EnemySpawnPoints={_characters.EnemySpawnPoints.Count}, BuffSpawnPoints={_characters.BuffSpawnPoints.Count}");
+    }
+
+    private void BuildRoom()
+    {
+        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
+        if (template == null)
+        {
+            Debug.LogError("Template not found");
+            return;
+        }
+
+        GameObject roomObject = new GameObject(template.name);
+        roomObject.transform.position = new Vector3(0, 0, 0);
+
+        PlayersParent = CreateParent("Players", roomObject.transform);
+        EnemiesParent = CreateParent("Enemies", roomObject.transform);
+        BuffsParent = CreateParent("Buffs", roomObject.transform);
+        WallsParent = CreateParent("Walls", roomObject.transform);
+        FloorsParent = CreateParent("Floors", roomObject.transform);
+
+        var templateElements = template.TemplateElement;
+        var coordinates = template.Coordinates;
+
+        for (int i = 0; i < templateElements.GetLength(0); i++)
+        {
+            for (int j = 0; j < templateElements.GetLength(1); j++)
+            {
+                TemplateElementType elementType = templateElements[i, j];
+                Vector3 position = coordinates[i, j];
+                Vector3 floorPosition = new Vector3(position.x, position.y - 1, position.z);
+
+                _roomObjectsFactory.Build(floorPosition, FloorsParent, RoomObjectType.Floor);
+
+                switch (elementType)
+                {
+                    case TemplateElementType.DefaultWall:
+                        _roomObjectsFactory.Build(position, WallsParent, RoomObjectType.DefaultWall);
+                        break;
+                }
+            }
+        }
+
+        BuildExits(templateElements, coordinates);
+    }
+
+    private void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
+    {
+        int rows = templateElements.GetLength(0);
+        int cols = templateElements.GetLength(1);
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                if (templateElements[i, j] == TemplateElementType.Exit)
+                {
+                    if (j + 2 < cols &&
+                        templateElements[i, j + 1] == TemplateElementType.Exit &&
+                        templateElements[i, j + 2] == TemplateElementType.Exit)
+                    {
+                        Vector3 centerPos = coordinates[i, j + 1];
+                        GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+                        exit.transform.rotation = Quaternion.Euler(0, 90, 0);
+
+                        ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
+                        _characters.CompleatedRoomTriggers.Add(trigger);
+                        trigger.Init(_scenario);
+
+                        templateElements[i, j] = TemplateElementType.None;
+                        templateElements[i, j + 2] = TemplateElementType.None;
+                    }
+                    else if (i + 2 < rows &&
+                             templateElements[i + 1, j] == TemplateElementType.Exit &&
+                             templateElements[i + 2, j] == TemplateElementType.Exit)
+                    {
+                        Vector3 centerPos = coordinates[i + 1, j];
+                        GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+
+                        ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
+                        _characters.CompleatedRoomTriggers.Add(trigger);
+                        trigger.Init(_scenario);
+
+                        templateElements[i, j] = TemplateElementType.None;
+                        templateElements[i + 2, j] = TemplateElementType.None;
+                    }
+
+                    
+                }
+            }
+        }
+    }
+
+    private void CenterCamera()
+    {
+        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
+        if (template == null)
+        {
+            Debug.LogError("Template not found");
+            return;
+        }
+
+        var coordinates = template.Coordinates;
+        int rows = coordinates.GetLength(0);
+        int cols = coordinates.GetLength(1);
+
+        Vector3 bottomLeft = coordinates[0, 0];
+        Vector3 topRight = coordinates[rows - 1, cols - 1];
+        Vector3 center = (bottomLeft + topRight) / 2;
+
+        Debug.Log($"Camera position before: {Camera.main.transform.position}");
+        Camera.main.transform.position = new Vector3(center.x, Camera.main.transform.position.y, center.z);
+        Camera.main.transform.LookAt(new Vector3(center.x, 0, center.z));
+        Debug.Log($"Camera position after: {Camera.main.transform.position}");
+    }
+
+
+    private Transform CreateParent(string name, Transform parent)
+    {
+        GameObject parentObject = new GameObject(name);
+        parentObject.transform.SetParent(parent);
+        parentObject.transform.localPosition = Vector3.zero;
+        parentObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        return parentObject.transform;
+    }
+
+    public void OnNavigationCreate()
+    {
+        NavMeshSurface navMeshSurface = _navigationFactory.CreateNavigation();
+        _characters.NavMeshSurface = navMeshSurface;
+        navMeshSurface.BuildNavMesh();
+    }
+}
