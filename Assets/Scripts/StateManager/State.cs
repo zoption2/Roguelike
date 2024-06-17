@@ -131,6 +131,8 @@ namespace Gameplay
 
         public ICharacterScenarioContext _characters { get; }
 
+        private const float YOffset = 0.5f;
+
         IStatsProvider _statsProvider;
 
         IBuffFactory _buffFactory;
@@ -237,7 +239,8 @@ namespace Gameplay
             {
                 player = _characters.PlayerSpawnPoints[i];
                 playerType = DataTransfer.TypeCollection[i];
-                Vector3 newPos = player.SpawnPoint;
+                Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
+                Debug.LogWarning(newPos);
                 IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
                 newPlayer.SetCharacterContext(_characters);
                 _characters.Players.Add(newPlayer);
@@ -258,7 +261,8 @@ namespace Gameplay
 
                 if (enemyType != CharacterType.None)
                 {
-                    Vector3 newPos = spawnPointWithType.SpawnPoint;
+                    Vector3 newPos = new Vector3(spawnPointWithType.SpawnPoint.x, spawnPointWithType.SpawnPoint.y + YOffset, spawnPointWithType.SpawnPoint.z);
+                    Debug.LogWarning(newPos);
                     IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomBuilder.EnemiesParent, enemyType);
                     newEnemy.SetCharacterContext(_characters);
                     _characters.Enemies.Add(newEnemy);
