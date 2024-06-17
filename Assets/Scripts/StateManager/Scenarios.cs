@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace Gameplay
 {
@@ -130,6 +131,37 @@ namespace Gameplay
             GameObject.Destroy(obj);
         }
 
+        public new void CreateNewRoomScene(int level, int room) ///////
+        {
+            string sceneName = "Level" + level + "-" + room;
+            Scene newScene = SceneManager.CreateScene(sceneName);
+            //createdScenes.Add(newScene);
+
+            GameObject contextInstance = new GameObject("SceneContext");
+
+            SceneContext sceneContext = contextInstance.AddComponent<SceneContext>();
+
+            SceneManager.MoveGameObjectToScene(contextInstance, newScene);
+
+            GameObject roomStarterInstance = new GameObject("RoomStarter");
+
+            RoomStarter roomStarter = roomStarterInstance.AddComponent<RoomStarter>();
+
+            roomStarter.Init(_gameplayService);
+
+            SceneManager.MoveGameObjectToScene(roomStarterInstance, newScene);
+
+            SceneManager.SetActiveScene(newScene);
+
+            Debug.Log("Created new room scene: " + sceneName);
+        }
+
+
+
+
+
+
+
 
         public void ActivateCompleatedRoomTriggers()
         {
@@ -212,6 +244,7 @@ namespace Gameplay
         public void Init(IScenarioContext context);
         public IGameplayService _gameplayService { get; set; }
         public void LoadMainMenu();
+        public void CreateNewRoomScene(int level, int room);
     }
 
     public interface IDefaultScenario : IScenario
@@ -272,6 +305,11 @@ namespace Gameplay
         }
 
         public abstract void LoadMainMenu();
+
+        public void CreateNewRoomScene(int level, int room)
+        {
+            //throw new System.NotImplementedException();
+        }
     }
     public class CookedMapper
     {

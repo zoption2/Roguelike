@@ -34,6 +34,7 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
     public void UseTrigger()
     {
         _scenario.LoadMainMenu();
+        //_scenario.CreateNewRoomScene(1,2);
     }
 
     public void DisableTrigger()

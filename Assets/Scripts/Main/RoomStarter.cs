@@ -7,7 +7,7 @@ namespace Gameplay
     {
         private IGameplayService _gameplayService;
 
-        public RoomStarter(IGameplayService service)
+        public void Init(IGameplayService service)
         {
             _gameplayService = service;
         }
