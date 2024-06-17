@@ -152,7 +152,9 @@ namespace Gameplay
             IBuffFactory buffFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
-            INavigationFactory navigationFactory)
+            INavigationFactory navigationFactory,
+            IRoomObjectsFactory roomObjectsFactory,
+            RoomTemplateSO roomTemplate)
         {
             _scenario = scenario;
             _characters = context;

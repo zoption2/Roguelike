@@ -52,7 +52,7 @@ namespace Gameplay
             {
                 case TypeOfState.Init:
                     state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _triggerFactory, _playerFactory,
-                        _enemyFactory, _navigationFactory);
+                        _enemyFactory, _navigationFactory, _roomObjectsFactory, _roomTemplate);
                     break;
                 case TypeOfState.PlayerTurn:
                     state = new PlayerTurnState(_scenarioInstance, _context);
