@@ -21,10 +21,6 @@ public class RoomBuilder : IRoomBuilder
 {
     public IScenario _scenario { get; }
     public ICharacterScenarioContext _characters { get; }
-    private IStatsProvider _statsProvider;
-    private IBuffFactory _buffFactory;
-    private IPlayerFactory _playerFactory;
-    private IEnemyFactory _enemyFactory;
     private INavigationFactory _navigationFactory;
     private IRoomObjectsFactory _roomObjectsFactory;
     private RoomTemplateSO _roomTemplate;
@@ -39,20 +35,12 @@ public class RoomBuilder : IRoomBuilder
 
     public RoomBuilder(IScenario scenario,
             ICharacterScenarioContext context,
-            IStatsProvider provider,
-            IBuffFactory buffFactory,
-            IPlayerFactory playerFactory,
-            IEnemyFactory enemyFactory,
             INavigationFactory navigationFactory,
             IRoomObjectsFactory roomObjectsFactory,
             RoomTemplateSO roomTemplate)
     {
         _scenario = scenario;
         _characters = context;
-        _statsProvider = provider;
-        _buffFactory = buffFactory;
-        _playerFactory = playerFactory;
-        _enemyFactory = enemyFactory;
         _navigationFactory = navigationFactory;
         _roomObjectsFactory = roomObjectsFactory;
         _roomTemplate = roomTemplate;

@@ -102,7 +102,7 @@ public abstract class ActiveState
         IAbility currentAbility = _characterController.CurrentAbility;
         _launchMultiplier = currentAbility.GetLaunchModifier();
         Vector3 forceVector = direction * launchPower * _launchMultiplier;
-        Debug.LogWarning(forceVector);
+
         return forceVector;
     }
 

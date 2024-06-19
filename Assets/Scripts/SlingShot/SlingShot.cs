@@ -37,6 +37,7 @@ namespace SlingShotLogic
         private SlingshotPooler _slingShotPooler;
         private float _launchDistance;
         private const float SLINGSHOT_RADIUS = 2.1f;
+        private const float POINTER_RADIUS = 0.5f;
 
         public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance)
         {
@@ -57,7 +58,7 @@ namespace SlingShotLogic
             _endPoint = _cursor.rectTransform.position;
             _direction = _startPoint - _endPoint;
             ChangePointerDirection(_direction);
-            ChangePointerLength(_direction.magnitude);
+            ChangePointerLength(_direction.magnitude, _direction);
             OnDirectionChange?.Invoke(_direction);
         }
 
@@ -107,14 +108,23 @@ namespace SlingShotLogic
             _pointerOrigin.localEulerAngles = Vector3.forward * -angle;
         }
 
-        public void ChangePointerLength(float directionMagnitude)
+        public void ChangePointerLength(float directionMagnitude, Vector3 direction)
         {
             float length = _launchDistance * (directionMagnitude / SLINGSHOT_RADIUS);
+            RaycastHit hit;
+
+            if (Physics.SphereCast(transform.position, POINTER_RADIUS, direction, out hit))
+            {
+                length = Mathf.Min(length, hit.distance);
+            }
+
             Vector2 size = new Vector2(1, length);
-            Vector2 position = new Vector2(0,length/2);
-            _pointer.sizeDelta =  size;
+            Vector2 position = new Vector2(0, length / 2);
+            _pointer.sizeDelta = size;
             _pointer.anchoredPosition = position;
         }
+
+
 
         public void OnCreate()
         {

@@ -12,9 +12,9 @@ namespace Gameplay
             _gameplayService = service;
         }
 
-        public void Start()
+        public void StartRoom(TypeOfScenario type)
         {
-            _gameplayService.InitRoom();
+            _gameplayService.Init(type);
         }
     }
 }

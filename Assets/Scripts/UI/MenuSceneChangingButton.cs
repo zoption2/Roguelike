@@ -8,16 +8,16 @@ namespace UI
 {
     public class MenuSceneChangingButton : MonoBehaviour
     {
-        private const string _sceneName = "Level_1";
+        private const string _sceneName = "Loader";
         //Level_TestScene Level_1 Level_MovementTest Level_UITestScene Level_AdaptiveScreenTest
         private ICharacterSelector _characterSelector;
-        private IGameplayService _gameplayService;
+
 
         [Inject]
-        public void Construct(ICharacterSelector characterSelector, IGameplayService gameplayService)
+        public void Construct(ICharacterSelector characterSelector)
         {
             _characterSelector = characterSelector;
-            _gameplayService = gameplayService;
+
         }
 
         void Start()

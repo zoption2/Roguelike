@@ -165,12 +165,9 @@ namespace Gameplay
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;
             //_navigationFactory = navigationFactory;
-            _roomBuilder = new RoomBuilder(scenario,
-                context,
-                provider,
-                buffFactory,
-                playerFactory,
-                enemyFactory,   
+            _roomBuilder = new RoomBuilder(
+                scenario,
+                context, 
                 navigationFactory,
                 roomObjectsFactory,
                 roomTemplate
@@ -288,82 +285,4 @@ namespace Gameplay
 
         }
     }
-
-    //public class InitLevelState : IState
-    //{
-    //    public IScenario _scenario { get; }
-
-    //    public ICharacterScenarioContext _characters { get; }
-
-    //    IStatsProvider _statsProvider;
-
-    //    IBuffFactory _buffFactory;
-
-    //    IPlayerFactory _playerFactory;
-
-    //    IEnemyFactory _enemyFactory;
-
-    //    IRoomObjectsFactory _roomObjectsFactory;
-
-    //    INavigationFactory _navigationFactory;
-
-    //    ILevelBuilder _levelBuilder;
-
-    //    RoomTemplateSO _roomTemplateSO;
-
-
-    //    public InitLevelState(IScenario scenario,
-    //        ICharacterScenarioContext context,
-    //        IStatsProvider provider,
-    //        IBuffFactory buffFactory,
-    //        IPlayerFactory playerFactory,
-    //        IEnemyFactory enemyFactory,
-    //        INavigationFactory navigationFactory,
-    //        IRoomObjectsFactory roomObjectsFactory,
-    //        RoomTemplateSO roomTemplate
-    //        )
-    //    {
-    //        _scenario = scenario;
-    //        //_characters = context;
-    //        //_statsProvider  = provider;
-    //        //_buffFactory = buffFactory;
-    //        //_playerFactory = playerFactory;
-    //        //_enemyFactory = enemyFactory;
-    //        //_navigationFactory = navigationFactory;
-    //        //_roomBuilder = roomBuilder;
-    //        _levelBuilder = new LevelBuilder(scenario,
-    //            context,
-    //            provider,
-    //            buffFactory,
-    //            playerFactory,
-    //            enemyFactory,   
-    //            navigationFactory,
-    //            roomObjectsFactory,
-    //            roomTemplate
-    //            );
-    //    }
-
-    //    public void OnEnter()
-    //    {
-
-    //        //OnPlayerCreate();
-    //        //OnEnemyCreate();
-    //        //OnBuffCreate();
-    //        _levelBuilder.BuildLevel();
-    //        _scenario.OnStateEnd();
-
-    //    }
-
-
-
-    //    public void OnExit()
-    //    {
-    //    }
-
-    //    public void SetCharacter(ICharacterController controller)
-    //    {
-
-    //    }
-    //}
-
 }

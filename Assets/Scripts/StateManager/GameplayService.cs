@@ -1,13 +1,15 @@
 using CharactersStats;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Gameplay
 {
     public enum TypeOfScenario
     {
-        Default,
+        DefaultRoom,
+        MainRoom,
         Boss
     }
 
@@ -16,10 +18,10 @@ namespace Gameplay
         void Init(TypeOfScenario type);
         public Queue<TypeOfScenario> RoomsOrder { get; set; }
         public void EnqueueScenario(TypeOfScenario scenario);
-        public void InitRoom();
         public IPlayerFactory _playerFactory { get; }
         public IEnemyFactory _enemyFactory { get; }
         public IStatsProvider _statsProvider { get; }
+        public LevelManager LevelManager { get; set; }
     }
 
     public class GameplayService : IGameplayService
@@ -31,6 +33,7 @@ namespace Gameplay
         public IStatsProvider _statsProvider { get; }
         public IScenarioFactory _scenarioFactory { get; }
         public IScenario ScenarioType;
+        public LevelManager LevelManager { get; set; }
 
         public GameplayService(IStatsProvider statsProvider,
             IScenarioFactory scenarioFactory,
@@ -50,27 +53,49 @@ namespace Gameplay
         {
             ScenarioType = _scenarioFactory.CreateScenario(type, this);
             IScenarioContext context = _scenarioFactory.CreateContext(type);
-            ScenarioType.Init(context);
+            ScenarioType.Init(context, LevelManager);
         }
 
-        public void InitRoom()
-        {
-            if (RoomsOrder.Count > 0)
-            {
-                TypeOfScenario firstRoom = RoomsOrder.Dequeue();
-                Init(firstRoom);
-            }
-            else
-            {
-                Debug.LogError("No rooms in the sequence to start the level.");
-            }
-        }
+        
 
         public void EnqueueScenario(TypeOfScenario context)
         {
             RoomsOrder.Enqueue(context);
         }
+
+        //public void LoadRoomScene(TypeOfScenario type)
+        //{
+        //    SceneManager.LoadScene("Room", LoadSceneMode.Additive);
+
+        //    SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
+        //    {
+        //        if (scene.name == "Room")
+        //        {
+        //            string newSceneName = type.ToString();
+        //            Scene newScene = SceneManager.CreateScene(newSceneName);
+
+        //            foreach (GameObject obj in scene.GetRootGameObjects())
+        //            {
+        //                SceneManager.MoveGameObjectToScene(GameObject.Instantiate(obj), newScene);
+        //            }
+
+        //            SceneManager.UnloadSceneAsync("Room");
+
+        //            //Init(type);
+
+        //            GameObject roomConfig = newScene.GetRootGameObjects()[0];
+        //            RoomStarter roomStarter = roomConfig.GetComponent<RoomStarter>();
+
+        //            roomStarter.Init(this);
+        //            roomStarter.StartRoom();
+
+        //            SceneManager.sceneLoaded -= null;
+        //        }
+        //    };
+        //}
     }
+
+
 
     public interface IScenarioFactory
     {
@@ -88,13 +113,16 @@ namespace Gameplay
             IScenario scenario = null;
             switch (type)
             {
-                case TypeOfScenario.Default:
+                case TypeOfScenario.DefaultRoom:
                     scenario = _diContainer.Resolve<IDefaultScenario>();
                     break;
-                //case TypeOfScenario.Boss:
-                //    //scenario = new BossScenario(fullService, context);
-                //    scenario = new BossScenario(fullService);
-                //    break;
+                case TypeOfScenario.MainRoom:
+                    scenario = _diContainer.Resolve<IDefaultScenario>();
+                    break;
+                    //case TypeOfScenario.Boss:
+                    //    //scenario = new BossScenario(fullService, context);
+                    //    scenario = new BossScenario(fullService);
+                    //    break;
             }
             return scenario;
         }
@@ -105,7 +133,10 @@ namespace Gameplay
 
             switch (type)
             {
-                case TypeOfScenario.Default:
+                case TypeOfScenario.DefaultRoom:
+                    context = new DefaultScenarioContext();
+                    break;
+                case TypeOfScenario.MainRoom:
                     context = new DefaultScenarioContext();
                     break;
                 default:
@@ -115,5 +146,7 @@ namespace Gameplay
 
             return context;
         }
+
+        
     }
 }
