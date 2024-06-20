@@ -13,7 +13,7 @@ public interface IPlayerFactory
 
 public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
 {
-    public PlayerFactory(DiContainer container, IStatsProvider statsProvider, CharacterUIPooler characterUIPooler, CharacterPooler pooler, IAbilityFactory abilityFactory) : base(container, statsProvider, characterUIPooler, pooler, abilityFactory)
+    public PlayerFactory(DiContainer container, IStatsProvider statsProvider, IPoolManager poolManager, IAbilityFactory abilityFactory) : base(container, statsProvider, poolManager, abilityFactory)
     {
     }
 

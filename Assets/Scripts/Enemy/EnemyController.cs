@@ -48,14 +48,14 @@ namespace Enemy
         private CharacterUIView _UIView;
         private ReactiveList<IEffect> _allEffects;
         private Transform _slingShotInitPosition;
-        private CharacterPooler _pooler;
+        private CharacterPooler _characterPooler;
         private CharacterUIPooler _characterUIPooler;
         private CharacterUIViewmodel _uIViewmodel;
         private DiContainer _container;
 
         [Inject]
         public void Construct(
-            CharacterUIPooler characterUIPooler,
+            IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
@@ -64,7 +64,8 @@ namespace Enemy
             IUIFactory uIFactory,
             DiContainer container)
         {
-            _characterUIPooler = characterUIPooler;
+            _characterUIPooler = poolManager.GetCharacterUIPooler();
+            _characterPooler = poolManager.GetCharacterPooler();
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
@@ -77,7 +78,6 @@ namespace Enemy
         public void Init(
             CharacterModel characterModel,
             CharacterView characterView,
-            CharacterPooler characterPooler,
             CharacterUIView characterUIView)
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
@@ -100,7 +100,7 @@ namespace Enemy
             InteractionDealer.Init(ModifiableStats);
 
             _UIView = characterUIView;
-            _pooler = characterPooler;
+            
 
             _uIViewmodel = new CharacterUIViewmodel();
             _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
@@ -221,14 +221,14 @@ namespace Enemy
 
         public void PushIfDead()
         {
-            _pooler.Push(CharacterModel.Type, CharacterView);
+            _characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
             ON_CHARACTER_DEATH?.Invoke(this);
         }
 
         public void JustPush()
         {
-            _pooler.Push(CharacterModel.Type, CharacterView);
+            _characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
         }
 

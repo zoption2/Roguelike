@@ -10,16 +10,12 @@ public interface IBuffFactory
 }
 public class BuffFactory : IBuffFactory
 {
-    private BuffPooler _pool;
+    private BuffPooler _buffPool;
 
     [Inject]
-    public void Construct(
-        BuffPooler pool
-        )
+    public void Construct(IPoolManager poolManager)
     {
-        _pool = pool;
-
-        _pool.Init();
+        _buffPool = poolManager.GetBuffPooler();
     }
 
     public void Init()
@@ -28,9 +24,9 @@ public class BuffFactory : IBuffFactory
 
     public IBuff CreateBuff(Vector3 position, Transform parent, BuffType type)
     {
-        IMyPoolable newb = _pool.Pull<IMyPoolable>(type, position, parent.rotation, parent.parent);
+        IMyPoolable newb = _buffPool.Pull<IMyPoolable>(type, position, parent.rotation, parent.parent);
         IBuff buff = newb.gameObject.GetComponent<IBuff>();
-        buff.Init(_pool);
+        buff.Init(_buffPool);
         return buff;
     }
 

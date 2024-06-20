@@ -24,7 +24,7 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
     public MainRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory, CharacterPooler characterPooler,
         CharacterUIPooler characterUIPooler, ProjectilePooler projectilePooler, EffectPooler effectPooler)
     {
-        _gameplayService = gameplayService;
+        GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
         _turnsOrder = new List<CookedMapper>();
         _stateFactory = stateFactory;
@@ -90,7 +90,7 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
 
     public override void LoadMainMenu()
     {
-        CleanPoolers();
+        //CleanPoolers();
         _levelManager.LoadNextRoom();
         //SceneManager.LoadScene("Menu");
     }

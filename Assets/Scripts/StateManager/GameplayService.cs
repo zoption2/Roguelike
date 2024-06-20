@@ -6,12 +6,7 @@ using Zenject;
 
 namespace Gameplay
 {
-    public enum TypeOfScenario
-    {
-        DefaultRoom,
-        MainRoom,
-        Boss
-    }
+    
 
     public interface IGameplayService
     {
@@ -35,7 +30,8 @@ namespace Gameplay
         public IScenario ScenarioType;
         public LevelManager LevelManager { get; set; }
 
-        public GameplayService(IStatsProvider statsProvider,
+        public GameplayService(
+            IStatsProvider statsProvider,
             IScenarioFactory scenarioFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
@@ -56,46 +52,11 @@ namespace Gameplay
             ScenarioType.Init(context, LevelManager);
         }
 
-        
-
         public void EnqueueScenario(TypeOfScenario context)
         {
             RoomsOrder.Enqueue(context);
         }
-
-        //public void LoadRoomScene(TypeOfScenario type)
-        //{
-        //    SceneManager.LoadScene("Room", LoadSceneMode.Additive);
-
-        //    SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
-        //    {
-        //        if (scene.name == "Room")
-        //        {
-        //            string newSceneName = type.ToString();
-        //            Scene newScene = SceneManager.CreateScene(newSceneName);
-
-        //            foreach (GameObject obj in scene.GetRootGameObjects())
-        //            {
-        //                SceneManager.MoveGameObjectToScene(GameObject.Instantiate(obj), newScene);
-        //            }
-
-        //            SceneManager.UnloadSceneAsync("Room");
-
-        //            //Init(type);
-
-        //            GameObject roomConfig = newScene.GetRootGameObjects()[0];
-        //            RoomStarter roomStarter = roomConfig.GetComponent<RoomStarter>();
-
-        //            roomStarter.Init(this);
-        //            roomStarter.StartRoom();
-
-        //            SceneManager.sceneLoaded -= null;
-        //        }
-        //    };
-        //}
     }
-
-
 
     public interface IScenarioFactory
     {

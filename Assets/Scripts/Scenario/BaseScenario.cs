@@ -10,8 +10,7 @@ namespace Gameplay
         protected IStateFactory _stateFactory;
         protected LevelManager _levelManager;
 
-        public IGameplayService _gameplayService { get; set; }
-
+        public IGameplayService GameplayService { get; set; }
 
         public abstract void RenewQueue();
         public abstract void CheckConditonsForEndOfScenario();

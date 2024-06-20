@@ -1,10 +1,16 @@
 using CharactersStats;
 using Gameplay;
+using Pool;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
+
+public interface ILevelManager
+{
+}
+
 
 public class LevelManager : MonoBehaviour
 {
@@ -18,36 +24,39 @@ public class LevelManager : MonoBehaviour
     private IScenarioFactory _scenarioFactory;
     private TypeOfScenario _nextRoom;
     private Scene _currentRoomScene;
+    private RoomTemplateSO _roomTemplate;
+    private RoomTemplateSO.Template _template;
+    public IPoolManager PoolManager { get; set; }
 
     [Inject]
     public void Construct(
         IStatsProvider statsProvider,
         IScenarioFactory scenarioFactory,
         IPlayerFactory playerFactory,
-        IEnemyFactory enemyFactory
+        IEnemyFactory enemyFactory,
+        IPoolManager poolManager,
+        RoomTemplateSO roomTemplateSO,
+        IGameplayService gameplayService
         )
     {
         _statsProvider = statsProvider;
         _scenarioFactory = scenarioFactory;
         _playerFactory = playerFactory;
         _enemyFactory = enemyFactory;
+        PoolManager = poolManager;
+        _roomTemplate = roomTemplateSO;
+        _gameplayService = gameplayService;
 
     }
 
     private void Awake()
     {
-        _gameplayService = new GameplayService(
-            _statsProvider,
-            _scenarioFactory,
-            _playerFactory,
-            _enemyFactory,
-            _roomsOrder
-            );
-        _gameplayService.LevelManager = this;
+        PoolManager.InitPoolers();
     }
 
     public void Start()
     {
+        _gameplayService.LevelManager = this;
         _nextRoom = GetNextRoom();
         LoadRoomScene(_nextRoom);
     }
@@ -72,12 +81,33 @@ public class LevelManager : MonoBehaviour
         LoadRoomScene(_nextRoom);
     }
 
+    public RoomTemplateSO.Template GetTemplate()
+    {
+        return _template;
+    }
+
+    private RoomTemplateSO.Template SetTemplate(TypeOfScenario type)
+    {
+        var templatesOfType = _roomTemplate.Templates.Where(t => t.ScenarioType == type).ToList();
+
+        if (templatesOfType.Count == 0)
+        {
+            Debug.LogError($"No templates available for the scenario type: {type}");
+            return null;
+        }
+
+        int randomIndex = Random.Range(0, templatesOfType.Count);
+        return templatesOfType[randomIndex];
+    }
+
     public void LoadRoomScene(TypeOfScenario type)
     {
         if (_currentRoomScene.IsValid())
         {
             SceneManager.UnloadSceneAsync(_currentRoomScene);
         }
+
+        _template = SetTemplate(type);
 
         SceneManager.LoadScene("Room", LoadSceneMode.Additive);
 

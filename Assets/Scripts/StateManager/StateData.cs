@@ -2,6 +2,7 @@ using CharactersStats;
 using Pool;
 using Zenject;
 using Projectiles;
+using UnityEngine;
 
 namespace Gameplay
 {

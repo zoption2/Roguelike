@@ -29,6 +29,7 @@ public class TemplateBuilder : EditorWindow
     private bool displayNewObjectFields = false;
 
     private TemplatePlacebleElements templatePlacebleElementsSO;
+    private TypeOfScenario _selectedScenarioType = TypeOfScenario.DefaultRoom;
 
     private bool showInitialOptions = true;
     private bool createNewArray = false;
@@ -197,6 +198,7 @@ public class TemplateBuilder : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
     }
+
 
     private void ShowTilemapOptions()
     {
@@ -400,6 +402,11 @@ public class TemplateBuilder : EditorWindow
 
         GUILayout.Space(10);
 
+        GUILayout.Label("Scenario Type", EditorStyles.boldLabel); // Додайте цей блок
+        _selectedScenarioType = (TypeOfScenario)EditorGUILayout.EnumPopup("Scenario Type", _selectedScenarioType); // Додайте цей рядок
+
+        GUILayout.Space(10);
+
         if (!DisplayNewTemplateRecordFields)
         {
             if (GUILayout.Button("Add New Template Record"))
@@ -437,6 +444,7 @@ public class TemplateBuilder : EditorWindow
             resizeArray = true;
         }
     }
+
     #endregion
 
     #region MainWindowLogic
@@ -704,6 +712,7 @@ public class TemplateBuilder : EditorWindow
         if (existingTemplate != null && name == existingTemplate.name)
         {
             existingTemplate.TemplateElement = (TemplateElementType[,])levelArray.Clone();
+            existingTemplate.ScenarioType = _selectedScenarioType;
             existingTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             AssignExits(existingTemplate, levelArray);
             Debug.Log($"Updated existing template: {name}");
@@ -724,6 +733,7 @@ public class TemplateBuilder : EditorWindow
                 name = name,
                 id = id,
                 TemplateElement = (TemplateElementType[,])levelArray.Clone(),
+                ScenarioType = _selectedScenarioType,
                 DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
@@ -741,6 +751,7 @@ public class TemplateBuilder : EditorWindow
         EditorUtility.SetDirty(roomTemplateSO);
         AssetDatabase.SaveAssets();
     }
+
 
     private void AssignExits(RoomTemplateSO.Template template, TemplateElementType[,] levelArray)
     {
@@ -824,6 +835,7 @@ public class TemplateBuilder : EditorWindow
         }
 
         levelArray = template.TemplateElement;
+        _selectedScenarioType = template.ScenarioType;
         int rows = levelArray.GetLength(0);
         int cols = levelArray.GetLength(1);
         originalLevelArray = new TemplateElementType[rows, cols];

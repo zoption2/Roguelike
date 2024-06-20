@@ -115,6 +115,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
         Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
         Container.Bind<ProjectilePooler>().To<ProjectilePooler>().AsSingle();
+
+        Container.Bind<IPoolManager>().To<PoolManager>().AsSingle();
     }
 
     public void BindFactories()

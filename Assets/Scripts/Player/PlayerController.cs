@@ -46,7 +46,7 @@ namespace Player
         public NavMeshObstacle NavMeshObstacle { get; set; } 
         private CharacterUIView _UIView;
         private Transform _slingShotInitPosition;
-        private CharacterPooler _pooler;
+        private CharacterPooler _characterPooler;
         private CharacterUIPooler _characterUIPooler;
         private DiContainer _container;
         private NavMeshObstacle _navMeshObstacle;
@@ -62,8 +62,7 @@ namespace Player
 
         [Inject]
         public void Construct(
-            SlingshotPooler slingShotPooler,   
-            CharacterUIPooler characterUIPooler,
+            IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,
             IEffectProcessor effector,
@@ -72,8 +71,9 @@ namespace Player
             IUIFactory uIFactory,
             DiContainer container)
         {
-            SlingShotPooler = slingShotPooler;
-            _characterUIPooler = characterUIPooler;
+            SlingShotPooler = poolManager.GetSlingshotPooler();
+            _characterPooler = poolManager.GetCharacterPooler();
+            _characterUIPooler = poolManager.GetCharacterUIPooler();
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;
@@ -86,7 +86,6 @@ namespace Player
         public void Init(
         CharacterModel playerModel,
         CharacterView characterView,
-        CharacterPooler characterPooler,
         CharacterUIView characterUIView)
         {
             DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
@@ -106,8 +105,7 @@ namespace Player
             _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
-            _UIView = characterUIView;
-            _pooler = characterPooler;
+            _UIView = characterUIView;       
 
             _uIViewmodel = new CharacterUIViewmodel();
             _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
@@ -210,14 +208,14 @@ namespace Player
         public void PushIfDead()
         {
             Debug.Log("pushed player to pool!");
-            _pooler.Push(CharacterModel.Type, CharacterView);
+            _characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
             ON_CHARACTER_DEATH?.Invoke(this);
         }
 
         public void JustPush()
         {
-            _pooler.Push(CharacterModel.Type, CharacterView);
+            _characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
         }
 

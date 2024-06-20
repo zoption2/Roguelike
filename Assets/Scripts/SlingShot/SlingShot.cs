@@ -34,6 +34,7 @@ namespace SlingShotLogic
         private CharacterType _type;
 
         [Inject]
+        private IPoolManager _poolManager;
         private SlingshotPooler _slingShotPooler;
         private float _launchDistance;
         private const float SLINGSHOT_RADIUS = 2.1f;
@@ -41,6 +42,7 @@ namespace SlingShotLogic
 
         public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance)
         {
+            _slingShotPooler = _poolManager.GetSlingshotPooler();
             _type = type;
             _startPoint = _initPosition;
             _launchDistance = currentLaunchDistance;
@@ -74,7 +76,6 @@ namespace SlingShotLogic
                 {
                     OnShoot?.Invoke(_direction);
                     OnAbilityUse?.Invoke();
-                    Debug.LogWarning(_direction);
                     _slingShotPooler.Push(_type, this);
                 }
             }

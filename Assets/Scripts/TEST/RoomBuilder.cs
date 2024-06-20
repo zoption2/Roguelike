@@ -11,7 +11,7 @@ using UnityEngine;
 
 public interface IRoomBuilder
 {
-    void BuildLevel();
+    void BuildLevel(RoomTemplateSO.Template template);
     public Transform PlayersParent { get; set; }
     public Transform EnemiesParent { get; set; }
     public Transform BuffsParent { get; set; }
@@ -46,17 +46,17 @@ public class RoomBuilder : IRoomBuilder
         _roomTemplate = roomTemplate;
     }
 
-    public void BuildLevel()
+    public void BuildLevel(RoomTemplateSO.Template template)
     {
-        AnalyzeTemplate();
-        BuildRoom();
+        AnalyzeTemplate(template);
+        BuildRoom(template);
         OnNavigationCreate();
         CenterCamera();
     }
 
-    private void AnalyzeTemplate()
+    private void AnalyzeTemplate(RoomTemplateSO.Template roomTemplate)
     {
-        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
+        RoomTemplateSO.Template template = roomTemplate;
         if (template == null)
         {
             Debug.LogError("Template not found");
@@ -96,9 +96,9 @@ public class RoomBuilder : IRoomBuilder
         Debug.Log($"Analyzed template 'TEST BUILD': PlayerSpawnPoints={_characters.PlayerSpawnPoints.Count}, EnemySpawnPoints={_characters.EnemySpawnPoints.Count}, BuffSpawnPoints={_characters.BuffSpawnPoints.Count}");
     }
 
-    private void BuildRoom()
+    private void BuildRoom(RoomTemplateSO.Template roomTemplate)
     {
-        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
+        RoomTemplateSO.Template template = roomTemplate;
         if (template == null)
         {
             Debug.LogError("Template not found");

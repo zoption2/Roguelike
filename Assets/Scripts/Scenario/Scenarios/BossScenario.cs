@@ -14,7 +14,7 @@ public class BossScenario : Scenario<DefaultScenarioContext>
 
     public BossScenario(IGameplayService fullService)
     {
-        _gameplayService = fullService;
+        GameplayService = fullService;
     }
 
     public override void CheckConditonsForEndOfScenario()

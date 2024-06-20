@@ -13,15 +13,13 @@ public class MoreDamageBuff : MonoBehaviour, IBuff, IMyPoolable
 
     private BuffPooler _pooler;
 
-    public void Init(BuffPooler pooler)
+    public void Init(BuffPooler buffPooler)
     {
-        _pooler = pooler;
-        _pooler.Init();
+        _pooler = buffPooler;
     }
 
     public List<IEffect> UseBuff()
     {
-        _pooler.Init();
         List<IEffect> effects = new List<IEffect>()
         {
             new MoreDamageEffect(1),

@@ -22,16 +22,13 @@ public abstract class CharacterFactory<TController>
     public CharacterFactory(
         DiContainer container,
         IStatsProvider statsProvider,
-        CharacterUIPooler characterUIPooler,
-        CharacterPooler pooler,
+        IPoolManager poolManager,
          IAbilityFactory abilityFactory)
     {
         _container = container;
         _statsProvider = statsProvider;
-        _characterPooler = pooler;
-        _characterUIPooler = characterUIPooler;
-        _characterPooler.Init();
-        _characterUIPooler.Init();
+        _characterPooler = poolManager.GetCharacterPooler();
+        _characterUIPooler = poolManager.GetCharacterUIPooler();
         _abilityFactory = abilityFactory;
     }
 
@@ -51,11 +48,11 @@ public abstract class CharacterFactory<TController>
 
         _poolable = _characterPooler.Pull<IMyPoolable>(type, position, Quaternion.identity, parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();
-        //
+        
         _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, Quaternion.Euler(90, 0, 0), parent);
         CharacterUIView characterUIView = _poolable.gameObject.GetComponent<CharacterUIView>();
 
-        controller.Init(_characterModel, characterView, _characterPooler, characterUIView);
+        controller.Init(_characterModel, characterView, characterUIView);
 
         mapper.Controller = controller;
         DataTransfer.RawMappers.Add(mapper);

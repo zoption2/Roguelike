@@ -140,3 +140,10 @@ public enum ProjectileType
     None= 0,
     Arrow =1,
 }
+
+public enum TypeOfScenario
+{
+    DefaultRoom,
+    MainRoom,
+    Boss
+}

@@ -23,7 +23,7 @@ public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenari
     public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory, CharacterPooler characterPooler,
         CharacterUIPooler characterUIPooler, ProjectilePooler projectilePooler, EffectPooler effectPooler)
     {
-        _gameplayService = gameplayService;
+        GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
         _turnsOrder = new List<CookedMapper>();
         _stateFactory = stateFactory;
@@ -89,7 +89,7 @@ public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenari
 
     public override void LoadMainMenu()
     {
-        CleanPoolers();
+        //CleanPoolers();
         _levelManager.LoadNextRoom();
         //SceneManager.LoadScene("Menu");
     }

@@ -14,15 +14,12 @@ public class UIFactory : IUIFactory
     private AbilityIconPooler _abilityIconPooler;
 
     [Inject]
-    public void Construct(EffectPooler pooler, AbilityIconPooler abilityIconPooler)
+    public void Construct(IPoolManager poolManager)
     {
-        _effectPooler = pooler;
-        _effectPooler.Init();
-
-        _abilityIconPooler = abilityIconPooler;
-        _abilityIconPooler.Init();
+        _effectPooler = poolManager.GetEffectPooler();
+        _abilityIconPooler = poolManager.GetAbilityIconPooler();
     }
-    //
+
     public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent)
     {
         IEffectIconView effectIcon = _effectPooler.Pull<IEffectIconView>(type, position, Quaternion.Euler(90, 0, 0), parent);

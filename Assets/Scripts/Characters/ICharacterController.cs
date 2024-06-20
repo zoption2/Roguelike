@@ -35,7 +35,7 @@ public interface ICharacterController
     public Transform GetProjectileSpawn();
     public Rigidbody GetRigidbody();
     public float GetCurrentLaunchDistance();
-    public void Init(CharacterModel model, CharacterView playerView, CharacterPooler pooler, CharacterUIView uIView);
+    public void Init(CharacterModel model, CharacterView playerView, CharacterUIView uIView);
     public Vector3 GetVelocity();
     public void ActivateUI();
     public void DisableUI();

@@ -13,7 +13,7 @@ namespace Gameplay
 {
     public interface IState
     {
-        public IScenario _scenario { get; }
+        public IScenario Scenario { get; }
         public void SetCharacter(ICharacterController controller);
         public void OnEnter();
         public void OnExit();
@@ -22,7 +22,9 @@ namespace Gameplay
 
     public class PlayerTurnState : IState
     {
-        public IScenario _scenario { get; }
+        private IScenario _scenario;
+
+        public IScenario Scenario { get { return _scenario; } }
         public ICharacterScenarioContext _characters { get; }
 
         private ICharacterController _characterController;
@@ -75,7 +77,9 @@ namespace Gameplay
     }
     public class EnemyTurnState : IState
     {
-        public IScenario _scenario { get; }
+        private IScenario _scenario;
+
+        public IScenario Scenario { get { return _scenario; } }
         public ICharacterScenarioContext _characters { get; }
 
         private ICharacterController _characterController;
@@ -127,7 +131,9 @@ namespace Gameplay
 
     public class InitLevelState : IState
     {
-        public IScenario _scenario { get; }
+        private IScenario _scenario;
+
+        public IScenario Scenario { get { return _scenario; } }
 
         public ICharacterScenarioContext _characters { get; }
 
@@ -148,7 +154,8 @@ namespace Gameplay
         RoomTemplateSO _roomTemplateSO;
 
 
-        public InitLevelState(IScenario scenario,
+        public InitLevelState(
+            IScenario scenario,
             ICharacterScenarioContext context,
             IStatsProvider provider,
             IBuffFactory buffFactory,
@@ -163,7 +170,7 @@ namespace Gameplay
             _statsProvider  = provider;
             _buffFactory = buffFactory;
             _playerFactory = playerFactory;
-            _enemyFactory = enemyFactory;
+            _enemyFactory = enemyFactory;     
             //_navigationFactory = navigationFactory;
             _roomBuilder = new RoomBuilder(
                 scenario,
@@ -176,7 +183,10 @@ namespace Gameplay
 
         public void OnEnter()
         {
-            _roomBuilder.BuildLevel();
+            LevelManager levelManager = _scenario.GameplayService.LevelManager; //null
+            Debug.LogWarning(levelManager);
+            RoomTemplateSO.Template template = _scenario.GameplayService.LevelManager.GetTemplate();
+            _roomBuilder.BuildLevel(template);
             OnPlayerCreate();
             OnEnemyCreate();
             OnBuffCreate();

@@ -11,6 +11,7 @@ public class RoomTemplateSO : ScriptableObject
         [HideInInspector] public string name;
         public int id;
         public string DateAdded;
+        public TypeOfScenario ScenarioType;
         [HideInInspector] public int rows;
         [HideInInspector] public int cols;
         [HideInInspector] public List<TemplateElementType> TemplateElementsFlat;

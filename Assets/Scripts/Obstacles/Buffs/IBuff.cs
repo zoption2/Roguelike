@@ -5,7 +5,7 @@ namespace Obstacles
 {
     public interface IBuff
     {
-        public void Init(BuffPooler pooler);
+        public void Init(BuffPooler buffPooler);
         public BuffType GetBuffType();
         public float GetBuffProbability();
         public List<IEffect> UseBuff();
