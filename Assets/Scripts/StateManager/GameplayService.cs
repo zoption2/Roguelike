@@ -1,13 +1,9 @@
 using CharactersStats;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Gameplay
 {
-    
-
     public interface IGameplayService
     {
         public IPoolManager PoolManager { get; set; }

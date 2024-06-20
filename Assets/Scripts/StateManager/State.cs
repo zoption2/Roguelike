@@ -214,33 +214,6 @@ namespace Gameplay
                     _characters.Buffs.Add(newBuff);
                 }
             }
-
-            //foreach (var spawnPointWithType in shuffledSpawnPoints)
-            //{
-            //    BuffType buffType = spawnPointWithType.Type;
-
-            //    if (buffType == BuffType.None)
-            //    {
-            //        buffType = buffTypes[UnityEngine.Random.Range(0, buffTypes.Count)];
-
-            //        if (_characters.Buffs.Any(b => b.GetBuffType() == buffType))
-            //        {
-            //            continue;
-            //        }
-            //        Vector3 newPos = spawnPointWithType.SpawnPoint;
-            //        IBuff newBuff = _buffFactory.CreateBuff(newPos, _roomBuilder.BuffsParent, buffType);
-            //        float probability = newBuff.GetBuffProbability();
-
-            //        if (UnityEngine.Random.value <= probability)
-            //        {
-            //            _characters.Buffs.Add(newBuff);
-            //        }
-            //        else
-            //        {
-            //            newBuff.RemoveBuff();
-            //        }
-            //    }
-            //}
         }
 
         public void OnPlayerCreate()
@@ -261,11 +234,6 @@ namespace Gameplay
 
         public void OnEnemyCreate()
         {
-            //var enemyTypes = Enum.GetValues(typeof(EnemyType)).Cast<EnemyType>().Where(t => t != EnemyType.None).ToList();
-
-            //int enemyCount = Math.Min(UnityEngine.Random.Range(1, _characters.EnemySpawnPoints.Count + 1), _characters.EnemySpawnPoints.Count);
-            //var shuffledSpawnPoints = _characters.EnemySpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
-
             for (int i = 0; i < _characters.EnemySpawnPoints.Count; i++)
             {
                 var spawnPointWithType = _characters.EnemySpawnPoints[i];
@@ -278,17 +246,8 @@ namespace Gameplay
                     newEnemy.SetCharacterContext(_characters);
                     _characters.Enemies.Add(newEnemy);
                 }
-                //else
-                //{
-                //    enemyType = (CharacterType)enemyTypes[UnityEngine.Random.Range(0, enemyTypes.Count)];
-                //    Vector3 newPos = spawnPointWithType.SpawnPoint;
-                //    IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomBuilder.EnemiesParent, enemyType);
-                //    newEnemy.SetCharacterContext(_characters);
-                //    _characters.Enemies.Add(newEnemy);
-                //}
             }
         }
-
 
         public void OnExit()
         {
@@ -299,4 +258,24 @@ namespace Gameplay
 
         }
     }
+
+    public class PauseState : IState
+    {
+        private IScenario _scenario;
+
+        public IScenario Scenario { get { return _scenario; } }
+
+        public void OnEnter()
+        {
+        }
+
+        public void OnExit()
+        {
+        }
+
+        public void SetCharacter(ICharacterController controller)
+        {
+        }
+    }
+
 }

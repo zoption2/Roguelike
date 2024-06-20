@@ -138,9 +138,18 @@ public class LevelManager : MonoBehaviour
                         roomStarter.StartRoom(type);
                     }
                 }
-
                 SceneManager.sceneLoaded -= OnSceneLoaded;
             }
         }
+    }
+    public void MoveObjectToScene(GameObject obj, string targetSceneName)
+    {
+        Scene targetScene = SceneManager.GetSceneByName(targetSceneName);
+        if (!targetScene.IsValid())
+        {
+            targetScene = SceneManager.CreateScene(targetSceneName);
+        }
+
+        SceneManager.MoveGameObjectToScene(obj, targetScene);
     }
 }
