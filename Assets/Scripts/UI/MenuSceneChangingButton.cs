@@ -9,7 +9,6 @@ namespace UI
     public class MenuSceneChangingButton : MonoBehaviour
     {
         private const string _sceneName = "Loader";
-        //Level_TestScene Level_1 Level_MovementTest Level_UITestScene Level_AdaptiveScreenTest
         private ICharacterSelector _characterSelector;
 
 
@@ -30,8 +29,6 @@ namespace UI
         {
             if (_characterSelector.HasRequiredNumberOfPlayers())
             {
-                //var context = ScriptableObject.CreateInstance<DefaultScenarioContext>();
-                //_gameplayService.EnqueueScenario(context);
                 SceneManager.LoadScene(_sceneName);
                 
             }

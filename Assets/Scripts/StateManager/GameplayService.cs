@@ -10,51 +10,45 @@ namespace Gameplay
 
     public interface IGameplayService
     {
+        public IPoolManager PoolManager { get; set; }
         void Init(TypeOfScenario type);
-        public Queue<TypeOfScenario> RoomsOrder { get; set; }
-        public void EnqueueScenario(TypeOfScenario scenario);
-        public IPlayerFactory _playerFactory { get; }
-        public IEnemyFactory _enemyFactory { get; }
-        public IStatsProvider _statsProvider { get; }
+        public IPlayerFactory _playerFactory { get; set; }
+        public IEnemyFactory _enemyFactory { get; set; }
+        public IStatsProvider _statsProvider { get; set; }
         public LevelManager LevelManager { get; set; }
     }
 
     public class GameplayService : IGameplayService
     {
-        public Queue<TypeOfScenario> RoomsOrder { get; set; }
-
-        public IPlayerFactory _playerFactory { get; }
-        public IEnemyFactory _enemyFactory { get; }
-        public IStatsProvider _statsProvider { get; }
-        public IScenarioFactory _scenarioFactory { get; }
+        public IPoolManager PoolManager { get; set; }
+        public IPlayerFactory _playerFactory { get; set; }
+        public IEnemyFactory _enemyFactory { get; set; }
+        public IStatsProvider _statsProvider { get; set; }
+        public IScenarioFactory _scenarioFactory { get; set; }
         public IScenario ScenarioType;
         public LevelManager LevelManager { get; set; }
 
-        public GameplayService(
+        [Inject]
+        public void Construct(
+            IPoolManager poolManager,
             IStatsProvider statsProvider,
             IScenarioFactory scenarioFactory,
             IPlayerFactory playerFactory,
-            IEnemyFactory enemyFactory,
-            List<TypeOfScenario> scenarios)
+            IEnemyFactory enemyFactory)
         {
+            PoolManager = poolManager;
             _scenarioFactory = scenarioFactory;
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;
-            _statsProvider = statsProvider;
-
-            RoomsOrder = new Queue<TypeOfScenario>(scenarios);
+            _statsProvider = statsProvider;    
         }
 
         public void Init(TypeOfScenario type)
         {
+            PoolManager.InitPoolers();
             ScenarioType = _scenarioFactory.CreateScenario(type, this);
             IScenarioContext context = _scenarioFactory.CreateContext(type);
             ScenarioType.Init(context, LevelManager);
-        }
-
-        public void EnqueueScenario(TypeOfScenario context)
-        {
-            RoomsOrder.Enqueue(context);
         }
     }
 

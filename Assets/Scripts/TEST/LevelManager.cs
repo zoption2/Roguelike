@@ -15,13 +15,10 @@ public interface ILevelManager
 public class LevelManager : MonoBehaviour
 {
     [SerializeField]
-    private List<TypeOfScenario> _roomsOrder;
+    private List<TypeOfScenario> _roomsOrderInitList;
 
+    private Queue<TypeOfScenario> _roomsOrder;
     private IGameplayService _gameplayService;
-    private IPlayerFactory _playerFactory;
-    private IEnemyFactory _enemyFactory;
-    private IStatsProvider _statsProvider;
-    private IScenarioFactory _scenarioFactory;
     private TypeOfScenario _nextRoom;
     private Scene _currentRoomScene;
     private RoomTemplateSO _roomTemplate;
@@ -30,32 +27,18 @@ public class LevelManager : MonoBehaviour
 
     [Inject]
     public void Construct(
-        IStatsProvider statsProvider,
-        IScenarioFactory scenarioFactory,
-        IPlayerFactory playerFactory,
-        IEnemyFactory enemyFactory,
-        IPoolManager poolManager,
         RoomTemplateSO roomTemplateSO,
         IGameplayService gameplayService
         )
     {
-        _statsProvider = statsProvider;
-        _scenarioFactory = scenarioFactory;
-        _playerFactory = playerFactory;
-        _enemyFactory = enemyFactory;
-        PoolManager = poolManager;
         _roomTemplate = roomTemplateSO;
         _gameplayService = gameplayService;
 
     }
 
-    private void Awake()
-    {
-        PoolManager.InitPoolers();
-    }
-
     public void Start()
     {
+        _roomsOrder = new Queue<TypeOfScenario>(_roomsOrderInitList);
         _gameplayService.LevelManager = this;
         _nextRoom = GetNextRoom();
         LoadRoomScene(_nextRoom);
@@ -63,9 +46,10 @@ public class LevelManager : MonoBehaviour
 
     public TypeOfScenario GetNextRoom()
     {
-        if (_gameplayService.RoomsOrder.Count > 0)
+        if (_roomsOrderInitList.Count > 0)
         {
-            TypeOfScenario firstRoom = _gameplayService.RoomsOrder.Dequeue();
+
+            TypeOfScenario firstRoom = _roomsOrder.Dequeue();
             return firstRoom;
         }
         else
@@ -97,7 +81,11 @@ public class LevelManager : MonoBehaviour
         }
 
         int randomIndex = Random.Range(0, templatesOfType.Count);
-        return templatesOfType[randomIndex];
+        var selectedTemplate = templatesOfType[randomIndex];
+
+        Debug.Log($"Selected template: {selectedTemplate.name} for scenario type: {type}");
+
+        return selectedTemplate;
     }
 
     public void LoadRoomScene(TypeOfScenario type)

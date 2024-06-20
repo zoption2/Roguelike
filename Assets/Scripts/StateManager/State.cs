@@ -183,9 +183,14 @@ namespace Gameplay
 
         public void OnEnter()
         {
-            LevelManager levelManager = _scenario.GameplayService.LevelManager; //null
-            Debug.LogWarning(levelManager);
             RoomTemplateSO.Template template = _scenario.GameplayService.LevelManager.GetTemplate();
+
+            if (template == null)
+            {
+                Debug.LogError("Template not found");
+                return;
+            }
+
             _roomBuilder.BuildLevel(template);
             OnPlayerCreate();
             OnEnemyCreate();
@@ -269,7 +274,6 @@ namespace Gameplay
                 if (enemyType != CharacterType.None)
                 {
                     Vector3 newPos = new Vector3(spawnPointWithType.SpawnPoint.x, spawnPointWithType.SpawnPoint.y + YOffset, spawnPointWithType.SpawnPoint.z);
-                    Debug.LogWarning(newPos);
                     IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomBuilder.EnemiesParent, enemyType);
                     newEnemy.SetCharacterContext(_characters);
                     _characters.Enemies.Add(newEnemy);

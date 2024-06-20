@@ -51,7 +51,7 @@ public class RoomBuilder : IRoomBuilder
         AnalyzeTemplate(template);
         BuildRoom(template);
         OnNavigationCreate();
-        CenterCamera();
+        CenterCamera(template);
     }
 
     private void AnalyzeTemplate(RoomTemplateSO.Template roomTemplate)
@@ -93,7 +93,7 @@ public class RoomBuilder : IRoomBuilder
             }
         }
 
-        Debug.Log($"Analyzed template 'TEST BUILD': PlayerSpawnPoints={_characters.PlayerSpawnPoints.Count}, EnemySpawnPoints={_characters.EnemySpawnPoints.Count}, BuffSpawnPoints={_characters.BuffSpawnPoints.Count}");
+        Debug.Log($"Analyzed template {template}: PlayerSpawnPoints={_characters.PlayerSpawnPoints.Count}, EnemySpawnPoints={_characters.EnemySpawnPoints.Count}, BuffSpawnPoints={_characters.BuffSpawnPoints.Count}");
     }
 
     private void BuildRoom(RoomTemplateSO.Template roomTemplate)
@@ -186,9 +186,9 @@ public class RoomBuilder : IRoomBuilder
         }
     }
 
-    private void CenterCamera()
+    private void CenterCamera(RoomTemplateSO.Template roomTemplate)
     {
-        RoomTemplateSO.Template template = _roomTemplate.Templates.FirstOrDefault(t => t.name == "TEST BUILD");
+        RoomTemplateSO.Template template = roomTemplate;
         if (template == null)
         {
             Debug.LogError("Template not found");
