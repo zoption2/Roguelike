@@ -49,7 +49,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
 
         if (other.gameObject.TryGetComponent(out ICompleatedRoomTrigger trigger))
         {
-             trigger.UseTrigger();
+             trigger.UseTrigger(_characterView.gameObject);
         }
     }
 

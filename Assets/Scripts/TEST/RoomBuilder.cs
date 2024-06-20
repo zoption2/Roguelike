@@ -160,7 +160,7 @@ public class RoomBuilder : IRoomBuilder
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
                         _characters.CompleatedRoomTriggers.Add(trigger);
-                        trigger.Init(_scenario);
+                        trigger.Init(_scenario.GameplayService);
 
                         templateElements[i, j] = TemplateElementType.None;
                         templateElements[i, j + 2] = TemplateElementType.None;
@@ -174,7 +174,7 @@ public class RoomBuilder : IRoomBuilder
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
                         _characters.CompleatedRoomTriggers.Add(trigger);
-                        trigger.Init(_scenario);
+                        trigger.Init(_scenario.GameplayService);
 
                         templateElements[i, j] = TemplateElementType.None;
                         templateElements[i + 2, j] = TemplateElementType.None;

@@ -91,7 +91,7 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
     public override void LoadMainMenu()
     {
         //CleanPoolers();
-        _levelManager.LoadNextRoom();
+        //_levelManager.LoadNextRoom();
         //SceneManager.LoadScene("Menu");
     }
 

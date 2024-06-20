@@ -3,6 +3,7 @@ using Gameplay;
 using Pool;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -59,10 +60,10 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void LoadNextRoom()
+    public void LoadNextRoom(GameObject player)
     {
         _nextRoom = GetNextRoom();
-        LoadRoomScene(_nextRoom);
+        LoadRoomScene(_nextRoom, player);
     }
 
     public RoomTemplateSO.Template GetTemplate()
@@ -88,7 +89,7 @@ public class LevelManager : MonoBehaviour
         return selectedTemplate;
     }
 
-    public void LoadRoomScene(TypeOfScenario type)
+    public void LoadRoomScene(TypeOfScenario type, GameObject player = null)
     {
         if (_currentRoomScene.IsValid())
         {
@@ -123,6 +124,11 @@ public class LevelManager : MonoBehaviour
                 }
 
                 SceneManager.UnloadSceneAsync("Room");
+
+                if(player != null)
+                {
+                    MoveObjectToScene(player, newSceneName);
+                }
 
                 SceneManager.SetActiveScene(newScene);
 

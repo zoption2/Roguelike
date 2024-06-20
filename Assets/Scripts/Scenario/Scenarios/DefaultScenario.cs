@@ -81,7 +81,6 @@ public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenari
         }
         else if (noEnemies)
         {
-            Debug.LogWarning("You Won!");
             ActivateCompleatedRoomTriggers();
             //LoadMainMenu();
         }
@@ -90,13 +89,12 @@ public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenari
     public override void LoadMainMenu()
     {
         //CleanPoolers();
-        _levelManager.LoadNextRoom();
+        //_levelManager.LoadNextRoom();
         //SceneManager.LoadScene("Menu");
     }
 
     public void ActivateCompleatedRoomTriggers()
     {
-        Debug.LogWarning("Room Cleaned!");
         foreach (var trigger in _scenarioContext.CompleatedRoomTriggers)
         {
             trigger.ActivateTrigger();

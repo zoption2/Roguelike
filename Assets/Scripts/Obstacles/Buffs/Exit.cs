@@ -8,16 +8,16 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 {
     private bool _isActivated;
     private BoxCollider _boxCollider;
-    private IScenario _scenario;
+    private IGameplayService _gameplayService;
 
     private void Start()
     {
         _boxCollider = GetComponent<BoxCollider>();
     }
 
-    public void Init(IScenario scenario)
+    public void Init(IGameplayService gameplayService)
     {
-        _scenario = scenario;
+        _gameplayService = gameplayService;
     }
 
     public bool GetActiveStatus()
@@ -27,14 +27,12 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 
     public void ActivateTrigger()
     {
-        Debug.LogWarning("Exit trigger!");
         _boxCollider.isTrigger = true;
     }
 
-    public void UseTrigger()
+    public void UseTrigger(GameObject player)
     {
-        _scenario.LoadMainMenu();
-        //_scenario.CreateNewRoomScene(1,2);
+        _gameplayService.LevelManager.LoadNextRoom(player);
     }
 
     public void DisableTrigger()

@@ -92,6 +92,8 @@ namespace Gameplay
 
         public void OnEnter()
         {
+            if (!_characters.Enemies.Contains(_characterController))
+                _scenario.OnStateEnd();
             Debug.Log($"-----------------------------|Enemy {_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
 
@@ -104,8 +106,7 @@ namespace Gameplay
 
             _characterController.Tick();
 
-            if (!_characters.Enemies.Contains(_characterController))
-                _scenario.OnStateEnd();
+            
         }
 
         public void OnExit()
@@ -218,18 +219,27 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-            PlayerSpawnPointWithType player;
-            CharacterType playerType;
-            for (int i = 0; i < _characters.PlayerSpawnPoints.Count; i++)
+
+            if (_scenario.GameplayService.Player == null)
             {
-                player = _characters.PlayerSpawnPoints[i];
-                playerType = DataTransfer.TypeCollection[i];
-                Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
-                Debug.LogWarning(newPos);
-                IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
-                newPlayer.SetCharacterContext(_characters);
-                _characters.Players.Add(newPlayer);
+                PlayerSpawnPointWithType player;
+                CharacterType playerType;
+                for (int i = 0; i < _characters.PlayerSpawnPoints.Count; i++)
+                {
+                    player = _characters.PlayerSpawnPoints[i];
+                    playerType = DataTransfer.TypeCollection[i];
+                    Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
+                    Debug.LogWarning(newPos);
+                    IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
+                    newPlayer.SetCharacterContext(_characters);
+                    _characters.Players.Add(newPlayer);
+                }
+            } else
+            {
+                Debug.Log("Player already create!!!");
             }
+
+            
         }
 
         public void OnEnemyCreate()

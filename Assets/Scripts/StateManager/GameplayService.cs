@@ -1,4 +1,5 @@
 using CharactersStats;
+using Player;
 using UnityEngine;
 using Zenject;
 
@@ -6,6 +7,7 @@ namespace Gameplay
 {
     public interface IGameplayService
     {
+        public IPlayerController Player { get; set; }
         public IPoolManager PoolManager { get; set; }
         void Init(TypeOfScenario type);
         public IPlayerFactory _playerFactory { get; set; }
@@ -16,6 +18,7 @@ namespace Gameplay
 
     public class GameplayService : IGameplayService
     {
+        public IPlayerController Player { get; set; }
         public IPoolManager PoolManager { get; set; }
         public IPlayerFactory _playerFactory { get; set; }
         public IEnemyFactory _enemyFactory { get; set; }
@@ -46,7 +49,13 @@ namespace Gameplay
             IScenarioContext context = _scenarioFactory.CreateContext(type);
             ScenarioType.Init(context, LevelManager);
         }
+
+        public void SetPlayer(IPlayerController playerController)
+        {
+            Player = playerController;
+        }
     }
+
 
     public interface IScenarioFactory
     {

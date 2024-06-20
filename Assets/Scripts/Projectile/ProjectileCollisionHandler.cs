@@ -16,6 +16,8 @@ namespace Projectiles
         private IProjectile _projectile;
         private Rigidbody _rigidbody;
         private int _ricochetCount;
+        private float _cooldown = 0.02f;
+        private Coroutine _coroutine;
 
         public void Init(IProjectile projectile)
         {
@@ -50,9 +52,13 @@ namespace Projectiles
 
             if (collision.gameObject.TryGetComponent(out IWall obstacle))
             {
-                CheckRichochet(obstacle);
-                Vector3 velocity = _projectile.GetLastVelocity();
-                obstacle.ProcessCollision(collision, _rigidbody, velocity);
+                if (_coroutine == null)
+                {
+                    CheckRichochet(obstacle);
+                    Vector3 velocity = _projectile.GetLastVelocity();
+                    obstacle.ProcessCollision(collision, _rigidbody, velocity);
+                    _coroutine = StartCoroutine(ReflectCooldown());
+                }
             }
 
             if (collision.gameObject.TryGetComponent(out IInteractible interactible))
@@ -67,6 +73,11 @@ namespace Projectiles
             {
                 _projectile.ControllerInputs.HandleStopMovement();
             }
+        }
+        private IEnumerator ReflectCooldown()
+        {
+            yield return new WaitForSeconds(_cooldown);
+            _coroutine = null;
         }
     }
 }
