@@ -61,21 +61,13 @@ public class PoolManager : IPoolManager
         CreatePool(_projectilePooler, "ProjectilePool", parent);
         CreatePool(_slingshotPooler, "SlingshotPool", parent);
 
-        //_buffPooler.Init(buffParent);
-        //_effectPooler.Init(effectParent);
-        //_abilityIconPooler.Init(abilityIconParent);
-        //_characterPanelPooler.Init(characterPanelParent);
-        //_characterPooler.Init(characterParent);
-        //_characterUIPooler.Init(characterUIParent);
-        //_projectilePooler.Init(projectileParent);
-        //_slingshotPooler.Init(slingshotParent);
     }
 
     private void CreatePool<T>(IPool<T> pool, string name, Transform parent)
     {
-        GameObject poolParent = new GameObject(name);
+        Transform poolParent = new GameObject(name).transform;
         poolParent.transform.SetParent(parent);
-        pool.Init();
+        pool.Init(poolParent);
     }
 
     public void CleanPoolers()

@@ -48,8 +48,8 @@ public abstract class CharacterFactory<TController>
 
         _poolable = _characterPooler.Pull<IMyPoolable>(type, position, Quaternion.identity, parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();
-        
-        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, Quaternion.Euler(90, 0, 0), characterView.transform);
+
+        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, Quaternion.Euler(90, 0, 0), parent);
         CharacterUIView characterUIView = _poolable.gameObject.GetComponent<CharacterUIView>();
 
         controller.Init(_characterModel, characterView, characterUIView);

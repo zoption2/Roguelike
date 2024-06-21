@@ -18,20 +18,34 @@ namespace Projectiles
         private int _ricochetCount;
         private bool _hadCollisionInThisFrame;
 
+        [ContextMenu("TestStop")]
+        private void TESTSTOP()
+        {
+            _rigidbody.velocity = Vector3.zero;
+        }
+
+        [ContextMenu("TestLaunch")]
+        private void TESTLAUNCH()
+        {
+            Vector3 p = new Vector3(5, 0, 0);
+            _rigidbody.AddForce(p, ForceMode.Impulse);
+        }
+
         public void Init(IProjectile projectile)
         {
             _projectile = projectile;
             _rigidbody = _projectile.GetRigidbody();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             _hadCollisionInThisFrame = false;
         }
 
         public void SetRicochetCount(int count)
         {
-            _ricochetCount = count;
+            //_ricochetCount = count;
+            _ricochetCount = 999;
         }
 
         private void CheckRichochet(IWall obstacle)

@@ -16,7 +16,7 @@ namespace Pool
 
     public interface IPool<TEnum>
     {
-        public void Init();
+        public void Init(Transform parent);
         public void CleanPool();
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         public void Push(TEnum tag, IMyPoolable obj);
@@ -28,15 +28,24 @@ namespace Pool
 
         protected abstract GameObject GetPrefab(TEnum tag);
 
+        protected Transform _parentTransform;
+
         public void Init()
         {
             _poolDictionary = new Dictionary<TEnum, Queue<IMyPoolable>>();
+        }
+
+        public void Init(Transform parent)
+        {
+            _poolDictionary = new Dictionary<TEnum, Queue<IMyPoolable>>();
+            _parentTransform = parent;
         }
 
         public void CleanPool()
         {
             _poolDictionary.Clear();
         }
+
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
         {
             if (!_poolDictionary.ContainsKey(tag))
@@ -65,7 +74,7 @@ namespace Pool
                     spawnedInstance = ProjectContext.Instance.Container.InstantiatePrefab(prefab, position, rotation, parent);
                 } else
                 {
-                    spawnedInstance = GameObject.Instantiate(prefab, position, rotation, parent);
+                    spawnedInstance = GameObject.Instantiate(prefab, position, rotation);
                 }
 
                 IMyPoolable result = spawnedInstance.gameObject.GetComponent<IMyPoolable>();
@@ -79,6 +88,7 @@ namespace Pool
         }
         public void Push(TEnum tag,IMyPoolable obj)
         {
+            obj.transform.SetParent(_parentTransform);
             if (_poolDictionary.ContainsKey(tag))
             {
                 obj.gameObject.SetActive(false);

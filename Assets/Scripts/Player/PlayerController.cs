@@ -122,7 +122,6 @@ namespace Player
             CharacterView.ON_CLICK += OnClick;
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
             ON_STOP_MOVEMENT += CheckForEndOfState;
-            SlingShotPooler.Init();
 
             foreach(var ability in CharacterModel.Abilities)
             {

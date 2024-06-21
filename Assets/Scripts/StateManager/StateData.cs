@@ -37,7 +37,6 @@ namespace Gameplay
             _roomObjectsFactory = roomObjectsFactory;
             _roomTemplate = roomTemplateSO;
             _projectilePooler = projectilePooler;
-            _projectilePooler.Init();
         }
 
         public void Init(IScenario scenarioInstance, ICharacterScenarioContext context)
