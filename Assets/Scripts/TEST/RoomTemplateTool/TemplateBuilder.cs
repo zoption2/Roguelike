@@ -8,51 +8,51 @@ public class TemplateBuilder : EditorWindow
 {
     #region Fields
     private Tilemap selectedTilemap;
-    private TemplateElementType[,] levelArray;
-    private TemplateElementType[,] originalLevelArray;
+    private TemplateElementType[,] _levelArray;
+    private TemplateElementType[,] _originalLevelArray;
 
-    private Color[,] cellColors;
-    private bool[,] isEditableArray;
-    private Vector2 scrollPosition;
+    private Color[,] _cellColors;
+    private bool[,] _isEditableArray;
+    private Vector2 _scrollPosition;
 
-    private List<TemplatePlacebleElements.TemplatePlacebleElement> placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>();
-    private int selectedObjectIndex = -1;
+    private List<TemplatePlacebleElements.TemplatePlacebleElement> _placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>();
+    private int _selectedObjectIndex = -1;
 
-    private string newObjectName = "";
-    private Color newObjectColor = Color.white;
-    private TemplateElementType newObjectType = TemplateElementType.Ground;
+    private string _newObjectName = "";
+    private Color _newObjectColor = Color.white;
+    private TemplateElementType _newObjectType = TemplateElementType.Ground;
 
-    private float zoomScale = 1f;
+    private float _zoomScale = 1f;
 
-    private string newRecordName = "";
-    private bool DisplayNewTemplateRecordFields = false;
-    private bool displayNewObjectFields = false;
+    private string _newRecordName = "";
+    private bool _DisplayNewTemplateRecordFields = false;
+    private bool _displayNewObjectFields = false;
 
-    private TemplatePlacebleElements templatePlacebleElementsSO;
-    private TypeOfScenario _selectedScenarioType = TypeOfScenario.DefaultRoom;
+    private TemplatePlacebleElements _templatePlacebleElementsSO;
+    private TypeOfScenario __selectedScenarioType = TypeOfScenario.DefaultRoom;
 
-    private bool showInitialOptions = true;
-    private bool createNewArray = false;
-    private bool createFromTilemap = false;
-    private bool editExistingTemplate = false;
-    private bool resizeArray = false;
+    private bool _showInitialOptions = true;
+    private bool _createNewArray = false;
+    private bool _createFromTilemap = false;
+    private bool _editExistingTemplate = false;
+    private bool _resizeArray = false;
 
-    private bool isMousePressed = false;
+    private bool _isMousePressed = false;
 
-    private int arrayWidth = 0;
-    private int arrayHeight = 0;
+    private int _arrayWidth = 0;
+    private int _arrayHeight = 0;
 
-    private GUIStyle headerStyle;
-    private GUIStyle buttonStyle;
+    private GUIStyle _headerStyle;
+    private GUIStyle _buttonStyle;
 
-    private RoomTemplateSO roomTemplateSO;
-    private List<RoomTemplateSO.Template> templates = new List<RoomTemplateSO.Template>();
-    private int selectedTemplateIndex = -1;
+    private RoomTemplateSO _roomTemplateSO;
+    private List<RoomTemplateSO.Template> _templates = new List<RoomTemplateSO.Template>();
+    private int _selectedTemplateIndex = -1;
 
-    private int deleteIndex = -1;
+    private int _deleteIndex = -1;
 
-    private const string TemplatePlaceableElementsPath = "Assets/SO/TemplatePlacebleElementsSO.asset";
-    private const string RoomTemplateSOPath = "Assets/SO/RoomTemplateSO.asset";
+    private const string C_TemplatePlaceableElementsPath = "Assets/SO/TemplatePlacebleElementsSO.asset";
+    private const string C_RoomTemplateSOPath = "Assets/SO/RoomTemplateSO.asset";
     #endregion
 
     [MenuItem("Tools/Template Builder")]
@@ -65,78 +65,78 @@ public class TemplateBuilder : EditorWindow
     #region GUI 
     private void OnEnable()
     {
-        templatePlacebleElementsSO = AssetDatabase.LoadAssetAtPath<TemplatePlacebleElements>(TemplatePlaceableElementsPath);
-        if (templatePlacebleElementsSO == null)
+        _templatePlacebleElementsSO = AssetDatabase.LoadAssetAtPath<TemplatePlacebleElements>(C_TemplatePlaceableElementsPath);
+        if (_templatePlacebleElementsSO == null)
         {
-            templatePlacebleElementsSO = CreateInstance<TemplatePlacebleElements>();
-            AssetDatabase.CreateAsset(templatePlacebleElementsSO, TemplatePlaceableElementsPath);
+            _templatePlacebleElementsSO = CreateInstance<TemplatePlacebleElements>();
+            AssetDatabase.CreateAsset(_templatePlacebleElementsSO, C_TemplatePlaceableElementsPath);
             AssetDatabase.SaveAssets();
-            Debug.Log("Created new TemplatePlacebleElements SO at " + TemplatePlaceableElementsPath);
+            Debug.Log("Created new TemplatePlacebleElements SO at " + C_TemplatePlaceableElementsPath);
         }
         else
         {
-            placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>(templatePlacebleElementsSO.PlacebleElements);
-            Debug.Log($"Loaded {placeableObjects.Count} placeable objects from SO.");
+            _placeableObjects = new List<TemplatePlacebleElements.TemplatePlacebleElement>(_templatePlacebleElementsSO.PlacebleElements);
+            Debug.Log($"Loaded {_placeableObjects.Count} placeable objects from SO.");
         }
 
-        roomTemplateSO = AssetDatabase.LoadAssetAtPath<RoomTemplateSO>(RoomTemplateSOPath);
-        if (roomTemplateSO == null)
+        _roomTemplateSO = AssetDatabase.LoadAssetAtPath<RoomTemplateSO>(C_RoomTemplateSOPath);
+        if (_roomTemplateSO == null)
         {
-            roomTemplateSO = CreateInstance<RoomTemplateSO>();
-            AssetDatabase.CreateAsset(roomTemplateSO, RoomTemplateSOPath);
+            _roomTemplateSO = CreateInstance<RoomTemplateSO>();
+            AssetDatabase.CreateAsset(_roomTemplateSO, C_RoomTemplateSOPath);
             AssetDatabase.SaveAssets();
-            Debug.Log("Created new RoomTemplateSO at " + RoomTemplateSOPath);
+            Debug.Log("Created new RoomTemplateSO at " + C_RoomTemplateSOPath);
         }
         else
         {
-            templates = roomTemplateSO.Templates;
-            Debug.Log($"Loaded {templates.Count} templates from SO.");
+            _templates = _roomTemplateSO.Templates;
+            Debug.Log($"Loaded {_templates.Count} templates from SO.");
         }
     }
 
     private void OnGUI()
     {
-        if (headerStyle == null)
+        if (_headerStyle == null)
         {
-            headerStyle = new GUIStyle(GUI.skin.label);
-            headerStyle.fontSize = 20;
-            headerStyle.alignment = TextAnchor.MiddleCenter;
+            _headerStyle = new GUIStyle(GUI.skin.label);
+            _headerStyle.fontSize = 20;
+            _headerStyle.alignment = TextAnchor.MiddleCenter;
         }
 
-        if (buttonStyle == null)
+        if (_buttonStyle == null)
         {
-            buttonStyle = new GUIStyle(GUI.skin.button);
-            buttonStyle.fontSize = 14;
+            _buttonStyle = new GUIStyle(GUI.skin.button);
+            _buttonStyle.fontSize = 14;
         }
 
         Event e = Event.current;
 
         if (e.type == EventType.MouseDown && e.button == 0)
         {
-            isMousePressed = true;
+            _isMousePressed = true;
         }
         else if (e.type == EventType.MouseUp && e.button == 0)
         {
-            isMousePressed = false;
+            _isMousePressed = false;
         }
 
-        if (showInitialOptions)
+        if (_showInitialOptions)
         {
             ShowInitialOptions();
         }
-        else if (createNewArray)
+        else if (_createNewArray)
         {
             ShowNewArrayOptions();
         }
-        else if (createFromTilemap)
+        else if (_createFromTilemap)
         {
             ShowTilemapOptions();
         }
-        else if (editExistingTemplate)
+        else if (_editExistingTemplate)
         {
             ShowEditTemplateOptions();
         }
-        else if (resizeArray)
+        else if (_resizeArray)
         {
             ShowResizeArrayOptions();
         }
@@ -149,30 +149,30 @@ public class TemplateBuilder : EditorWindow
     private void ShowInitialOptions()
     {
         GUILayout.Space(20);
-        GUILayout.Label("TEMPLATE BUILDER", headerStyle, GUILayout.Height(40));
+        GUILayout.Label("TEMPLATE BUILDER", _headerStyle, GUILayout.Height(40));
 
         GUILayout.FlexibleSpace();
 
-        if (GUILayout.Button("Empty Template", buttonStyle, GUILayout.Height(50)))
+        if (GUILayout.Button("Empty Template", _buttonStyle, GUILayout.Height(50)))
         {
-            createNewArray = true;
-            showInitialOptions = false;
+            _createNewArray = true;
+            _showInitialOptions = false;
         }
 
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Template From Tilemap", buttonStyle, GUILayout.Height(50)))
+        if (GUILayout.Button("Template From Tilemap", _buttonStyle, GUILayout.Height(50)))
         {
-            createFromTilemap = true;
-            showInitialOptions = false;
+            _createFromTilemap = true;
+            _showInitialOptions = false;
         }
 
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Edit Existing Template", buttonStyle, GUILayout.Height(50)))
+        if (GUILayout.Button("Edit Existing Template", _buttonStyle, GUILayout.Height(50)))
         {
-            editExistingTemplate = true;
-            showInitialOptions = false;
+            _editExistingTemplate = true;
+            _showInitialOptions = false;
         }
 
         GUILayout.FlexibleSpace();
@@ -182,19 +182,19 @@ public class TemplateBuilder : EditorWindow
     {
         GUILayout.Label("Enter Array Size", EditorStyles.boldLabel);
 
-        arrayWidth = EditorGUILayout.IntField("Width", arrayWidth);
-        arrayHeight = EditorGUILayout.IntField("Height", arrayHeight);
+        _arrayWidth = EditorGUILayout.IntField("Width", _arrayWidth);
+        _arrayHeight = EditorGUILayout.IntField("Height", _arrayHeight);
 
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Create Array"))
         {
             CreateEmptyArray();
-            createNewArray = false;
+            _createNewArray = false;
         }
         if (GUILayout.Button("Back"))
         {
-            createNewArray = false;
-            showInitialOptions = true;
+            _createNewArray = false;
+            _showInitialOptions = true;
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -210,12 +210,12 @@ public class TemplateBuilder : EditorWindow
         if (selectedTilemap != null && GUILayout.Button("Generate Template"))
         {
             GenerateArrayFromTilemap();
-            createFromTilemap = false;
+            _createFromTilemap = false;
         }
         if (GUILayout.Button("Back"))
         {
-            createFromTilemap = false;
-            showInitialOptions = true;
+            _createFromTilemap = false;
+            _showInitialOptions = true;
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -228,18 +228,18 @@ public class TemplateBuilder : EditorWindow
 
         GUILayout.Space(20);
 
-        if (templates.Count == 0)
+        if (_templates.Count == 0)
         {
             GUILayout.Label("No available templates to edit", EditorStyles.label);
         }
         else
         {
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            for (int i = 0; i < templates.Count; i++)
+            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
+            for (int i = 0; i < _templates.Count; i++)
             {
-                var template = templates[i];
+                var template = _templates[i];
                 GUIStyle style = new GUIStyle(GUI.skin.box);
-                if (selectedTemplateIndex == i)
+                if (_selectedTemplateIndex == i)
                 {
                     style.normal.background = MakeTex(1, 1, new Color(115 / 255f, 115 / 255f, 115 / 255f));
                     style.normal.textColor = Color.white;
@@ -252,7 +252,7 @@ public class TemplateBuilder : EditorWindow
                 GUILayout.FlexibleSpace();
                 GUILayout.Label(template.DateAdded, GUILayout.Width(200));
                 GUILayout.FlexibleSpace();
-                if (deleteIndex == i)
+                if (_deleteIndex == i)
                 {
                     if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(24)))
                     {
@@ -260,14 +260,14 @@ public class TemplateBuilder : EditorWindow
                     }
                     if (GUILayout.Button("Cancel", GUILayout.Width(80), GUILayout.Height(24)))
                     {
-                        deleteIndex = -1;
+                        _deleteIndex = -1;
                     }
                 }
                 else
                 {
                     if (GUILayout.Button("Delete", GUILayout.Width(80), GUILayout.Height(24)))
                     {
-                        deleteIndex = i;
+                        _deleteIndex = i;
                     }
                 }
                 EditorGUILayout.EndHorizontal();
@@ -277,7 +277,7 @@ public class TemplateBuilder : EditorWindow
                 Rect rect = GUILayoutUtility.GetLastRect();
                 if (Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition))
                 {
-                    selectedTemplateIndex = i;
+                    _selectedTemplateIndex = i;
                     Repaint();
                 }
             }
@@ -287,15 +287,15 @@ public class TemplateBuilder : EditorWindow
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Edit Template"))
         {
-            if (selectedTemplateIndex >= 0 && selectedTemplateIndex < templates.Count)
+            if (_selectedTemplateIndex >= 0 && _selectedTemplateIndex < _templates.Count)
             {
-                LoadTemplate(templates[selectedTemplateIndex]);
+                LoadTemplate(_templates[_selectedTemplateIndex]);
             }
         }
         if (GUILayout.Button("Back"))
         {
-            editExistingTemplate = false;
-            showInitialOptions = true;
+            _editExistingTemplate = false;
+            _showInitialOptions = true;
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -304,19 +304,19 @@ public class TemplateBuilder : EditorWindow
     {
         GUILayout.Label("Enter New Array Size", EditorStyles.boldLabel);
 
-        arrayWidth = EditorGUILayout.IntField("New Width", arrayWidth);
-        arrayHeight = EditorGUILayout.IntField("New Height", arrayHeight);
+        _arrayWidth = EditorGUILayout.IntField("New Width", _arrayWidth);
+        _arrayHeight = EditorGUILayout.IntField("New Height", _arrayHeight);
 
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Resize Array"))
         {
-            ResizeArray(arrayWidth, arrayHeight);
-            resizeArray = false;
+            ResizeArray(_arrayWidth, _arrayHeight);
+            _resizeArray = false;
         }
         if (GUILayout.Button("Back"))
         {
-            resizeArray = false;
-            showInitialOptions = false;
+            _resizeArray = false;
+            _showInitialOptions = false;
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -338,14 +338,14 @@ public class TemplateBuilder : EditorWindow
     {
         GUILayout.Space(10);
 
-        if (levelArray != null)
+        if (_levelArray != null)
         {
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             EditorGUILayout.BeginVertical();
             GUILayout.FlexibleSpace();
 
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
             DisplayArrayEditor();
 
@@ -360,10 +360,10 @@ public class TemplateBuilder : EditorWindow
         GUILayout.Space(10);
 
         GUILayout.Label("Selected element", EditorStyles.boldLabel);
-        if (selectedObjectIndex != -1)
+        if (_selectedObjectIndex != -1)
         {
-            EditorGUILayout.LabelField("Type: " + placeableObjects[selectedObjectIndex].Type);
-            EditorGUILayout.LabelField("Color: " + placeableObjects[selectedObjectIndex].Color);
+            EditorGUILayout.LabelField("Type: " + _placeableObjects[_selectedObjectIndex].Type);
+            EditorGUILayout.LabelField("Color: " + _placeableObjects[_selectedObjectIndex].Color);
         }
 
         GUILayout.Space(10);
@@ -371,68 +371,68 @@ public class TemplateBuilder : EditorWindow
         GUILayout.Label("Elements to build", EditorStyles.boldLabel);
         DisplayPlaceableObjects();
 
-        if (!displayNewObjectFields)
+        if (!_displayNewObjectFields)
         {
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Add New Object"))
             {
-                displayNewObjectFields = true;
+                _displayNewObjectFields = true;
             }
             GUILayout.EndHorizontal();
         }
         else
         {
-            newObjectName = EditorGUILayout.TextField("Name", newObjectName);
-            newObjectType = (TemplateElementType)EditorGUILayout.Popup("Type", (int)newObjectType, System.Enum.GetNames(typeof(TemplateElementType)));
-            newObjectColor = EditorGUILayout.ColorField("Color", newObjectColor);
+            _newObjectName = EditorGUILayout.TextField("Name", _newObjectName);
+            _newObjectType = (TemplateElementType)EditorGUILayout.Popup("Type", (int)_newObjectType, System.Enum.GetNames(typeof(TemplateElementType)));
+            _newObjectColor = EditorGUILayout.ColorField("Color", _newObjectColor);
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Add Object"))
             {
                 AddNewObject();
-                displayNewObjectFields = false;
+                _displayNewObjectFields = false;
             }
             if (GUILayout.Button("Cancel"))
             {
-                displayNewObjectFields = false;
+                _displayNewObjectFields = false;
             }
             GUILayout.EndHorizontal();
         }
 
         GUILayout.Space(10);
 
-        GUILayout.Label("Scenario Type", EditorStyles.boldLabel); // Додайте цей блок
-        _selectedScenarioType = (TypeOfScenario)EditorGUILayout.EnumPopup("Scenario Type", _selectedScenarioType); // Додайте цей рядок
+        GUILayout.Label("Scenario Type", EditorStyles.boldLabel);
+        __selectedScenarioType = (TypeOfScenario)EditorGUILayout.EnumPopup("Scenario Type", __selectedScenarioType); // Додайте цей рядок
 
         GUILayout.Space(10);
 
-        if (!DisplayNewTemplateRecordFields)
+        if (!_DisplayNewTemplateRecordFields)
         {
             if (GUILayout.Button("Add New Template Record"))
             {
-                DisplayNewTemplateRecordFields = true;
-                if (selectedTemplateIndex >= 0 && selectedTemplateIndex < templates.Count)
+                _DisplayNewTemplateRecordFields = true;
+                if (_selectedTemplateIndex >= 0 && _selectedTemplateIndex < _templates.Count)
                 {
-                    newRecordName = templates[selectedTemplateIndex].name;
+                    _newRecordName = _templates[_selectedTemplateIndex].name;
                 }
             }
         }
         else
         {
             GUILayout.Label("New Template Record", EditorStyles.boldLabel);
-            newRecordName = EditorGUILayout.TextField("Name", newRecordName);
+            _newRecordName = EditorGUILayout.TextField("Name", _newRecordName);
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Create Template Record"))
             {
-                CreateOrUpdateRecordInSO(newRecordName, levelArray);
-                DisplayNewTemplateRecordFields = false;
-                newRecordName = "";
+                CreateOrUpdateRecordInSO(_newRecordName, _levelArray);
+                _DisplayNewTemplateRecordFields = false;
+                _newRecordName = "";
             }
             if (GUILayout.Button("Cancel"))
             {
-                DisplayNewTemplateRecordFields = false;
+                _DisplayNewTemplateRecordFields = false;
             }
             GUILayout.EndHorizontal();
         }
@@ -441,7 +441,7 @@ public class TemplateBuilder : EditorWindow
 
         if (GUILayout.Button("Resize Array", GUILayout.Height(50)))
         {
-            resizeArray = true;
+            _resizeArray = true;
         }
     }
 
@@ -450,27 +450,27 @@ public class TemplateBuilder : EditorWindow
     #region MainWindowLogic
     private void CreateEmptyArray()
     {
-        if (arrayWidth <= 0 || arrayHeight <= 0)
+        if (_arrayWidth <= 0 || _arrayHeight <= 0)
         {
             Debug.LogError("Width and Height must be greater than 0.");
             return;
         }
 
-        levelArray = new TemplateElementType[arrayWidth, arrayHeight];
-        cellColors = new Color[arrayWidth, arrayHeight];
-        isEditableArray = new bool[arrayWidth, arrayHeight];
+        _levelArray = new TemplateElementType[_arrayWidth, _arrayHeight];
+        _cellColors = new Color[_arrayWidth, _arrayHeight];
+        _isEditableArray = new bool[_arrayWidth, _arrayHeight];
 
-        for (int x = 0; x < arrayWidth; x++)
+        for (int x = 0; x < _arrayWidth; x++)
         {
-            for (int y = 0; y < arrayHeight; y++)
+            for (int y = 0; y < _arrayHeight; y++)
             {
-                levelArray[x, y] = TemplateElementType.Ground;
-                cellColors[x, y] = Color.white;
-                isEditableArray[x, y] = true;
+                _levelArray[x, y] = TemplateElementType.Ground;
+                _cellColors[x, y] = Color.white;
+                _isEditableArray[x, y] = true;
             }
         }
 
-        Debug.Log($"Created empty array of size {arrayWidth}x{arrayHeight}.");
+        Debug.Log($"Created empty array of size {_arrayWidth}x{_arrayHeight}.");
     }
 
     private void ResizeArray(int newWidth, int newHeight)
@@ -489,11 +489,11 @@ public class TemplateBuilder : EditorWindow
         {
             for (int y = 0; y < newHeight; y++)
             {
-                if (x < levelArray.GetLength(0) && y < levelArray.GetLength(1))
+                if (x < _levelArray.GetLength(0) && y < _levelArray.GetLength(1))
                 {
-                    newLevelArray[x, y] = levelArray[x, y];
-                    newCellColors[x, y] = cellColors[x, y];
-                    newIsEditableArray[x, y] = isEditableArray[x, y];
+                    newLevelArray[x, y] = _levelArray[x, y];
+                    newCellColors[x, y] = _cellColors[x, y];
+                    newIsEditableArray[x, y] = _isEditableArray[x, y];
                 }
                 else
                 {
@@ -504,9 +504,9 @@ public class TemplateBuilder : EditorWindow
             }
         }
 
-        levelArray = newLevelArray;
-        cellColors = newCellColors;
-        isEditableArray = newIsEditableArray;
+        _levelArray = newLevelArray;
+        _cellColors = newCellColors;
+        _isEditableArray = newIsEditableArray;
 
         Debug.Log($"Resized array to {newWidth}x{newHeight}.");
     }
@@ -515,27 +515,27 @@ public class TemplateBuilder : EditorWindow
     {
         GUILayout.BeginVertical(GUI.skin.box);
 
-        int cellSize = Mathf.FloorToInt(20 * zoomScale);
+        int cellSize = Mathf.FloorToInt(20 * _zoomScale);
 
-        for (int y = levelArray.GetLength(1) - 1; y >= 0; y--)
+        for (int y = _levelArray.GetLength(1) - 1; y >= 0; y--)
         {
             GUILayout.BeginHorizontal();
 
-            for (int x = 0; x < levelArray.GetLength(0); x++)
+            for (int x = 0; x < _levelArray.GetLength(0); x++)
             {
                 Rect rect = GUILayoutUtility.GetRect(cellSize, cellSize, GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(false));
 
-                Color buttonColor = cellColors[x, y];
+                Color buttonColor = _cellColors[x, y];
                 GUI.backgroundColor = buttonColor;
-                if (GUI.Button(rect, GUIContent.none) || (isMousePressed && rect.Contains(Event.current.mousePosition)))
+                if (GUI.Button(rect, GUIContent.none) || (_isMousePressed && rect.Contains(Event.current.mousePosition)))
                 {
-                    if (selectedObjectIndex != -1)
+                    if (_selectedObjectIndex != -1)
                     {
-                        TemplateElementType previousType = levelArray[x, y];
-                        levelArray[x, y] = placeableObjects[selectedObjectIndex].Type;
-                        TemplateElementType newType = levelArray[x, y];
+                        TemplateElementType previousType = _levelArray[x, y];
+                        _levelArray[x, y] = _placeableObjects[_selectedObjectIndex].Type;
+                        TemplateElementType newType = _levelArray[x, y];
                         Debug.Log($"Cell changed from {previousType} to {newType}");
-                        cellColors[x, y] = placeableObjects[selectedObjectIndex].Color;
+                        _cellColors[x, y] = _placeableObjects[_selectedObjectIndex].Color;
                     }
                 }
                 GUI.backgroundColor = Color.white;
@@ -546,7 +546,6 @@ public class TemplateBuilder : EditorWindow
 
         GUILayout.EndVertical();
     }
-
 
     private void GenerateArrayFromTilemap()
     {
@@ -562,9 +561,9 @@ public class TemplateBuilder : EditorWindow
             return;
         }
 
-        levelArray = new TemplateElementType[width, height];
-        cellColors = new Color[width, height];
-        isEditableArray = new bool[width, height];
+        _levelArray = new TemplateElementType[width, height];
+        _cellColors = new Color[width, height];
+        _isEditableArray = new bool[width, height];
 
         for (int x = 0; x < width; x++)
         {
@@ -575,15 +574,15 @@ public class TemplateBuilder : EditorWindow
 
                 if (tile != null)
                 {
-                    levelArray[x, y] = DetermineTileType(tile);
-                    cellColors[x, y] = tile is Tile concreteTile ? concreteTile.color : Color.white;
-                    isEditableArray[x, y] = true;
+                    _levelArray[x, y] = DetermineTileType(tile);
+                    _cellColors[x, y] = tile is Tile concreteTile ? concreteTile.color : Color.white;
+                    _isEditableArray[x, y] = true;
                 }
                 else
                 {
-                    levelArray[x, y] = TemplateElementType.None;
-                    cellColors[x, y] = Color.black;
-                    isEditableArray[x, y] = false;
+                    _levelArray[x, y] = TemplateElementType.None;
+                    _cellColors[x, y] = Color.black;
+                    _isEditableArray[x, y] = false;
                 }
             }
         }
@@ -639,9 +638,9 @@ public class TemplateBuilder : EditorWindow
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
-        for (int i = 0; i < placeableObjects.Count; i++)
+        for (int i = 0; i < _placeableObjects.Count; i++)
         {
-            var obj = placeableObjects[i];
+            var obj = _placeableObjects[i];
             EditorGUILayout.BeginHorizontal();
 
             GUILayout.Label(obj.Name, GUILayout.Width(nameWidth));
@@ -656,7 +655,7 @@ public class TemplateBuilder : EditorWindow
 
             if (GUILayout.Button("Select", GUILayout.Width(buttonWidth)))
             {
-                selectedObjectIndex = i;
+                _selectedObjectIndex = i;
             }
 
             EditorGUILayout.EndHorizontal();
@@ -668,21 +667,21 @@ public class TemplateBuilder : EditorWindow
     private void AddNewObject()
     {
         TemplatePlacebleElements.TemplatePlacebleElement newObj = new TemplatePlacebleElements.TemplatePlacebleElement();
-        newObj.Name = newObjectName;
-        newObj.Color = newObjectColor;
-        newObj.Type = newObjectType;
+        newObj.Name = _newObjectName;
+        newObj.Color = _newObjectColor;
+        newObj.Type = _newObjectType;
 
-        placeableObjects.Add(newObj);
+        _placeableObjects.Add(newObj);
 
-        if (templatePlacebleElementsSO != null)
+        if (_templatePlacebleElementsSO != null)
         {
-            if (templatePlacebleElementsSO.PlacebleElements == null)
+            if (_templatePlacebleElementsSO.PlacebleElements == null)
             {
-                templatePlacebleElementsSO.PlacebleElements = new List<TemplatePlacebleElements.TemplatePlacebleElement>();
+                _templatePlacebleElementsSO.PlacebleElements = new List<TemplatePlacebleElements.TemplatePlacebleElement>();
             }
 
-            templatePlacebleElementsSO.PlacebleElements.Add(newObj);
-            EditorUtility.SetDirty(templatePlacebleElementsSO);
+            _templatePlacebleElementsSO.PlacebleElements.Add(newObj);
+            EditorUtility.SetDirty(_templatePlacebleElementsSO);
             AssetDatabase.SaveAssets();
             Debug.Log($"Added new object: {newObj.Name}, Type: {newObj.Type}, Color: {newObj.Color}");
         }
@@ -694,61 +693,61 @@ public class TemplateBuilder : EditorWindow
 
     private void CreateOrUpdateRecordInSO(string name, TemplateElementType[,] levelArray)
     {
-        if (roomTemplateSO == null)
+        if (_roomTemplateSO == null)
         {
             Debug.LogError("RoomTemplateSO not found at path: Assets/SO/RoomTemplateSO.asset");
             return;
         }
 
-        if (roomTemplateSO.Templates == null)
+        if (_roomTemplateSO.Templates == null)
         {
-            roomTemplateSO.Templates = new List<RoomTemplateSO.Template>();
+            _roomTemplateSO.Templates = new List<RoomTemplateSO.Template>();
         }
 
-        var existingTemplate = selectedTemplateIndex >= 0 && selectedTemplateIndex < templates.Count
-                                ? templates[selectedTemplateIndex]
+        var existingTemplate = _selectedTemplateIndex >= 0 && _selectedTemplateIndex < _templates.Count
+                                ? _templates[_selectedTemplateIndex]
                                 : null;
 
         if (existingTemplate != null && name == existingTemplate.name)
         {
             existingTemplate.TemplateElement = (TemplateElementType[,])levelArray.Clone();
-            existingTemplate.ScenarioType = _selectedScenarioType;
+            existingTemplate.ScenarioType = __selectedScenarioType;
             existingTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             AssignExits(existingTemplate, levelArray);
             Debug.Log($"Updated existing template: {name}");
         }
         else
         {
-            var sameNameTemplate = roomTemplateSO.Templates.FirstOrDefault(t => t.name == name);
+            var sameNameTemplate = _roomTemplateSO.Templates.FirstOrDefault(t => t.name == name);
             if (sameNameTemplate != null)
             {
                 Debug.LogError($"Template with name {name} already exists. Choose a different name.");
                 return;
             }
 
-            int id = roomTemplateSO.Templates.Count > 0 ? roomTemplateSO.Templates.Max(t => t.id) + 1 : 1;
+            int id = _roomTemplateSO.Templates.Count > 0 ? _roomTemplateSO.Templates.Max(t => t.id) + 1 : 1;
 
             RoomTemplateSO.Template newTemplate = new RoomTemplateSO.Template
             {
                 name = name,
                 id = id,
                 TemplateElement = (TemplateElementType[,])levelArray.Clone(),
-                ScenarioType = _selectedScenarioType,
+                ScenarioType = __selectedScenarioType,
                 DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
             AssignExits(newTemplate, levelArray);
-            roomTemplateSO.Templates.Add(newTemplate);
+            _roomTemplateSO.Templates.Add(newTemplate);
             Debug.Log($"Added new template: {name}");
 
             if (existingTemplate != null)
             {
-                existingTemplate.TemplateElement = originalLevelArray;
+                existingTemplate.TemplateElement = _originalLevelArray;
                 Debug.Log($"Restored original template: {existingTemplate.name}");
             }
         }
 
-        EditorUtility.SetDirty(roomTemplateSO);
+        EditorUtility.SetDirty(_roomTemplateSO);
         AssetDatabase.SaveAssets();
     }
 
@@ -808,24 +807,6 @@ public class TemplateBuilder : EditorWindow
         return TemplateElementType.None;
     }
 
-
-
-    private string ArrayToString(TemplateElementType[,] array)
-    {
-        int rows = array.GetLength(0);
-        int cols = array.GetLength(1);
-        string result = "";
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                result += array[i, j].ToString() + " ";
-            }
-            result += "\n";
-        }
-        return result;
-    }
-
     private void LoadTemplate(RoomTemplateSO.Template template)
     {
         if (template == null || template.TemplateElement == null)
@@ -834,62 +815,61 @@ public class TemplateBuilder : EditorWindow
             return;
         }
 
-        levelArray = template.TemplateElement;
-        _selectedScenarioType = template.ScenarioType;
-        int rows = levelArray.GetLength(0);
-        int cols = levelArray.GetLength(1);
-        originalLevelArray = new TemplateElementType[rows, cols];
+        _levelArray = template.TemplateElement;
+        __selectedScenarioType = template.ScenarioType;
+        int rows = _levelArray.GetLength(0);
+        int cols = _levelArray.GetLength(1);
+        _originalLevelArray = new TemplateElementType[rows, cols];
 
         for (int x = 0; x < rows; x++)
         {
             for (int y = 0; y < cols; y++)
             {
-                originalLevelArray[x, y] = levelArray[x, y];
+                _originalLevelArray[x, y] = _levelArray[x, y];
             }
         }
 
-        cellColors = new Color[rows, cols];
-        isEditableArray = new bool[rows, cols];
+        _cellColors = new Color[rows, cols];
+        _isEditableArray = new bool[rows, cols];
 
         for (int x = 0; x < rows; x++)
         {
             for (int y = 0; y < cols; y++)
             {
-                var elementType = levelArray[x, y];
+                var elementType = _levelArray[x, y];
                 if (elementType == TemplateElementType.None)
                 {
-                    cellColors[x, y] = Color.black;
+                    _cellColors[x, y] = Color.black;
                 }
                 else
                 {
-                    var placeableObject = placeableObjects.FirstOrDefault(obj => obj.Type == elementType);
+                    var placeableObject = _placeableObjects.FirstOrDefault(obj => obj.Type == elementType);
                     if (placeableObject != null)
                     {
-                        cellColors[x, y] = placeableObject.Color;
+                        _cellColors[x, y] = placeableObject.Color;
                     }
                     else
                     {
-                        cellColors[x, y] = Color.white;
+                        _cellColors[x, y] = Color.white;
                     }
                 }
-                isEditableArray[x, y] = true;
+                _isEditableArray[x, y] = true;
             }
         }
 
-        editExistingTemplate = false;
-        showInitialOptions = false;
+        _editExistingTemplate = false;
+        _showInitialOptions = false;
     }
-
 
     private void DeleteTemplate(int index)
     {
-        if (index >= 0 && index < templates.Count)
+        if (index >= 0 && index < _templates.Count)
         {
-            templates.RemoveAt(index);
-            EditorUtility.SetDirty(roomTemplateSO);
+            _templates.RemoveAt(index);
+            EditorUtility.SetDirty(_roomTemplateSO);
             AssetDatabase.SaveAssets();
-            deleteIndex = -1;
-            selectedTemplateIndex = -1;
+            _deleteIndex = -1;
+            _selectedTemplateIndex = -1;
         }
     }
 

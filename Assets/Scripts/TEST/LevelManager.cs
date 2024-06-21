@@ -12,7 +12,6 @@ public interface ILevelManager
 {
 }
 
-
 public class LevelManager : MonoBehaviour
 {
     [SerializeField]
@@ -29,18 +28,23 @@ public class LevelManager : MonoBehaviour
     [Inject]
     public void Construct(
         RoomTemplateSO roomTemplateSO,
-        IGameplayService gameplayService
-        )
+        IGameplayService gameplayService,
+        IPoolManager poolManager
+    )
     {
         _roomTemplate = roomTemplateSO;
         _gameplayService = gameplayService;
-
+        PoolManager = poolManager;
     }
 
     public void Start()
     {
         _roomsOrder = new Queue<TypeOfScenario>(_roomsOrderInitList);
         _gameplayService.LevelManager = this;
+
+        GameObject poolManagerObject = new GameObject("PoolManager");
+        PoolManager.InitPoolers(poolManagerObject.transform);
+
         _nextRoom = GetNextRoom();
         LoadRoomScene(_nextRoom);
     }
@@ -49,7 +53,6 @@ public class LevelManager : MonoBehaviour
     {
         if (_roomsOrderInitList.Count > 0)
         {
-
             TypeOfScenario firstRoom = _roomsOrder.Dequeue();
             return firstRoom;
         }
@@ -125,7 +128,7 @@ public class LevelManager : MonoBehaviour
 
                 SceneManager.UnloadSceneAsync("Room");
 
-                if(player != null)
+                if (player != null)
                 {
                     MoveObjectToScene(player, newSceneName);
                 }
@@ -148,6 +151,7 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
+
     public void MoveObjectToScene(GameObject obj, string targetSceneName)
     {
         Scene targetScene = SceneManager.GetSceneByName(targetSceneName);

@@ -4,17 +4,17 @@ using Zenject;
 
 public interface IPoolManager
 {
-    public BuffPooler GetBuffPooler();
-    public EffectPooler GetEffectPooler();
-    public AbilityIconPooler GetAbilityIconPooler();
-    public CharacterPanelPooler GetCharacterPanelPooler();
-    public CharacterPooler GetCharacterPooler();
-    public CharacterUIPooler GetCharacterUIPooler();
-    public ProjectilePooler GetProjectilePooler();
-    public SlingshotPooler GetSlingshotPooler();
+    BuffPooler GetBuffPooler();
+    EffectPooler GetEffectPooler();
+    AbilityIconPooler GetAbilityIconPooler();
+    CharacterPanelPooler GetCharacterPanelPooler();
+    CharacterPooler GetCharacterPooler();
+    CharacterUIPooler GetCharacterUIPooler();
+    ProjectilePooler GetProjectilePooler();
+    SlingshotPooler GetSlingshotPooler();
 
-    public void InitPoolers();
-    public void CleanPoolers();
+    void InitPoolers(Transform parent);
+    void CleanPoolers();
 }
 
 public class PoolManager : IPoolManager
@@ -38,7 +38,7 @@ public class PoolManager : IPoolManager
         CharacterUIPooler characterUIPooler,
         ProjectilePooler projectilePooler,
         SlingshotPooler slingshotPooler
-        )
+    )
     {
         _buffPooler = buffPooler;
         _effectPooler = effectPooler;
@@ -50,16 +50,32 @@ public class PoolManager : IPoolManager
         _slingshotPooler = slingshotPooler;
     }
 
-    public void InitPoolers()
+    public void InitPoolers(Transform parent)
     {
-        _buffPooler.Init();
-        _effectPooler.Init();
-        _abilityIconPooler.Init();
-        _characterPanelPooler.Init();
-        _characterPooler.Init();
-        _characterUIPooler.Init();
-        _projectilePooler.Init();
-        _slingshotPooler.Init();
+        CreatePool(_buffPooler, "BuffPool", parent);
+        CreatePool(_effectPooler, "EffectPool", parent);
+        CreatePool(_abilityIconPooler, "AbilityIconPool", parent);
+        CreatePool(_characterPanelPooler, "CharacterPanelPool", parent);
+        CreatePool(_characterPooler, "CharacterPool", parent);
+        CreatePool(_characterUIPooler, "CharacterUIPool", parent);
+        CreatePool(_projectilePooler, "ProjectilePool", parent);
+        CreatePool(_slingshotPooler, "SlingshotPool", parent);
+
+        //_buffPooler.Init(buffParent);
+        //_effectPooler.Init(effectParent);
+        //_abilityIconPooler.Init(abilityIconParent);
+        //_characterPanelPooler.Init(characterPanelParent);
+        //_characterPooler.Init(characterParent);
+        //_characterUIPooler.Init(characterUIParent);
+        //_projectilePooler.Init(projectileParent);
+        //_slingshotPooler.Init(slingshotParent);
+    }
+
+    private void CreatePool<T>(IPool<T> pool, string name, Transform parent)
+    {
+        GameObject poolParent = new GameObject(name);
+        poolParent.transform.SetParent(parent);
+        pool.Init();
     }
 
     public void CleanPoolers()

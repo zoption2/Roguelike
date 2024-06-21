@@ -1,11 +1,5 @@
-using CharactersStats;
-using Enemy;
 using Gameplay;
 using Obstacles;
-using Player;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 
@@ -19,28 +13,27 @@ public interface IRoomBuilder
 
 public class RoomBuilder : IRoomBuilder
 {
-    public IScenario _scenario { get; }
-    public ICharacterScenarioContext _characters { get; }
-    private INavigationFactory _navigationFactory;
-    private IRoomObjectsFactory _roomObjectsFactory;
-    private RoomTemplateSO _roomTemplate;
+    public IScenario Scenario { get; }
+    public ICharacterScenarioContext Characters { get; }
     public Transform PlayersParent { get; set; }
     public Transform EnemiesParent { get; set; }
     public Transform BuffsParent { get; set; }
     public Transform WallsParent { get; set; }
     public Transform FloorsParent { get; set; }
 
-    public int EnemyCount { get; set; } = 2;
-    public int BuffCount { get; set; } = 2;
+    private INavigationFactory _navigationFactory;
+    private IRoomObjectsFactory _roomObjectsFactory;
+    private RoomTemplateSO _roomTemplate;
 
-    public RoomBuilder(IScenario scenario,
-            ICharacterScenarioContext context,
-            INavigationFactory navigationFactory,
-            IRoomObjectsFactory roomObjectsFactory,
-            RoomTemplateSO roomTemplate)
+    public RoomBuilder(
+        IScenario scenario,
+        ICharacterScenarioContext context,
+        INavigationFactory navigationFactory,
+        IRoomObjectsFactory roomObjectsFactory,
+        RoomTemplateSO roomTemplate)
     {
-        _scenario = scenario;
-        _characters = context;
+        Scenario = scenario;
+        Characters = context;
         _navigationFactory = navigationFactory;
         _roomObjectsFactory = roomObjectsFactory;
         _roomTemplate = roomTemplate;
@@ -76,29 +69,30 @@ public class RoomBuilder : IRoomBuilder
                 switch (elementType)
                 {
                     case TemplateElementType.Player:
-                        _characters.PlayerSpawnPoints.Add(new PlayerSpawnPointWithType { SpawnPoint = position, Type = CharacterType.Warrior });
+                        Characters.PlayerSpawnPoints.Add(new PlayerSpawnPointWithType { SpawnPoint = position, Type = CharacterType.Warrior });
                         break;
 
                     case TemplateElementType.Barbarian:
                     case TemplateElementType.Summoner:
                     case TemplateElementType.Thrower:
-                        _characters.EnemySpawnPoints.Add(new EnemySpawnPointWithType { SpawnPoint = position, Type = (CharacterType)elementType });
+                        Characters.EnemySpawnPoints.Add(new EnemySpawnPointWithType { SpawnPoint = position, Type = (CharacterType)elementType });
                         Debug.Log($"Added enemy spawn point at {position} of type {elementType}");
                         break;
 
                     case TemplateElementType.RandomBuff:
-                        _characters.BuffSpawnPoints.Add(new BuffSpawnPointWithType { SpawnPoint = position, Type = (BuffType)elementType });
+                        Characters.BuffSpawnPoints.Add(new BuffSpawnPointWithType { SpawnPoint = position, Type = (BuffType)elementType });
                         break;
                 }
             }
         }
 
-        Debug.Log($"Analyzed template {template}: PlayerSpawnPoints={_characters.PlayerSpawnPoints.Count}, EnemySpawnPoints={_characters.EnemySpawnPoints.Count}, BuffSpawnPoints={_characters.BuffSpawnPoints.Count}");
+        Debug.Log($"Analyzed template {template}: PlayerSpawnPoints={Characters.PlayerSpawnPoints.Count}, EnemySpawnPoints={Characters.EnemySpawnPoints.Count}, BuffSpawnPoints={Characters.BuffSpawnPoints.Count}");
     }
 
     private void BuildRoom(RoomTemplateSO.Template roomTemplate)
     {
         RoomTemplateSO.Template template = roomTemplate;
+
         if (template == null)
         {
             Debug.LogError("Template not found");
@@ -159,8 +153,8 @@ public class RoomBuilder : IRoomBuilder
                         exit.transform.rotation = Quaternion.Euler(0, 90, 0);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
-                        _characters.CompleatedRoomTriggers.Add(trigger);
-                        trigger.Init(_scenario.GameplayService);
+                        Characters.CompleatedRoomTriggers.Add(trigger);
+                        trigger.Init(Scenario.GameplayService);
 
                         templateElements[i, j] = TemplateElementType.None;
                         templateElements[i, j + 2] = TemplateElementType.None;
@@ -173,8 +167,8 @@ public class RoomBuilder : IRoomBuilder
                         GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
-                        _characters.CompleatedRoomTriggers.Add(trigger);
-                        trigger.Init(_scenario.GameplayService);
+                        Characters.CompleatedRoomTriggers.Add(trigger);
+                        trigger.Init(Scenario.GameplayService);
 
                         templateElements[i, j] = TemplateElementType.None;
                         templateElements[i + 2, j] = TemplateElementType.None;
@@ -189,6 +183,7 @@ public class RoomBuilder : IRoomBuilder
     private void CenterCamera(RoomTemplateSO.Template roomTemplate)
     {
         RoomTemplateSO.Template template = roomTemplate;
+
         if (template == null)
         {
             Debug.LogError("Template not found");
@@ -203,12 +198,9 @@ public class RoomBuilder : IRoomBuilder
         Vector3 topRight = coordinates[rows - 1, cols - 1];
         Vector3 center = (bottomLeft + topRight) / 2;
 
-        Debug.Log($"Camera position before: {Camera.main.transform.position}");
         Camera.main.transform.position = new Vector3(center.x, Camera.main.transform.position.y, center.z);
         Camera.main.transform.LookAt(new Vector3(center.x, 0, center.z));
-        Debug.Log($"Camera position after: {Camera.main.transform.position}");
     }
-
 
     private Transform CreateParent(string name, Transform parent)
     {
@@ -222,7 +214,7 @@ public class RoomBuilder : IRoomBuilder
     public void OnNavigationCreate()
     {
         NavMeshSurface navMeshSurface = _navigationFactory.CreateNavigation();
-        _characters.NavMeshSurface = navMeshSurface;
+        Characters.NavMeshSurface = navMeshSurface;
         navMeshSurface.BuildNavMesh();
     }
 }

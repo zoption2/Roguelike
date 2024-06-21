@@ -44,7 +44,6 @@ namespace Gameplay
 
         public void Init(TypeOfScenario type)
         {
-            PoolManager.InitPoolers();
             ScenarioType = _scenarioFactory.CreateScenario(type, this);
             IScenarioContext context = _scenarioFactory.CreateContext(type);
             ScenarioType.Init(context, LevelManager);
