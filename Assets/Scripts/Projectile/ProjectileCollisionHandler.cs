@@ -2,6 +2,7 @@ using Interactions;
 using Obstacles;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Projectiles
@@ -21,6 +22,7 @@ namespace Projectiles
         {
             _projectile = projectile;
             _rigidbody = _projectile.GetRigidbody();
+            _rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
         }
 
         public void SetRicochetCount(int count)
@@ -52,6 +54,7 @@ namespace Projectiles
             {
                 CheckRichochet(obstacle);
                 Vector3 velocity = _projectile.GetLastVelocity();
+
                 obstacle.ProcessCollision(collision, _rigidbody, velocity);
             }
 
@@ -67,6 +70,11 @@ namespace Projectiles
             {
                 _projectile.ControllerInputs.HandleStopMovement();
             }
+        }
+
+        private Vector3 GetCurrentVelocity()
+        {
+            return _rigidbody.velocity;
         }
     }
 }

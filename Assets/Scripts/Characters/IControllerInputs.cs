@@ -1,6 +1,8 @@
 using CharactersStats;
 using Interactions;
 using System.Collections.Generic;
+using UnityEngine;
+
 
 public interface IControllerInputs
 {
@@ -15,6 +17,7 @@ public interface IControllerInputs
     public bool GetActiveStatus();
     public void DoUpdate();
     public void PushCharacterUI();
+    public Transform GetTransform();
 
     public void HandleStopMovement();
 }

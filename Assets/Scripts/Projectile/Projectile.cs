@@ -23,9 +23,12 @@ namespace Projectiles
         public IControllerInputs ControllerInputs { get; set; }
         public ProjectileType ProjectileType { get; set; }
         public Vector3 Normal { get; set; }
-        private Queue<Vector3> _lastVelocities = new(2);
+
+        private const float X_ROTATION = 90f;
+        private Queue<Vector3> _lastVelocities = new Queue<Vector3>(2);
 
         private ProjectileCollisionHandler _projectileCollisionHandler;
+        private float _maxDistanceFromCharacter = 50f;
 
 
         public void Init(IControllerInputs controllerInputs,ProjectileType projectileType,ProjectilePooler projectilePooler)
@@ -45,7 +48,6 @@ namespace Projectiles
 
         public void PushToPool()
         {
-            Debug.Log("pushed projectile to pool");
             _pooler.Push(ProjectileType, this);
         }
 
@@ -90,18 +92,26 @@ namespace Projectiles
             }
 
             ViewRotation();
+
+            if(Vector3.Distance(transform.position, ControllerInputs.GetTransform().position) > _maxDistanceFromCharacter)
+            {
+                PushToPool();
+            }
         }
 
         public void ViewRotation()
         {
-            Transform projectile = GetRigidbody().transform;
             Vector3 velocity = GetVelocity();
             float rotationSpeed = velocity.magnitude;
             float angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0f, angle, 0);
-            projectile.rotation = Quaternion.Slerp(projectile.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.Euler(X_ROTATION, angle, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
+        public void AddLastVelocity(Vector3 velocity)
+        {
+            _lastVelocities.Enqueue(velocity);
+        }
         public Vector3 GetLastVelocity()
         {
             return _lastVelocities.Dequeue();
