@@ -17,6 +17,7 @@ namespace Projectiles
         private IProjectile _projectile;
         private Rigidbody _rigidbody;
         private int _ricochetCount;
+        private int _currentCollisions = 0;
 
         public void Init(IProjectile projectile)
         {
@@ -34,12 +35,10 @@ namespace Projectiles
         {
             if (obstacle is StickyWall)
             {
-                _projectile.ControllerInputs.HandleStopMovement();
                 _projectile.PushToPool();
             }
             else if (_ricochetCount == 0)
             {
-                _projectile.ControllerInputs.HandleStopMovement();
                 _projectile.PushToPool();
             }
             else
@@ -48,28 +47,32 @@ namespace Projectiles
 
         private void OnCollisionEnter(Collision collision)
         {
-            bool InteractibleIsAlive = true;
+            _currentCollisions++;
+
 
             if (collision.gameObject.TryGetComponent(out IWall obstacle))
             {
                 CheckRichochet(obstacle);
                 Vector3 velocity = _projectile.GetLastVelocity();
-
                 obstacle.ProcessCollision(collision, _rigidbody, velocity);
+            }
+
+            if(_currentCollisions >= 3)
+            {
+                _projectile.PushToPool();
             }
 
             if (collision.gameObject.TryGetComponent(out IInteractible interactible))
             {
                 _projectile.Normal = collision.GetContact(0).normal;
-                _projectile.PushToPool();
                 _projectile.StartInteraction(interactible);
-                InteractibleIsAlive = interactible.GetRigidbody().gameObject.activeInHierarchy;
+                _projectile.PushToPool();
             }
+        }
 
-            if (!InteractibleIsAlive)
-            {
-                _projectile.ControllerInputs.HandleStopMovement();
-            }
+        private void OnCollisionExit(Collision collision)
+        {
+            _currentCollisions--;
         }
 
         private Vector3 GetCurrentVelocity()

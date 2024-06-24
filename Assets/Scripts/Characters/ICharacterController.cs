@@ -5,6 +5,8 @@ using Interactions;
 using UnityEngine;
 using UnityEngine.AI;
 using Abilities;
+using System.Collections.Generic;
+using Projectiles;
 
 public interface ICharacterController
 {
@@ -24,6 +26,7 @@ public interface ICharacterController
     public NavMeshAgent NavMeshAgent { get; set; }
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
+
     public void ProcessReloadAbility();
     public void ProcessOnStartTurn();
     public void ProcessOnEndTurn();

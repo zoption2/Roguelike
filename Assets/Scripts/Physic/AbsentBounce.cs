@@ -16,7 +16,5 @@ public class AbsentBounce : IMovable
         _handlerRb.angularVelocity = Vector3.zero;
         _providerRb.velocity = Vector3.zero;
         _providerRb.angularVelocity = Vector3.zero;
-
-        provider.ControllerInputs.HandleStopMovement();
     }
 }

@@ -123,10 +123,14 @@ namespace Projectiles
 
         public void OnPull()
         {
+            ControllerInputs.LaunchedProjectiles.Add(this);
         }
 
         public void OnRelease()
         {
+            ControllerInputs.LaunchedProjectiles.Remove(this);
+            if(ControllerInputs.LaunchedProjectiles.Count == 0)
+                ControllerInputs.HandleStopMovement();
         }
     }
 }
