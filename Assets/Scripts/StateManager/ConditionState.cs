@@ -121,7 +121,9 @@ public abstract class ActiveState
         IMyPoolable projectilePoolable = _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
         Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
 
-        projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
+        if(projectile.ControllerInputs == null)
+            projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
+
         projectile.SetRicochetCount(currentAbility.RicochetCount);
         projectile.GetRigidbody().velocity = forceVector;
     }

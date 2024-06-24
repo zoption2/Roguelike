@@ -49,6 +49,11 @@ namespace Projectiles
         {
             _currentCollisions++;
 
+            Debug.Log("number of collisions(onEnter): " + _currentCollisions);
+            if(_currentCollisions >= 2)
+            {
+                _projectile.PushToPool();
+            }
 
             if (collision.gameObject.TryGetComponent(out IWall obstacle))
             {
@@ -57,10 +62,6 @@ namespace Projectiles
                 obstacle.ProcessCollision(collision, _rigidbody, velocity);
             }
 
-            if(_currentCollisions >= 3)
-            {
-                _projectile.PushToPool();
-            }
 
             if (collision.gameObject.TryGetComponent(out IInteractible interactible))
             {
@@ -73,11 +74,17 @@ namespace Projectiles
         private void OnCollisionExit(Collision collision)
         {
             _currentCollisions--;
+            Debug.Log("number of collisions(onExit): " + _currentCollisions);
         }
 
         private Vector3 GetCurrentVelocity()
         {
             return _rigidbody.velocity;
+        }
+
+        public void ResetCollisions()
+        {
+            _currentCollisions = 0;
         }
     }
 }

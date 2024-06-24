@@ -48,6 +48,7 @@ namespace Projectiles
 
         public void PushToPool()
         {
+            _projectileCollisionHandler.ResetCollisions();
             _pooler.Push(ProjectileType, this);
         }
 
