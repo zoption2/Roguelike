@@ -36,7 +36,6 @@ public abstract class ActiveState
     protected ICharacterController _characterController;
     protected ISlingShot _slingShot;
     protected int _milisecondsDelay = 3000;
-    protected float _launchMultiplier = 1;
     protected event OnStopped ON_STOPPED;
     protected NavMeshAgent _navAgent;
     protected NavMeshObstacle _navObstacle;
@@ -100,8 +99,8 @@ public abstract class ActiveState
         float launchPower = _characterController.ModifiableStats.LaunchPower.Value;
         direction.Normalize();
         IAbility currentAbility = _characterController.CurrentAbility;
-        _launchMultiplier = currentAbility.GetLaunchModifier();
-        Vector3 forceVector = direction * launchPower * _launchMultiplier;
+        float launchMultiplier = currentAbility.GetLaunchModifier();
+        Vector3 forceVector = direction * launchPower * launchMultiplier;
 
         return forceVector;
     }
@@ -109,8 +108,7 @@ public abstract class ActiveState
     public virtual void LaunchYourself(Vector3 direction)
     {
         Vector3 forceVector = GetForceVector(direction);
-        _characterController.GetRigidbody().velocity = forceVector;
-        _characterController.NavMeshAgent.enabled = false;
+        _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
     }
 
     public virtual void LaunchProjectile(Vector3 direction)
@@ -123,7 +121,9 @@ public abstract class ActiveState
         IMyPoolable projectilePoolable = _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
         Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
 
-        projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
+        if(projectile.ControllerInputs == null)
+            projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);
+
         projectile.SetRicochetCount(currentAbility.RicochetCount);
         projectile.GetRigidbody().velocity = forceVector;
     }
@@ -298,10 +298,8 @@ public class EnemyActiveState : ActiveState, IConditionState
         Transform target = _characterController.DefaultBehaviourTree.GetTarget();
         Transform enemy = _characterController.GetTransform();
         Vector3 direction = target.position - enemy.position;
-        direction.y = 0f;
         _characterController.CharacterView.ChangeDirection(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
-        _launchMultiplier = currentAbility.GetLaunchModifier();
         
         if(currentAbility.ProjectileType == ProjectileType.None)
         {

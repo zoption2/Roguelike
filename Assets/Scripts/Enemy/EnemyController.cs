@@ -40,6 +40,7 @@ namespace Enemy
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
         public NavMeshObstacle NavMeshObstacle { get; set; }
+        public List<IProjectile> LaunchedProjectiles { get; set; }
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
@@ -118,6 +119,8 @@ namespace Enemy
             NavMeshObstacle = CharacterView.NavMeshObstacle;
             NavMeshObstacle.carving = true;
             NavMeshObstacle.carveOnlyStationary = true;
+
+            LaunchedProjectiles = new List<IProjectile>();
         }
 
         public void DoUpdate()

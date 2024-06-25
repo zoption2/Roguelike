@@ -43,7 +43,9 @@ namespace Player
         public SlingshotPooler SlingShotPooler { get; set; }
         public ReactiveStats ModifiableStats { get; set; }
         public NavMeshAgent NavMeshAgent { get; set; }
-        public NavMeshObstacle NavMeshObstacle { get; set; } 
+        public NavMeshObstacle NavMeshObstacle { get; set; }
+        public List<IProjectile> LaunchedProjectiles { get; set; }
+
         private CharacterUIView _UIView;
         private Transform _slingShotInitPosition;
         private CharacterPooler _characterPooler;
@@ -132,6 +134,7 @@ namespace Player
             }
 
             CurrentAbility = _basicAbility;
+            LaunchedProjectiles = new List<IProjectile>();
         }
 
         public void DoUpdate()
@@ -168,7 +171,7 @@ namespace Player
         public void OnBeginDrag(PointerEventData eventData)
         {
             _uIViewmodel.DeactivateSkillsBTNs();
-            if (!IsMoving)
+            if (!IsMoving && LaunchedProjectiles.Count == 0)
             {
                 _currentState.UseSlingshot(eventData, _slingShotInitPosition);
             }
