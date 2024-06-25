@@ -49,7 +49,6 @@ namespace Projectiles
         {
             _currentCollisions++;
 
-            Debug.Log("number of collisions(onEnter): " + _currentCollisions);
             if(_currentCollisions >= 2)
             {
                 _projectile.PushToPool();
@@ -74,7 +73,6 @@ namespace Projectiles
         private void OnCollisionExit(Collision collision)
         {
             _currentCollisions--;
-            Debug.Log("number of collisions(onExit): " + _currentCollisions);
         }
 
         private Vector3 GetCurrentVelocity()
