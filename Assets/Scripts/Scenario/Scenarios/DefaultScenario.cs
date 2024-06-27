@@ -13,7 +13,7 @@ public interface IDefaultScenario : IScenario
     //public void LoadMainMenu();
 }
 
-public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenario
+public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 {
     private List<CookedMapper> _turnsOrder;
     private CharacterPooler _characterPooler;
@@ -82,15 +82,20 @@ public class DefaultScenario : Scenario<DefaultScenarioContext>, IDefaultScenari
         else if (noEnemies)
         {
             ActivateCompleatedRoomTriggers();
+
+            foreach (var Player in _scenarioContext.Players)
+            {
+                Player.JustPush();
+            }
+
             //LoadMainMenu();
         }
     }
 
     public override void LoadMainMenu()
     {
-        //CleanPoolers();
-        //_levelManager.LoadNextRoom();
-        //SceneManager.LoadScene("Menu");
+        GameplayService.PoolManager.CleanPoolers();
+        SceneManager.LoadScene("Menu");
     }
 
     public void ActivateCompleatedRoomTriggers()

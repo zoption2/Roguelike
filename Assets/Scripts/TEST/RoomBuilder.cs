@@ -14,7 +14,7 @@ public interface IRoomBuilder
 public class RoomBuilder : IRoomBuilder
 {
     public IScenario Scenario { get; }
-    public ICharacterScenarioContext Characters { get; }
+    public IRoomContext Characters { get; }
     public Transform PlayersParent { get; set; }
     public Transform EnemiesParent { get; set; }
     public Transform BuffsParent { get; set; }
@@ -23,20 +23,17 @@ public class RoomBuilder : IRoomBuilder
 
     private INavigationFactory _navigationFactory;
     private IRoomObjectsFactory _roomObjectsFactory;
-    private RoomTemplateSO _roomTemplate;
 
     public RoomBuilder(
         IScenario scenario,
-        ICharacterScenarioContext context,
+        IRoomContext context,
         INavigationFactory navigationFactory,
-        IRoomObjectsFactory roomObjectsFactory,
-        RoomTemplateSO roomTemplate)
+        IRoomObjectsFactory roomObjectsFactory)
     {
         Scenario = scenario;
         Characters = context;
         _navigationFactory = navigationFactory;
         _roomObjectsFactory = roomObjectsFactory;
-        _roomTemplate = roomTemplate;
     }
 
     public void BuildLevel(RoomTemplateSO.Template template)

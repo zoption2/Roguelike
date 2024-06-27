@@ -1,6 +1,6 @@
 using Gameplay;
 
-public class BossScenario : Scenario<DefaultScenarioContext>
+public class BossScenario : Scenario<RoomContext>
 {
     public override void Init(IScenarioContext context, LevelManager levelManager)
     {

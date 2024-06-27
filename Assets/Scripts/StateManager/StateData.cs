@@ -8,7 +8,7 @@ namespace Gameplay
 {
     public interface IStateFactory
     {
-        public void Init(IScenario scenarioInstance, ICharacterScenarioContext context);
+        public void Init(IScenario scenarioInstance, IRoomContext context);
         public IState CreateState(TypeOfState type);
         public IConditionState CreateConditionState(TypeOfConditionState type, ICharacterController controller);
     }
@@ -20,14 +20,13 @@ namespace Gameplay
         private IRoomObjectsFactory _roomObjectsFactory;
         private IStatsProvider _statsProvider;
         private IScenario _scenarioInstance;
-        private ICharacterScenarioContext _context;
+        private IRoomContext _context;
         private INavigationFactory _navigationFactory;
-        private RoomTemplateSO _roomTemplate;
         private ProjectilePooler _projectilePooler;
 
         [Inject]
         public void Construct(IBuffFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
-            INavigationFactory navigationFactory, ProjectilePooler projectilePooler, IRoomObjectsFactory roomObjectsFactory, RoomTemplateSO roomTemplateSO)
+            INavigationFactory navigationFactory, ProjectilePooler projectilePooler, IRoomObjectsFactory roomObjectsFactory)
         {
             _triggerFactory = triggerFactory;
             _enemyFactory = enemyFactory;
@@ -35,11 +34,10 @@ namespace Gameplay
             _statsProvider = statsProvider;
             _navigationFactory = navigationFactory;
             _roomObjectsFactory = roomObjectsFactory;
-            _roomTemplate = roomTemplateSO;
             _projectilePooler = projectilePooler;
         }
 
-        public void Init(IScenario scenarioInstance, ICharacterScenarioContext context)
+        public void Init(IScenario scenarioInstance, IRoomContext context)
         {
             _context = context;
             _scenarioInstance = scenarioInstance;
@@ -52,7 +50,7 @@ namespace Gameplay
             {
                 case TypeOfState.Init:
                     state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _triggerFactory, _playerFactory,
-                        _enemyFactory, _navigationFactory, _roomObjectsFactory, _roomTemplate);
+                        _enemyFactory, _navigationFactory, _roomObjectsFactory);
                     break;
                 case TypeOfState.PlayerTurn:
                     state = new PlayerTurnState(_scenarioInstance, _context);

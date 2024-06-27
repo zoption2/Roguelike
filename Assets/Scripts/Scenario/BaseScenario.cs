@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Gameplay
 {
@@ -19,14 +20,18 @@ namespace Gameplay
         {
             return _scenarioContext;
         }
+
         public void SetScenarioContext(IScenarioContext context)
         {
             _scenarioContext = (T)context;
+            Debug.Log("Scenario context set: " + _scenarioContext);
         }
+
         public IState GetCurrentState()
         {
             return _currentState;
         }
+
         public abstract void Init(IScenarioContext context, LevelManager levelManager);
 
         public abstract void EraseCharacter(ICharacterController controller);
@@ -38,18 +43,19 @@ namespace Gameplay
                 RenewQueue();
             }
 
-            if (_queueOfStates.Count != 0)///
+            if (_queueOfStates.Count != 0)
             {
                 IState state = _queueOfStates.Dequeue();
+                Debug.Log("Dequeue state: " + state);
                 SwitchState(state);
             }
-            
-            
         }
+
         public void SwitchState(IState state)
         {
             if (_currentState != state)
             {
+                Debug.Log("Switching state from " + _currentState + " to " + state);
                 _currentState?.OnExit();
                 _currentState = state;
                 _currentState.OnEnter();
@@ -60,11 +66,18 @@ namespace Gameplay
 
         public void CreateNewRoomScene(int level, int room)
         {
+
         }
     }
+
     public class CookedMapper
     {
         public ICharacterController Controller;
         public TypeOfState State;
+
+        public override string ToString()
+        {
+            return $"Controller: {Controller}, State: {State}";
+        }
     }
 }

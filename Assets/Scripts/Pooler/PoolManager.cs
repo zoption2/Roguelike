@@ -1,19 +1,12 @@
 using Pool;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 public interface IPoolManager
 {
-    BuffPooler GetBuffPooler();
-    EffectPooler GetEffectPooler();
-    AbilityIconPooler GetAbilityIconPooler();
-    CharacterPanelPooler GetCharacterPanelPooler();
-    CharacterPooler GetCharacterPooler();
-    CharacterUIPooler GetCharacterUIPooler();
-    ProjectilePooler GetProjectilePooler();
-    SlingshotPooler GetSlingshotPooler();
-
-    void InitPoolers(Transform parent);
+    IPool<TEnum> UsePooler<TEnum>(PoolType poolType);
+    void InitPool(PoolType poolType);
     void CleanPoolers();
 }
 
@@ -27,6 +20,8 @@ public class PoolManager : IPoolManager
     private CharacterUIPooler _characterUIPooler;
     private ProjectilePooler _projectilePooler;
     private SlingshotPooler _slingshotPooler;
+
+    private Dictionary<PoolType, Transform> _parentTransforms;
 
     [Inject]
     public void Construct(
@@ -48,26 +43,96 @@ public class PoolManager : IPoolManager
         _characterUIPooler = characterUIPooler;
         _projectilePooler = projectilePooler;
         _slingshotPooler = slingshotPooler;
+
+        _parentTransforms = new Dictionary<PoolType, Transform>();
     }
 
-    public void InitPoolers(Transform parent)
+    public void InitPool(PoolType poolType)
     {
-        CreatePool(_buffPooler, "BuffPool", parent);
-        CreatePool(_effectPooler, "EffectPool", parent);
-        CreatePool(_abilityIconPooler, "AbilityIconPool", parent);
-        CreatePool(_characterPanelPooler, "CharacterPanelPool", parent);
-        CreatePool(_characterPooler, "CharacterPool", parent);
-        CreatePool(_characterUIPooler, "CharacterUIPool", parent);
-        CreatePool(_projectilePooler, "ProjectilePool", parent);
-        CreatePool(_slingshotPooler, "SlingshotPool", parent);
+        if (!_parentTransforms.ContainsKey(poolType))
+        {
+            Transform parent = CreateParentTransform(poolType.ToString());
+            _parentTransforms[poolType] = parent;
+        }
 
+        Transform parentTransform = _parentTransforms[poolType];
+
+        switch (poolType)
+        {
+            case PoolType.BuffPool:
+                InitSinglePool(_buffPooler, parentTransform);
+                break;
+            case PoolType.EffectPool:
+                InitSinglePool(_effectPooler, parentTransform);
+                break;
+            case PoolType.AbilityIconPool:
+                InitSinglePool(_abilityIconPooler, parentTransform);
+                break;
+            case PoolType.CharacterPanelPool:
+                InitSinglePool(_characterPanelPooler, parentTransform);
+                break;
+            case PoolType.CharacterPool:
+                InitSinglePool(_characterPooler, parentTransform);
+                break;
+            case PoolType.CharacterUIPool:
+                InitSinglePool(_characterUIPooler, parentTransform);
+                break;
+            case PoolType.ProjectilePool:
+                InitSinglePool(_projectilePooler, parentTransform);
+                break;
+            case PoolType.SlingshotPool:
+                InitSinglePool(_slingshotPooler, parentTransform);
+                break;
+            default:
+                Debug.LogWarning("Unknown pool type: " + poolType);
+                break;
+        }
     }
 
-    private void CreatePool<T>(IPool<T> pool, string name, Transform parent)
+    public IPool<TEnum> UsePooler<TEnum>(PoolType poolType)
     {
-        Transform poolParent = new GameObject(name).transform;
-        poolParent.transform.SetParent(parent);
-        pool.Init(poolParent);
+        InitPool(poolType);
+
+        switch (poolType)
+        {
+            case PoolType.BuffPool:
+                return _buffPooler as IPool<TEnum>;
+            case PoolType.EffectPool:
+                return _effectPooler as IPool<TEnum>;
+            case PoolType.AbilityIconPool:
+                return _abilityIconPooler as IPool<TEnum>;
+            case PoolType.CharacterPanelPool:
+                return _characterPanelPooler as IPool<TEnum>;
+            case PoolType.CharacterPool:
+                return _characterPooler as IPool<TEnum>;
+            case PoolType.CharacterUIPool:
+                return _characterUIPooler as IPool<TEnum>;
+            case PoolType.ProjectilePool:
+                return _projectilePooler as IPool<TEnum>;
+            case PoolType.SlingshotPool:
+                return _slingshotPooler as IPool<TEnum>;
+            default:
+                Debug.LogWarning("Unknown pool type: " + poolType);
+                return null;
+        }
+    }
+
+    private Transform CreateParentTransform(string poolName)
+    {
+        GameObject parentObject = GameObject.Find(poolName);
+        if (parentObject == null)
+        {
+            parentObject = new GameObject(poolName);
+        }
+        Transform parentTransform = parentObject.transform;
+        parentTransform.localPosition = Vector3.zero;
+        parentTransform.localRotation = Quaternion.identity;
+        return parentTransform;
+    }
+
+    private void InitSinglePool<T>(IPool<T> pool, Transform parent)
+    {
+        pool.Init(parent);
     }
 
     public void CleanPoolers()
@@ -81,13 +146,4 @@ public class PoolManager : IPoolManager
         _projectilePooler.CleanPool();
         _slingshotPooler.CleanPool();
     }
-
-    public BuffPooler GetBuffPooler() { return _buffPooler; }
-    public EffectPooler GetEffectPooler() { return _effectPooler; }
-    public AbilityIconPooler GetAbilityIconPooler() { return _abilityIconPooler; }
-    public CharacterPanelPooler GetCharacterPanelPooler() { return _characterPanelPooler; }
-    public CharacterPooler GetCharacterPooler() { return _characterPooler; }
-    public CharacterUIPooler GetCharacterUIPooler() { return _characterUIPooler; }
-    public ProjectilePooler GetProjectilePooler() { return _projectilePooler; }
-    public SlingshotPooler GetSlingshotPooler() { return _slingshotPooler; }
 }

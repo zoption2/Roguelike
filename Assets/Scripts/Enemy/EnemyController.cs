@@ -27,6 +27,8 @@ namespace Enemy
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
+
+        public bool IsDead { get; set; }
         public IAbility CurrentAbility { get; set; }
         public IAnalyzer Analyzer { get; set; }
         public IEffectProcessor Effector { get; set; }
@@ -44,7 +46,7 @@ namespace Enemy
 
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
-        private ICharacterScenarioContext _characterScenarioContext;
+        private IRoomContext _characterScenarioContext;
         private IUIFactory _uIFactory;
         private CharacterUIView _UIView;
         private ReactiveList<IEffect> _allEffects;
@@ -255,7 +257,7 @@ namespace Enemy
             DefaultBehaviourTree.TickTree();
         }
 
-        public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
+        public void SetCharacterContext(IRoomContext characterScenarioContext)
         {
             _characterScenarioContext = characterScenarioContext;
             DefaultBehaviourTree.SetCharacters(_characterScenarioContext);
@@ -303,7 +305,12 @@ namespace Enemy
                 _currentState?.OnExit();
                 _currentState = newState;
                 _currentState.OnEnter();
-            } 
+            }
+
+            if (state == TypeOfConditionState.DeadState)
+            {
+                IsDead = true;
+            }
         }
 
         public CharacterType GetCharacterType()

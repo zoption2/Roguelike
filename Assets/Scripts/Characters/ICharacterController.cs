@@ -13,6 +13,7 @@ public interface ICharacterController
     public bool IsActive { get; set; }
     public bool IsStunned { get; set; }
     public bool IsMoving { get; set; }
+    public bool IsDead { get; set; }
     public IEffectProcessor Effector { get; set; }
     public IInteractionProcessor InteractionProcessor { get; set; }
     public IInteractionDealer InteractionDealer { get; set; }
@@ -51,7 +52,7 @@ public interface ICharacterController
     public void Move();
     public void Tick();
     public bool CheckIfMoving();
-    public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext);
+    public void SetCharacterContext(IRoomContext characterScenarioContext);
     public void HandleStopMovement();
 
     public void RevertReadyUnactiveAbilityButtons();

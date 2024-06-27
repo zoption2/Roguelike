@@ -14,7 +14,7 @@ public interface IMainRoomScenario : IScenario
 }
 
 
-public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScenario
+public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 {
     private List<CookedMapper> _turnsOrder;
     private CharacterPooler _characterPooler;
@@ -35,6 +35,7 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
     }
     public override void EraseCharacter(ICharacterController controller)
     {
+        Debug.LogError(controller + "was deleted");
         controller.ON_CHARACTER_DEATH -= EraseCharacter;
         controller.Dispose();
         foreach (CookedMapper mapper in _turnsOrder)
@@ -90,9 +91,8 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
 
     public override void LoadMainMenu()
     {
-        //CleanPoolers();
-        //_levelManager.LoadNextRoom();
-        //SceneManager.LoadScene("Menu");
+        GameplayService.PoolManager.CleanPoolers();
+        SceneManager.LoadScene("Menu");
     }
 
     public void ActivateCompleatedRoomTriggers()

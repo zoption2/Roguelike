@@ -147,3 +147,17 @@ public enum TypeOfScenario
     MainRoom,
     Boss
 }
+
+public enum PoolType
+{
+    BuffPool,
+    EffectPool,
+    AbilityIconPool,
+    CharacterPanelPool,
+    CharacterPool,
+    CharacterUIPool,
+    ProjectilePool,
+    SlingshotPool
+}
+
+

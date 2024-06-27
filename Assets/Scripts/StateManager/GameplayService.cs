@@ -10,9 +10,12 @@ namespace Gameplay
         public IPlayerController Player { get; set; }
         public IPoolManager PoolManager { get; set; }
         void Init(TypeOfScenario type);
+        public IScenario Scenario { get; set; }
         public IPlayerFactory _playerFactory { get; set; }
         public IEnemyFactory _enemyFactory { get; set; }
         public IStatsProvider _statsProvider { get; set; }
+        public IScenarioContext CurrentContext { get; set; }
+        public ILevelContext LevelContext { get; set; }
         public LevelManager LevelManager { get; set; }
     }
 
@@ -24,7 +27,9 @@ namespace Gameplay
         public IEnemyFactory _enemyFactory { get; set; }
         public IStatsProvider _statsProvider { get; set; }
         public IScenarioFactory _scenarioFactory { get; set; }
-        public IScenario ScenarioType;
+        public IScenario Scenario { get; set; }
+        public IScenarioContext CurrentContext { get; set; }
+        public ILevelContext LevelContext { get; set; }
         public LevelManager LevelManager { get; set; }
 
         [Inject]
@@ -44,14 +49,10 @@ namespace Gameplay
 
         public void Init(TypeOfScenario type)
         {
-            ScenarioType = _scenarioFactory.CreateScenario(type, this);
-            IScenarioContext context = _scenarioFactory.CreateContext(type);
-            ScenarioType.Init(context, LevelManager);
-        }
-
-        public void SetPlayer(IPlayerController playerController)
-        {
-            Player = playerController;
+            Scenario = _scenarioFactory.CreateScenario(type, this);
+            CurrentContext = new RoomContext();
+            
+            Scenario.Init(CurrentContext, LevelManager);
         }
     }
 
@@ -93,10 +94,10 @@ namespace Gameplay
             switch (type)
             {
                 case TypeOfScenario.DefaultRoom:
-                    context = new DefaultScenarioContext();
+                    context = new RoomContext();
                     break;
                 case TypeOfScenario.MainRoom:
-                    context = new DefaultScenarioContext();
+                    context = new RoomContext();
                     break;
                 default:
                     Debug.LogWarning("--|" + this + "Can`t create a scenario context |--");

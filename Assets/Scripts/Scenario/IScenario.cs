@@ -11,6 +11,6 @@ namespace Gameplay
         public void Init(IScenarioContext context, LevelManager levelManager);
         public IGameplayService GameplayService { get; set; }
         public void LoadMainMenu();
-        public void CreateNewRoomScene(int level, int room);
+        public void RenewQueue();
     }
 }

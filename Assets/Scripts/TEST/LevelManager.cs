@@ -17,9 +17,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private List<TypeOfScenario> _roomsOrderInitList;
 
-    private Queue<TypeOfScenario> _roomsOrder;
+    public Queue<TypeOfScenario> RoomsOrder {  get; private set; }
     private IGameplayService _gameplayService;
     private TypeOfScenario _nextRoom;
+    private ILevelContext _levelContext;
     private Scene _currentRoomScene;
     private RoomTemplateSO _roomTemplate;
     private RoomTemplateSO.Template _template;
@@ -39,11 +40,14 @@ public class LevelManager : MonoBehaviour
 
     public void Start()
     {
-        _roomsOrder = new Queue<TypeOfScenario>(_roomsOrderInitList);
+        RoomsOrder = new Queue<TypeOfScenario>(_roomsOrderInitList);
         _gameplayService.LevelManager = this;
 
         GameObject poolManagerObject = new GameObject("PoolManager");
         PoolManager.InitPoolers(poolManagerObject.transform);
+
+        _levelContext = new LevelContext();
+        _gameplayService.LevelContext = _levelContext;
 
         _nextRoom = GetNextRoom();
         LoadRoomScene(_nextRoom);
@@ -53,7 +57,7 @@ public class LevelManager : MonoBehaviour
     {
         if (_roomsOrderInitList.Count > 0)
         {
-            TypeOfScenario firstRoom = _roomsOrder.Dequeue();
+            TypeOfScenario firstRoom = RoomsOrder.Dequeue();
             return firstRoom;
         }
         else

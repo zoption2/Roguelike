@@ -37,7 +37,7 @@ public class ContextInstaller : MonoInstaller
     private CharacterPanelPrefabHolder characterPanelPrefabHolder;
 
     [SerializeField]
-    private DefaultScenarioContext _defaultScenarioContext;
+    private RoomContext _defaultScenarioContext;
 
     [SerializeField]
     private SlingShotPrefabHolder _slingShotPrefabHolder;

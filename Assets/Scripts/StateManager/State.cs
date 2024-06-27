@@ -25,11 +25,11 @@ namespace Gameplay
         private IScenario _scenario;
 
         public IScenario Scenario { get { return _scenario; } }
-        public ICharacterScenarioContext _characters { get; }
+        public IRoomContext _characters { get; }
 
         private ICharacterController _characterController;
 
-        public PlayerTurnState( IScenario scenario, ICharacterScenarioContext context)
+        public PlayerTurnState( IScenario scenario, IRoomContext context)
         {
             _scenario = scenario;
             _characters = context;
@@ -80,11 +80,11 @@ namespace Gameplay
         private IScenario _scenario;
 
         public IScenario Scenario { get { return _scenario; } }
-        public ICharacterScenarioContext _characters { get; }
+        public IRoomContext _characters { get; }
 
         private ICharacterController _characterController;
 
-        public EnemyTurnState(IScenario scenario, ICharacterScenarioContext context)
+        public EnemyTurnState(IScenario scenario, IRoomContext context)
         {
             _scenario = scenario;
             _characters = context;
@@ -136,7 +136,7 @@ namespace Gameplay
 
         public IScenario Scenario { get { return _scenario; } }
 
-        public ICharacterScenarioContext _characters { get; }
+        public IRoomContext _characters { get; }
 
         private const float YOffset = 0.5f;
 
@@ -152,19 +152,16 @@ namespace Gameplay
 
         IRoomBuilder _roomBuilder;
 
-        RoomTemplateSO _roomTemplateSO;
-
 
         public InitLevelState(
             IScenario scenario,
-            ICharacterScenarioContext context,
+            IRoomContext context,
             IStatsProvider provider,
             IBuffFactory buffFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
             INavigationFactory navigationFactory,
-            IRoomObjectsFactory roomObjectsFactory,
-            RoomTemplateSO roomTemplate)
+            IRoomObjectsFactory roomObjectsFactory)
         {
             _scenario = scenario;
             _characters = context;
@@ -177,8 +174,7 @@ namespace Gameplay
                 scenario,
                 context, 
                 navigationFactory,
-                roomObjectsFactory,
-                roomTemplate
+                roomObjectsFactory
                 );
         }
 
@@ -232,6 +228,7 @@ namespace Gameplay
                     Debug.LogWarning(newPos);
                     IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
                     newPlayer.SetCharacterContext(_characters);
+                    _scenario.GameplayService.LevelContext.Players.Add(newPlayer);
                     _characters.Players.Add(newPlayer);
                 }
             } else

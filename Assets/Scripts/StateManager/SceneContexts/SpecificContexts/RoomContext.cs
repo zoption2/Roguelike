@@ -25,7 +25,7 @@ namespace Gameplay
         public BuffType Type;
     }
 
-    public interface ICharacterScenarioContext : IScenarioContext
+    public interface IRoomContext : IScenarioContext
     {
         public List<IPlayerController> Players { get;  set; }
         public List<IEnemyController> Enemies { get; set; }
@@ -43,7 +43,7 @@ namespace Gameplay
         public event OnEndTurn ON_END_TURN;
     }
 
-    public class DefaultScenarioContext : ICharacterScenarioContext
+    public class RoomContext : IRoomContext
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
@@ -57,7 +57,7 @@ namespace Gameplay
 
         public event OnEndTurn ON_END_TURN;
 
-        public DefaultScenarioContext()
+        public RoomContext()
         {
             Players = new List<IPlayerController>();
             Enemies = new List<IEnemyController>();

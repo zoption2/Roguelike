@@ -32,7 +32,15 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 
     public void UseTrigger(GameObject player)
     {
-        _gameplayService.LevelManager.LoadNextRoom(player);
+        _gameplayService.CurrentContext = null;
+        if(_gameplayService.LevelManager.RoomsOrder.Count > 0)
+        {
+            _gameplayService.LevelManager.LoadNextRoom(player);
+        } else
+        {
+            _gameplayService.Scenario.LoadMainMenu();
+        }
+        
     }
 
     public void DisableTrigger()

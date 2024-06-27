@@ -6,7 +6,7 @@ namespace BehaviourTree
     {
         public void TickTree();
         public void InitTree(ICharacterController characterController);
-        public void SetCharacters(ICharacterScenarioContext characterContext);
+        public void SetCharacters(IRoomContext characterContext);
 
     }
     public abstract class BehaviourTree : IBehaviourTree
@@ -14,9 +14,9 @@ namespace BehaviourTree
         protected Node _root;
         protected Blackboard _blackboard;
         protected ICharacterController _characterController;
-        protected ICharacterScenarioContext _characterScenarioContext;
+        protected IRoomContext _characterScenarioContext;
 
-        public void SetCharacters(ICharacterScenarioContext characterContext)
+        public void SetCharacters(IRoomContext characterContext)
         {
             _characterScenarioContext = characterContext;
         }

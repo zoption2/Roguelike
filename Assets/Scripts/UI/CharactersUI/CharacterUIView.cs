@@ -45,8 +45,8 @@ public class CharacterUIView : MonoBehaviour, IMyPoolable, ICharacterUIView
 
     private void ChangeHealthBar(int newHealth)
     {
-        Debug.LogWarning("Max Health: " + _maxHealth);
-        Debug.LogWarning("Current Health: " + newHealth);
+        //Debug.LogWarning("Max Health: " + _maxHealth);
+        //Debug.LogWarning("Current Health: " + newHealth);
         _greenBar.value = newHealth;
     }
 

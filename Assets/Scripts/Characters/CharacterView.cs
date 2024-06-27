@@ -61,10 +61,6 @@ public class CharacterView : MonoBehaviour,
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
         _rigidbody = GetComponent<Rigidbody>();
-    }
-
-    private void Start()
-    {
         _collisionHandler = gameObject.AddComponent<CollisionHandler>();
         _collisionHandler.Init(ControllerInputs, this);
     }
@@ -138,6 +134,7 @@ public class CharacterView : MonoBehaviour,
 
     public void OnPull()
     {
+        ControllerInputs = null;
     }
 
     public void OnRelease()

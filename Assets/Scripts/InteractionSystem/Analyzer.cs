@@ -16,8 +16,8 @@ public class Analyzer : IAnalyzer
         _controller = controller;
     }
     public void Analyze(ReactiveStats stats, IEffectProcessor effectProcessor)
-    { 
-        if (stats.Health.Value <= 0)
+    {
+        if (stats.Health.Value <= 0 && !_controller.IsDead)
         {
             _controller.SwitchState(TypeOfConditionState.DeadState);
             return;
@@ -32,7 +32,7 @@ public class Analyzer : IAnalyzer
             }
         }
 
-        if (_controller.IsActive)
+        if (_controller.IsActive && !_controller.IsDead)
         {
             if (_controller is IPlayerController)
             {

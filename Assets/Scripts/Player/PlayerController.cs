@@ -31,6 +31,8 @@ namespace Player
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
+
+        public bool IsDead { get; set; }
         public IAbility CurrentAbility { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
@@ -58,7 +60,7 @@ namespace Player
         private IAbility _basicAbility;
         private IConditionState _currentState;
         private IStateFactory _stateFactory;
-        private ICharacterScenarioContext _characterScenarioContext;
+        private IRoomContext _characterScenarioContext;
         private IUIFactory _uIFactory;
         
 
@@ -217,8 +219,10 @@ namespace Player
 
         public void JustPush()
         {
-            _characterPooler.Push(CharacterModel.Type, CharacterView);
+            //_characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
+            ON_CHARACTER_DEATH = null;
+
         }
 
         public ReactiveStats GetCharacterStats()
@@ -250,7 +254,7 @@ namespace Player
         {
             return IsMoving;
         }
-        public void SetCharacterContext(ICharacterScenarioContext characterScenarioContext)
+        public void SetCharacterContext(IRoomContext characterScenarioContext)
         {
             _characterScenarioContext = characterScenarioContext;
         }
@@ -297,6 +301,11 @@ namespace Player
                 _currentState?.OnExit();
                 _currentState = newState;
                 _currentState.OnEnter();
+
+                if (state == TypeOfConditionState.DeadState)
+                {
+                    IsDead = true;
+                }
             }
         }
 
