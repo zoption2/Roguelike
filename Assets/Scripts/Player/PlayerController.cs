@@ -75,9 +75,9 @@ namespace Player
             IUIFactory uIFactory,
             DiContainer container)
         {
-            SlingShotPooler = poolManager.GetSlingshotPooler();
-            _characterPooler = poolManager.GetCharacterPooler();
-            _characterUIPooler = poolManager.GetCharacterUIPooler();
+            SlingShotPooler = poolManager.UseSlingshotPooler();
+            _characterPooler = poolManager.UseCharacterPooler();
+            _characterUIPooler = poolManager.UseCharacterUIPooler();
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;

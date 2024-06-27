@@ -15,7 +15,7 @@ public class BuffFactory : IBuffFactory
     [Inject]
     public void Construct(IPoolManager poolManager)
     {
-        _buffPool = poolManager.GetBuffPooler();
+        _buffPool = poolManager.UseBuffPooler();
     }
 
     public void Init()

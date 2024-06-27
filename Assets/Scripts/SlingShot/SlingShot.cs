@@ -42,7 +42,7 @@ namespace SlingShotLogic
 
         public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance)
         {
-            _slingShotPooler = _poolManager.GetSlingshotPooler();
+            _slingShotPooler = _poolManager.UseSlingshotPooler();
             _type = type;
             _startPoint = _initPosition;
             _launchDistance = currentLaunchDistance;

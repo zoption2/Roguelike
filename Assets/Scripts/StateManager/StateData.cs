@@ -26,7 +26,7 @@ namespace Gameplay
 
         [Inject]
         public void Construct(IBuffFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,
-            INavigationFactory navigationFactory, ProjectilePooler projectilePooler, IRoomObjectsFactory roomObjectsFactory)
+            INavigationFactory navigationFactory, IPoolManager poolManager, IRoomObjectsFactory roomObjectsFactory)
         {
             _triggerFactory = triggerFactory;
             _enemyFactory = enemyFactory;
@@ -34,7 +34,7 @@ namespace Gameplay
             _statsProvider = statsProvider;
             _navigationFactory = navigationFactory;
             _roomObjectsFactory = roomObjectsFactory;
-            _projectilePooler = projectilePooler;
+            _projectilePooler = poolManager.UseProjectilePooler();
         }
 
         public void Init(IScenario scenarioInstance, IRoomContext context)

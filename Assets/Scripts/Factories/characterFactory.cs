@@ -27,8 +27,8 @@ public abstract class CharacterFactory<TController>
     {
         _container = container;
         _statsProvider = statsProvider;
-        _characterPooler = poolManager.GetCharacterPooler();
-        _characterUIPooler = poolManager.GetCharacterUIPooler();
+        _characterPooler = poolManager.UseCharacterPooler();
+        _characterUIPooler = poolManager.UseCharacterUIPooler();
         _abilityFactory = abilityFactory;
     }
 

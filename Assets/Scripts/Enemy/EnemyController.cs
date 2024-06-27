@@ -67,8 +67,8 @@ namespace Enemy
             IUIFactory uIFactory,
             DiContainer container)
         {
-            _characterUIPooler = poolManager.GetCharacterUIPooler();
-            _characterPooler = poolManager.GetCharacterPooler();
+            _characterUIPooler = poolManager.UseCharacterUIPooler();
+            _characterPooler = poolManager.UseCharacterPooler();
             InteractionProcessor = interactionProcessor;
             InteractionDealer = interactionDealer;
             Effector = effector;

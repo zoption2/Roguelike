@@ -5,7 +5,15 @@ using Zenject;
 
 public interface IPoolManager
 {
-    IPool<TEnum> UsePooler<TEnum>(PoolType poolType);
+    void Init(GameObject parent);
+    BuffPooler UseBuffPooler();
+    EffectPooler UseEffectPooler();
+    AbilityIconPooler UseAbilityIconPooler();
+    CharacterPanelPooler UseCharacterPanelPooler();
+    CharacterPooler UseCharacterPooler();
+    CharacterUIPooler UseCharacterUIPooler();
+    ProjectilePooler UseProjectilePooler();
+    SlingshotPooler UseSlingshotPooler();
     void InitPool(PoolType poolType);
     void CleanPoolers();
 }
@@ -22,6 +30,7 @@ public class PoolManager : IPoolManager
     private SlingshotPooler _slingshotPooler;
 
     private Dictionary<PoolType, Transform> _parentTransforms;
+    private Transform _globalParent;
 
     [Inject]
     public void Construct(
@@ -47,8 +56,67 @@ public class PoolManager : IPoolManager
         _parentTransforms = new Dictionary<PoolType, Transform>();
     }
 
+    public void Init(GameObject parent)
+    {
+        _globalParent = parent.transform;
+    }
+
+    public BuffPooler UseBuffPooler()
+    {
+        InitPool(PoolType.BuffPool);
+        return _buffPooler;
+    }
+
+    public EffectPooler UseEffectPooler()
+    {
+        InitPool(PoolType.EffectPool);
+        return _effectPooler;
+    }
+
+    public AbilityIconPooler UseAbilityIconPooler()
+    {
+        InitPool(PoolType.AbilityIconPool);
+        return _abilityIconPooler;
+    }
+
+    public CharacterPanelPooler UseCharacterPanelPooler()
+    {
+        InitPool(PoolType.CharacterPanelPool);
+        return _characterPanelPooler;
+    }
+
+    public CharacterPooler UseCharacterPooler()
+    {
+        InitPool(PoolType.CharacterPool);
+        return _characterPooler;
+    }
+
+    public CharacterUIPooler UseCharacterUIPooler()
+    {
+        InitPool(PoolType.CharacterUIPool);
+        return _characterUIPooler;
+    }
+
+    public ProjectilePooler UseProjectilePooler()
+    {
+        InitPool(PoolType.ProjectilePool);
+        return _projectilePooler;
+    }
+
+    public SlingshotPooler UseSlingshotPooler()
+    {
+        InitPool(PoolType.SlingshotPool);
+        return _slingshotPooler;
+    }
+
     public void InitPool(PoolType poolType)
     {
+        if (_globalParent == null)
+        {
+            Debug.LogError("Global parent is not set. Make sure to call Init with a valid parent GameObject before using pools.");
+            return;
+        }
+
         if (!_parentTransforms.ContainsKey(poolType))
         {
             Transform parent = CreateParentTransform(poolType.ToString());
@@ -89,48 +157,17 @@ public class PoolManager : IPoolManager
         }
     }
 
-    public IPool<TEnum> UsePooler<TEnum>(PoolType poolType)
-    {
-        InitPool(poolType);
-
-        switch (poolType)
-        {
-            case PoolType.BuffPool:
-                return _buffPooler as IPool<TEnum>;
-            case PoolType.EffectPool:
-                return _effectPooler as IPool<TEnum>;
-            case PoolType.AbilityIconPool:
-                return _abilityIconPooler as IPool<TEnum>;
-            case PoolType.CharacterPanelPool:
-                return _characterPanelPooler as IPool<TEnum>;
-            case PoolType.CharacterPool:
-                return _characterPooler as IPool<TEnum>;
-            case PoolType.CharacterUIPool:
-                return _characterUIPooler as IPool<TEnum>;
-            case PoolType.ProjectilePool:
-                return _projectilePooler as IPool<TEnum>;
-            case PoolType.SlingshotPool:
-                return _slingshotPooler as IPool<TEnum>;
-            default:
-                Debug.LogWarning("Unknown pool type: " + poolType);
-                return null;
-        }
-    }
-
     private Transform CreateParentTransform(string poolName)
     {
-        GameObject parentObject = GameObject.Find(poolName);
-        if (parentObject == null)
-        {
-            parentObject = new GameObject(poolName);
-        }
+        GameObject parentObject = new GameObject(poolName);
+        parentObject.transform.SetParent(_globalParent);
         Transform parentTransform = parentObject.transform;
         parentTransform.localPosition = Vector3.zero;
         parentTransform.localRotation = Quaternion.identity;
         return parentTransform;
     }
 
-    private void InitSinglePool<T>(IPool<T> pool, Transform parent)
+    private void InitSinglePool<TEnum>(IPool<TEnum> pool, Transform parent)
     {
         pool.Init(parent);
     }

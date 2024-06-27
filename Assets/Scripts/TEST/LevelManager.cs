@@ -44,7 +44,7 @@ public class LevelManager : MonoBehaviour
         _gameplayService.LevelManager = this;
 
         GameObject poolManagerObject = new GameObject("PoolManager");
-        PoolManager.InitPoolers(poolManagerObject.transform);
+        PoolManager.Init(poolManagerObject);
 
         _levelContext = new LevelContext();
         _gameplayService.LevelContext = _levelContext;

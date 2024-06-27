@@ -16,8 +16,8 @@ public class UIFactory : IUIFactory
     [Inject]
     public void Construct(IPoolManager poolManager)
     {
-        _effectPooler = poolManager.GetEffectPooler();
-        _abilityIconPooler = poolManager.GetAbilityIconPooler();
+        _effectPooler = poolManager.UseEffectPooler();
+        _abilityIconPooler = poolManager.UseAbilityIconPooler();
     }
 
     public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent)
