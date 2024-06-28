@@ -39,7 +39,6 @@ public class AbilityIconView : MonoBehaviour, IAbilityIconView
 
         _previousTurnsLeftToReload = currentTurnsLeftToReload;
 
-
         _reloadText.gameObject.SetActive(!sameAsPrevious || currentTurnsLeftToReload > 0);
         if(sameAsPrevious)
         {

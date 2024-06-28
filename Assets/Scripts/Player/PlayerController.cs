@@ -153,7 +153,7 @@ namespace Player
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
-            if(IsActive)
+            if(!IsMoving && IsActive)
             {
                 _uIViewmodel.ActivateSkillsBTNs();
             }

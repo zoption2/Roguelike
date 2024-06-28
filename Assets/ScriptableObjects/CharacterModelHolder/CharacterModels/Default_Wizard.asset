@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Default_Wizard
   m_EditorClassIdentifier: 
   Type: 2
-  Health: 100
+  Health: 40
   Damage: 4
   Speed: 10
   LaunchPower: 20
+  Abilities: 

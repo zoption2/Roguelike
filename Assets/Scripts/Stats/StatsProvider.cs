@@ -10,6 +10,7 @@ namespace CharactersStats
     public interface IStatsProvider
     {
         public OriginStats GetPlayerStats(CharacterType playerType);
+        public OriginStats GetDefaultPlayerStats(CharacterType playerType);
         public OriginStats GetEnemyStats(CharacterType enemyType);
         public List<AbilityType> GetCharacterAbilitiesTypes(CharacterType characterType);
     }
@@ -27,6 +28,12 @@ namespace CharactersStats
             {
                 stats = _defaultModelHolder.GetDefaultStats(playerType);
             }
+            return stats;
+        }
+
+        public OriginStats GetDefaultPlayerStats(CharacterType playerType)
+        {
+            OriginStats stats = _defaultModelHolder.GetDefaultStats(playerType);
             return stats;
         }
 
