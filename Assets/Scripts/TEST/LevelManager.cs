@@ -17,7 +17,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private List<TypeOfScenario> _roomsOrderInitList;
 
-    public Queue<TypeOfScenario> RoomsOrder {  get; private set; }
+    public Queue<TypeOfScenario> RoomsOrder { get; private set; }
     private IGameplayService _gameplayService;
     private TypeOfScenario _nextRoom;
     private ILevelContext _levelContext;
@@ -36,9 +36,18 @@ public class LevelManager : MonoBehaviour
         _roomTemplate = roomTemplateSO;
         _gameplayService = gameplayService;
         PoolManager = poolManager;
+
+        _levelContext = new LevelContext();
+        _gameplayService.LevelContext = _levelContext;
+        _gameplayService.LevelManager = this;
     }
 
-    public void Start()
+    private void Start()
+    {
+        SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
+    }
+
+    public void LoadLevel()
     {
         RoomsOrder = new Queue<TypeOfScenario>(_roomsOrderInitList);
         _gameplayService.LevelManager = this;
@@ -46,11 +55,20 @@ public class LevelManager : MonoBehaviour
         GameObject poolManagerObject = new GameObject("PoolManager");
         PoolManager.Init(poolManagerObject);
 
-        _levelContext = new LevelContext();
-        _gameplayService.LevelContext = _levelContext;
-
         _nextRoom = GetNextRoom();
-        LoadRoomScene(_nextRoom);
+
+        // Unload the Menu scene before loading the new room
+        if (SceneManager.GetSceneByName("Menu").IsValid())
+        {
+            SceneManager.UnloadSceneAsync("Menu").completed += (AsyncOperation operation) =>
+            {
+                LoadRoomScene(_nextRoom);
+            };
+        }
+        else
+        {
+            LoadRoomScene(_nextRoom);
+        }
     }
 
     public TypeOfScenario GetNextRoom()
@@ -67,7 +85,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void LoadNextRoom(GameObject player)
+    public void LoadNextRoom(GameObject player = null)
     {
         _nextRoom = GetNextRoom();
         LoadRoomScene(_nextRoom, player);
