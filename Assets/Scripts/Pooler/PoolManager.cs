@@ -113,7 +113,7 @@ public class PoolManager : IPoolManager
     {
         if (_globalParent == null)
         {
-            Debug.LogError("Global parent is not set. Make sure to call Init with a valid parent GameObject before using pools.");
+            Debug.LogError("Parent for pools is`t set before pool.Init.");
             return;
         }
 

@@ -15,21 +15,13 @@ public interface IDefaultScenario : IScenario
 
 public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 {
-    private CharacterPooler _characterPooler;
-    private CharacterUIPooler _characterUIPooler;
-    private ProjectilePooler _projectilePooler;
-    private EffectPooler _effectPooler;
-    public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory, CharacterPooler characterPooler,
-        CharacterUIPooler characterUIPooler, ProjectilePooler projectilePooler, EffectPooler effectPooler)
+
+    public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory)
     {
         GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
         _turnsOrder = new List<CookedMapper>();
         _stateFactory = stateFactory;
-        _characterPooler = characterPooler;
-        _characterUIPooler = characterUIPooler;
-        _projectilePooler = projectilePooler;
-        _effectPooler = effectPooler;
     }
     public override void EraseCharacter(ICharacterController controller)
     {
@@ -69,9 +61,26 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         {
             ActivateCompleatedRoomTriggers();
 
-            //LOGIC TOO MOVE PLAYER TO ANOTHER SCENE!!!!!!
+            //PREPAIR LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
 
             //LoadMainMenu();
+        }
+    }
+
+    public void SubscribeToDeathOfCharacters()
+    {
+        foreach (ICharacterController controller in _scenarioContext.Players)
+        {
+            controller.ON_CHARACTER_DEATH -= EraseCharacter;
+            controller.ON_CHARACTER_DEATH += EraseCharacter;
+            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for player: {controller}");
+        }
+
+        foreach (ICharacterController controller in _scenarioContext.Enemies)
+        {
+            controller.ON_CHARACTER_DEATH -= EraseCharacter;
+            controller.ON_CHARACTER_DEATH += EraseCharacter;
+            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for enemy: {controller}");
         }
     }
 
@@ -86,23 +95,6 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         foreach (var trigger in _scenarioContext.CompleatedRoomTriggers)
         {
             trigger.ActivateTrigger();
-        }
-    }
-
-    public void SubscribeToDeathOfCharacters()
-    {
-        foreach (ICharacterController controller in _scenarioContext.Players)
-        {
-            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
-            controller.ON_CHARACTER_DEATH += EraseCharacter;
-            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for player: {controller}");
-        }
-
-        foreach (ICharacterController controller in _scenarioContext.Enemies)
-        {
-            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
-            controller.ON_CHARACTER_DEATH += EraseCharacter;
-            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for enemy: {controller}");
         }
     }
 
@@ -156,7 +148,6 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
             state.SetCharacter(mapper.Controller);
             _queueOfStates.Enqueue(state);
         }
-        //_scenarioContext.TeleportWallEnters.ForEach(teleportWallEnter => teleportWallEnter.Recharge());///
     }
 
 }

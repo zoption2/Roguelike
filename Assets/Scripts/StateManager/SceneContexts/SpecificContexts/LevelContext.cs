@@ -11,12 +11,16 @@ namespace Gameplay
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
+
+        public GameObject Player { get; set; }
     }
 
     public class LevelContext : ILevelContext
     {
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
+
+        public GameObject Player { get; set; }
 
         public LevelContext()
         {

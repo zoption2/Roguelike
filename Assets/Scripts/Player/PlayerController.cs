@@ -13,6 +13,8 @@ using System.Linq;
 using Enemy;
 using Abilities;
 using Projectiles;
+using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 
 namespace Player
@@ -21,6 +23,7 @@ namespace Player
     {
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
+        public void ReInit(Vector3 newPos, Transform newParent);
     }
 
     public delegate void OnEndTurn();
@@ -31,7 +34,6 @@ namespace Player
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
-
         public bool IsDead { get; set; }
         public IAbility CurrentAbility { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
@@ -92,8 +94,12 @@ namespace Player
         CharacterView characterView,
         CharacterUIView characterUIView)
         {
-            DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
-            DefaultBehaviourTree.InitTree(this);
+            if (DefaultBehaviourTree == null)
+            {
+                DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
+                DefaultBehaviourTree.InitTree(this);
+            }
+
             DefaultBehaviourTree.SetAbilities(playerModel.Abilities);
 
             CharacterModel = playerModel;
@@ -137,6 +143,35 @@ namespace Player
 
             CurrentAbility = _basicAbility;
             LaunchedProjectiles = new List<IProjectile>();
+        }
+
+        public void ReInit(Vector3 newPos, Transform newParent)
+        {
+            IMyPoolable poolable = _characterPooler.Pull<IMyPoolable>(CharacterModel.Type, newPos, Quaternion.Euler(90, 0, 0), newParent);
+            CharacterView = poolable.gameObject.GetComponent<CharacterView>();
+            CharacterView.Init(this);
+
+            NavMeshAgent = CharacterView.NavMeshAgent;
+            NavMeshAgent.enabled = false;
+            _navMeshObstacle = CharacterView.NavMeshObstacle;
+            _navMeshObstacle.carving = true;
+            _navMeshObstacle.carveOnlyStationary = true;
+
+            CharacterView.ON_CLICK += OnClick;
+            CharacterView.ON_BEGINDRAG += OnBeginDrag;
+            ON_STOP_MOVEMENT += CheckForEndOfState;
+
+            poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, newPos, Quaternion.Euler(90, 0, 0), newParent);
+            _UIView = poolable.gameObject.GetComponent<CharacterUIView>();
+
+            _UIView.Init(CharacterView, _uIViewmodel);
+            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
+            Effector.Init(_uIViewmodel, _allEffects);
+
+            _uIViewmodel.UpdateStats(ModifiableStats);
+            _uIViewmodel.VisualiseEffects(_allEffects.Value);
+
+            Debug.LogWarning("Reinitialized player view");
         }
 
         public void DoUpdate()

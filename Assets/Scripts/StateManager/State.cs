@@ -6,6 +6,7 @@ using Pool;
 using System;
 using System.Linq;
 using Unity.AI.Navigation;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using Zenject.SpaceFighter;
 
@@ -48,9 +49,9 @@ namespace Gameplay
 
             _characterController.ProcessOnStartTurn();
 
-
             if (!_characters.Players.Contains(_characterController) || _characterController.IsStunned)
             {
+                
                 _scenario.OnStateEnd();
             }
         }
@@ -215,7 +216,8 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-            if (_scenario.GameplayService.Player == null)
+
+            if (_scenario.GameplayService.LevelContext.Players.Count == 0)
             {
                 PlayerSpawnPointWithType player;
                 CharacterType playerType;
@@ -227,37 +229,29 @@ namespace Gameplay
                     Debug.LogWarning(newPos);
                     IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
                     newPlayer.SetCharacterContext(_characters);
-                    _scenario.GameplayService.Player = _roomBuilder.PlayersParent.gameObject;
-                    Debug.LogWarning(_scenario.GameplayService.Player);
-                    _scenario.GameplayService.LevelContext.Players.Add(newPlayer);
                     _characters.Players.Add(newPlayer);
+                    _scenario.GameplayService.LevelContext.Players.Add(newPlayer);
                 }
             }
             else
             {
-                Debug.LogError("Player already created. Moving to spawn point.");
-
-                PlayerSpawnPointWithType playerSpawnPoint = _characters.PlayerSpawnPoints[0];
-                Vector3 newPos = new Vector3(playerSpawnPoint.SpawnPoint.x, playerSpawnPoint.SpawnPoint.y + YOffset, playerSpawnPoint.SpawnPoint.z);
-
-                _scenario.GameplayService.Player.transform.position = newPos;
-                _scenario.GameplayService.Player.transform.SetParent(_roomBuilder.PlayersParent);
-
-                IPlayerController existingPlayerController = _scenario.GameplayService.Player.GetComponent<IPlayerController>();
-                if (existingPlayerController != null)
+                Debug.Log("Player already create!!!");
+                for (int i = 0; i < _characters.PlayerSpawnPoints.Count; i++)
                 {
-                    existingPlayerController.SetCharacterContext(_characters);
-                    if (!_characters.Players.Contains(existingPlayerController))
-                    {
-                        _characters.Players.Add(existingPlayerController);
-                    }
-                    if (!_scenario.GameplayService.LevelContext.Players.Contains(existingPlayerController))
-                    {
-                        _scenario.GameplayService.LevelContext.Players.Add(existingPlayerController);
-                    }
+                    PlayerSpawnPointWithType player;
+                    player = _characters.PlayerSpawnPoints[i];
+                    Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
+                    Debug.LogWarning(newPos);
+                    IPlayerController existingPlayer = _scenario.GameplayService.LevelContext.Players[0];
+                    existingPlayer.ReInit(newPos, _roomBuilder.PlayersParent);
+                    existingPlayer.SetCharacterContext(_characters);
+                    _characters.Players.Add(existingPlayer);
                 }
             }
+
+
         }
+
 
 
         public void OnEnemyCreate()

@@ -95,14 +95,14 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
     {
         foreach (ICharacterController controller in _scenarioContext.Players)
         {
-            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
+            controller.ON_CHARACTER_DEATH -= EraseCharacter;
             controller.ON_CHARACTER_DEATH += EraseCharacter;
             Debug.Log($"Subscribed to ON_CHARACTER_DEATH for player: {controller}");
         }
 
         foreach (ICharacterController controller in _scenarioContext.Enemies)
         {
-            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
+            controller.ON_CHARACTER_DEATH -= EraseCharacter;
             controller.ON_CHARACTER_DEATH += EraseCharacter;
             Debug.Log($"Subscribed to ON_CHARACTER_DEATH for enemy: {controller}");
         }

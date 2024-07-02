@@ -55,6 +55,7 @@ namespace Gameplay
             }
         }
 
+
         public void SwitchState(IState state)
         {
             if (_currentState != state)

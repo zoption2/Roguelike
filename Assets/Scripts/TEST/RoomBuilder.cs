@@ -42,6 +42,7 @@ public class RoomBuilder : IRoomBuilder
         BuildRoom(template);
         OnNavigationCreate();
         CenterCamera(template);
+
     }
 
     private void AnalyzeTemplate(RoomTemplateSO.Template roomTemplate)
@@ -99,7 +100,7 @@ public class RoomBuilder : IRoomBuilder
         GameObject roomObject = new GameObject(template.name);
         roomObject.transform.position = new Vector3(0, 0, 0);
 
-        PlayersParent = CreateParent("Players", roomObject.transform);
+        PlayersParent = CreateParent("Player", roomObject.transform);
         EnemiesParent = CreateParent("Enemies", roomObject.transform);
         BuffsParent = CreateParent("Buffs", roomObject.transform);
         WallsParent = CreateParent("Walls", roomObject.transform);

@@ -36,14 +36,14 @@ public class LevelManager : MonoBehaviour
         _roomTemplate = roomTemplateSO;
         _gameplayService = gameplayService;
         PoolManager = poolManager;
-
-        _levelContext = new LevelContext();
-        _gameplayService.LevelContext = _levelContext;
-        _gameplayService.LevelManager = this;
     }
 
     private void Start()
     {
+        _levelContext = new LevelContext();
+        _gameplayService.LevelContext = _levelContext;
+        _gameplayService.LevelManager = this;
+
         SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
     }
 
@@ -57,7 +57,6 @@ public class LevelManager : MonoBehaviour
 
         _nextRoom = GetNextRoom();
 
-        // Unload the Menu scene before loading the new room
         if (SceneManager.GetSceneByName("Menu").IsValid())
         {
             SceneManager.UnloadSceneAsync("Menu").completed += (AsyncOperation operation) =>
@@ -88,7 +87,7 @@ public class LevelManager : MonoBehaviour
     public void LoadNextRoom()
     {
         _nextRoom = GetNextRoom();
-        GameObject player = _gameplayService.Player;
+        GameObject player = _levelContext.Player;
         LoadRoomScene(_nextRoom, player);
     }
 
@@ -149,7 +148,7 @@ public class LevelManager : MonoBehaviour
                     SceneManager.MoveGameObjectToScene(GameObject.Instantiate(obj), newScene);
                 }
 
-                SceneManager.UnloadSceneAsync("Room");
+                
 
                 if (playerParent != null)
                 {
@@ -160,6 +159,8 @@ public class LevelManager : MonoBehaviour
                 {
                     Debug.LogWarning("Player parent is null when trying to move to new scene.");
                 }
+
+                SceneManager.UnloadSceneAsync("Room");
 
                 SceneManager.SetActiveScene(newScene);
 
@@ -179,6 +180,7 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
+
 
 
     public void MoveObjectToScene(GameObject obj, string targetSceneName)
