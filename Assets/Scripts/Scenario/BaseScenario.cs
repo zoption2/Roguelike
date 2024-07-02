@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Gameplay
@@ -10,6 +11,7 @@ namespace Gameplay
         protected T _scenarioContext;
         protected IStateFactory _stateFactory;
         protected LevelManager _levelManager;
+        protected List<CookedMapper> _turnsOrder;
 
         public IGameplayService GameplayService { get; set; }
 
@@ -43,6 +45,8 @@ namespace Gameplay
                 RenewQueue();
             }
 
+            RemoveDeadCharactersFromQueue();
+
             if (_queueOfStates.Count != 0)
             {
                 IState state = _queueOfStates.Dequeue();
@@ -67,6 +71,12 @@ namespace Gameplay
         public void CreateNewRoomScene(int level, int room)
         {
 
+        }
+
+        public void RemoveDeadCharactersFromQueue()
+        {
+
+            _turnsOrder = _turnsOrder.Where(mapper => mapper.Controller != null && !mapper.Controller.IsDead).ToList();
         }
     }
 

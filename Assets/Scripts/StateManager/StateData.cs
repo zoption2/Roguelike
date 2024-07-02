@@ -23,6 +23,7 @@ namespace Gameplay
         private IRoomContext _context;
         private INavigationFactory _navigationFactory;
         private ProjectilePooler _projectilePooler;
+        private LevelManager _levelManager;
 
         [Inject]
         public void Construct(IBuffFactory triggerFactory ,IPlayerFactory playerFactory, IEnemyFactory enemyFactory, IStatsProvider statsProvider,

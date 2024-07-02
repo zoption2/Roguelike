@@ -15,7 +15,6 @@ public interface IDefaultScenario : IScenario
 
 public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 {
-    private List<CookedMapper> _turnsOrder;
     private CharacterPooler _characterPooler;
     private CharacterUIPooler _characterUIPooler;
     private ProjectilePooler _projectilePooler;
@@ -34,16 +33,11 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
     }
     public override void EraseCharacter(ICharacterController controller)
     {
+        Debug.LogWarning($"EraseCharacter called for: {controller}");
         controller.ON_CHARACTER_DEATH -= EraseCharacter;
         controller.Dispose();
-        foreach (CookedMapper mapper in _turnsOrder)
-        {
-            if (mapper.Controller == controller)
-            {
-                _turnsOrder.Remove(mapper);
-                break;
-            }
-        }
+
+        _turnsOrder.RemoveAll(mapper => mapper.Controller == controller || mapper.Controller == null);
 
         if (controller is IPlayerController)
         {
@@ -53,16 +47,8 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         {
             _scenarioContext.Enemies.Remove((IEnemyController)controller);
         }
-        CheckConditonsForEndOfScenario();
-    }
 
-    private void CleanPoolers()
-    {
-        _characterPooler.CleanPool();
-        _characterUIPooler.CleanPool();
-        _effectPooler.CleanPool();
-        _projectilePooler.CleanPool();
-        Debug.LogWarning("cleaned poolers!");
+        CheckConditonsForEndOfScenario();
     }
 
     public override void CheckConditonsForEndOfScenario()
@@ -83,10 +69,7 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         {
             ActivateCompleatedRoomTriggers();
 
-            foreach (var Player in _scenarioContext.Players)
-            {
-                Player.JustPush();
-            }
+            //LOGIC TOO MOVE PLAYER TO ANOTHER SCENE!!!!!!
 
             //LoadMainMenu();
         }
@@ -106,18 +89,23 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         }
     }
 
-    private void SubscribeToDeathOfCharacters()
+    public void SubscribeToDeathOfCharacters()
     {
         foreach (ICharacterController controller in _scenarioContext.Players)
         {
+            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
             controller.ON_CHARACTER_DEATH += EraseCharacter;
+            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for player: {controller}");
         }
 
         foreach (ICharacterController controller in _scenarioContext.Enemies)
         {
+            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
             controller.ON_CHARACTER_DEATH += EraseCharacter;
+            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for enemy: {controller}");
         }
     }
+
 
     public override void Init(IScenarioContext context, LevelManager levelManager)
     {
@@ -170,4 +158,5 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         }
         //_scenarioContext.TeleportWallEnters.ForEach(teleportWallEnter => teleportWallEnter.Recharge());///
     }
+
 }

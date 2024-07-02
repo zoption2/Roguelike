@@ -168,7 +168,7 @@ namespace Gameplay
             _statsProvider  = provider;
             _buffFactory = buffFactory;
             _playerFactory = playerFactory;
-            _enemyFactory = enemyFactory;     
+            _enemyFactory = enemyFactory;  
             //_navigationFactory = navigationFactory;
             _roomBuilder = new RoomBuilder(
                 scenario,
@@ -215,7 +215,6 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-
             if (_scenario.GameplayService.Player == null)
             {
                 PlayerSpawnPointWithType player;
@@ -228,16 +227,38 @@ namespace Gameplay
                     Debug.LogWarning(newPos);
                     IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
                     newPlayer.SetCharacterContext(_characters);
+                    _scenario.GameplayService.Player = _roomBuilder.PlayersParent.gameObject;
+                    Debug.LogWarning(_scenario.GameplayService.Player);
                     _scenario.GameplayService.LevelContext.Players.Add(newPlayer);
                     _characters.Players.Add(newPlayer);
                 }
-            } else
-            {
-                Debug.Log("Player already create!!!");
             }
+            else
+            {
+                Debug.LogError("Player already created. Moving to spawn point.");
 
-            
+                PlayerSpawnPointWithType playerSpawnPoint = _characters.PlayerSpawnPoints[0];
+                Vector3 newPos = new Vector3(playerSpawnPoint.SpawnPoint.x, playerSpawnPoint.SpawnPoint.y + YOffset, playerSpawnPoint.SpawnPoint.z);
+
+                _scenario.GameplayService.Player.transform.position = newPos;
+                _scenario.GameplayService.Player.transform.SetParent(_roomBuilder.PlayersParent);
+
+                IPlayerController existingPlayerController = _scenario.GameplayService.Player.GetComponent<IPlayerController>();
+                if (existingPlayerController != null)
+                {
+                    existingPlayerController.SetCharacterContext(_characters);
+                    if (!_characters.Players.Contains(existingPlayerController))
+                    {
+                        _characters.Players.Add(existingPlayerController);
+                    }
+                    if (!_scenario.GameplayService.LevelContext.Players.Contains(existingPlayerController))
+                    {
+                        _scenario.GameplayService.LevelContext.Players.Add(existingPlayerController);
+                    }
+                }
+            }
         }
+
 
         public void OnEnemyCreate()
         {

@@ -85,9 +85,10 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void LoadNextRoom(GameObject player = null)
+    public void LoadNextRoom()
     {
         _nextRoom = GetNextRoom();
+        GameObject player = _gameplayService.Player;
         LoadRoomScene(_nextRoom, player);
     }
 
@@ -114,7 +115,7 @@ public class LevelManager : MonoBehaviour
         return selectedTemplate;
     }
 
-    public void LoadRoomScene(TypeOfScenario type, GameObject player = null)
+    public void LoadRoomScene(TypeOfScenario type, GameObject playerParent = null)
     {
         if (_currentRoomScene.IsValid())
         {
@@ -150,9 +151,14 @@ public class LevelManager : MonoBehaviour
 
                 SceneManager.UnloadSceneAsync("Room");
 
-                if (player != null)
+                if (playerParent != null)
                 {
-                    MoveObjectToScene(player, newSceneName);
+                    MoveObjectToScene(playerParent.gameObject, newSceneName);
+                    Debug.Log("Player parent moved to new scene: " + playerParent.name);
+                }
+                else
+                {
+                    Debug.LogWarning("Player parent is null when trying to move to new scene.");
                 }
 
                 SceneManager.SetActiveScene(newScene);
@@ -173,6 +179,7 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
+
 
     public void MoveObjectToScene(GameObject obj, string targetSceneName)
     {

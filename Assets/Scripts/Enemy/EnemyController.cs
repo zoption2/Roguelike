@@ -226,16 +226,13 @@ namespace Enemy
 
         public void PushIfDead()
         {
+            Debug.Log("PushIfDead called");
             _characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
             ON_CHARACTER_DEATH?.Invoke(this);
+            Debug.Log("ON_CHARACTER_DEATH invoked");
         }
 
-        public void JustPush()
-        {
-            _characterPooler.Push(CharacterModel.Type, CharacterView);
-            PushCharacterUI();
-        }
 
         public bool CheckIfMoving()
         {

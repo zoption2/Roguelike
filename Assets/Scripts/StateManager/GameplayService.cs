@@ -7,7 +7,7 @@ namespace Gameplay
 {
     public interface IGameplayService
     {
-        public IPlayerController Player { get; set; }
+        public GameObject Player { get; set; }
         public IPoolManager PoolManager { get; set; }
         void Init(TypeOfScenario type);
         public IScenario Scenario { get; set; }
@@ -21,7 +21,7 @@ namespace Gameplay
 
     public class GameplayService : IGameplayService
     {
-        public IPlayerController Player { get; set; }
+        public GameObject Player { get; set; }
         public IPoolManager PoolManager { get; set; }
         public IPlayerFactory _playerFactory { get; set; }
         public IEnemyFactory _enemyFactory { get; set; }

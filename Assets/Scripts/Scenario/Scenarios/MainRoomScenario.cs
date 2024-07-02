@@ -16,7 +16,6 @@ public interface IMainRoomScenario : IScenario
 
 public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 {
-    private List<CookedMapper> _turnsOrder;
     private CharacterPooler _characterPooler;
     private CharacterUIPooler _characterUIPooler;
     private ProjectilePooler _projectilePooler;
@@ -33,19 +32,15 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         _projectilePooler = projectilePooler;
         _effectPooler = effectPooler;
     }
+
+
     public override void EraseCharacter(ICharacterController controller)
     {
-        Debug.LogError(controller + "was deleted");
+        Debug.LogWarning($"EraseCharacter called for: {controller}");
         controller.ON_CHARACTER_DEATH -= EraseCharacter;
         controller.Dispose();
-        foreach (CookedMapper mapper in _turnsOrder)
-        {
-            if (mapper.Controller == controller)
-            {
-                _turnsOrder.Remove(mapper);
-                break;
-            }
-        }
+
+        _turnsOrder.RemoveAll(mapper => mapper.Controller == controller || mapper.Controller == null);
 
         if (controller is IPlayerController)
         {
@@ -55,16 +50,8 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         {
             _scenarioContext.Enemies.Remove((IEnemyController)controller);
         }
-        CheckConditonsForEndOfScenario();
-    }
 
-    private void CleanPoolers()
-    {
-        _characterPooler.CleanPool();
-        _characterUIPooler.CleanPool();
-        _effectPooler.CleanPool();
-        _projectilePooler.CleanPool();
-        Debug.LogWarning("cleaned poolers!");
+        CheckConditonsForEndOfScenario();
     }
 
     public override void CheckConditonsForEndOfScenario()
@@ -83,8 +70,8 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         }
         else if (noEnemies)
         {
-            Debug.LogWarning("You Won!");
             ActivateCompleatedRoomTriggers();
+
             //LoadMainMenu();
         }
     }
@@ -104,16 +91,20 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         }
     }
 
-    private void SubscribeToDeathOfCharacters()
+    public void SubscribeToDeathOfCharacters()
     {
         foreach (ICharacterController controller in _scenarioContext.Players)
         {
+            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
             controller.ON_CHARACTER_DEATH += EraseCharacter;
+            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for player: {controller}");
         }
 
         foreach (ICharacterController controller in _scenarioContext.Enemies)
         {
+            controller.ON_CHARACTER_DEATH -= EraseCharacter; // Remove previous subscriptions to avoid duplicates
             controller.ON_CHARACTER_DEATH += EraseCharacter;
+            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for enemy: {controller}");
         }
     }
 
@@ -168,4 +159,5 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         }
         //_scenarioContext.TeleportWallEnters.ForEach(teleportWallEnter => teleportWallEnter.Recharge());///
     }
+
 }
