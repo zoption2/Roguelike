@@ -80,15 +80,18 @@ public abstract class ActiveState
         {
             ViewRotation();
         }
-        else if (_navAgent.enabled && _navAgent.velocity.magnitude != 0)
+        else if (_navAgent != null && _navAgent.enabled && _navAgent.velocity.magnitude != 0)
         {
             AdjustRotationForNavAgent();
         }
 
-        if (_navAgent.enabled && _navAgent.velocity.magnitude == 0 && ON_STOPPED != null)
+        if (_navAgent != null && _navAgent.enabled && _navAgent.velocity.magnitude == 0 && ON_STOPPED != null)
         {
             _navAgent.enabled = false;
-            _navObstacle.enabled = true;
+            if (_navObstacle != null)
+            {
+                _navObstacle.enabled = true;
+            }
             ON_STOPPED?.Invoke();
         }
     }

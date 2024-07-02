@@ -10,6 +10,7 @@ namespace SlingShotLogic
     public interface ISlingShot : IMyPoolable
     {
         public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance);
+        public void UnsubscribeEvents();
         public event Action<Vector3> OnShoot;
         public event Action OnAbilityUse;
         public event Action<Vector3> OnDirectionChange;
@@ -70,16 +71,25 @@ namespace SlingShotLogic
             {
                 if (IsInDeadZone(_cursor.rectTransform.position, _touchZone.rectTransform))
                 {
+                    UnsubscribeEvents(); // Відписуємо події перед поверненням в пул
                     _slingShotPooler.Push(_type, this);
                 }
                 else
                 {
                     OnShoot?.Invoke(_direction);
                     OnAbilityUse?.Invoke();
+                    UnsubscribeEvents(); // Відписуємо події перед поверненням в пул
                     _slingShotPooler.Push(_type, this);
                 }
             }
             IsDragging = false;
+        }
+
+        public void UnsubscribeEvents()
+        {
+            OnShoot = null;
+            OnAbilityUse = null;
+            OnDirectionChange = null;
         }
 
         private bool IsInDeadZone(Vector3 position, RectTransform zone)
@@ -124,8 +134,6 @@ namespace SlingShotLogic
             _pointer.sizeDelta = size;
             _pointer.anchoredPosition = position;
         }
-
-
 
         public void OnCreate()
         {

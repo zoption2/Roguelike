@@ -96,10 +96,9 @@ namespace Player
         {
             if (DefaultBehaviourTree == null)
             {
-                DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>();
-                DefaultBehaviourTree.InitTree(this);
+                DefaultBehaviourTree = _container.Resolve<IDefaultBehaviourTree>(); 
             }
-
+            DefaultBehaviourTree.InitTree(this);
             DefaultBehaviourTree.SetAbilities(playerModel.Abilities);
 
             CharacterModel = playerModel;
@@ -147,9 +146,24 @@ namespace Player
 
         public void ReInit(Vector3 newPos, Transform newParent)
         {
+
+            if (CharacterView != null)
+            {
+                CharacterView.ON_CLICK -= OnClick;
+                CharacterView.ON_BEGINDRAG -= OnBeginDrag;
+            }
+
+            _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             IMyPoolable poolable = _characterPooler.Pull<IMyPoolable>(CharacterModel.Type, newPos, Quaternion.Euler(90, 0, 0), newParent);
             CharacterView = poolable.gameObject.GetComponent<CharacterView>();
             CharacterView.Init(this);
+
+            poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, newPos, Quaternion.Euler(90, 0, 0), newParent);
+            _UIView = poolable.gameObject.GetComponent<CharacterUIView>();
+            _UIView.Init(CharacterView, _uIViewmodel);
+
+            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
+            Effector.Init(_uIViewmodel, _allEffects);
 
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
@@ -160,13 +174,6 @@ namespace Player
             CharacterView.ON_CLICK += OnClick;
             CharacterView.ON_BEGINDRAG += OnBeginDrag;
             ON_STOP_MOVEMENT += CheckForEndOfState;
-
-            poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, newPos, Quaternion.Euler(90, 0, 0), newParent);
-            _UIView = poolable.gameObject.GetComponent<CharacterUIView>();
-
-            _UIView.Init(CharacterView, _uIViewmodel);
-            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
-            Effector.Init(_uIViewmodel, _allEffects);
 
             _uIViewmodel.UpdateStats(ModifiableStats);
             _uIViewmodel.VisualiseEffects(_allEffects.Value);
@@ -252,13 +259,6 @@ namespace Player
             ON_CHARACTER_DEATH?.Invoke(this);
         }
 
-        public void JustPush()
-        {
-            //_characterPooler.Push(CharacterModel.Type, CharacterView);
-            PushCharacterUI();
-            ON_CHARACTER_DEATH = null;
-
-        }
 
         public ReactiveStats GetCharacterStats()
         {

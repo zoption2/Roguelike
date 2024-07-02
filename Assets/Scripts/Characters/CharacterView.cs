@@ -42,8 +42,8 @@ public class CharacterView : MonoBehaviour,
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
     
-    [SerializeField] Transform _viewTransform;
-    [SerializeField] Transform _projectileSpawn;
+    private Transform _viewTransform;
+    private Transform _projectileSpawn;
     public ParticleSystem ParticleTestSystem { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
@@ -57,12 +57,17 @@ public class CharacterView : MonoBehaviour,
 
     public void Init(IControllerInputs controllerInputs)
     {
+        Debug.LogError("INIT!!!!");
+        _viewTransform = gameObject.transform;
+        Debug.LogError(_viewTransform);
+        _projectileSpawn = _viewTransform;
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
         _rigidbody = GetComponent<Rigidbody>();
         _collisionHandler = gameObject.AddComponent<CollisionHandler>();
         _collisionHandler.Init(ControllerInputs, this);
+        Debug.Log("CharacterView initialized with transform: " + _viewTransform);
     }
 
     private void FixedUpdate()
@@ -134,7 +139,7 @@ public class CharacterView : MonoBehaviour,
 
     public void OnPull()
     {
-        ControllerInputs = null;
+        //ControllerInputs = null;
     }
 
     public void OnRelease()

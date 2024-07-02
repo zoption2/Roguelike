@@ -113,7 +113,7 @@ public class PoolManager : IPoolManager
     {
         if (_globalParent == null)
         {
-            Debug.LogError("Parent for pools is`t set before pool.Init.");
+            Debug.LogError("Parent for pools isn`t set before pool.Init.");
             return;
         }
 
