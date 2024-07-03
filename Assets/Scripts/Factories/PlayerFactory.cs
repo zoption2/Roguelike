@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using Abilities;
+using Cysharp.Threading.Tasks;
 
 public interface IPlayerFactory
 {
-    public IPlayerController CreatePlayer(Vector3 position, Transform parent, CharacterType type);
+    public UniTask<IPlayerController> CreatePlayer(Vector3 position, Transform parent, CharacterType type);
 }
 
 public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
@@ -27,8 +28,9 @@ public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
         return _statsProvider.GetCharacterAbilitiesTypes(type);
     }
 
-    public IPlayerController CreatePlayer(Vector3 position, Transform parent, CharacterType type)
+    public async UniTask<IPlayerController> CreatePlayer(Vector3 position, Transform parent, CharacterType type)
     {
-        return base.CreateCharacter(position, parent, type);
+        IPlayerController playerController = await base.CreateCharacter(position, parent, type);
+        return playerController;
     }
 }

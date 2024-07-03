@@ -1,10 +1,11 @@
+using Cysharp.Threading.Tasks;
 using Prefab;
 using UnityEngine;
 using Zenject;
 
 public interface IRoomObjectsFactory
 {
-    GameObject Build(Vector3 position, Transform parent, RoomObjectType type);
+    UniTask<GameObject> Build(Vector3 position, Transform parent, RoomObjectType type);
     public void Init();
 }
 
@@ -17,9 +18,9 @@ public class RoomObjectsFactory : IRoomObjectsFactory
     {
     }
 
-    public GameObject Build(Vector3 position, Transform parent, RoomObjectType type)
+    public async UniTask<GameObject> Build(Vector3 position, Transform parent, RoomObjectType type)
     {
-        var prefab = _prefabHolder.GetPrefab(type);
+        GameObject prefab = await _prefabHolder.GetPrefab(type);
 
         return GameObject.Instantiate(prefab, position, Quaternion.identity, parent);
     }

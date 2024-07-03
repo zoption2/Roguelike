@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Prefab;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,15 +8,9 @@ namespace Pool
 {
     public class CharacterPanelPooler : ObjectPooler<CharacterType>
     {
-        private CharacterPanelPrefabHolder _holder;
         public CharacterPanelPooler(CharacterPanelPrefabHolder provider)
         {
-            _holder = provider;
-        }
-
-        protected override GameObject GetPrefab(CharacterType tag)
-        {
-            return _holder.GetPrefab(tag);
+            _prefabHolder = provider;
         }
     }
 }

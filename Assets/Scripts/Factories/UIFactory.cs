@@ -1,11 +1,12 @@
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 public interface IUIFactory
 {
-    public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent);
+    public UniTask<IEffectIconView> CreateEffectIcon(EffectType type, Vector3 position, Transform parent);
     public void RemoveEffectIcon(EffectType type, IEffectIconView myPoolable);
-    public IAbilityIconView CreateAbilityIcon(AbilityType type, Vector3 position, Transform parent);
+    public UniTask<IAbilityIconView> CreateAbilityIcon(AbilityType type, Vector3 position, Transform parent);
 }
 
 public class UIFactory : IUIFactory
@@ -20,9 +21,9 @@ public class UIFactory : IUIFactory
         _abilityIconPooler = poolManager.GetAbilityIconPooler();
     }
 
-    public IEffectIconView CreateEffectIcon(EffectType type, Vector3 position, Transform parent)
+    public async UniTask<IEffectIconView> CreateEffectIcon(EffectType type, Vector3 position, Transform parent)
     {
-        IEffectIconView effectIcon = _effectPooler.Pull<IEffectIconView>(type, position, Quaternion.Euler(90, 0, 0), parent);
+        IEffectIconView effectIcon = await _effectPooler.Pull<IEffectIconView>(type, position, Quaternion.Euler(90, 0, 0), parent);
         return effectIcon;
     }
 
@@ -31,9 +32,9 @@ public class UIFactory : IUIFactory
         _effectPooler.Push(type, myPoolable);
     }
 
-    public IAbilityIconView CreateAbilityIcon(AbilityType type, Vector3 position, Transform parent)
+    public async UniTask<IAbilityIconView> CreateAbilityIcon(AbilityType type, Vector3 position, Transform parent)
     {
-        IAbilityIconView abilityIcon = _abilityIconPooler.Pull<IAbilityIconView>(type, position, Quaternion.Euler(90, 0, 0), parent);
+        IAbilityIconView abilityIcon = await _abilityIconPooler.Pull<IAbilityIconView>(type, position, Quaternion.Euler(90, 0, 0), parent);
         return abilityIcon;
     }
 }

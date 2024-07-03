@@ -111,14 +111,14 @@ public abstract class ActiveState
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
     }
 
-    public virtual void LaunchProjectile(Vector3 direction)
+    public virtual async void LaunchProjectile(Vector3 direction)
     {
         Vector3 forceVector = GetForceVector(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
         Transform transform = _characterController.GetTransform();
         Transform spawn = _characterController.GetProjectileSpawn();
 
-        IMyPoolable projectilePoolable = _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
+        IMyPoolable projectilePoolable = await _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
         Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
 
         if(projectile.ControllerInputs == null)
@@ -207,13 +207,13 @@ public class PlayerActiveState : ActiveState, IConditionState
     {
     }
 
-    public override void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
+    public override async void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
     {
         CharacterType type = _characterController.GetCharacterType();
 
         Vector3 fixedInitPosition = new Vector3(slingShotInitPosition.position.x, slingShotInitPosition.position.y, slingShotInitPosition.position.z);
 
-        _slingShot = _characterController.SlingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.Euler(90, 0, 0), slingShotInitPosition.parent);
+        _slingShot = await _characterController.SlingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.Euler(90, 0, 0), slingShotInitPosition.parent);
 
         _slingShot.Init(slingShotInitPosition.position, type,_characterController.GetCurrentLaunchDistance());
 

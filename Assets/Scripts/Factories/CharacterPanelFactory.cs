@@ -1,12 +1,13 @@
 using Pool;
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 namespace UI
 {
     public interface ICharacterPanelFactory
     {
-        ICharacterPanelController CreateCharacterPanel(CharacterType panelType, RectTransform transform);
+        UniTask<ICharacterPanelController> CreateCharacterPanel(CharacterType panelType, RectTransform transform);
     }
     public class CharacterPanelFactory : ICharacterPanelFactory
     {
@@ -20,13 +21,13 @@ namespace UI
             _pooler.Init();
         }
 
-        public ICharacterPanelController CreateCharacterPanel(CharacterType panelType,RectTransform transform)
+        public async UniTask<ICharacterPanelController> CreateCharacterPanel(CharacterType panelType,RectTransform transform)
         {
             ICharacterPanelView panelView;
             ICharacterPanelModel panelModel;
             ICharacterPanelController controller;
 
-            IMyPoolable myPoolable = _pooler.Pull<IMyPoolable>( panelType,new Vector2(0,0),Quaternion.identity,transform);
+            IMyPoolable myPoolable = await _pooler.Pull<IMyPoolable>( panelType,new Vector2(0,0),Quaternion.identity,transform);
             panelView = myPoolable.gameObject.GetComponent<CharacterPanelView>();
             panelView.CharacterType = panelType;
             panelModel = _container.Resolve<ICharacterPanelModel>();

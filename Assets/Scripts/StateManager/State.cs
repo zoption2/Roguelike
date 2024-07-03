@@ -1,10 +1,12 @@
 using CharactersStats;
+using Cysharp.Threading.Tasks;
 using Enemy;
 using Obstacles;
 using Player;
 using Pool;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.AI.Navigation;
 using UnityEngine;
 using Zenject.SpaceFighter;
@@ -182,7 +184,7 @@ namespace Gameplay
                 );
         }
 
-        public void OnEnter()
+        public async void OnEnter()
         {
             RoomTemplateSO.Template template = _scenario.GameplayService.LevelManager.GetTemplate();
 
@@ -193,13 +195,15 @@ namespace Gameplay
             }
 
             _roomBuilder.BuildLevel(template);
-            OnPlayerCreate();
-            OnEnemyCreate();
+
             OnBuffCreate();
-            _scenario.OnStateEnd();
+            await OnPlayerCreate();
+            await OnEnemyCreate();
+
+             _scenario.OnStateEnd();
         }
 
-        public void OnBuffCreate()
+        public async void OnBuffCreate()
         {
             var buffTypes = Enum.GetValues(typeof(BuffType)).Cast<BuffType>().Where(t => t != BuffType.None).ToList();
             var shuffledSpawnPoints = _characters.BuffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
@@ -211,15 +215,14 @@ namespace Gameplay
                 if (buffType != BuffType.None)
                 {
                     Vector3 newPos = spawnPointWithType.SpawnPoint;
-                    IBuff newBuff = _buffFactory.CreateBuff(newPos, _roomBuilder.BuffsParent, buffType);
+                    IBuff newBuff = await _buffFactory.CreateBuff(newPos, _roomBuilder.BuffsParent, buffType);
                     _characters.Buffs.Add(newBuff);
                 }
             }
         }
 
-        public void OnPlayerCreate()
+        public async UniTask OnPlayerCreate()
         {
-
             if (_scenario.GameplayService.Player == null)
             {
                 PlayerSpawnPointWithType player;
@@ -230,19 +233,18 @@ namespace Gameplay
                     playerType = DataTransfer.TypeCollection[i];
                     Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
                     Debug.LogWarning(newPos);
-                    IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
+                    IPlayerController newPlayer = await _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
                     newPlayer.SetCharacterContext(_characters);
                     _characters.Players.Add(newPlayer);
                 }
-            } else
+            } 
+            else
             {
-                Debug.Log("Player already create!!!");
+                Debug.Log("Player was already created!!!");
             }
-
-            
         }
 
-        public void OnEnemyCreate()
+        public async UniTask OnEnemyCreate()
         {
             for (int i = 0; i < _characters.EnemySpawnPoints.Count; i++)
             {
@@ -252,7 +254,7 @@ namespace Gameplay
                 if (enemyType != CharacterType.None)
                 {
                     Vector3 newPos = new Vector3(spawnPointWithType.SpawnPoint.x, spawnPointWithType.SpawnPoint.y + YOffset, spawnPointWithType.SpawnPoint.z);
-                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomBuilder.EnemiesParent, enemyType);
+                    IEnemyController newEnemy = await _enemyFactory.CreateEnemy(newPos, _roomBuilder.EnemiesParent, enemyType);
                     newEnemy.SetCharacterContext(_characters);
                     _characters.Enemies.Add(newEnemy);
                 }

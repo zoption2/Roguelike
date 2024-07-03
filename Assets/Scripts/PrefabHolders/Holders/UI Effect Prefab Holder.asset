@@ -12,10 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73b237bd25938eb4aaf44341bcaee65e, type: 3}
   m_Name: UI Effect Prefab Holder
   m_EditorClassIdentifier: 
-  _prefabs:
-  - Key: 1
-    Value: {fileID: 4126718407162399544, guid: 026019761ae7d3f409f124712d163c11, type: 3}
+  _references:
   - Key: 2
-    Value: {fileID: 417488159127674505, guid: ac1ebb206bba71c489d3cbf79ff5d646, type: 3}
+    PrefabReference:
+      m_AssetGUID: ac1ebb206bba71c489d3cbf79ff5d646
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+  - Key: 1
+    PrefabReference:
+      m_AssetGUID: 026019761ae7d3f409f124712d163c11
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
   - Key: 3
-    Value: {fileID: 2393523748079264978, guid: 1c706bd32fdf5ce498c1ea755ab7fd92, type: 3}
+    PrefabReference:
+      m_AssetGUID: 1c706bd32fdf5ce498c1ea755ab7fd92
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

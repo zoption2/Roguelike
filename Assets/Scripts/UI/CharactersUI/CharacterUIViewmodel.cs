@@ -131,13 +131,13 @@ public class CharacterUIViewmodel
     //}
 
 
-    public void VisualiseAbilities()
+    public async void VisualiseAbilities()
     {
         
         foreach (var ability in _abilities)
         {
             AbilityType type = ability.Type;
-            IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, _abilityPanel.transform.position, _abilityPanel.transform);
+            IAbilityIconView abilityIcon = await _factory.CreateAbilityIcon(type, _abilityPanel.transform.position, _abilityPanel.transform);
             abilityIcon.Init(ability);
 
             _abilityIcons.Add(abilityIcon);
@@ -166,7 +166,7 @@ public class CharacterUIViewmodel
         ChangeButtonInteractible(ability,false);
     }
 
-    public void VisualiseEffects(List<IEffect> displayedEffects)
+    public async void VisualiseEffects(List<IEffect> displayedEffects)
     {
         GridLayoutGroup effectPanel = _uIView.GetEffectsPanel();
 
@@ -184,7 +184,7 @@ public class CharacterUIViewmodel
                 }
                 else
                 {
-                    IEffectIconView icon = _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
+                    IEffectIconView icon = await _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
                     _visualizedEffects.Add(effectType, icon);
                     _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
                 }

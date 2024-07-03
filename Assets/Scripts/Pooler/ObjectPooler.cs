@@ -1,3 +1,6 @@
+using Cysharp.Threading.Tasks;
+using Prefab;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,15 +21,20 @@ namespace Pool
     {
         public void Init(Transform parent);
         public void CleanPool();
-        public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
+        public  UniTask<T> Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         public void Push(TEnum tag, IMyPoolable obj);
     }
 
-    public abstract class ObjectPooler<TEnum> : IPool<TEnum>
+    public abstract class ObjectPooler<TEnum> : IPool<TEnum> where TEnum : Enum
     {
         protected Dictionary<TEnum, Queue<IMyPoolable>> _poolDictionary;
+        protected PrefabHolder<TEnum> _prefabHolder;
 
-        protected abstract GameObject GetPrefab(TEnum tag);
+        protected async UniTask<GameObject> GetPrefab(TEnum tag)
+        {
+            GameObject prefab = await _prefabHolder.GetPrefab(tag);
+            return prefab;
+        }
 
         protected Transform _parentTransform;
 
@@ -46,7 +54,7 @@ namespace Pool
             _poolDictionary.Clear();
         }
 
-        public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
+        public async UniTask<T> Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
         {
             if (!_poolDictionary.ContainsKey(tag))
             {
@@ -65,7 +73,7 @@ namespace Pool
             }
             else
             {
-                var prefab = GetPrefab(tag);
+                GameObject prefab = await GetPrefab(tag);
 
                 GameObject spawnedInstance = null;
 

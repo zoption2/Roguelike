@@ -12,10 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c23a4782142a3cd4e81e30694001dab5, type: 3}
   m_Name: SlingShot Prefab Holder
   m_EditorClassIdentifier: 
-  _prefabs:
+  _references:
   - Key: 1
-    Value: {fileID: 6048978302989031216, guid: 0b5b74589c74edd40823473bab2add65, type: 3}
-  - Key: 3
-    Value: {fileID: 6048978302989031216, guid: 0b5b74589c74edd40823473bab2add65, type: 3}
+    PrefabReference:
+      m_AssetGUID: 0b5b74589c74edd40823473bab2add65
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
   - Key: 2
-    Value: {fileID: 6048978302989031216, guid: 0b5b74589c74edd40823473bab2add65, type: 3}
+    PrefabReference:
+      m_AssetGUID: 0b5b74589c74edd40823473bab2add65
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+  - Key: 3
+    PrefabReference:
+      m_AssetGUID: 0b5b74589c74edd40823473bab2add65
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

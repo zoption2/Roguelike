@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using Abilities;
+using Cysharp.Threading.Tasks;
 
 public interface IEnemyFactory
 {
-    public IEnemyController CreateEnemy(Vector3 position, Transform parent, CharacterType type);
+    public UniTask<IEnemyController> CreateEnemy(Vector3 position, Transform parent, CharacterType type);
 }
 public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 {
@@ -26,8 +27,9 @@ public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
         return _statsProvider.GetCharacterAbilitiesTypes(type);
     }
 
-    public IEnemyController CreateEnemy(Vector3 position, Transform parent, CharacterType type)
+    public async UniTask<IEnemyController> CreateEnemy(Vector3 position, Transform parent, CharacterType type)
     {
-        return base.CreateCharacter(position, parent, type);
+        IEnemyController enemyController = await base.CreateCharacter(position, parent, type);
+        return enemyController;
     }
 }

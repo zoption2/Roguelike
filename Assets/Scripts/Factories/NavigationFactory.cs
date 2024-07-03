@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public interface INavigationFactory
 {
-    public NavMeshSurface CreateNavigation();
+    public UniTask<NavMeshSurface> CreateNavigation();
 }
 public class NavigationFactory : INavigationFactory
 {
@@ -16,9 +17,9 @@ public class NavigationFactory : INavigationFactory
         _navigationPrefabHolder = navigationPrefabHolder;
     }
     
-    public NavMeshSurface CreateNavigation()
+    public async UniTask<NavMeshSurface> CreateNavigation()
     {
-        GameObject prefab = _navigationPrefabHolder.GetPrefab(NavigationType.Default);
+        GameObject prefab =  await _navigationPrefabHolder.GetPrefab(NavigationType.Default);
         GameObject navObj = GameObject.Instantiate(prefab, Vector3.zero, prefab.transform.rotation);
         NavMeshSurface navigation = navObj.GetComponent<NavMeshSurface>();
         return navigation;

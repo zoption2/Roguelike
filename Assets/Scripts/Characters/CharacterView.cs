@@ -60,25 +60,25 @@ public class CharacterView : MonoBehaviour,
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
-        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
+        _rigidbody = gameObject.GetComponent<Rigidbody>();
         _collisionHandler = gameObject.AddComponent<CollisionHandler>();
         _collisionHandler.Init(ControllerInputs, this);
     }
 
     private void FixedUpdate()
     {
-        _lastVelocities.Enqueue(_rigidbody.velocity);
+        _lastVelocities.Enqueue(GetVelocity());
 
         if (_lastVelocities.Count > 2)
         {
             _lastVelocities.Dequeue();
         }
 
-        ControllerInputs.DoUpdate();
+        ControllerInputs?.DoUpdate();
     }
 
     public Vector3 GetLastVelocity()

@@ -133,7 +133,7 @@ public class RoomBuilder : IRoomBuilder
         BuildExits(templateElements, coordinates);
     }
 
-    private void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
+    private async void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
     {
         int rows = templateElements.GetLength(0);
         int cols = templateElements.GetLength(1);
@@ -149,7 +149,7 @@ public class RoomBuilder : IRoomBuilder
                         templateElements[i, j + 2] == TemplateElementType.Exit)
                     {
                         Vector3 centerPos = coordinates[i, j + 1];
-                        GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+                        GameObject exit = await _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
                         exit.transform.rotation = Quaternion.Euler(0, 90, 0);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
@@ -164,7 +164,7 @@ public class RoomBuilder : IRoomBuilder
                              templateElements[i + 2, j] == TemplateElementType.Exit)
                     {
                         Vector3 centerPos = coordinates[i + 1, j];
-                        GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+                        GameObject exit = await _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
                         Characters.CompleatedRoomTriggers.Add(trigger);
@@ -211,9 +211,9 @@ public class RoomBuilder : IRoomBuilder
         return parentObject.transform;
     }
 
-    public void OnNavigationCreate()
+    public async void OnNavigationCreate()
     {
-        NavMeshSurface navMeshSurface = _navigationFactory.CreateNavigation();
+        NavMeshSurface navMeshSurface = await _navigationFactory.CreateNavigation();
         Characters.NavMeshSurface = navMeshSurface;
         navMeshSurface.BuildNavMesh();
     }

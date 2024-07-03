@@ -1,0 +1,195 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 7b8750ce9d880ff4289142c53066220f
+  m_SerializeEntries:
+  - m_GUID: 2e22512f9beb330419f1affd25bced1c
+    m_Address: Assets/Prefabs/Enemy/Barbarian.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c75638b12cfd6af47b5202913fd742b3
+    m_Address: Assets/Prefabs/Enemy/Summoner.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c743a160aa6bc6e45a5af5811e893518
+    m_Address: Assets/Prefabs/Enemy/Thrower.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2ef050a940b1f6943ad9bdae62265c0b
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/CharacterUI.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac1ebb206bba71c489d3cbf79ff5d646
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/EffectIcons/FireEffect.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 026019761ae7d3f409f124712d163c11
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/EffectIcons/MoreDamageEffect.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c706bd32fdf5ce498c1ea755ab7fd92
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/EffectIcons/StunEffect.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 18006a2923e3455459c19c79f153047f
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/AbillitiesIcons/ArrowShootAbility.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ddbd1899f2062d4d93a0b485e7e3cde
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/AbillitiesIcons/BasicAbility.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6d9129a8b40f11c499d3f78eb9d170ee
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/AbillitiesIcons/HeavyAttackAbility.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bdbd791a82a74374892dbe9254759837
+    m_Address: Assets/Prefabs/CharacterUIPrefabs/AbillitiesIcons/MegaAttackAbility.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e880c8c5bdba17841b75eeed116ae2ad
+    m_Address: Assets/Prefabs/Buffs/Exit.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f7879d91ad4608418a119f066887124
+    m_Address: Assets/Prefabs/Buffs/MoreDamageBuff 1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 16a3e8c314e9be14ca7a1e51489c4861
+    m_Address: Assets/Prefabs/Buffs/MoreDamageBuff 2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d4bf32b19ad67147a94aa8a5ee42519
+    m_Address: Assets/Prefabs/Buffs/MoreDamageBuff.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d1162dc08dc23a4b8fdfcb282ad3202
+    m_Address: Assets/Prefabs/Navigation/NavMesh.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e7398ce14d37aa4db65c7fc2f5d2304
+    m_Address: Assets/Prefabs/Player/Archer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d80571712323925418ca71affd7b10f4
+    m_Address: Assets/Prefabs/Player/Warrior.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b081e17cf262f3942b30e9ed3abb6d6c
+    m_Address: Assets/Prefabs/Player/Wizzard.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87d4a13af9f5ff048a6d78bd8d7af28e
+    m_Address: Assets/Prefabs/Projectiles/Arrow.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99fa70c4db1a5dc429bda08efe73735a
+    m_Address: Assets/Prefabs/RoomBuilderTEST/Exit.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb897329401fac24d91c56757eb64f3e
+    m_Address: Assets/Prefabs/RoomBuilderTEST/Floor.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4521f627209c42b4a806ddc828135894
+    m_Address: Assets/Prefabs/RoomBuilderTEST/EnemySpawnPoint.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19f949b442363b14da3650f62bb39c5a
+    m_Address: Assets/Prefabs/RoomBuilderTEST/PlayerSpawnPoint.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0647a609cde114646ae5c44ed18b2d69
+    m_Address: Assets/Prefabs/RoomBuilderTEST/DefaultWall.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9e054bf35943ad44887085efa757afb
+    m_Address: Assets/Prefabs/RoomBuilderTEST/Backgroung.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4574801a9c8677640a1c07fb8af75c7a
+    m_Address: Assets/Prefabs/RoomBuilderTEST/BuffSpawnPoint.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0b5b74589c74edd40823473bab2add65
+    m_Address: Assets/Prefabs/SlingShot/SlingShot.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 795b749e025694f45a9565a1c6a42280
+    m_Address: Assets/Prefabs/SlingShot/SlingShot_distance.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9ad55148d3cdb94fa87f54b043ad5f6
+    m_Address: Assets/Prefabs/SlingShot/SlingShot_magic.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c9df2bf53a865e4da8fd40f7303dc94
+    m_Address: Assets/Prefabs/SlingShot/SlingShot_melee.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b78d1ce987d769346913f96c52bd0a6b
+    m_Address: Assets/Prefabs/UIPrefabs/ArcherCharacterPanel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2cd1b8a5de9a8f946b0fe09747641cb4
+    m_Address: Assets/Prefabs/UIPrefabs/WarriorCharacterPanel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0250c5d72af5edb45ae0f1a40ba0bef1
+    m_Address: Assets/Prefabs/UIPrefabs/WizardCharacterPanel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5eccae2c6b4cfce4699825b2956f1609, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 99bb40d48c4378c498cd347e804a14e4, type: 2}
+    - {fileID: 11400000, guid: 3c0ab63a582b3424d88de84e73453cf9, type: 2}
