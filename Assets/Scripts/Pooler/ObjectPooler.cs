@@ -52,6 +52,7 @@ namespace Pool
         public void CleanPool()
         {
             _poolDictionary.Clear();
+            _prefabHolder.ReleaseAllAssets();
         }
 
         public async UniTask<T> Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable

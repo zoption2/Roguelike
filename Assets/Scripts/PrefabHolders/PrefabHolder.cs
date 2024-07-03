@@ -53,5 +53,14 @@ namespace Prefab
             }
             throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
         }
+
+        public void ReleaseAllAssets()
+        {
+            foreach(AsyncOperationHandle<GameObject> handle in _cache.Values)
+            {
+                Addressables.Release(handle);
+            }
+            _cache.Clear();
+        }
     }
 }
