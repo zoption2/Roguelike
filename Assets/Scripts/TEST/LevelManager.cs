@@ -3,7 +3,6 @@ using Gameplay;
 using Pool;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -12,7 +11,7 @@ public interface ILevelManager
 {
 }
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : MonoBehaviour, ILevelManager
 {
     [SerializeField]
     private List<TypeOfScenario> _roomsOrderInitList;
@@ -24,7 +23,23 @@ public class LevelManager : MonoBehaviour
     private Scene _currentRoomScene;
     private RoomTemplateSO _roomTemplate;
     private RoomTemplateSO.Template _template;
-    public IPoolManager PoolManager { get; set; }
+    public IPoolManager PoolManager { get; private set; }
+
+    private Transform _globalPoolParent;
+
+    public Transform GlobalPoolParent
+    {
+        get
+        {
+            if (_globalPoolParent == null)
+            {
+                GameObject globalParentObject = new GameObject("GlobalPoolParent");
+                _globalPoolParent = globalParentObject.transform;
+                DontDestroyOnLoad(globalParentObject);
+            }
+            return _globalPoolParent;
+        }
+    }
 
     [Inject]
     public void Construct(
@@ -44,6 +59,9 @@ public class LevelManager : MonoBehaviour
         _gameplayService.LevelContext = _levelContext;
         _gameplayService.LevelManager = this;
 
+        GameObject poolManagerObject = new GameObject("PoolManager");
+        PoolManager.Init(poolManagerObject);
+
         SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
     }
 
@@ -51,9 +69,6 @@ public class LevelManager : MonoBehaviour
     {
         RoomsOrder = new Queue<TypeOfScenario>(_roomsOrderInitList);
         _gameplayService.LevelManager = this;
-
-        GameObject poolManagerObject = new GameObject("PoolManager");
-        PoolManager.Init(poolManagerObject);
 
         _nextRoom = GetNextRoom();
 
@@ -148,8 +163,6 @@ public class LevelManager : MonoBehaviour
                     SceneManager.MoveGameObjectToScene(GameObject.Instantiate(obj), newScene);
                 }
 
-                
-
                 if (playerParent != null)
                 {
                     MoveObjectToScene(playerParent.gameObject, newSceneName);
@@ -180,8 +193,6 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
-
-
 
     public void MoveObjectToScene(GameObject obj, string targetSceneName)
     {

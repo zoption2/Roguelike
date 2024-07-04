@@ -5,7 +5,6 @@ using Zenject;
 
 public interface IPoolManager
 {
-    void Init(GameObject parent);
     BuffPooler UseBuffPooler();
     EffectPooler UseEffectPooler();
     AbilityIconPooler UseAbilityIconPooler();
@@ -16,6 +15,7 @@ public interface IPoolManager
     SlingshotPooler UseSlingshotPooler();
     void InitPool(PoolType poolType);
     void CleanPoolers();
+    public void Init(GameObject parent);
 }
 
 public class PoolManager : IPoolManager
@@ -29,7 +29,6 @@ public class PoolManager : IPoolManager
     private ProjectilePooler _projectilePooler;
     private SlingshotPooler _slingshotPooler;
 
-    private Dictionary<PoolType, Transform> _parentTransforms;
     private Transform _globalParent;
 
     [Inject]
@@ -52,12 +51,10 @@ public class PoolManager : IPoolManager
         _characterUIPooler = characterUIPooler;
         _projectilePooler = projectilePooler;
         _slingshotPooler = slingshotPooler;
-
-        _parentTransforms = new Dictionary<PoolType, Transform>();
     }
 
     public void Init(GameObject parent)
-    {
+    { 
         _globalParent = parent.transform;
     }
 
@@ -111,45 +108,31 @@ public class PoolManager : IPoolManager
 
     public void InitPool(PoolType poolType)
     {
-        if (_globalParent == null)
-        {
-            Debug.LogError("Parent for pools isn`t set before pool.Init.");
-            return;
-        }
-
-        if (!_parentTransforms.ContainsKey(poolType))
-        {
-            Transform parent = CreateParentTransform(poolType.ToString());
-            _parentTransforms[poolType] = parent;
-        }
-
-        Transform parentTransform = _parentTransforms[poolType];
-
         switch (poolType)
         {
             case PoolType.BuffPool:
-                InitSinglePool(_buffPooler, parentTransform);
+                InitSinglePool(_buffPooler);
                 break;
             case PoolType.EffectPool:
-                InitSinglePool(_effectPooler, parentTransform);
+                InitSinglePool(_effectPooler);
                 break;
             case PoolType.AbilityIconPool:
-                InitSinglePool(_abilityIconPooler, parentTransform);
+                InitSinglePool(_abilityIconPooler);
                 break;
             case PoolType.CharacterPanelPool:
-                InitSinglePool(_characterPanelPooler, parentTransform);
+                InitSinglePool(_characterPanelPooler);
                 break;
             case PoolType.CharacterPool:
-                InitSinglePool(_characterPooler, parentTransform);
+                InitSinglePool(_characterPooler);
                 break;
             case PoolType.CharacterUIPool:
-                InitSinglePool(_characterUIPooler, parentTransform);
+                InitSinglePool(_characterUIPooler);
                 break;
             case PoolType.ProjectilePool:
-                InitSinglePool(_projectilePooler, parentTransform);
+                InitSinglePool(_projectilePooler);
                 break;
             case PoolType.SlingshotPool:
-                InitSinglePool(_slingshotPooler, parentTransform);
+                InitSinglePool(_slingshotPooler);
                 break;
             default:
                 Debug.LogWarning("Unknown pool type: " + poolType);
@@ -157,20 +140,13 @@ public class PoolManager : IPoolManager
         }
     }
 
-    private Transform CreateParentTransform(string poolName)
+    private void InitSinglePool<TEnum>(IPool<TEnum> pool)
     {
-        GameObject parentObject = new GameObject(poolName);
-        parentObject.transform.SetParent(_globalParent);
-        Transform parentTransform = parentObject.transform;
-        parentTransform.localPosition = Vector3.zero;
-        parentTransform.localRotation = Quaternion.identity;
-        return parentTransform;
+
+        pool.Init(_globalParent);
+
     }
 
-    private void InitSinglePool<TEnum>(IPool<TEnum> pool, Transform parent)
-    {
-        pool.Init(parent);
-    }
 
     public void CleanPoolers()
     {
