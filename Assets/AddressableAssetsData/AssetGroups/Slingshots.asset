@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Slingshots
+  m_EditorClassIdentifier: 
+  m_GroupName: Slingshots
+  m_Data:
+    m_SerializedData: []
+  m_GUID: cf76ebcde3b345d4b87a309eb1d7b9de
+  m_SerializeEntries:
+  - m_GUID: 0b5b74589c74edd40823473bab2add65
+    m_Address: Assets/Prefabs/SlingShot/SlingShot.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 795b749e025694f45a9565a1c6a42280
+    m_Address: Assets/Prefabs/SlingShot/SlingShot_distance.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9ad55148d3cdb94fa87f54b043ad5f6
+    m_Address: Assets/Prefabs/SlingShot/SlingShot_magic.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c9df2bf53a865e4da8fd40f7303dc94
+    m_Address: Assets/Prefabs/SlingShot/SlingShot_melee.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5eccae2c6b4cfce4699825b2956f1609, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: cdc3522539d53234c987047c8753cde5, type: 2}
+    - {fileID: 11400000, guid: 7256aeb5a03cc674cae1a1510482961d, type: 2}

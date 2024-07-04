@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: RoomBuildings
+  m_EditorClassIdentifier: 
+  m_GroupName: RoomBuildings
+  m_Data:
+    m_SerializedData: []
+  m_GUID: d25a94e7a232cd8429f5bc5a2c55698e
+  m_SerializeEntries:
+  - m_GUID: 99fa70c4db1a5dc429bda08efe73735a
+    m_Address: Assets/Prefabs/RoomBuilderTEST/Exit.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb897329401fac24d91c56757eb64f3e
+    m_Address: Assets/Prefabs/RoomBuilderTEST/Floor.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4521f627209c42b4a806ddc828135894
+    m_Address: Assets/Prefabs/RoomBuilderTEST/EnemySpawnPoint.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19f949b442363b14da3650f62bb39c5a
+    m_Address: Assets/Prefabs/RoomBuilderTEST/PlayerSpawnPoint.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0647a609cde114646ae5c44ed18b2d69
+    m_Address: Assets/Prefabs/RoomBuilderTEST/DefaultWall.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9e054bf35943ad44887085efa757afb
+    m_Address: Assets/Prefabs/RoomBuilderTEST/Backgroung.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4574801a9c8677640a1c07fb8af75c7a
+    m_Address: Assets/Prefabs/RoomBuilderTEST/BuffSpawnPoint.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5eccae2c6b4cfce4699825b2956f1609, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0557f0c4ae307924e9e9e9f588720528, type: 2}
+    - {fileID: 11400000, guid: 8de25c4122fab034fb371b3b711916e8, type: 2}

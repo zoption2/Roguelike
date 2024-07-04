@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Buffs
+  m_EditorClassIdentifier: 
+  m_GroupName: Buffs
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 2b33972549c48704aac73d626b700e63
+  m_SerializeEntries:
+  - m_GUID: e880c8c5bdba17841b75eeed116ae2ad
+    m_Address: Assets/Prefabs/Buffs/Exit.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f7879d91ad4608418a119f066887124
+    m_Address: Assets/Prefabs/Buffs/MoreDamageBuff 1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 16a3e8c314e9be14ca7a1e51489c4861
+    m_Address: Assets/Prefabs/Buffs/MoreDamageBuff 2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1d4bf32b19ad67147a94aa8a5ee42519
+    m_Address: Assets/Prefabs/Buffs/MoreDamageBuff.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5eccae2c6b4cfce4699825b2956f1609, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 336cf3fa818ecb843a48121e96cde66b, type: 2}
+    - {fileID: 11400000, guid: 511a7d0ce5c3a0c498b6b8201a3e95c8, type: 2}

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: CharacterPanels
+  m_EditorClassIdentifier: 
+  m_GroupName: CharacterPanels
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 8b707ae7af857104eabf66a4d0583910
+  m_SerializeEntries:
+  - m_GUID: b78d1ce987d769346913f96c52bd0a6b
+    m_Address: Assets/Prefabs/UIPrefabs/ArcherCharacterPanel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2cd1b8a5de9a8f946b0fe09747641cb4
+    m_Address: Assets/Prefabs/UIPrefabs/WarriorCharacterPanel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0250c5d72af5edb45ae0f1a40ba0bef1
+    m_Address: Assets/Prefabs/UIPrefabs/WizardCharacterPanel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5eccae2c6b4cfce4699825b2956f1609, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a9f712f8cb9a0444b8888f427e663b3e, type: 2}
+    - {fileID: 11400000, guid: e3fbb6419fdaed642ba5aedbf59679f2, type: 2}
