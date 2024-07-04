@@ -137,7 +137,7 @@ public class CharacterUIViewmodel
         foreach (var ability in _abilities)
         {
             AbilityType type = ability.Type;
-            IAbilityIconView abilityIcon = await _factory.CreateAbilityIcon(type, _abilityPanel.transform.position, _abilityPanel.transform);
+            IAbilityIconView abilityIcon = await _factory.CreateAbilityIconAsync(type, _abilityPanel.transform.position, _abilityPanel.transform);
             abilityIcon.Init(ability);
 
             _abilityIcons.Add(abilityIcon);
@@ -184,7 +184,7 @@ public class CharacterUIViewmodel
                 }
                 else
                 {
-                    IEffectIconView icon = await _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
+                    IEffectIconView icon = await _factory.CreateEffectIconAsync(effectType, effectPanel.transform.position, effectPanel.transform);
                     _visualizedEffects.Add(effectType, icon);
                     _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
                 }

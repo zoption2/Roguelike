@@ -19,7 +19,7 @@ public class NavigationFactory : INavigationFactory
     
     public async UniTask<NavMeshSurface> CreateNavigation()
     {
-        GameObject prefab =  await _navigationPrefabHolder.GetPrefab(NavigationType.Default);
+        GameObject prefab =  await _navigationPrefabHolder.GetPrefabAsync(NavigationType.Default);
         GameObject navObj = GameObject.Instantiate(prefab, Vector3.zero, prefab.transform.rotation);
         NavMeshSurface navigation = navObj.GetComponent<NavMeshSurface>();
         return navigation;

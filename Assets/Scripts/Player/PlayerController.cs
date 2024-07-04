@@ -173,7 +173,7 @@ namespace Player
             _uIViewmodel.DeactivateSkillsBTNs();
             if (!IsMoving && LaunchedProjectiles.Count == 0)
             {
-                _currentState.UseSlingshot(eventData, _slingShotInitPosition);
+                _currentState.UseSlingshotAsync(eventData, _slingShotInitPosition);
             }
         }
 

@@ -21,7 +21,7 @@ namespace Pool
     {
         public void Init(Transform parent);
         public void CleanPool();
-        public  UniTask<T> Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
+        public  UniTask<T> PullAsync<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         public void Push(TEnum tag, IMyPoolable obj);
     }
 
@@ -30,9 +30,9 @@ namespace Pool
         protected Dictionary<TEnum, Queue<IMyPoolable>> _poolDictionary;
         protected PrefabHolder<TEnum> _prefabHolder;
 
-        protected async UniTask<GameObject> GetPrefab(TEnum tag)
+        protected async UniTask<GameObject> GetPrefabAsync(TEnum tag)
         {
-            GameObject prefab = await _prefabHolder.GetPrefab(tag);
+            GameObject prefab = await _prefabHolder.GetPrefabAsync(tag);
             return prefab;
         }
 
@@ -55,7 +55,7 @@ namespace Pool
             _prefabHolder.ReleaseAllAssets();
         }
 
-        public async UniTask<T> Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
+        public async UniTask<T> PullAsync<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable
         {
             if (!_poolDictionary.ContainsKey(tag))
             {
@@ -74,7 +74,7 @@ namespace Pool
             }
             else
             {
-                GameObject prefab = await GetPrefab(tag);
+                GameObject prefab = await GetPrefabAsync(tag);
 
                 GameObject spawnedInstance = null;
 

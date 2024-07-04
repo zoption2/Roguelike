@@ -23,7 +23,7 @@ public interface IConditionState
     public void AddEffects(List<IEffect> effects);
     public void ViewRotation();
     public void DoUpdate();
-    public void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition);
+    public void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition);
     public void LaunchYourselfToPoint(Vector3 point);
     public void Attack();
     public void Move();
@@ -111,14 +111,14 @@ public abstract class ActiveState
         _characterController.GetRigidbody().AddForce(forceVector, ForceMode.VelocityChange);
     }
 
-    public virtual async void LaunchProjectile(Vector3 direction)
+    public virtual async void LaunchProjectileAsync(Vector3 direction)
     {
         Vector3 forceVector = GetForceVector(direction);
         IAbility currentAbility = _characterController.CurrentAbility;
         Transform transform = _characterController.GetTransform();
         Transform spawn = _characterController.GetProjectileSpawn();
 
-        IMyPoolable projectilePoolable = await _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
+        IMyPoolable projectilePoolable = await _projectilePooler.PullAsync<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
         Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
 
         if(projectile.ControllerInputs == null)
@@ -190,7 +190,7 @@ public abstract class ActiveState
     {
     }
 
-    public virtual void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
+    public virtual void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition)
     {
     }
 
@@ -207,13 +207,13 @@ public class PlayerActiveState : ActiveState, IConditionState
     {
     }
 
-    public override async void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
+    public override async void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition)
     {
         CharacterType type = _characterController.GetCharacterType();
 
         Vector3 fixedInitPosition = new Vector3(slingShotInitPosition.position.x, slingShotInitPosition.position.y, slingShotInitPosition.position.z);
 
-        _slingShot = await _characterController.SlingShotPooler.Pull<ISlingShot>(type, fixedInitPosition, Quaternion.Euler(90, 0, 0), slingShotInitPosition.parent);
+        _slingShot = await _characterController.SlingShotPooler.PullAsync<ISlingShot>(type, fixedInitPosition, Quaternion.Euler(90, 0, 0), slingShotInitPosition.parent);
 
         _slingShot.Init(slingShotInitPosition.position, type,_characterController.GetCurrentLaunchDistance());
 
@@ -222,15 +222,15 @@ public class PlayerActiveState : ActiveState, IConditionState
         IAbility currentAbility = _characterController.CurrentAbility;
         if(currentAbility.ProjectileType == ProjectileType.None)
         {
-            _slingShot.OnShoot -= LaunchProjectile;
+            _slingShot.OnShoot -= LaunchProjectileAsync;
             _slingShot.OnShoot -= LaunchYourself;
             _slingShot.OnShoot += LaunchYourself;
         }
         else
         {
             _slingShot.OnShoot -= LaunchYourself;
-            _slingShot.OnShoot -= LaunchProjectile;
-            _slingShot.OnShoot += LaunchProjectile;
+            _slingShot.OnShoot -= LaunchProjectileAsync;
+            _slingShot.OnShoot += LaunchProjectileAsync;
         }
 
         _slingShot.OnAbilityUse -= _characterController.ProcessReloadAbility;
@@ -252,10 +252,10 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     }
 
-    public override void LaunchProjectile(Vector3 direction)
+    public override void LaunchProjectileAsync(Vector3 direction)
     {
-        base.LaunchProjectile(direction);
-        _slingShot.OnShoot -= LaunchProjectile;
+        base.LaunchProjectileAsync(direction);
+        _slingShot.OnShoot -= LaunchProjectileAsync;
     }
 
 
@@ -307,7 +307,7 @@ public class EnemyActiveState : ActiveState, IConditionState
         }
         else
         {
-            LaunchProjectile(direction);
+            LaunchProjectileAsync(direction);
         }
         currentAbility.UseAbility();
     }
@@ -435,7 +435,7 @@ public class InactiveState : IConditionState
     {
     }
 
-    public void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
+    public void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition)
     {
     }
 
@@ -506,7 +506,7 @@ public class DeadState : IConditionState
         //Debug.Log("<color=#FFFFFF>" + "--|Exit Dead Condition State|-- " + "</color>");
     }
 
-    public void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
+    public void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition)
     {
     }
 
@@ -629,7 +629,7 @@ public class StunState : IConditionState
         Debug.Log("<color=#FFFFF>" + "--|Exit Stun Condition State|-- " + "</color>");
     }
 
-    public void UseSlingshot(PointerEventData eventData, Transform slingShotInitPosition)
+    public void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition)
     {
     }
 

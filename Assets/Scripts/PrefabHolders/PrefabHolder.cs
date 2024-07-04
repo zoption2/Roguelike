@@ -5,6 +5,7 @@ using UnityEngine.AddressableAssets;
 using Cysharp.Threading.Tasks;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Concurrent;
+using UnityEditor;
 
 namespace Prefab
 {
@@ -19,33 +20,36 @@ namespace Prefab
 
         [SerializeField]
         protected List<Mapper> _references;
-        protected ConcurrentDictionary<string, AsyncOperationHandle<GameObject>> _cache = new();
         
-        public async UniTask<GameObject> GetPrefab(T prefabType)
+        public async UniTask<GameObject> GetPrefabAsync(T prefabType)
         {
             foreach (Mapper mapper in _references) 
             {
                 if (mapper.Key.Equals(prefabType))
                 {
                     AssetReferenceGameObject reference = mapper.PrefabReference;
-                    string key = reference.RuntimeKey.ToString();
-
-                    if (_cache.TryGetValue(key,out AsyncOperationHandle<GameObject> handle))
+                    
+                    if (reference.IsValid())
                     {
-                        GameObject prefab = handle.Result;
-
-                        return prefab;
+                        if (reference.IsDone)
+                        {
+                            GameObject prefab = reference.OperationHandle.Convert<GameObject>().Result;
+                            return prefab;
+                        }
+                        else
+                        {
+                            await reference.OperationHandle;
+                            GameObject prefab = reference.OperationHandle.Convert<GameObject>().Result;
+                            return prefab;
+                        }
                     }
                     else
-                    {                        
-                        AsyncOperationHandle<GameObject> handler = Addressables.LoadAssetAsync<GameObject>(reference.RuntimeKey);
-                        await handler;
+                    {
+                        await reference.LoadAssetAsync();
 
-                        if (handler.Status == AsyncOperationStatus.Succeeded)
+                        if (reference.OperationHandle.Status == AsyncOperationStatus.Succeeded)
                         {
-                            _cache.TryAdd(key, handler);
-
-                            GameObject prefab = handler.Result;
+                            GameObject prefab = reference.OperationHandle.Convert<GameObject>().Result;
                             return prefab;
                         }
                     }
@@ -54,13 +58,26 @@ namespace Prefab
             throw new System.ArgumentException(string.Format("Prefab of type {0} not exists at holder", prefabType));
         }
 
+        public void ReleaseOneAsset(T prefabType)
+        {
+            foreach (Mapper mapper in _references)
+            {
+                if (mapper.Key.Equals(prefabType) && mapper.PrefabReference.IsValid())
+                {
+                    mapper.PrefabReference.ReleaseAsset();
+                }
+            }
+        }
+
         public void ReleaseAllAssets()
         {
-            foreach(AsyncOperationHandle<GameObject> handle in _cache.Values)
+            foreach (Mapper mapper in _references)
             {
-                Addressables.Release(handle);
+                if ( mapper.PrefabReference.IsValid())
+                {
+                    mapper.PrefabReference.ReleaseAsset();
+                }
             }
-            _cache.Clear();
         }
     }
 }

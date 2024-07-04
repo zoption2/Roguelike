@@ -169,7 +169,7 @@ namespace Enemy
         {
             if (IsActive && !IsMoving)
             {
-                _currentState.UseSlingshot(eventData, _slingShotInitPosition);
+                _currentState.UseSlingshotAsync(eventData, _slingShotInitPosition);
             }
         }
         public IInteraction GetInteraction()

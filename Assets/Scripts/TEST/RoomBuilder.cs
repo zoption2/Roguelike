@@ -1,5 +1,6 @@
 using Gameplay;
 using Obstacles;
+using System.Threading.Tasks;
 using Unity.AI.Navigation;
 using UnityEngine;
 
@@ -119,21 +120,21 @@ public class RoomBuilder : IRoomBuilder
                 Vector3 position = coordinates[i, j];
                 Vector3 floorPosition = new Vector3(position.x, position.y - 1, position.z);
 
-                _roomObjectsFactory.Build(floorPosition, FloorsParent, RoomObjectType.Floor);
+                _roomObjectsFactory.BuildAsync(floorPosition, FloorsParent, RoomObjectType.Floor);
 
                 switch (elementType)
                 {
                     case TemplateElementType.DefaultWall:
-                        _roomObjectsFactory.Build(position, WallsParent, RoomObjectType.DefaultWall);
+                        _roomObjectsFactory.BuildAsync(position, WallsParent, RoomObjectType.DefaultWall);
                         break;
                 }
             }
         }
 
-        BuildExits(templateElements, coordinates);
+        BuildExitsAsync(templateElements, coordinates);
     }
 
-    private async void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
+    private async void BuildExitsAsync(TemplateElementType[,] templateElements, Vector3[,] coordinates)
     {
         int rows = templateElements.GetLength(0);
         int cols = templateElements.GetLength(1);
@@ -149,7 +150,7 @@ public class RoomBuilder : IRoomBuilder
                         templateElements[i, j + 2] == TemplateElementType.Exit)
                     {
                         Vector3 centerPos = coordinates[i, j + 1];
-                        GameObject exit = await _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+                        GameObject exit = await _roomObjectsFactory.BuildAsync(centerPos, WallsParent, RoomObjectType.Exit);
                         exit.transform.rotation = Quaternion.Euler(0, 90, 0);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
@@ -164,7 +165,7 @@ public class RoomBuilder : IRoomBuilder
                              templateElements[i + 2, j] == TemplateElementType.Exit)
                     {
                         Vector3 centerPos = coordinates[i + 1, j];
-                        GameObject exit = await _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+                        GameObject exit = await _roomObjectsFactory.BuildAsync(centerPos, WallsParent, RoomObjectType.Exit);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
                         Characters.CompleatedRoomTriggers.Add(trigger);

@@ -82,7 +82,7 @@ namespace UI
         }
         public async void AddPanel(CharacterType characterType)
         {
-            ICharacterPanelController controller = await _characterPanelFactory.CreateCharacterPanel(characterType, RectTrans);
+            ICharacterPanelController controller = await _characterPanelFactory.CreateCharacterPanelAsync(characterType, RectTrans);
             _availablePanels.Add(controller);
             _unSelectedPanels.Add(controller);
             if(HasRequiredNumberOfPlayers())
