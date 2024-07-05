@@ -153,6 +153,7 @@ namespace Gameplay
         INavigationFactory _navigationFactory;
 
         IRoomBuilder _roomBuilder;
+        ILevelManager _levelManager;
 
 
         public InitLevelState(
@@ -163,7 +164,8 @@ namespace Gameplay
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
             INavigationFactory navigationFactory,
-            IRoomObjectsFactory roomObjectsFactory)
+            IRoomObjectsFactory roomObjectsFactory,
+            ILevelManager levelManager)
         {
             _scenario = scenario;
             _characters = context;
@@ -171,18 +173,14 @@ namespace Gameplay
             _buffFactory = buffFactory;
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;  
+            _levelManager = levelManager;
             //_navigationFactory = navigationFactory;
-            _roomBuilder = new RoomBuilder(
-                scenario,
-                context, 
-                navigationFactory,
-                roomObjectsFactory
-                );
+            
         }
 
         public void OnEnter()
         {
-            RoomTemplateSO.Template template = _scenario.GameplayService.LevelManager.GetTemplate();
+            RoomTemplateSO.Template template = _levelManager.GetTemplate();
 
             if (template == null)
             {
@@ -190,7 +188,7 @@ namespace Gameplay
                 return;
             }
 
-            _roomBuilder.BuildLevel(template);
+            //_roomBuilder.BuildLevel(template);
             OnPlayerCreate();
             OnEnemyCreate();
             OnBuffCreate();
@@ -218,7 +216,7 @@ namespace Gameplay
         public void OnPlayerCreate()
         {
 
-            if (_scenario.GameplayService.LevelContext.Players.Count == 0)
+            if (_scenario.GameplayService.LevelContext.Player is not null)
             {
                 PlayerSpawnPointWithType player;
                 CharacterType playerType;
@@ -231,7 +229,6 @@ namespace Gameplay
                     IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
                     newPlayer.SetCharacterContext(_characters);
                     _characters.Players.Add(newPlayer);
-                    _scenario.GameplayService.LevelContext.Players.Add(newPlayer);
                 }
             }
             else
@@ -243,10 +240,7 @@ namespace Gameplay
                     player = _characters.PlayerSpawnPoints[i];
                     Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
                     Debug.LogWarning(newPos);
-                    IPlayerController existingPlayer = _scenario.GameplayService.LevelContext.Players[0];
-                    existingPlayer.ReInit(newPos, _roomBuilder.PlayersParent);
-                    existingPlayer.SetCharacterContext(_characters);
-                    _characters.Players.Add(existingPlayer);
+
                 }
             }
 

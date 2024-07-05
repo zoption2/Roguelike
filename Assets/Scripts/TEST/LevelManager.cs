@@ -9,23 +9,23 @@ using Zenject;
 
 public interface ILevelManager
 {
+    void LoadLevel();
+    RoomTemplateSO.Template GetTemplate();
+    Queue<TypeOfScenario> RoomsOrder { get; set; }
 }
 
-public class LevelManager : MonoBehaviour, ILevelManager
+public class LevelManager : ILevelManager
 {
-    [SerializeField]
     private List<TypeOfScenario> _mainRoomOrder;
 
-    public Queue<TypeOfScenario> RoomsOrder { get; private set; }
-    private IGameplayService _gameplayService;
-    private TypeOfScenario _nextRoom;
-    private ILevelContext _levelContext;
-    private Scene _currentRoomScene;
+    public Queue<TypeOfScenario> RoomsOrder { get; set; }
     private RoomTemplateSO _roomTemplate;
     private RoomTemplateSO.Template _template;
+    private IGameplayService _gameplayService;
     public IPoolManager PoolManager { get; private set; }
 
     private Transform _globalPoolParent;
+    private RoomBuilder _roomBuilder;
 
     public Transform GlobalPoolParent
     {
@@ -35,7 +35,6 @@ public class LevelManager : MonoBehaviour, ILevelManager
             {
                 GameObject globalParentObject = new GameObject("GlobalPoolParent");
                 _globalPoolParent = globalParentObject.transform;
-                DontDestroyOnLoad(globalParentObject);
             }
             return _globalPoolParent;
         }
@@ -44,67 +43,96 @@ public class LevelManager : MonoBehaviour, ILevelManager
     [Inject]
     public void Construct(
         RoomTemplateSO roomTemplateSO,
+        IPoolManager poolManager,
         IGameplayService gameplayService,
-        IPoolManager poolManager
+        IRoomContext context,
+        INavigationFactory navigationFactory,
+        IRoomObjectsFactory roomObjectsFactory
     )
     {
         _roomTemplate = roomTemplateSO;
-        _gameplayService = gameplayService;
         PoolManager = poolManager;
-    }
+        _gameplayService = gameplayService;
 
-    private void Start()
-    {
-        _levelContext = new LevelContext();
-        _gameplayService.LevelContext = _levelContext;
-        _gameplayService.LevelManager = this;
+        _roomBuilder = new RoomBuilder(
+            context,
+            navigationFactory,
+            roomObjectsFactory
+        );
 
         GameObject poolManagerObject = new GameObject("PoolManager");
         PoolManager.Init(poolManagerObject);
-
-        SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
     }
 
     public void LoadLevel()
     {
+        _mainRoomOrder = new List<TypeOfScenario>
+        {
+            TypeOfScenario.MainRoom,
+            TypeOfScenario.DefaultRoom,
+            TypeOfScenario.DefaultRoom
+        };
+
         RoomsOrder = new Queue<TypeOfScenario>(_mainRoomOrder);
-        _gameplayService.LevelManager = this;
 
-        _nextRoom = GetNextRoom();
+        SceneManager.LoadScene("Level", LoadSceneMode.Additive);
+        SceneManager.sceneLoaded += OnLevelSceneLoaded;
 
-        if (SceneManager.GetSceneByName("Menu").IsValid())
+        void OnLevelSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            SceneManager.UnloadSceneAsync("Menu").completed += (AsyncOperation operation) =>
+            if (scene.name == "Level")
             {
-                LoadRoomScene(_nextRoom);
-            };
-        }
-        else
-        {
-            LoadRoomScene(_nextRoom);
+                if (SceneManager.GetSceneByName("Menu").IsValid())
+                {
+                    SceneManager.UnloadSceneAsync("Menu");
+                }
+
+                GameObject roomsObject = new GameObject("Rooms");
+                SceneManager.MoveGameObjectToScene(roomsObject, scene);
+
+                LevelInitilization levelInit = scene.GetRootGameObjects()
+                                                    .SelectMany(go => go.GetComponents<LevelInitilization>())
+                                                    .FirstOrDefault();
+                if (levelInit != null)
+                {
+                    levelInit.Init(_gameplayService);
+                    CreateRooms(roomsObject.transform);
+                }
+                else
+                {
+                    Debug.LogError("LevelInitilization component not found in the Level scene.");
+                }
+
+                SceneManager.sceneLoaded -= OnLevelSceneLoaded;
+            }
         }
     }
 
-    public TypeOfScenario GetNextRoom()
+    private void CreateRooms(Transform parent)
     {
-        if (_mainRoomOrder.Count > 0)
+        bool isFirstRoom = true;
+
+        foreach (var typeOfScenario in RoomsOrder)
         {
-            TypeOfScenario firstRoom = RoomsOrder.Dequeue();
-            return firstRoom;
-        }
-        else
-        {
-            Debug.LogError("No rooms in the sequence to start the level.");
-            return TypeOfScenario.DefaultRoom;
+            var template = SetTemplate(typeOfScenario);
+            if (template != null)
+            {
+                GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
+
+                if (isFirstRoom)
+                {
+                    roomObject.SetActive(true);
+                    isFirstRoom = false;
+                }
+                else
+                {
+                    roomObject.SetActive(false);
+                }
+            }
         }
     }
 
-    public void LoadNextRoom()
-    {
-        _nextRoom = GetNextRoom();
-        GameObject player = _levelContext.Player;
-        LoadRoomScene(_nextRoom, player);
-    }
+
 
     public RoomTemplateSO.Template GetTemplate()
     {
@@ -127,71 +155,6 @@ public class LevelManager : MonoBehaviour, ILevelManager
         Debug.Log($"Selected template: {selectedTemplate.name} for scenario type: {type}");
 
         return selectedTemplate;
-    }
-
-    public void LoadRoomScene(TypeOfScenario type, GameObject playerParent = null)
-    {
-        if (_currentRoomScene.IsValid())
-        {
-            SceneManager.UnloadSceneAsync(_currentRoomScene);
-        }
-
-        _template = SetTemplate(type);
-
-        SceneManager.LoadScene("Room", LoadSceneMode.Additive);
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
-
-        void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            if (scene.name == "Room")
-            {
-                string baseSceneName = type.ToString();
-                string newSceneName = baseSceneName;
-                int sceneNumber = 1;
-
-                while (SceneManager.GetSceneByName(newSceneName).IsValid())
-                {
-                    sceneNumber++;
-                    newSceneName = baseSceneName + sceneNumber;
-                }
-
-                Scene newScene = SceneManager.CreateScene(newSceneName);
-
-                foreach (GameObject obj in scene.GetRootGameObjects())
-                {
-                    SceneManager.MoveGameObjectToScene(GameObject.Instantiate(obj), newScene);
-                }
-
-                if (playerParent != null)
-                {
-                    MoveObjectToScene(playerParent.gameObject, newSceneName);
-                    Debug.Log("Player parent moved to new scene: " + playerParent.name);
-                }
-                else
-                {
-                    Debug.LogWarning("Player parent is null when trying to move to new scene.");
-                }
-
-                SceneManager.UnloadSceneAsync("Room");
-
-                SceneManager.SetActiveScene(newScene);
-
-                _currentRoomScene = newScene;
-
-                GameObject roomConfig = newScene.GetRootGameObjects().FirstOrDefault();
-                if (roomConfig != null)
-                {
-                    RoomStarter roomStarter = roomConfig.GetComponent<RoomStarter>();
-                    if (roomStarter != null)
-                    {
-                        roomStarter.Init(_gameplayService);
-                        roomStarter.StartRoom(type);
-                    }
-                }
-                SceneManager.sceneLoaded -= OnSceneLoaded;
-            }
-        }
     }
 
     public void MoveObjectToScene(GameObject obj, string targetSceneName)

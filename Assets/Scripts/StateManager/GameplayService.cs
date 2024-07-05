@@ -16,7 +16,6 @@ namespace Gameplay
         public IStatsProvider _statsProvider { get; set; }
         public IScenarioContext CurrentContext { get; set; }
         public ILevelContext LevelContext { get; set; }
-        public LevelManager LevelManager { get; set; }
     }
 
     public class GameplayService : IGameplayService
@@ -30,7 +29,6 @@ namespace Gameplay
         public IScenario Scenario { get; set; }
         public IScenarioContext CurrentContext { get; set; }
         public ILevelContext LevelContext { get; set; }
-        public LevelManager LevelManager { get; set; }
 
         [Inject]
         public void Construct(
@@ -52,7 +50,7 @@ namespace Gameplay
             Scenario = _scenarioFactory.CreateScenario(type, this);
             CurrentContext = new RoomContext();
             
-            Scenario.Init(CurrentContext, LevelManager);
+            Scenario.Init(CurrentContext);
         }
     }
 

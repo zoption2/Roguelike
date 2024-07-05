@@ -10,7 +10,6 @@ namespace Gameplay
         protected Queue<IState> _queueOfStates;
         protected T _scenarioContext;
         protected IStateFactory _stateFactory;
-        protected LevelManager _levelManager;
         protected List<CookedMapper> _turnsOrder;
 
         public IGameplayService GameplayService { get; set; }
@@ -34,7 +33,7 @@ namespace Gameplay
             return _currentState;
         }
 
-        public abstract void Init(IScenarioContext context, LevelManager levelManager);
+        public abstract void Init(IScenarioContext context);
 
         public abstract void EraseCharacter(ICharacterController controller);
 

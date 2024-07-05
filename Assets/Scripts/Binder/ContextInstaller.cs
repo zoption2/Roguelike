@@ -88,6 +88,10 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
         Container.Bind<ICharacterSelector>().To<CharacterSelector>().AsSingle();
         Container.Bind<IDataService>().To<DataService>().AsSingle(); 
+        Container.Bind<ILevelManager>().To<LevelManager>().AsSingle();
+
+        Container.Bind<IRoomContext>().To<RoomContext>().AsTransient();
+
     }
 
     public void BindInteractions()

@@ -10,7 +10,7 @@ namespace Gameplay
         public void Pause();
         object GetScenarioContext();
         public void OnStateEnd();
-        public void Init(IScenarioContext context, LevelManager levelManager);
+        public void Init(IScenarioContext context);
         public IGameplayService GameplayService { get; set; }
         public void LoadMainMenu();
         public void RenewQueue();

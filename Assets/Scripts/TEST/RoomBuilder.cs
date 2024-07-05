@@ -5,16 +5,17 @@ using UnityEngine;
 
 public interface IRoomBuilder
 {
-    void BuildLevel(RoomTemplateSO.Template template);
-    public Transform PlayersParent { get; set; }
-    public Transform EnemiesParent { get; set; }
-    public Transform BuffsParent { get; set; }
+    GameObject BuildRoom(RoomTemplateSO.Template template, Transform parent);
+    Transform PlayersParent { get; set; }
+    Transform EnemiesParent { get; set; }
+    Transform BuffsParent { get; set; }
+    Transform WallsParent { get; set; }
+    Transform FloorsParent { get; set; }
 }
 
 public class RoomBuilder : IRoomBuilder
 {
-    public IScenario Scenario { get; }
-    public IRoomContext Characters { get; }
+    public IRoomContext RoomContext { get; }
     public Transform PlayersParent { get; set; }
     public Transform EnemiesParent { get; set; }
     public Transform BuffsParent { get; set; }
@@ -25,89 +26,37 @@ public class RoomBuilder : IRoomBuilder
     private IRoomObjectsFactory _roomObjectsFactory;
 
     public RoomBuilder(
-        IScenario scenario,
         IRoomContext context,
         INavigationFactory navigationFactory,
         IRoomObjectsFactory roomObjectsFactory)
     {
-        Scenario = scenario;
-        Characters = context;
+        RoomContext = context;
         _navigationFactory = navigationFactory;
         _roomObjectsFactory = roomObjectsFactory;
     }
 
-    public void BuildLevel(RoomTemplateSO.Template template)
+    public GameObject BuildRoom(RoomTemplateSO.Template roomTemplate, Transform parent)
     {
-        AnalyzeTemplate(template);
-        BuildRoom(template);
-        OnNavigationCreate();
-        CenterCamera(template);
+        AnalyzeTemplate(roomTemplate);
 
-    }
-
-    private void AnalyzeTemplate(RoomTemplateSO.Template roomTemplate)
-    {
-        RoomTemplateSO.Template template = roomTemplate;
-        if (template == null)
+        if (roomTemplate == null)
         {
             Debug.LogError("Template not found");
-            return;
+            return null;
         }
 
-        var templateElements = template.TemplateElement;
-        var coordinates = template.Coordinates;
+        GameObject roomObject = new GameObject(roomTemplate.name);
+        roomObject.transform.SetParent(parent);
+        roomObject.transform.localPosition = Vector3.zero;
 
-        for (int i = 0; i < templateElements.GetLength(0); i++)
-        {
-            for (int j = 0; j < templateElements.GetLength(1); j++)
-            {
-                TemplateElementType elementType = templateElements[i, j];
-                Vector3 position = coordinates[i, j];
-
-                switch (elementType)
-                {
-                    case TemplateElementType.Player:
-                        Characters.PlayerSpawnPoints.Add(new PlayerSpawnPointWithType { SpawnPoint = position, Type = CharacterType.Warrior });
-                        break;
-
-                    case TemplateElementType.Barbarian:
-                    case TemplateElementType.Summoner:
-                    case TemplateElementType.Thrower:
-                        Characters.EnemySpawnPoints.Add(new EnemySpawnPointWithType { SpawnPoint = position, Type = (CharacterType)elementType });
-                        Debug.Log($"Added enemy spawn point at {position} of type {elementType}");
-                        break;
-
-                    case TemplateElementType.RandomBuff:
-                        Characters.BuffSpawnPoints.Add(new BuffSpawnPointWithType { SpawnPoint = position, Type = (BuffType)elementType });
-                        break;
-                }
-            }
-        }
-
-        Debug.Log($"Analyzed template {template}: PlayerSpawnPoints={Characters.PlayerSpawnPoints.Count}, EnemySpawnPoints={Characters.EnemySpawnPoints.Count}, BuffSpawnPoints={Characters.BuffSpawnPoints.Count}");
-    }
-
-    private void BuildRoom(RoomTemplateSO.Template roomTemplate)
-    {
-        RoomTemplateSO.Template template = roomTemplate;
-
-        if (template == null)
-        {
-            Debug.LogError("Template not found");
-            return;
-        }
-
-        GameObject roomObject = new GameObject(template.name);
-        roomObject.transform.position = new Vector3(0, 0, 0);
-
-        PlayersParent = CreateParent("Player", roomObject.transform);
+        PlayersParent = CreateParent("Players", roomObject.transform);
         EnemiesParent = CreateParent("Enemies", roomObject.transform);
         BuffsParent = CreateParent("Buffs", roomObject.transform);
         WallsParent = CreateParent("Walls", roomObject.transform);
         FloorsParent = CreateParent("Floors", roomObject.transform);
 
-        var templateElements = template.TemplateElement;
-        var coordinates = template.Coordinates;
+        var templateElements = roomTemplate.TemplateElement;
+        var coordinates = roomTemplate.Coordinates;
 
         for (int i = 0; i < templateElements.GetLength(0); i++)
         {
@@ -129,6 +78,52 @@ public class RoomBuilder : IRoomBuilder
         }
 
         BuildExits(templateElements, coordinates);
+        CenterCamera(roomTemplate);
+        OnNavigationCreate(roomObject.transform);
+
+        return roomObject;
+    }
+
+
+    private void AnalyzeTemplate(RoomTemplateSO.Template roomTemplate)
+    {
+        if (roomTemplate == null)
+        {
+            Debug.LogError("Template not found");
+            return;
+        }
+
+        var templateElements = roomTemplate.TemplateElement;
+        var coordinates = roomTemplate.Coordinates;
+
+        for (int i = 0; i < templateElements.GetLength(0); i++)
+        {
+            for (int j = 0; j < templateElements.GetLength(1); j++)
+            {
+                TemplateElementType elementType = templateElements[i, j];
+                Vector3 position = coordinates[i, j];
+
+                switch (elementType)
+                {
+                    case TemplateElementType.Player:
+                        RoomContext.PlayerSpawnPoints.Add(new PlayerSpawnPointWithType { SpawnPoint = position, Type = CharacterType.Warrior });
+                        break;
+
+                    case TemplateElementType.Barbarian:
+                    case TemplateElementType.Summoner:
+                    case TemplateElementType.Thrower:
+                        RoomContext.EnemySpawnPoints.Add(new EnemySpawnPointWithType { SpawnPoint = position, Type = (CharacterType)elementType });
+                        Debug.Log($"Added enemy spawn point at {position} of type {elementType}");
+                        break;
+
+                    case TemplateElementType.RandomBuff:
+                        RoomContext.BuffSpawnPoints.Add(new BuffSpawnPointWithType { SpawnPoint = position, Type = (BuffType)elementType });
+                        break;
+                }
+            }
+        }
+
+        Debug.Log($"Analyzed template {roomTemplate}: PlayerSpawnPoints={RoomContext.PlayerSpawnPoints.Count}, EnemySpawnPoints={RoomContext.EnemySpawnPoints.Count}, BuffSpawnPoints={RoomContext.BuffSpawnPoints.Count}");
     }
 
     private void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
@@ -151,8 +146,7 @@ public class RoomBuilder : IRoomBuilder
                         exit.transform.rotation = Quaternion.Euler(0, 90, 0);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
-                        Characters.CompleatedRoomTriggers.Add(trigger);
-                        trigger.Init(Scenario.GameplayService);
+                        RoomContext.CompleatedRoomTriggers.Add(trigger);
 
                         templateElements[i, j] = TemplateElementType.None;
                         templateElements[i, j + 2] = TemplateElementType.None;
@@ -165,14 +159,11 @@ public class RoomBuilder : IRoomBuilder
                         GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
-                        Characters.CompleatedRoomTriggers.Add(trigger);
-                        trigger.Init(Scenario.GameplayService);
+                        RoomContext.CompleatedRoomTriggers.Add(trigger);
 
                         templateElements[i, j] = TemplateElementType.None;
                         templateElements[i + 2, j] = TemplateElementType.None;
                     }
-
-                    
                 }
             }
         }
@@ -180,15 +171,13 @@ public class RoomBuilder : IRoomBuilder
 
     private void CenterCamera(RoomTemplateSO.Template roomTemplate)
     {
-        RoomTemplateSO.Template template = roomTemplate;
-
-        if (template == null)
+        if (roomTemplate == null)
         {
             Debug.LogError("Template not found");
             return;
         }
 
-        var coordinates = template.Coordinates;
+        var coordinates = roomTemplate.Coordinates;
         int rows = coordinates.GetLength(0);
         int cols = coordinates.GetLength(1);
 
@@ -205,14 +194,17 @@ public class RoomBuilder : IRoomBuilder
         GameObject parentObject = new GameObject(name);
         parentObject.transform.SetParent(parent);
         parentObject.transform.localPosition = Vector3.zero;
-        parentObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        parentObject.transform.localRotation = Quaternion.identity;
         return parentObject.transform;
     }
 
-    public void OnNavigationCreate()
+    public void OnNavigationCreate(Transform parent)
     {
+
         NavMeshSurface navMeshSurface = _navigationFactory.CreateNavigation();
-        Characters.NavMeshSurface = navMeshSurface;
+        navMeshSurface.gameObject.transform.SetParent(parent);
+        RoomContext.NavMeshSurface = navMeshSurface;
         navMeshSurface.BuildNavMesh();
     }
 }
+

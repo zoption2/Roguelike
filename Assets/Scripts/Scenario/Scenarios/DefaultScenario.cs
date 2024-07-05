@@ -99,9 +99,8 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
     }
 
 
-    public override void Init(IScenarioContext context, LevelManager levelManager)
+    public override void Init(IScenarioContext context)
     {
-        _levelManager = levelManager;
         SetScenarioContext(context);
         _stateFactory.Init(this, _scenarioContext);
         IState state = _stateFactory.CreateState(TypeOfState.Init);

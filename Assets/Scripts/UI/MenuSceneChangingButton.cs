@@ -10,14 +10,14 @@ namespace UI
     {
         private const string _sceneName = "Loader";
         private ICharacterSelector _characterSelector;
-        private IGameplayService _gameplayService;
+        private ILevelManager _levelManager;
 
 
         [Inject]
-        public void Construct(ICharacterSelector characterSelector, IGameplayService gameplayService)
+        public void Construct(ICharacterSelector characterSelector, ILevelManager levelManager)
         {
             _characterSelector = characterSelector;
-            _gameplayService = gameplayService;
+            _levelManager = levelManager;
         }
 
         void Start()
@@ -31,7 +31,7 @@ namespace UI
             if (_characterSelector.HasRequiredNumberOfPlayers())
             {
                 //SceneManager.LoadScene(_sceneName);
-                _gameplayService.LevelManager.LoadLevel();
+                _levelManager.LoadLevel();
             }
             else
             {

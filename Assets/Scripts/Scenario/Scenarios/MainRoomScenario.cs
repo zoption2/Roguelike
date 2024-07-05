@@ -16,21 +16,12 @@ public interface IMainRoomScenario : IScenario
 
 public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 {
-    private CharacterPooler _characterPooler;
-    private CharacterUIPooler _characterUIPooler;
-    private ProjectilePooler _projectilePooler;
-    private EffectPooler _effectPooler;
-    public MainRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory, CharacterPooler characterPooler,
-        CharacterUIPooler characterUIPooler, ProjectilePooler projectilePooler, EffectPooler effectPooler)
+    public MainRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory)
     {
         GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
         _turnsOrder = new List<CookedMapper>();
         _stateFactory = stateFactory;
-        _characterPooler = characterPooler;
-        _characterUIPooler = characterUIPooler;
-        _projectilePooler = projectilePooler;
-        _effectPooler = effectPooler;
     }
 
 
@@ -108,9 +99,8 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         }
     }
 
-    public override void Init(IScenarioContext context, LevelManager levelManager)
+    public override void Init(IScenarioContext context)
     {
-        _levelManager = levelManager;
         SetScenarioContext(context);
         _stateFactory.Init(this, _scenarioContext);
         IState state = _stateFactory.CreateState(TypeOfState.Init);

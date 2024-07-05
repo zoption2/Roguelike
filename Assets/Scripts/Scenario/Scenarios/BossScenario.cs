@@ -2,9 +2,8 @@ using Gameplay;
 
 public class BossScenario : Scenario<RoomContext>
 {
-    public override void Init(IScenarioContext context, LevelManager levelManager)
+    public override void Init(IScenarioContext context)
     {
-        _levelManager = levelManager;
     }
 
     public override void RenewQueue()
