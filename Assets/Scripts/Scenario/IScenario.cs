@@ -7,6 +7,7 @@ namespace Gameplay
     public interface IScenario
     {
         public void RemoveDeadCharactersFromQueue();
+        public void Pause();
         object GetScenarioContext();
         public void OnStateEnd();
         public void Init(IScenarioContext context, LevelManager levelManager);

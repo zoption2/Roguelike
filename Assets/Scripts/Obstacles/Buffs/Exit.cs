@@ -35,6 +35,7 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
         _gameplayService.CurrentContext = null;
         if(_gameplayService.LevelManager.RoomsOrder.Count > 0)
         {
+            _gameplayService.Scenario.Pause();
             _gameplayService.LevelManager.LoadNextRoom();
         } else
         {

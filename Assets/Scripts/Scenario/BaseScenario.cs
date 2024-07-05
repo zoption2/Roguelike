@@ -67,6 +67,13 @@ namespace Gameplay
             }
         }
 
+        public void Pause()
+        {
+            IState state = _stateFactory.CreateState(TypeOfState.Pause);
+            //_queueOfStates.Enqueue(state);
+            SwitchState(state);
+        }
+
         public abstract void LoadMainMenu();
 
         public void CreateNewRoomScene(int level, int room)

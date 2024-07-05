@@ -8,6 +8,7 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEditor.U2D.Aseprite;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using Zenject.SpaceFighter;
 
 namespace Gameplay
@@ -287,12 +288,19 @@ namespace Gameplay
 
         public IScenario Scenario { get { return _scenario; } }
 
+        public PauseState(IScenario scenario)
+        {
+            _scenario = scenario;
+        }
+
         public void OnEnter()
         {
+            Debug.Log($"-----------------------------|ENTER PAUSE STATE FOR {_scenario}|-------------------------------");
         }
 
         public void OnExit()
         {
+            Debug.Log($"-----------------------------|EXIT PAUSE STATE FOR {_scenario}|-------------------------------");
         }
 
         public void SetCharacter(ICharacterController controller)

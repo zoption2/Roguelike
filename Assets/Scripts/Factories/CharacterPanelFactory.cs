@@ -13,11 +13,11 @@ namespace UI
         private DiContainer _container;
         private CharacterPanelPooler _pooler;
 
-        public CharacterPanelFactory(DiContainer diContainer, CharacterPanelPooler pooler)
+        public CharacterPanelFactory(DiContainer diContainer, IPoolManager poolManager)
         {
             _container = diContainer;
-            _pooler = pooler;
-            _pooler.Init();
+            _pooler = poolManager.UseCharacterPanelPooler();
+            //_pooler.Init();
         }
 
         public ICharacterPanelController CreateCharacterPanel(CharacterType panelType,RectTransform transform)

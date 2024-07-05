@@ -59,6 +59,9 @@ namespace Gameplay
                 case TypeOfState.EnemyTurn:
                     state = new EnemyTurnState(_scenarioInstance, _context);
                     break;
+                case TypeOfState.Pause:
+                    state = new PauseState(_scenarioInstance);
+                    break;
             }
             return state;
         }

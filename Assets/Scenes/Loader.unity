@@ -340,7 +340,7 @@ GameObject:
   - component: {fileID: 1124163139}
   - component: {fileID: 1124163140}
   m_Layer: 0
-  m_Name: LoaderStarter
+  m_Name: LevelManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -373,7 +373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dd9e1161705133429fdcd1f021a0a96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _roomsOrderInitList: 0100000000000000
+  _mainRoomOrder: 0100000000000000
 --- !u!1 &1584272872
 GameObject:
   m_ObjectHideFlags: 0

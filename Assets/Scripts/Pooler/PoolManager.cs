@@ -13,7 +13,7 @@ public interface IPoolManager
     CharacterUIPooler UseCharacterUIPooler();
     ProjectilePooler UseProjectilePooler();
     SlingshotPooler UseSlingshotPooler();
-    void InitPool(PoolType poolType);
+    void InitPool(PoolType poolType, string poolName);
     void CleanPoolers();
     public void Init(GameObject parent);
 }
@@ -54,85 +54,85 @@ public class PoolManager : IPoolManager
     }
 
     public void Init(GameObject parent)
-    { 
+    {
         _globalParent = parent.transform;
     }
 
     public BuffPooler UseBuffPooler()
     {
-        InitPool(PoolType.BuffPool);
+        InitPool(PoolType.BuffPool, "BuffPool");
         return _buffPooler;
     }
 
     public EffectPooler UseEffectPooler()
     {
-        InitPool(PoolType.EffectPool);
+        InitPool(PoolType.EffectPool, "EffectPool");
         return _effectPooler;
     }
 
     public AbilityIconPooler UseAbilityIconPooler()
     {
-        InitPool(PoolType.AbilityIconPool);
+        InitPool(PoolType.AbilityIconPool, "AbilityIconPool");
         return _abilityIconPooler;
     }
 
     public CharacterPanelPooler UseCharacterPanelPooler()
     {
-        InitPool(PoolType.CharacterPanelPool);
+        InitPool(PoolType.CharacterPanelPool, "CharacterPanelPool");
         return _characterPanelPooler;
     }
 
     public CharacterPooler UseCharacterPooler()
     {
-        InitPool(PoolType.CharacterPool);
+        InitPool(PoolType.CharacterPool, "CharacterPool");
         return _characterPooler;
     }
 
     public CharacterUIPooler UseCharacterUIPooler()
     {
-        InitPool(PoolType.CharacterUIPool);
+        InitPool(PoolType.CharacterUIPool, "CharacterUIPool");
         return _characterUIPooler;
     }
 
     public ProjectilePooler UseProjectilePooler()
     {
-        InitPool(PoolType.ProjectilePool);
+        InitPool(PoolType.ProjectilePool, "ProjectilePool");
         return _projectilePooler;
     }
 
     public SlingshotPooler UseSlingshotPooler()
     {
-        InitPool(PoolType.SlingshotPool);
+        InitPool(PoolType.SlingshotPool, "SlingshotPool");
         return _slingshotPooler;
     }
 
-    public void InitPool(PoolType poolType)
+    public void InitPool(PoolType poolType, string poolName)
     {
         switch (poolType)
         {
             case PoolType.BuffPool:
-                InitSinglePool(_buffPooler);
+                InitSinglePool(_buffPooler, poolName);
                 break;
             case PoolType.EffectPool:
-                InitSinglePool(_effectPooler);
+                InitSinglePool(_effectPooler, poolName);
                 break;
             case PoolType.AbilityIconPool:
-                InitSinglePool(_abilityIconPooler);
+                InitSinglePool(_abilityIconPooler, poolName);
                 break;
             case PoolType.CharacterPanelPool:
-                InitSinglePool(_characterPanelPooler);
+                InitSinglePool(_characterPanelPooler, poolName);
                 break;
             case PoolType.CharacterPool:
-                InitSinglePool(_characterPooler);
+                InitSinglePool(_characterPooler, poolName);
                 break;
             case PoolType.CharacterUIPool:
-                InitSinglePool(_characterUIPooler);
+                InitSinglePool(_characterUIPooler, poolName);
                 break;
             case PoolType.ProjectilePool:
-                InitSinglePool(_projectilePooler);
+                InitSinglePool(_projectilePooler, poolName);
                 break;
             case PoolType.SlingshotPool:
-                InitSinglePool(_slingshotPooler);
+                InitSinglePool(_slingshotPooler, poolName);
                 break;
             default:
                 Debug.LogWarning("Unknown pool type: " + poolType);
@@ -140,13 +140,10 @@ public class PoolManager : IPoolManager
         }
     }
 
-    private void InitSinglePool<TEnum>(IPool<TEnum> pool)
+    private void InitSinglePool<TEnum>(IPool<TEnum> pool, string poolName)
     {
-
-        pool.Init(_globalParent);
-
+        pool.Init(_globalParent, poolName);
     }
-
 
     public void CleanPoolers()
     {

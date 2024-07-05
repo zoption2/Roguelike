@@ -17,7 +17,7 @@ namespace Pool
     public interface IPool<TEnum>
     {
         void Init();
-        void Init(Transform parent);
+        void Init(Transform parent, string poolName);
         void CleanPool();
         T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent) where T : IMyPoolable;
         void Push(TEnum tag, IMyPoolable obj);
@@ -30,17 +30,19 @@ namespace Pool
         protected abstract GameObject GetPrefab(TEnum tag);
 
         private Transform _parentTransform;
-        private Transform _globalParentTransform;
+        private static Transform _globalParentTransform;
+        private string _poolName;
 
         public void Init()
         {
             _poolDictionary = new Dictionary<TEnum, Queue<IMyPoolable>>();
         }
 
-        public void Init(Transform globalParent)
+        public void Init(Transform globalParent, string poolName)
         {
             _poolDictionary = new Dictionary<TEnum, Queue<IMyPoolable>>();
             _globalParentTransform = globalParent;
+            _poolName = poolName;
         }
 
         public void CleanPool()
@@ -54,12 +56,7 @@ namespace Pool
             {
                 if (_parentTransform == null)
                 {
-                    string poolName = typeof(TEnum).Name;
-                    if (poolName.Length > 4)
-                    {
-                        poolName = poolName.Substring(0, poolName.Length - 4);
-                    }
-                    GameObject parentObject = new GameObject(poolName + " Pool");
+                    GameObject parentObject = new GameObject(_poolName);
                     _parentTransform = parentObject.transform;
                     _parentTransform.SetParent(_globalParentTransform);
                     _parentTransform.localPosition = Vector3.zero;
@@ -69,18 +66,11 @@ namespace Pool
             }
         }
 
-
-
-
         public T Pull<T>(TEnum tag, Vector3 position, Quaternion rotation, Transform parent = null) where T : IMyPoolable
         {
             if (_parentTransform == null)
             {
-                GameObject parentObject = new GameObject(typeof(TEnum).Name + " Pool");
-                _parentTransform = parentObject.transform;
-                _parentTransform.SetParent(_globalParentTransform);
-                _parentTransform.localPosition = Vector3.zero;
-                _parentTransform.localRotation = Quaternion.identity;
+                _parentTransform = ParentTransform;
             }
 
             if (!_poolDictionary.ContainsKey(tag))
@@ -122,7 +112,6 @@ namespace Pool
                 return (T)result;
             }
         }
-
 
         public void Push(TEnum tag, IMyPoolable obj)
         {

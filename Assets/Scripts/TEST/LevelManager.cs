@@ -14,7 +14,7 @@ public interface ILevelManager
 public class LevelManager : MonoBehaviour, ILevelManager
 {
     [SerializeField]
-    private List<TypeOfScenario> _roomsOrderInitList;
+    private List<TypeOfScenario> _mainRoomOrder;
 
     public Queue<TypeOfScenario> RoomsOrder { get; private set; }
     private IGameplayService _gameplayService;
@@ -67,7 +67,7 @@ public class LevelManager : MonoBehaviour, ILevelManager
 
     public void LoadLevel()
     {
-        RoomsOrder = new Queue<TypeOfScenario>(_roomsOrderInitList);
+        RoomsOrder = new Queue<TypeOfScenario>(_mainRoomOrder);
         _gameplayService.LevelManager = this;
 
         _nextRoom = GetNextRoom();
@@ -87,7 +87,7 @@ public class LevelManager : MonoBehaviour, ILevelManager
 
     public TypeOfScenario GetNextRoom()
     {
-        if (_roomsOrderInitList.Count > 0)
+        if (_mainRoomOrder.Count > 0)
         {
             TypeOfScenario firstRoom = RoomsOrder.Dequeue();
             return firstRoom;
