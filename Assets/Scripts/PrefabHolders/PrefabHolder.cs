@@ -21,7 +21,7 @@ namespace Prefab
         [SerializeField]
         protected List<Mapper> _references;
         
-        public async UniTask<GameObject> GetPrefabAsync(T prefabType)
+        public GameObject GetPrefab(T prefabType)
         {
             foreach (Mapper mapper in _references) 
             {
@@ -38,14 +38,14 @@ namespace Prefab
                         }
                         else
                         {
-                            await reference.OperationHandle;
+                            reference.OperationHandle.WaitForCompletion();
                             GameObject prefab = reference.OperationHandle.Convert<GameObject>().Result;
                             return prefab;
                         }
                     }
                     else
                     {
-                        await reference.LoadAssetAsync();
+                        reference.LoadAssetAsync().WaitForCompletion();
 
                         if (reference.OperationHandle.Status == AsyncOperationStatus.Succeeded)
                         {

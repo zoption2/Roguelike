@@ -9,7 +9,7 @@ using Cysharp.Threading.Tasks;
 
 public interface IEnemyFactory
 {
-    public UniTask<IEnemyController> CreateEnemyAsync(Vector3 position, Transform parent, CharacterType type);
+    public IEnemyController CreateEnemy(Vector3 position, Transform parent, CharacterType type);
 }
 public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 {
@@ -27,9 +27,9 @@ public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
         return _statsProvider.GetCharacterAbilitiesTypes(type);
     }
 
-    public async UniTask<IEnemyController> CreateEnemyAsync(Vector3 position, Transform parent, CharacterType type)
+    public IEnemyController CreateEnemy(Vector3 position, Transform parent, CharacterType type)
     {
-        IEnemyController enemyController = await base.CreateCharacterAsync(position, parent, type);
+        IEnemyController enemyController =  base.CreateCharacter(position, parent, type);
         return enemyController;
     }
 }

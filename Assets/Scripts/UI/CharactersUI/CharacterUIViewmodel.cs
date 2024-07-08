@@ -42,11 +42,10 @@ public class CharacterUIViewmodel
         VisualiseAbilities();
     }
 
-    public async void ActivateSkillsBTNs()
+    public  void ActivateSkillsBTNs()
     {
         //ChangeAbilityPanelPos();
         isActivated = !isActivated; 
-        await Task.Delay(200);
         if (isActivated)
         {
             _abilityPanel.SetActive(true);
@@ -131,13 +130,12 @@ public class CharacterUIViewmodel
     //}
 
 
-    public async void VisualiseAbilities()
+    public void VisualiseAbilities()
     {
-        
         foreach (var ability in _abilities)
         {
             AbilityType type = ability.Type;
-            IAbilityIconView abilityIcon = await _factory.CreateAbilityIconAsync(type, _abilityPanel.transform.position, _abilityPanel.transform);
+            IAbilityIconView abilityIcon = _factory.CreateAbilityIcon(type, _abilityPanel.transform.position, _abilityPanel.transform);
             abilityIcon.Init(ability);
 
             _abilityIcons.Add(abilityIcon);
@@ -166,7 +164,7 @@ public class CharacterUIViewmodel
         ChangeButtonInteractible(ability,false);
     }
 
-    public async void VisualiseEffects(List<IEffect> displayedEffects)
+    public  void VisualiseEffects(List<IEffect> displayedEffects)
     {
         GridLayoutGroup effectPanel = _uIView.GetEffectsPanel();
 
@@ -184,7 +182,7 @@ public class CharacterUIViewmodel
                 }
                 else
                 {
-                    IEffectIconView icon = await _factory.CreateEffectIconAsync(effectType, effectPanel.transform.position, effectPanel.transform);
+                    IEffectIconView icon =  _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
                     _visualizedEffects.Add(effectType, icon);
                     _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
                 }

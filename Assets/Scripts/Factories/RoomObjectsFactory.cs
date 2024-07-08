@@ -5,7 +5,7 @@ using Zenject;
 
 public interface IRoomObjectsFactory
 {
-    UniTask<GameObject> BuildAsync(Vector3 position, Transform parent, RoomObjectType type);
+    GameObject Build(Vector3 position, Transform parent, RoomObjectType type);
     public void Init();
 }
 
@@ -18,9 +18,9 @@ public class RoomObjectsFactory : IRoomObjectsFactory
     {
     }
 
-    public async UniTask<GameObject> BuildAsync(Vector3 position, Transform parent, RoomObjectType type)
+    public GameObject Build(Vector3 position, Transform parent, RoomObjectType type)
     {
-        GameObject prefab = await _prefabHolder.GetPrefabAsync(type);
+        GameObject prefab =  _prefabHolder.GetPrefab(type);
 
         return GameObject.Instantiate(prefab, position, Quaternion.identity, parent);
     }

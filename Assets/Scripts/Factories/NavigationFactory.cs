@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 public interface INavigationFactory
 {
-    public UniTask<NavMeshSurface> CreateNavigation();
+    public NavMeshSurface CreateNavigation();
 }
 public class NavigationFactory : INavigationFactory
 {
@@ -17,9 +17,9 @@ public class NavigationFactory : INavigationFactory
         _navigationPrefabHolder = navigationPrefabHolder;
     }
     
-    public async UniTask<NavMeshSurface> CreateNavigation()
+    public NavMeshSurface CreateNavigation()
     {
-        GameObject prefab =  await _navigationPrefabHolder.GetPrefabAsync(NavigationType.Default);
+        GameObject prefab =   _navigationPrefabHolder.GetPrefab(NavigationType.Default);
         GameObject navObj = GameObject.Instantiate(prefab, Vector3.zero, prefab.transform.rotation);
         NavMeshSurface navigation = navObj.GetComponent<NavMeshSurface>();
         return navigation;

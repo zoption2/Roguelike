@@ -7,7 +7,7 @@ namespace UI
 {
     public interface ICharacterPanelFactory
     {
-        UniTask<ICharacterPanelController> CreateCharacterPanelAsync(CharacterType panelType, RectTransform transform);
+        ICharacterPanelController CreateCharacterPanel(CharacterType panelType, RectTransform transform);
     }
     public class CharacterPanelFactory : ICharacterPanelFactory
     {
@@ -21,13 +21,13 @@ namespace UI
             _pooler.Init();
         }
 
-        public async UniTask<ICharacterPanelController> CreateCharacterPanelAsync(CharacterType panelType,RectTransform transform)
+        public ICharacterPanelController CreateCharacterPanel(CharacterType panelType,RectTransform transform)
         {
             ICharacterPanelView panelView;
             ICharacterPanelModel panelModel;
             ICharacterPanelController controller;
 
-            IMyPoolable myPoolable = await _pooler.PullAsync<IMyPoolable>( panelType,new Vector2(0,0),Quaternion.identity,transform);
+            IMyPoolable myPoolable =  _pooler.Pull<IMyPoolable>( panelType,new Vector2(0,0),Quaternion.identity,transform);
             panelView = myPoolable.gameObject.GetComponent<CharacterPanelView>();
             panelView.CharacterType = panelType;
             panelModel = _container.Resolve<ICharacterPanelModel>();

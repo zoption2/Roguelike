@@ -26,6 +26,7 @@ public interface ICharacterController
     public NavMeshAgent NavMeshAgent { get; set; }
     public CharacterModel CharacterModel { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
+    public List<IProjectile> LaunchedProjectiles { get; set; }
 
     public void ProcessReloadAbility();
     public void ProcessOnStartTurn();

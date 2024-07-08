@@ -5,6 +5,7 @@ namespace Gameplay
     public abstract class Scenario<T> : IScenario where T : IScenarioContext
     {
         protected IState _currentState;
+        private List<CookedMapper> _turnsOrder;
         protected Queue<IState> _queueOfStates;
         protected T _scenarioContext;
         protected IStateFactory _stateFactory;
@@ -27,6 +28,7 @@ namespace Gameplay
         {
             return _currentState;
         }
+
         public abstract void Init(IScenarioContext context, LevelManager levelManager);
 
         public abstract void EraseCharacter(ICharacterController controller);
@@ -38,13 +40,11 @@ namespace Gameplay
                 RenewQueue();
             }
 
-            if (_queueOfStates.Count != 0)///
+            if (_queueOfStates.Count != 0)
             {
                 IState state = _queueOfStates.Dequeue();
                 SwitchState(state);
             }
-            
-            
         }
         public void SwitchState(IState state)
         {

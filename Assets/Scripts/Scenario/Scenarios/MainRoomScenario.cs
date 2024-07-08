@@ -5,6 +5,7 @@ using Pool;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -33,10 +34,9 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
         _projectilePooler = projectilePooler;
         _effectPooler = effectPooler;
     }
-    public override void EraseCharacter(ICharacterController controller)
+
+    protected void RemoveCharacterFromTurnsOrder(ICharacterController controller)
     {
-        controller.ON_CHARACTER_DEATH -= EraseCharacter;
-        controller.Dispose();
         foreach (CookedMapper mapper in _turnsOrder)
         {
             if (mapper.Controller == controller)
@@ -45,6 +45,26 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
                 break;
             }
         }
+    }
+
+    protected void RemoveCharacterFromDataTransfer(ICharacterController controller)
+    {
+        foreach (RawMapper mapper in DataTransfer.RawMappers)
+        {
+            if (mapper.Controller == controller)
+            {
+                DataTransfer.RawMappers.Remove(mapper);
+                break;
+            }
+        }
+    }
+
+    public override void EraseCharacter(ICharacterController controller)
+    {
+        controller.ON_CHARACTER_DEATH -= EraseCharacter;
+        controller.Dispose();
+        RemoveCharacterFromTurnsOrder(controller);
+        RemoveCharacterFromDataTransfer(controller);
 
         if (controller is IPlayerController)
         {
@@ -54,6 +74,7 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
         {
             _scenarioContext.Enemies.Remove((IEnemyController)controller);
         }
+
         CheckConditonsForEndOfScenario();
     }
 
@@ -126,9 +147,14 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
         _queueOfStates.Enqueue(state);
         _currentState = _queueOfStates.Dequeue();
         _currentState.OnEnter();
+
+        SubscribeToDeathOfCharacters();
+        SortTurns();
+
+        OnStateEnd();
     }
 
-    private void GetSortedTurns()
+    private void SortTurns()
     {
         DataTransfer.RawMappers = DataTransfer.RawMappers.OrderByDescending(x => x.Speed).ToList();
         foreach (RawMapper mapper in DataTransfer.RawMappers)
@@ -155,17 +181,11 @@ public class MainRoomScenario : Scenario<DefaultScenarioContext>, IMainRoomScena
     }
     public override void RenewQueue()
     {
-        if (_turnsOrder.Count == 0)
-        {
-            SubscribeToDeathOfCharacters();
-            GetSortedTurns();
-        }
         foreach (CookedMapper mapper in _turnsOrder)
         {
             IState state = _stateFactory.CreateState(mapper.State);
             state.SetCharacter(mapper.Controller);
             _queueOfStates.Enqueue(state);
         }
-        //_scenarioContext.TeleportWallEnters.ForEach(teleportWallEnter => teleportWallEnter.Recharge());///
     }
 }
