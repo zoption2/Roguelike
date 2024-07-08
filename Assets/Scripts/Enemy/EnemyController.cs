@@ -55,6 +55,7 @@ namespace Enemy
         private CharacterUIPooler _characterUIPooler;
         private CharacterUIViewmodel _uIViewmodel;
         private DiContainer _container;
+        private IGameplayService _gameplayService;
 
         [Inject]
         public void Construct(
@@ -65,7 +66,8 @@ namespace Enemy
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
             IUIFactory uIFactory,
-            DiContainer container)
+            DiContainer container,
+            IGameplayService gameplayService)
         {
             _characterUIPooler = poolManager.UseCharacterUIPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -76,6 +78,7 @@ namespace Enemy
             _stateFactory = stateFactory;
             _uIFactory = uIFactory;
             _container = container;
+            _gameplayService = gameplayService;
         }
 
         public void Init(
@@ -221,7 +224,8 @@ namespace Enemy
         }
         public void CheckForEndOfState()
         {
-            _characterScenarioContext.CheckIfAllStopped();
+            
+            _gameplayService.CheckIfAllStopped();
         }
 
         public void PushIfDead()

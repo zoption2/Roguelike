@@ -5,11 +5,7 @@ using Player;
 using Pool;
 using System;
 using System.Linq;
-using Unity.AI.Navigation;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
-using Zenject.SpaceFighter;
 
 namespace Gameplay
 {
@@ -27,14 +23,14 @@ namespace Gameplay
         private IScenario _scenario;
 
         public IScenario Scenario { get { return _scenario; } }
-        public IRoomContext _characters { get; }
+        public RoomContext _roomContext { get; }
 
         private ICharacterController _characterController;
 
-        public PlayerTurnState( IScenario scenario, IRoomContext context)
+        public PlayerTurnState( IScenario scenario, RoomContext context)
         {
             _scenario = scenario;
-            _characters = context;
+            _roomContext = context;
         }
 
         public void OnEnter()
@@ -42,7 +38,8 @@ namespace Gameplay
             Debug.Log($"-----------------------------|Player {_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
 
-            _characters.ON_END_TURN += _scenario.OnStateEnd;
+            _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
+            //_roomContext.ON_END_TURN += _scenario.OnStateEnd;
 
 
             _characterController.UseEffectsOnStart();
@@ -50,7 +47,7 @@ namespace Gameplay
 
             _characterController.ProcessOnStartTurn();
 
-            if (!_characters.Players.Contains(_characterController) || _characterController.IsStunned)
+            if (!_roomContext.Players.Contains(_characterController) || _characterController.IsStunned)
             {
                 
                 _scenario.OnStateEnd();
@@ -65,10 +62,12 @@ namespace Gameplay
             _characterController.AnalizeCondition();
 
             _characterController.ProcessOnEndTurn();
+            
+            _scenario.GameplayService.ProcessTurnEnd();
+            //_roomContext.ProcessTurnEnd();
 
-            _characters.ProcessTurnEnd();
-
-            _characters.ON_END_TURN -= _scenario.OnStateEnd;
+            _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
+            //_roomContext.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
         }
 
@@ -82,24 +81,25 @@ namespace Gameplay
         private IScenario _scenario;
 
         public IScenario Scenario { get { return _scenario; } }
-        public IRoomContext _characters { get; }
+        public RoomContext _roomContext { get; }
 
         private ICharacterController _characterController;
 
-        public EnemyTurnState(IScenario scenario, IRoomContext context)
+        public EnemyTurnState(IScenario scenario, RoomContext context)
         {
             _scenario = scenario;
-            _characters = context;
+            _roomContext = context;
         }
 
         public void OnEnter()
         {
-            if (!_characters.Enemies.Contains(_characterController))
+            if (!_roomContext.Enemies.Contains(_characterController))
                 _scenario.OnStateEnd();
             Debug.Log($"-----------------------------|Enemy {_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
 
-            _characters.ON_END_TURN += _scenario.OnStateEnd;
+            _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
+            //_roomContext.ON_END_TURN += _scenario.OnStateEnd;
 
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
@@ -120,9 +120,11 @@ namespace Gameplay
             
             _characterController.ProcessOnEndTurn();
 
-            _characters.ProcessTurnEnd();
+            _scenario.GameplayService.ProcessTurnEnd();
+            //_roomContext.ProcessTurnEnd();
 
-            _characters.ON_END_TURN -= _scenario.OnStateEnd;
+            _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
+            //_roomContext.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
         }
 
@@ -138,7 +140,7 @@ namespace Gameplay
 
         public IScenario Scenario { get { return _scenario; } }
 
-        public IRoomContext _characters { get; }
+        public RoomContext _roomContext { get; }
 
         private const float YOffset = 0.5f;
 
@@ -158,7 +160,7 @@ namespace Gameplay
 
         public InitLevelState(
             IScenario scenario,
-            IRoomContext context,
+            RoomContext context,
             IStatsProvider provider,
             IBuffFactory buffFactory,
             IPlayerFactory playerFactory,
@@ -168,7 +170,7 @@ namespace Gameplay
             ILevelManager levelManager)
         {
             _scenario = scenario;
-            _characters = context;
+            _roomContext = context;
             _statsProvider  = provider;
             _buffFactory = buffFactory;
             _playerFactory = playerFactory;
@@ -198,7 +200,7 @@ namespace Gameplay
         public void OnBuffCreate()
         {
             var buffTypes = Enum.GetValues(typeof(BuffType)).Cast<BuffType>().Where(t => t != BuffType.None).ToList();
-            var shuffledSpawnPoints = _characters.BuffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
+            var shuffledSpawnPoints = _roomContext.BuffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
 
             foreach (var spawnPointWithType in shuffledSpawnPoints)
             {
@@ -208,7 +210,7 @@ namespace Gameplay
                 {
                     Vector3 newPos = spawnPointWithType.SpawnPoint;
                     IBuff newBuff = _buffFactory.CreateBuff(newPos, _roomBuilder.BuffsParent, buffType);
-                    _characters.Buffs.Add(newBuff);
+                    _roomContext.Buffs.Add(newBuff);
                 }
             }
         }
@@ -220,24 +222,24 @@ namespace Gameplay
             {
                 PlayerSpawnPointWithType player;
                 CharacterType playerType;
-                for (int i = 0; i < _characters.PlayerSpawnPoints.Count; i++)
+                for (int i = 0; i < _roomContext.PlayerSpawnPoints.Count; i++)
                 {
-                    player = _characters.PlayerSpawnPoints[i];
+                    player = _roomContext.PlayerSpawnPoints[i];
                     playerType = DataTransfer.TypeCollection[i];
                     Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
                     Debug.LogWarning(newPos);
                     IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
-                    newPlayer.SetCharacterContext(_characters);
-                    _characters.Players.Add(newPlayer);
+                    newPlayer.SetCharacterContext(_roomContext);
+                    _roomContext.Players.Add(newPlayer);
                 }
             }
             else
             {
                 Debug.Log("Player already create!!!");
-                for (int i = 0; i < _characters.PlayerSpawnPoints.Count; i++)
+                for (int i = 0; i < _roomContext.PlayerSpawnPoints.Count; i++)
                 {
                     PlayerSpawnPointWithType player;
-                    player = _characters.PlayerSpawnPoints[i];
+                    player = _roomContext.PlayerSpawnPoints[i];
                     Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
                     Debug.LogWarning(newPos);
 
@@ -251,17 +253,17 @@ namespace Gameplay
 
         public void OnEnemyCreate()
         {
-            for (int i = 0; i < _characters.EnemySpawnPoints.Count; i++)
+            for (int i = 0; i < _roomContext.EnemySpawnPoints.Count; i++)
             {
-                var spawnPointWithType = _characters.EnemySpawnPoints[i];
+                var spawnPointWithType = _roomContext.EnemySpawnPoints[i];
                 CharacterType enemyType = spawnPointWithType.Type;
 
                 if (enemyType != CharacterType.None)
                 {
                     Vector3 newPos = new Vector3(spawnPointWithType.SpawnPoint.x, spawnPointWithType.SpawnPoint.y + YOffset, spawnPointWithType.SpawnPoint.z);
                     IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomBuilder.EnemiesParent, enemyType);
-                    newEnemy.SetCharacterContext(_characters);
-                    _characters.Enemies.Add(newEnemy);
+                    newEnemy.SetCharacterContext(_roomContext);
+                    _roomContext.Enemies.Add(newEnemy);
                 }
             }
         }

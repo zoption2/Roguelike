@@ -12,6 +12,8 @@ public interface ILevelManager
     void LoadLevel();
     RoomTemplateSO.Template GetTemplate();
     Queue<TypeOfScenario> RoomsOrder { get; set; }
+    void StartCurrentRoom();
+    void SwitchToNextRoom();
 }
 
 public class LevelManager : ILevelManager
@@ -25,6 +27,7 @@ public class LevelManager : ILevelManager
     public IPoolManager PoolManager { get; private set; }
 
     private Transform _globalPoolParent;
+    private LevelContext _levelContext;
     private RoomBuilder _roomBuilder;
 
     public Transform GlobalPoolParent
@@ -45,7 +48,6 @@ public class LevelManager : ILevelManager
         RoomTemplateSO roomTemplateSO,
         IPoolManager poolManager,
         IGameplayService gameplayService,
-        IRoomContext context,
         INavigationFactory navigationFactory,
         IRoomObjectsFactory roomObjectsFactory
     )
@@ -54,8 +56,9 @@ public class LevelManager : ILevelManager
         PoolManager = poolManager;
         _gameplayService = gameplayService;
 
+        _levelContext = new LevelContext();
+
         _roomBuilder = new RoomBuilder(
-            context,
             navigationFactory,
             roomObjectsFactory
         );
@@ -69,7 +72,6 @@ public class LevelManager : ILevelManager
         _mainRoomOrder = new List<TypeOfScenario>
         {
             TypeOfScenario.MainRoom,
-            TypeOfScenario.DefaultRoom,
             TypeOfScenario.DefaultRoom
         };
 
@@ -117,11 +119,18 @@ public class LevelManager : ILevelManager
             var template = SetTemplate(typeOfScenario);
             if (template != null)
             {
+                string roomName = template.name;
+                _levelContext.CreateRoomContext(roomName);
+                RoomContext roomContext = _levelContext.GetRoomContext(roomName);
+
+                _roomBuilder.RoomContext = roomContext;
+
                 GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
 
                 if (isFirstRoom)
                 {
                     roomObject.SetActive(true);
+                    _levelContext.CurrentRoom = roomContext;
                     isFirstRoom = false;
                 }
                 else
@@ -132,7 +141,35 @@ public class LevelManager : ILevelManager
         }
     }
 
+    public void StartCurrentRoom()
+    {
+        _gameplayService.StartCurrentRoom();
+    }
 
+    public void SwitchToNextRoom()
+    {
+        if (RoomsOrder.Count > 0)
+        {
+            var nextRoomScenario = RoomsOrder.Dequeue();
+            var template = SetTemplate(nextRoomScenario);
+
+            if (template != null)
+            {
+                string roomName = template.name;
+                RoomContext roomContext = _levelContext.GetRoomContext(roomName);
+
+                if (roomContext != null)
+                {
+                    _levelContext.CurrentRoom = roomContext;
+                    _gameplayService.StartCurrentRoom();
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("No more rooms to switch to.");
+        }
+    }
 
     public RoomTemplateSO.Template GetTemplate()
     {

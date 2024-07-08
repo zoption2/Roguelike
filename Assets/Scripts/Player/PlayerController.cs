@@ -64,6 +64,7 @@ namespace Player
         private IStateFactory _stateFactory;
         private IRoomContext _characterScenarioContext;
         private IUIFactory _uIFactory;
+        private IGameplayService _gameplayService;
         
 
         [Inject]
@@ -75,7 +76,8 @@ namespace Player
             IInteractionCalculator interactionFinalizer,
             IStateFactory stateFactory,
             IUIFactory uIFactory,
-            DiContainer container)
+            DiContainer container,
+            IGameplayService gameplayService)
         {
             SlingShotPooler = poolManager.UseSlingshotPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -87,6 +89,7 @@ namespace Player
             _stateFactory = stateFactory; 
             _uIFactory = uIFactory; 
             _container = container;
+            _gameplayService = gameplayService;
         }
 
         public void Init(
@@ -248,7 +251,7 @@ namespace Player
 
         public void CheckForEndOfState()
         {
-            _characterScenarioContext.CheckIfAllStopped();
+            _gameplayService.CheckIfAllStopped();
         }
 
         public void PushIfDead()

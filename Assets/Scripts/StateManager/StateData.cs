@@ -8,7 +8,7 @@ namespace Gameplay
 {
     public interface IStateFactory
     {
-        public void Init(IScenario scenarioInstance, IRoomContext context);
+        public void Init(IScenario scenarioInstance, RoomContext context);
         public IState CreateState(TypeOfState type);
         public IConditionState CreateConditionState(TypeOfConditionState type, ICharacterController controller);
     }
@@ -20,7 +20,7 @@ namespace Gameplay
         private IRoomObjectsFactory _roomObjectsFactory;
         private IStatsProvider _statsProvider;
         private IScenario _scenarioInstance;
-        private IRoomContext _context;
+        private RoomContext _roomContext;
         private INavigationFactory _navigationFactory;
         private ProjectilePooler _projectilePooler;
         private ILevelManager _levelManager;
@@ -46,9 +46,9 @@ namespace Gameplay
             _projectilePooler = poolManager.UseProjectilePooler();
         }
 
-        public void Init(IScenario scenarioInstance, IRoomContext context)
+        public void Init(IScenario scenarioInstance, RoomContext context)
         {
-            _context = context;
+            _roomContext = context;
             _scenarioInstance = scenarioInstance;
         }
 
@@ -58,14 +58,14 @@ namespace Gameplay
             switch (type)
             {
                 case TypeOfState.Init:
-                    state =  new InitLevelState(_scenarioInstance, _context, _statsProvider, _triggerFactory, _playerFactory,
+                    state =  new InitLevelState(_scenarioInstance, _roomContext, _statsProvider, _triggerFactory, _playerFactory,
                         _enemyFactory, _navigationFactory, _roomObjectsFactory, _levelManager);
                     break;
                 case TypeOfState.PlayerTurn:
-                    state = new PlayerTurnState(_scenarioInstance, _context);
+                    state = new PlayerTurnState(_scenarioInstance, _roomContext);
                     break;
                 case TypeOfState.EnemyTurn:
-                    state = new EnemyTurnState(_scenarioInstance, _context);
+                    state = new EnemyTurnState(_scenarioInstance, _roomContext);
                     break;
                 case TypeOfState.Pause:
                     state = new PauseState(_scenarioInstance);

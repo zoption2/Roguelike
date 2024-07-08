@@ -15,7 +15,7 @@ public interface IRoomBuilder
 
 public class RoomBuilder : IRoomBuilder
 {
-    public IRoomContext RoomContext { get; }
+    public IRoomContext RoomContext { get; set; }
     public Transform PlayersParent { get; set; }
     public Transform EnemiesParent { get; set; }
     public Transform BuffsParent { get; set; }
@@ -26,11 +26,9 @@ public class RoomBuilder : IRoomBuilder
     private IRoomObjectsFactory _roomObjectsFactory;
 
     public RoomBuilder(
-        IRoomContext context,
         INavigationFactory navigationFactory,
         IRoomObjectsFactory roomObjectsFactory)
     {
-        RoomContext = context;
         _navigationFactory = navigationFactory;
         _roomObjectsFactory = roomObjectsFactory;
     }
@@ -81,9 +79,10 @@ public class RoomBuilder : IRoomBuilder
         CenterCamera(roomTemplate);
         OnNavigationCreate(roomObject.transform);
 
+        Debug.Log($"Room '{roomTemplate.name}' created with context.");
+
         return roomObject;
     }
-
 
     private void AnalyzeTemplate(RoomTemplateSO.Template roomTemplate)
     {
@@ -200,11 +199,8 @@ public class RoomBuilder : IRoomBuilder
 
     public void OnNavigationCreate(Transform parent)
     {
-
-        NavMeshSurface navMeshSurface = _navigationFactory.CreateNavigation();
-        navMeshSurface.gameObject.transform.SetParent(parent);
+        NavMeshSurface navMeshSurface = parent.gameObject.AddComponent<NavMeshSurface>();
         RoomContext.NavMeshSurface = navMeshSurface;
         navMeshSurface.BuildNavMesh();
     }
 }
-

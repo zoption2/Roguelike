@@ -36,11 +36,6 @@ namespace Gameplay
         public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
-        public void CheckIfAllStopped();
-
-        public void ProcessTurnEnd();
-
-        public event OnEndTurn ON_END_TURN;
     }
 
     public class RoomContext : IRoomContext
@@ -55,8 +50,6 @@ namespace Gameplay
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
 
-        public event OnEndTurn ON_END_TURN;
-
         public RoomContext()
         {
             Players = new List<IPlayerController>();
@@ -68,42 +61,38 @@ namespace Gameplay
             BuffSpawnPoints = new List<BuffSpawnPointWithType>();
         }
 
-        public void CheckIfAllStopped()
-        {
-            foreach (IPlayerController player in Players)
-            {
-                if (player.CheckIfMoving())
-                {
-                    return;
-                }
-            }
+        //public void CheckIfAllStopped()
+        //{
+        //    foreach (IPlayerController player in Players)
+        //    {
+        //        if (player.CheckIfMoving())
+        //        {
+        //            return;
+        //        }
+        //    }
 
-            foreach (IEnemyController enemy in Enemies)
-            {
-                if (enemy.CheckIfMoving())
-                {
-                    return;
-                }
-            }
-            ON_END_TURN?.Invoke();
-        }
+        //    foreach (IEnemyController enemy in Enemies)
+        //    {
+        //        if (enemy.CheckIfMoving())
+        //        {
+        //            return;
+        //        }
+        //    }
+        //    ON_END_TURN?.Invoke();
+        //}
 
-        public void ProcessTurnEnd()
-        {
-            foreach (IPlayerController player in Players)
-            {
-                player.UpdateHealthBar();
-            }
+        //public void ProcessTurnEnd()
+        //{
+        //    foreach (IPlayerController player in Players)
+        //    {
+        //        player.UpdateHealthBar();
+        //    }
 
-            foreach (IEnemyController enemy in Enemies)
-            {
-                enemy.UpdateHealthBar();
-            }
-        }
-
-        public void ChangeRoom()
-        {
-        }
+        //    foreach (IEnemyController enemy in Enemies)
+        //    {
+        //        enemy.UpdateHealthBar();
+        //    }
+        //}
     }
 }
 
