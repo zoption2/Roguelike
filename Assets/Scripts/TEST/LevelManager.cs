@@ -130,7 +130,7 @@ public class LevelManager : ILevelManager
                 if (isFirstRoom)
                 {
                     roomObject.SetActive(true);
-                    _levelContext.CurrentRoom = roomContext;
+                    _levelContext.CurrentRoomContext = roomContext;
                     isFirstRoom = false;
                 }
                 else
@@ -160,7 +160,7 @@ public class LevelManager : ILevelManager
 
                 if (roomContext != null)
                 {
-                    _levelContext.CurrentRoom = roomContext;
+                    _levelContext.CurrentRoomContext = roomContext;
                     _gameplayService.StartCurrentRoom();
                 }
             }

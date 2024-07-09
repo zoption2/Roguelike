@@ -64,15 +64,31 @@ namespace Gameplay
 
         public void StartCurrentRoom()
         {
-            if (LevelContext.CurrentRoom != null)
+            if (LevelContext.CurrentRoomContext != null && LevelContext.CurrentRoomScenario != null)
             {
-                Scenario.Init(LevelContext.CurrentRoom);
+                Scenario = LevelContext.CurrentRoomScenario;
+                CurrentContext = LevelContext.CurrentRoomContext;
+                Scenario.Init(CurrentContext);
+            }
+            else
+            {
+                var currentRoomName = LevelContext.CurrentRoomName;
+                var currentRoomType = LevelContext.CurrentRoomType;
+                Scenario = _scenarioFactory.CreateScenario(currentRoomType, this);
+                CurrentContext = new RoomContext();
+
+                LevelContext.CreateRoomContext(currentRoomName);
+                LevelContext.CreateScenario(currentRoomName, Scenario);
+                LevelContext.CurrentRoomContext = LevelContext.GetRoomContext(currentRoomName);
+                LevelContext.CurrentRoomScenario = LevelContext.GetScenario(currentRoomName);
+
+                Scenario.Init(CurrentContext);
             }
         }
 
         public void CheckIfAllStopped()
         {
-            foreach (IPlayerController player in LevelContext.CurrentRoom.Players)
+            foreach (IPlayerController player in LevelContext.CurrentRoomContext.Players)
             {
                 if (player.CheckIfMoving())
                 {
@@ -80,7 +96,7 @@ namespace Gameplay
                 }
             }
 
-            foreach (IEnemyController enemy in LevelContext.CurrentRoom.Enemies)
+            foreach (IEnemyController enemy in LevelContext.CurrentRoomContext.Enemies)
             {
                 if (enemy.CheckIfMoving())
                 {
@@ -92,12 +108,12 @@ namespace Gameplay
 
         public void ProcessTurnEnd()
         {
-            foreach (IPlayerController player in LevelContext.CurrentRoom.Players)
+            foreach (IPlayerController player in LevelContext.CurrentRoomContext.Players)
             {
                 player.UpdateHealthBar();
             }
 
-            foreach (IEnemyController enemy in LevelContext.CurrentRoom.Enemies)
+            foreach (IEnemyController enemy in LevelContext.CurrentRoomContext.Enemies)
             {
                 enemy.UpdateHealthBar();
             }
