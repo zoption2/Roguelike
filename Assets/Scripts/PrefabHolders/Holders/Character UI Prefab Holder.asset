@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50bf499890119004a949d9dac94e3e4c, type: 3}
   m_Name: Character UI Prefab Holder
   m_EditorClassIdentifier: 
-  _prefabs:
+  _references:
   - Key: 1
-    Value: {fileID: 4706350003974146994, guid: 2ef050a940b1f6943ad9bdae62265c0b, type: 3}
+    PrefabReference:
+      m_AssetGUID: 2ef050a940b1f6943ad9bdae62265c0b
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

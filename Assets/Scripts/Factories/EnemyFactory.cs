@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using Abilities;
+using Cysharp.Threading.Tasks;
 
 public interface IEnemyFactory
 {
@@ -28,6 +29,7 @@ public class EnemyFactory : CharacterFactory<IEnemyController>, IEnemyFactory
 
     public IEnemyController CreateEnemy(Vector3 position, Transform parent, CharacterType type)
     {
-        return base.CreateCharacter(position, parent, type);
+        IEnemyController enemyController =  base.CreateCharacter(position, parent, type);
+        return enemyController;
     }
 }

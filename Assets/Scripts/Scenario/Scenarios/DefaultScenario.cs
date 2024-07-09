@@ -23,13 +23,38 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         _turnsOrder = new List<CookedMapper>();
         _stateFactory = stateFactory;
     }
+
+    protected void RemoveCharacterFromTurnsOrder(ICharacterController controller)
+    {
+        foreach (CookedMapper mapper in _turnsOrder)
+        {
+            if (mapper.Controller == controller)
+            {
+                _turnsOrder.Remove(mapper);
+                break;
+            }
+        }
+    }
+
+    protected void RemoveCharacterFromDataTransfer(ICharacterController controller)
+    {
+        foreach (RawMapper mapper in DataTransfer.RawMappers)
+        {
+            if (mapper.Controller == controller)
+            {
+                DataTransfer.RawMappers.Remove(mapper);
+                break;
+            }
+        }
+    }
+
+
     public override void EraseCharacter(ICharacterController controller)
     {
-        Debug.LogWarning($"EraseCharacter called for: {controller}");
         controller.ON_CHARACTER_DEATH -= EraseCharacter;
         controller.Dispose();
-
-        _turnsOrder.RemoveAll(mapper => mapper.Controller == controller || mapper.Controller == null);
+        RemoveCharacterFromTurnsOrder(controller);
+        RemoveCharacterFromDataTransfer(controller);
 
         if (controller is IPlayerController)
         {
@@ -107,9 +132,14 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         _queueOfStates.Enqueue(state);
         _currentState = _queueOfStates.Dequeue();
         _currentState.OnEnter();
+
+        SubscribeToDeathOfCharacters();
+        SortTurns();
+
+        OnStateEnd();
     }
 
-    private void GetSortedTurns()
+    private void SortTurns()
     {
         DataTransfer.RawMappers = DataTransfer.RawMappers.OrderByDescending(x => x.Speed).ToList();
         foreach (RawMapper mapper in DataTransfer.RawMappers)
@@ -136,11 +166,6 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
     }
     public override void RenewQueue()
     {
-        if (_turnsOrder.Count == 0)
-        {
-            SubscribeToDeathOfCharacters();
-            GetSortedTurns();
-        }
         foreach (CookedMapper mapper in _turnsOrder)
         {
             IState state = _stateFactory.CreateState(mapper.State);

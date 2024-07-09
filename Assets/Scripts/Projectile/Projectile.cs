@@ -72,7 +72,6 @@ namespace Projectiles
             if (!dealerType.Equals(handlerType) && interactionFromDealer != null)
             {
                 interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);
-
             }
             else
             {

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using Abilities;
+using Cysharp.Threading.Tasks;
+
 public abstract class CharacterFactory<TController>
     where TController : ICharacterController
 {
@@ -32,7 +34,7 @@ public abstract class CharacterFactory<TController>
         _abilityFactory = abilityFactory;
     }
 
-    protected virtual TController CreateCharacter(Vector3 position, Transform parent, CharacterType type)
+    protected TController CreateCharacter(Vector3 position, Transform parent, CharacterType type)
     {
         TController controller = GetNewController();
 
@@ -46,10 +48,10 @@ public abstract class CharacterFactory<TController>
         _characterModel = new CharacterModel(_stats, type, _abilities);
         mapper.Speed = _stats.Speed;
 
-        _poolable = _characterPooler.Pull<IMyPoolable>(type, position, Quaternion.identity, parent);
+        _poolable =  _characterPooler.Pull<IMyPoolable>(type, position, Quaternion.identity, parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();
 
-        _poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, Quaternion.Euler(90, 0, 0), parent);
+        _poolable =  _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, position, Quaternion.Euler(90, 0, 0), parent);
         CharacterUIView characterUIView = _poolable.gameObject.GetComponent<CharacterUIView>();
 
         controller.Init(_characterModel, characterView, characterUIView);

@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06861fc33107572429dd9cb5f4b9e731, type: 3}
   m_Name: Navigation Prefab Holder
   m_EditorClassIdentifier: 
-  _prefabs:
+  _references:
   - Key: 0
-    Value: {fileID: 2661658746673048531, guid: 1d1162dc08dc23a4b8fdfcb282ad3202, type: 3}
+    PrefabReference:
+      m_AssetGUID: 1d1162dc08dc23a4b8fdfcb282ad3202
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

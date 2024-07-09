@@ -1,3 +1,6 @@
+using Cysharp.Threading.Tasks;
+using Prefab;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,11 +26,16 @@ namespace Pool
         void Push(TEnum tag, IMyPoolable obj);
     }
 
-    public abstract class ObjectPooler<TEnum> : IPool<TEnum>
+    public abstract class ObjectPooler<TEnum> : IPool<TEnum> where TEnum : Enum
     {
         protected Dictionary<TEnum, Queue<IMyPoolable>> _poolDictionary;
+        protected PrefabHolder<TEnum> _prefabHolder;
 
-        protected abstract GameObject GetPrefab(TEnum tag);
+        protected GameObject GetPrefab(TEnum tag)
+        {
+            GameObject prefab =  _prefabHolder.GetPrefab(tag);
+            return prefab;
+        }
 
         private Transform _parentTransform;
         private static Transform _globalParentTransform;
@@ -48,6 +56,7 @@ namespace Pool
         public void CleanPool()
         {
             _poolDictionary.Clear();
+            _prefabHolder.ReleaseAllAssets();
         }
 
         private Transform ParentTransform
@@ -91,8 +100,9 @@ namespace Pool
             }
             else
             {
-                var prefab = GetPrefab(tag);
-                GameObject spawnedInstance;
+                GameObject prefab =  GetPrefab(tag);
+
+                GameObject spawnedInstance = null;
 
                 if (this is SlingshotPooler)
                 {

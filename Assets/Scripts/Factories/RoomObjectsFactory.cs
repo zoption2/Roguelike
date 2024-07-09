@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Prefab;
 using UnityEngine;
 using Zenject;
@@ -19,7 +20,7 @@ public class RoomObjectsFactory : IRoomObjectsFactory
 
     public GameObject Build(Vector3 position, Transform parent, RoomObjectType type)
     {
-        var prefab = _prefabHolder.GetPrefab(type);
+        GameObject prefab =  _prefabHolder.GetPrefab(type);
 
         return GameObject.Instantiate(prefab, position, Quaternion.identity, parent);
     }

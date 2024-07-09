@@ -1,10 +1,13 @@
 using CharactersStats;
+using Cysharp.Threading.Tasks;
 using Enemy;
 using Obstacles;
 using Player;
 using Pool;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 namespace Gameplay
@@ -96,6 +99,12 @@ namespace Gameplay
             if (!_roomContext.Enemies.Contains(_characterController))
                 _scenario.OnStateEnd();
             Debug.Log($"-----------------------------|Enemy {_characterController.GetCharacterType()}|-------------------------------");
+            if (!_characters.Enemies.Contains(_characterController))
+            {
+                Debug.Log("removed enemy's turn");   
+                _scenario.OnStateEnd();
+                return;
+            }
             _characterController.IsActive = true;
 
             _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
@@ -191,13 +200,13 @@ namespace Gameplay
             }
 
             //_roomBuilder.BuildLevel(template);
+            //OnBuffCreate();
             OnPlayerCreate();
             OnEnemyCreate();
-            OnBuffCreate();
-            _scenario.OnStateEnd();
+
         }
 
-        public void OnBuffCreate()
+        public  void OnBuffCreate()
         {
             var buffTypes = Enum.GetValues(typeof(BuffType)).Cast<BuffType>().Where(t => t != BuffType.None).ToList();
             var shuffledSpawnPoints = _roomContext.BuffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();

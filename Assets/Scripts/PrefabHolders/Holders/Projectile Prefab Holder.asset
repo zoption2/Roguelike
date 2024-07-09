@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bba61462ad030248963ee53b841c200, type: 3}
   m_Name: Projectile Prefab Holder
   m_EditorClassIdentifier: 
-  _prefabs:
+  _references:
   - Key: 1
-    Value: {fileID: 6058342809516932798, guid: 87d4a13af9f5ff048a6d78bd8d7af28e, type: 3}
+    PrefabReference:
+      m_AssetGUID: 87d4a13af9f5ff048a6d78bd8d7af28e
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

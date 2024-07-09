@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using Abilities;
+using Cysharp.Threading.Tasks;
 
 public interface IPlayerFactory
 {
@@ -29,6 +30,7 @@ public class PlayerFactory : CharacterFactory<IPlayerController>, IPlayerFactory
 
     public IPlayerController CreatePlayer(Vector3 position, Transform parent, CharacterType type)
     {
-        return base.CreateCharacter(position, parent, type);
+        IPlayerController playerController =  base.CreateCharacter(position, parent, type);
+        return playerController;
     }
 }

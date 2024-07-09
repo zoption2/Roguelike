@@ -7,6 +7,7 @@ namespace Gameplay
     public abstract class Scenario<T> : IScenario where T : IScenarioContext
     {
         protected IState _currentState;
+        private List<CookedMapper> _turnsOrder;
         protected Queue<IState> _queueOfStates;
         protected T _scenarioContext;
         protected IStateFactory _stateFactory;
@@ -43,8 +44,6 @@ namespace Gameplay
             {
                 RenewQueue();
             }
-
-            RemoveDeadCharactersFromQueue();
 
             if (_queueOfStates.Count != 0)
             {

@@ -1,5 +1,6 @@
 using Interactions;
 using Obstacles;
+using Projectiles;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,7 +33,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
             obstacle.ProcessCollision(collision, _rigidbody, velocity);
         }
 
-        if (collision.gameObject.TryGetComponent(out IInteractible interactible))
+        if (collision.gameObject.TryGetComponent(out IInteractible interactible) && interactible is not IProjectile)
         {
             _characterView.Normal = collision.GetContact(0).normal;
             _characterView.StartInteraction(interactible);

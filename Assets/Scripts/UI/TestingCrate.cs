@@ -37,13 +37,22 @@ public class TestingCrate : MonoBehaviour
         if (load==null)
         {
             OriginStats stats = _statsProvider.GetPlayerStats(CharacterType);
-            //List<InteractionType> abilities = _statsProvider.GetCharacterAbilitiesTypes(CharacterType);
-            //CharacterModel savedModel = new CharacterModel(stats, CharacterType, abilities);
             _dataService.PlayerData.SetStats(CharacterType, stats);
-            //_dataService.PlayerData.SetAbilities(abilities,CharacterType);
             _characterSelector.AddPanel(CharacterType);
             Destroy(gameObject);
         }
         //GPrefs.DeleteAll();
+    }
+
+    [ContextMenu("Reset Saves")]
+    private void ResetPlayerSaves()
+    {
+        List<CharacterType> characterTypes= _dataService.PlayerData.GetAvailablePlayers();
+        foreach (CharacterType characterType in characterTypes)
+        {
+            OriginStats defaultStats = _statsProvider.GetDefaultPlayerStats(characterType);
+            _dataService.PlayerData.SetStats(characterType, defaultStats);
+        }
+        Debug.LogWarning("Saves were reset to default values!");
     }
 }

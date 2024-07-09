@@ -120,7 +120,6 @@ public static class GPrefs  {
         {
             allGameData[key] = value;
         }
-        //Debug.LogError(allGameData.ToString());
         Save();
     }
 
@@ -140,8 +139,6 @@ public static class GPrefs  {
     #region SaveGame
 
     public static void Save(){
-    //    Debug.LogError(allGameData.ToString());
-       // if(PlayerPrefs.)
         allGameData.SaveToFile (dataPath);
 	}
 

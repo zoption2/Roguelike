@@ -12,12 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ac45e9dd82a1648bdec3761f52ff01, type: 3}
   m_Name: UI Abilities Prefab Holder
   m_EditorClassIdentifier: 
-  _prefabs:
+  _references:
   - Key: 0
-    Value: {fileID: 5882390599834112184, guid: 3ddbd1899f2062d4d93a0b485e7e3cde, type: 3}
+    PrefabReference:
+      m_AssetGUID: 3ddbd1899f2062d4d93a0b485e7e3cde
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
   - Key: 1
-    Value: {fileID: 1055021620984264437, guid: 6d9129a8b40f11c499d3f78eb9d170ee, type: 3}
+    PrefabReference:
+      m_AssetGUID: 6d9129a8b40f11c499d3f78eb9d170ee
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
   - Key: 2
-    Value: {fileID: 5031415635377583403, guid: bdbd791a82a74374892dbe9254759837, type: 3}
+    PrefabReference:
+      m_AssetGUID: bdbd791a82a74374892dbe9254759837
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
   - Key: 3
-    Value: {fileID: 1055021620984264437, guid: 18006a2923e3455459c19c79f153047f, type: 3}
+    PrefabReference:
+      m_AssetGUID: 18006a2923e3455459c19c79f153047f
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

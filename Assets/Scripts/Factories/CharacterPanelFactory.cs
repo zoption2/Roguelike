@@ -1,6 +1,7 @@
 using Pool;
 using UnityEngine;
 using Zenject;
+using Cysharp.Threading.Tasks;
 
 namespace UI
 {
@@ -25,7 +26,8 @@ namespace UI
             ICharacterPanelView panelView;
             ICharacterPanelModel panelModel;
             ICharacterPanelController controller;
-            IMyPoolable myPoolable = _pooler.Pull<IMyPoolable>( panelType,new Vector2(0,0),Quaternion.identity,transform);
+
+            IMyPoolable myPoolable =  _pooler.Pull<IMyPoolable>( panelType,new Vector2(0,0),Quaternion.identity,transform);
             panelView = myPoolable.gameObject.GetComponent<CharacterPanelView>();
             panelView.CharacterType = panelType;
             panelModel = _container.Resolve<ICharacterPanelModel>();

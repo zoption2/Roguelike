@@ -124,6 +124,8 @@ namespace Player
 
             _UIView.Init(CharacterView, _uIViewmodel);
             Effector.Init(_uIViewmodel, _allEffects);
+            _uIViewmodel.UpdateReloadIndicators();
+
 
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.enabled = false;
@@ -144,6 +146,7 @@ namespace Player
             }
 
             CurrentAbility = _basicAbility;
+
             LaunchedProjectiles = new List<IProjectile>();
         }
 
@@ -200,7 +203,7 @@ namespace Player
         public void OnClick(Transform point, PointerEventData eventData)
         {
             _slingShotInitPosition = point;
-            if(IsActive)
+            if(!IsMoving && IsActive)
             {
                 _uIViewmodel.ActivateSkillsBTNs();
             }
@@ -218,15 +221,25 @@ namespace Player
         public void OnBeginDrag(PointerEventData eventData)
         {
             _uIViewmodel.DeactivateSkillsBTNs();
+            DisableEnemiesSkillButtons();
+
             if (!IsMoving && LaunchedProjectiles.Count == 0)
             {
-                _currentState.UseSlingshot(eventData, _slingShotInitPosition);
+                _currentState.UseSlingshotAsync(eventData, _slingShotInitPosition);
             }
         }
 
         public IInteraction GetInteraction()
         {
             return _currentState.GetInteraction();
+        }
+
+        public void DisableEnemiesSkillButtons()
+        {
+            foreach (IEnemyController enemy in _characterScenarioContext.Enemies)
+            {
+                enemy.DisactivateAbilityPanel();
+            }
         }
 
         public void ApplyInteraction(IInteraction interaction)
@@ -434,6 +447,7 @@ namespace Player
                 }
             }
         }
+
         public void ProcessOnEndTurn()
         {
             _uIViewmodel.ToggleActiveIndicator();
@@ -449,11 +463,7 @@ namespace Player
                 }
             }
 
-
-            foreach(IEnemyController enemy in _characterScenarioContext.Enemies)
-            {
-                enemy.DisactivateAbilityPanel();
-            }
+            DisableEnemiesSkillButtons();
             RevertReadyUnactiveAbilityButtons();
         }
 

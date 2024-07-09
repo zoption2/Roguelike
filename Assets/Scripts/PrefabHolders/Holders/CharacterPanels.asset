@@ -12,10 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26c3bc955dc449841a31563f7a0e8db9, type: 3}
   m_Name: CharacterPanels
   m_EditorClassIdentifier: 
-  _prefabs:
-  - Key: 3
-    Value: {fileID: 4814394147961967121, guid: b78d1ce987d769346913f96c52bd0a6b, type: 3}
+  _references:
   - Key: 1
-    Value: {fileID: 4814394147961967121, guid: 2cd1b8a5de9a8f946b0fe09747641cb4, type: 3}
+    PrefabReference:
+      m_AssetGUID: 2cd1b8a5de9a8f946b0fe09747641cb4
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
   - Key: 2
-    Value: {fileID: 4814394147961967121, guid: 0250c5d72af5edb45ae0f1a40ba0bef1, type: 3}
+    PrefabReference:
+      m_AssetGUID: 0250c5d72af5edb45ae0f1a40ba0bef1
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+  - Key: 3
+    PrefabReference:
+      m_AssetGUID: b78d1ce987d769346913f96c52bd0a6b
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0

@@ -113,6 +113,8 @@ namespace Enemy
 
             _UIView.Init(CharacterView, _uIViewmodel);
             Effector.Init(_uIViewmodel, _allEffects);
+            _uIViewmodel.UpdateReloadIndicators();
+
 
             NavMeshAgent = CharacterView.NavMeshAgent;
             NavMeshAgent.updateUpAxis = false;
@@ -147,6 +149,8 @@ namespace Enemy
         {
             _slingShotInitPosition = point;
             bool isPlayerTurn = true;
+            ICharacterController activePlayer = _characterScenarioContext.Players[0];
+
             foreach(ICharacterController enemy in _characterScenarioContext.Enemies)
             {
                 if(enemy.IsActive)
@@ -155,7 +159,17 @@ namespace Enemy
                     break;
                 }
             }
-            if (isPlayerTurn)
+
+            foreach (ICharacterController player in _characterScenarioContext.Players)
+            {
+                if (player.IsActive)
+                {
+                    activePlayer = player;
+                }
+            }
+
+
+            if (isPlayerTurn && !activePlayer.IsMoving && activePlayer.LaunchedProjectiles.Count == 0)
             {
                 _uIViewmodel.ActivateSkillsBTNs();
             }
@@ -174,7 +188,7 @@ namespace Enemy
         {
             if (IsActive && !IsMoving)
             {
-                _currentState.UseSlingshot(eventData, _slingShotInitPosition);
+                _currentState.UseSlingshotAsync(eventData, _slingShotInitPosition);
             }
         }
         public IInteraction GetInteraction()
@@ -230,7 +244,7 @@ namespace Enemy
 
         public void PushIfDead()
         {
-            Debug.Log("PushIfDead called");
+            Debug.Log("pushed enemy to pool");
             _characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
             ON_CHARACTER_DEATH?.Invoke(this);
