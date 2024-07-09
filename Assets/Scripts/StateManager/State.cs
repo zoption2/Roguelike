@@ -54,7 +54,6 @@ namespace Gameplay
             {
                 _scenario.OnStateEnd();
             }
-
         }
 
         public void OnExit()
