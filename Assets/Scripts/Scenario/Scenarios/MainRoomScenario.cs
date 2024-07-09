@@ -17,13 +17,13 @@ public interface IMainRoomScenario : IScenario
 
 public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 {
-    private bool _wonScenario = false;
-    public MainRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory)
+    public MainRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory, ILevelManager levelManager)
     {
         GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
         _turnsOrder = new List<CookedMapper>();
         _stateFactory = stateFactory;
+        _levelManager = levelManager;
     }
 
     public override void CheckConditonsForEndOfScenario()
@@ -31,15 +31,18 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
-        if (noPlayers)
+        if (noPlayers && !_haslost)
         {
+            _haslost = true;
+            _queueOfStates.Clear();
             LoadMainMenu();
         }
-        else if (noEnemies && !_wonScenario)
+        else if (noEnemies && !_hasWon)
         {
+            _queueOfStates.Clear();
             ActivateCompleatedRoomTriggers();
             UnlockAllChests();
-            _wonScenario=true;
+            _hasWon = true;
             //PREPAIR LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
 
             //LoadMainMenu();

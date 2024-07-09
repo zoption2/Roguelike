@@ -16,12 +16,13 @@ public interface IDefaultScenario : IScenario
 public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 {
 
-    public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory)
+    public DefaultScenario(IGameplayService gameplayService, IStateFactory stateFactory, ILevelManager levelManager)
     {
         GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
         _turnsOrder = new List<CookedMapper>();
         _stateFactory = stateFactory;
+        _levelManager = levelManager;
     }
 
 
@@ -30,12 +31,16 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
-        if (noPlayers)
+        if (noPlayers && !_haslost)
         {
+            _queueOfStates.Clear();
+            _haslost = true;
             LoadMainMenu();
         }
-        else if (noEnemies)
+        else if (noEnemies && !_hasWon)
         {
+            _queueOfStates.Clear();
+            _hasWon = true;
             ActivateCompleatedRoomTriggers();
 
             //PREPAIRE LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!

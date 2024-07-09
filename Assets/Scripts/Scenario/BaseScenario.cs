@@ -1,9 +1,11 @@
+using CharactersStats;
 using Enemy;
 using Player;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace Gameplay
 {
@@ -13,10 +15,19 @@ namespace Gameplay
         protected Queue<IState> _queueOfStates;
         protected T _scenarioContext;
         protected IStateFactory _stateFactory;
+        protected ILevelManager _levelManager;
         protected List<CookedMapper> _turnsOrder;
+        protected ILevelContext _levelContext;
+        protected bool _haslost=false;
+        protected bool _hasWon=false;
 
         public IGameplayService GameplayService { get; set; }
 
+        [Inject]
+        public void Construct(ILevelContext levelContext)
+        {
+            _levelContext = levelContext;
+        }
         public void RenewQueue()
         {
             foreach (CookedMapper mapper in _turnsOrder)
@@ -124,8 +135,10 @@ namespace Gameplay
 
         public void LoadMainMenu()
         {
+            Debug.Log("load menu");
+            _levelContext.ClearPlayer();
             GameplayService.PoolManager.CleanPoolers();
-            SceneManager.LoadScene("Menu");
+            _levelManager.LoadMenu();
         }
 
         public void SubscribeToDeathOfCharacters()

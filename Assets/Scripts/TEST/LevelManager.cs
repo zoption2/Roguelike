@@ -10,6 +10,7 @@ using Zenject;
 public interface ILevelManager
 {
     void LoadLevel();
+    void LoadMenu();
     RoomTemplateSO.Template GetTemplate();
     Queue<TypeOfScenario> RoomsOrder { get; set; }
     //void StartCurrentRoom();
@@ -95,6 +96,24 @@ public class LevelManager : ILevelManager
                 
                 CreateRooms(roomsObject.transform);
                 
+                SceneManager.sceneLoaded -= OnLevelSceneLoaded;
+            }
+        }
+    }
+
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
+        SceneManager.sceneLoaded += OnLevelSceneLoaded;
+
+        void OnLevelSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name == "Menu")
+            {
+                if (SceneManager.GetSceneByName("Level").IsValid())
+                {
+                    SceneManager.UnloadSceneAsync("Level");
+                }
                 SceneManager.sceneLoaded -= OnLevelSceneLoaded;
             }
         }
