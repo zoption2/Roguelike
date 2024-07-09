@@ -16,14 +16,20 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
         _boxCollider = GetComponent<BoxCollider>();
     }
 
-    [Inject]
-    public void Construct(
-        IGameplayService gameplayService,
-        ILevelManager levelManager)
+    public void Init(IGameplayService gameplayService, ILevelManager levelManager)
     {
         _gameplayService = gameplayService;
         _levelManager = levelManager;
     }
+
+    //[Inject]
+    //public void Construct(
+    //    IGameplayService gameplayService,
+    //    ILevelManager levelManager)
+    //{
+    //    _gameplayService = gameplayService;
+    //    _levelManager = levelManager;
+    //}
 
     public bool GetActiveStatus()
     {
@@ -41,6 +47,7 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
         if(_levelManager.RoomsOrder.Count > 0)
         {
             _gameplayService.CurrentScenario.Pause();
+            _levelManager.SwitchToNextRoom();
             //_gameplayService.LevelManager.LoadNextRoom();
         } else
         {
