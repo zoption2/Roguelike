@@ -30,7 +30,7 @@ namespace BehaviourTree
 
             foreach (IAbility abilityType in availableAbilities)
             {
-                if (abilityType.ProjectileType== ProjectileType.None)
+                if (abilityType.ProjectileType == ProjectileType.None)
                     attackWouldReachTarget = DefaultBT.SphereCastHitTheTarget(target, startingPoint, abilityType.GetLaunchModifier(), remainingDistance);
                 else
                     attackWouldReachTarget = DefaultBT.RemoteSphereCastHitTarget(target,startingPoint);
