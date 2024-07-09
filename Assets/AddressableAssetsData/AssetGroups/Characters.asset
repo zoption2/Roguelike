@@ -32,8 +32,8 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1e7398ce14d37aa4db65c7fc2f5d2304
-    m_Address: Assets/Prefabs/Player/Archer.prefab
+  - m_GUID: b081e17cf262f3942b30e9ed3abb6d6c
+    m_Address: Assets/Prefabs/Player/Wizzard.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -42,8 +42,8 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b081e17cf262f3942b30e9ed3abb6d6c
-    m_Address: Assets/Prefabs/Player/Wizzard.prefab
+  - m_GUID: 1e7398ce14d37aa4db65c7fc2f5d2304
+    m_Address: Assets/Prefabs/Player/Archer.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

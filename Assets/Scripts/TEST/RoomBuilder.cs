@@ -126,7 +126,7 @@ public class RoomBuilder : IRoomBuilder
         Debug.Log($"Analyzed template {roomTemplate}: PlayerSpawnPoints={RoomContext.PlayerSpawnPoints.Count}, EnemySpawnPoints={RoomContext.EnemySpawnPoints.Count}, BuffSpawnPoints={RoomContext.BuffSpawnPoints.Count}");
     }
 
-    private  void BuildExitsAsync(TemplateElementType[,] templateElements, Vector3[,] coordinates)
+    private  void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
     {
         int rows = templateElements.GetLength(0);
         int cols = templateElements.GetLength(1);

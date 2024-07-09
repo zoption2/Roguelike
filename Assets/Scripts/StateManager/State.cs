@@ -99,7 +99,7 @@ namespace Gameplay
             if (!_roomContext.Enemies.Contains(_characterController))
                 _scenario.OnStateEnd();
             Debug.Log($"-----------------------------|Enemy {_characterController.GetCharacterType()}|-------------------------------");
-            if (!_characters.Enemies.Contains(_characterController))
+            if (!_roomContext.Enemies.Contains(_characterController))
             {
                 Debug.Log("removed enemy's turn");   
                 _scenario.OnStateEnd();
