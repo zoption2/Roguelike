@@ -210,11 +210,6 @@ namespace BehaviourTree
         
         protected bool HitTransformIsTarget(Transform hitTransform, Transform target)
         {
-            if (hitTransform != null && hitTransform.childCount > 0)
-            {
-                hitTransform = hitTransform.GetChild(0);
-            }
-
             if (hitTransform != null && hitTransform == target)
             {
                 return true;

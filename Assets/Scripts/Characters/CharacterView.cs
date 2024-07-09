@@ -43,6 +43,7 @@ public class CharacterView : MonoBehaviour,
     public event Action<PointerEventData> ON_BEGINDRAG;
     
     private Transform _viewTransform;
+    [SerializeField]
     private Transform _projectileSpawn;
     public ParticleSystem ParticleTestSystem { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
@@ -60,7 +61,6 @@ public class CharacterView : MonoBehaviour,
         Debug.LogError("INIT!!!!");
         _viewTransform = gameObject.transform;
         Debug.LogError(_viewTransform);
-        _projectileSpawn = _viewTransform;
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
