@@ -40,7 +40,7 @@ public class Chest : MonoBehaviour, IChest
 
     private void TakeSomeStuff()
     {
-        
+        Debug.Log("Відкрив сундук і получив по будці");
     }
 
     private void GenerateSomeRundomStuff()

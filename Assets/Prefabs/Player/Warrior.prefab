@@ -220,6 +220,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c23d56eca6b2f458cde324ab603f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _projectileSpawn: {fileID: 8101284788601911292}
   MaxVelocity: 50
 --- !u!135 &216731504792179663
 SphereCollider:
