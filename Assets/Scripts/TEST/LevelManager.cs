@@ -12,7 +12,7 @@ public interface ILevelManager
     void LoadLevel();
     RoomTemplateSO.Template GetTemplate();
     Queue<TypeOfScenario> RoomsOrder { get; set; }
-    void StartCurrentRoom();
+    //void StartCurrentRoom();
     void SwitchToNextRoom();
 }
 
@@ -27,7 +27,7 @@ public class LevelManager : ILevelManager
     public IPoolManager PoolManager { get; private set; }
 
     private Transform _globalPoolParent;
-    private LevelContext _levelContext;
+    private ILevelContext _levelContext;
     private RoomBuilder _roomBuilder;
 
     public Transform GlobalPoolParent
@@ -49,14 +49,15 @@ public class LevelManager : ILevelManager
         IPoolManager poolManager,
         IGameplayService gameplayService,
         INavigationFactory navigationFactory,
-        IRoomObjectsFactory roomObjectsFactory
+        IRoomObjectsFactory roomObjectsFactory,
+        ILevelContext levelContext
     )
     {
         _roomTemplate = roomTemplateSO;
         PoolManager = poolManager;
         _gameplayService = gameplayService;
 
-        _levelContext = new LevelContext();
+        _levelContext = levelContext;
 
         _roomBuilder = new RoomBuilder(
             navigationFactory,
@@ -91,20 +92,9 @@ public class LevelManager : ILevelManager
 
                 GameObject roomsObject = new GameObject("Rooms");
                 SceneManager.MoveGameObjectToScene(roomsObject, scene);
-
-                LevelInitilization levelInit = scene.GetRootGameObjects()
-                                                    .SelectMany(go => go.GetComponents<LevelInitilization>())
-                                                    .FirstOrDefault();
-                if (levelInit != null)
-                {
-                    levelInit.Init(_gameplayService);
-                    CreateRooms(roomsObject.transform);
-                }
-                else
-                {
-                    Debug.LogError("LevelInitilization component not found in the Level scene.");
-                }
-
+                
+                CreateRooms(roomsObject.transform);
+                
                 SceneManager.sceneLoaded -= OnLevelSceneLoaded;
             }
         }
@@ -131,6 +121,9 @@ public class LevelManager : ILevelManager
                 {
                     roomObject.SetActive(true);
                     _levelContext.CurrentRoomContext = roomContext;
+                    _levelContext.CurrentRoomName = roomName;
+                    _levelContext.CurrentRoomType = typeOfScenario;
+
                     isFirstRoom = false;
                 }
                 else
@@ -139,12 +132,13 @@ public class LevelManager : ILevelManager
                 }
             }
         }
-    }
-
-    public void StartCurrentRoom()
-    {
         _gameplayService.StartCurrentRoom();
     }
+
+    //public void StartCurrentRoom()
+    //{
+    //    _gameplayService.StartCurrentRoom();
+    //}
 
     public void SwitchToNextRoom()
     {
@@ -161,6 +155,8 @@ public class LevelManager : ILevelManager
                 if (roomContext != null)
                 {
                     _levelContext.CurrentRoomContext = roomContext;
+                    _levelContext.CurrentRoomName = roomName;
+                    _levelContext.CurrentRoomType = nextRoomScenario;
                     _gameplayService.StartCurrentRoom();
                 }
             }

@@ -48,11 +48,13 @@ public class RoomBuilder : IRoomBuilder
         roomObject.transform.SetParent(parent);
         roomObject.transform.localPosition = Vector3.zero;
 
-        PlayersParent = CreateParent("Players", roomObject.transform);
         EnemiesParent = CreateParent("Enemies", roomObject.transform);
         BuffsParent = CreateParent("Buffs", roomObject.transform);
         WallsParent = CreateParent("Walls", roomObject.transform);
         FloorsParent = CreateParent("Floors", roomObject.transform);
+
+        RoomContext.EnemiesParent = EnemiesParent;
+        RoomContext.BuffsParent = BuffsParent;
 
         var templateElements = roomTemplate.TemplateElement;
         var coordinates = roomTemplate.Coordinates;

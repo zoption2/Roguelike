@@ -24,6 +24,7 @@ namespace Player
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
         public void ReInit(Vector3 newPos, Transform newParent);
+        public void SetTransform(Transform newTransform);
     }
 
     public delegate void OnEndTurn();
@@ -313,6 +314,11 @@ namespace Player
         public Transform GetTransform()
         {
             return CharacterView.GetTransform();
+        }
+
+        public void SetTransform(Transform newTransform)
+        {
+            CharacterView.SetTransform(newTransform);
         }
 
         public Transform GetProjectileSpawn()

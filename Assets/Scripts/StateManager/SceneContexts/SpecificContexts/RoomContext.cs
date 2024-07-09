@@ -27,7 +27,7 @@ namespace Gameplay
 
     public interface IRoomContext : IScenarioContext
     {
-        public List<IPlayerController> Players { get;  set; }
+        public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
         public List<IBuff> Buffs { get; set; }
         public List<ICompleatedRoomTrigger> CompleatedRoomTriggers { get; set; }
@@ -36,6 +36,8 @@ namespace Gameplay
         public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
+        public Transform EnemiesParent { get; set; }
+        public Transform BuffsParent { get; set; }
     }
 
     public class RoomContext : IRoomContext
@@ -49,6 +51,8 @@ namespace Gameplay
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
+        public Transform EnemiesParent { get; set; }
+        public Transform BuffsParent { get; set; }
 
         public RoomContext()
         {
@@ -60,39 +64,40 @@ namespace Gameplay
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
             BuffSpawnPoints = new List<BuffSpawnPointWithType>();
         }
-
-        //public void CheckIfAllStopped()
-        //{
-        //    foreach (IPlayerController player in Players)
-        //    {
-        //        if (player.CheckIfMoving())
-        //        {
-        //            return;
-        //        }
-        //    }
-
-        //    foreach (IEnemyController enemy in Enemies)
-        //    {
-        //        if (enemy.CheckIfMoving())
-        //        {
-        //            return;
-        //        }
-        //    }
-        //    ON_END_TURN?.Invoke();
-        //}
-
-        //public void ProcessTurnEnd()
-        //{
-        //    foreach (IPlayerController player in Players)
-        //    {
-        //        player.UpdateHealthBar();
-        //    }
-
-        //    foreach (IEnemyController enemy in Enemies)
-        //    {
-        //        enemy.UpdateHealthBar();
-        //    }
-        //}
     }
+
+    //public void CheckIfAllStopped()
+    //{
+    //    foreach (IPlayerController player in Players)
+    //    {
+    //        if (player.CheckIfMoving())
+    //        {
+    //            return;
+    //        }
+    //    }
+
+    //    foreach (IEnemyController enemy in Enemies)
+    //    {
+    //        if (enemy.CheckIfMoving())
+    //        {
+    //            return;
+    //        }
+    //    }
+    //    ON_END_TURN?.Invoke();
+    //}
+
+    //public void ProcessTurnEnd()
+    //{
+    //    foreach (IPlayerController player in Players)
+    //    {
+    //        player.UpdateHealthBar();
+    //    }
+
+    //    foreach (IEnemyController enemy in Enemies)
+    //    {
+    //        enemy.UpdateHealthBar();
+    //    }
+    //}
 }
+
 

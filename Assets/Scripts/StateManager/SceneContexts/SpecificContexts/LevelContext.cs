@@ -9,7 +9,7 @@ namespace Gameplay
 {
     public interface ILevelContext : IScenarioContext
     {
-        GameObject Player { get; set; }
+        IPlayerController Player { get; set; }
         RoomContext GetRoomContext(string roomName);
         void CreateRoomContext(string roomName);
         void RemoveRoomContext(string roomName);
@@ -18,13 +18,13 @@ namespace Gameplay
         void RemoveScenario(string roomName);
         RoomContext CurrentRoomContext { get; set; }
         IScenario CurrentRoomScenario { get; set; }
-        string CurrentRoomName { get; set; }
-        TypeOfScenario CurrentRoomType { get; set; }
+        public string CurrentRoomName { get; set; }
+        public TypeOfScenario CurrentRoomType { get; set; }
     }
 
     public class LevelContext : ILevelContext
     {
-        public GameObject Player { get; set; }
+        public IPlayerController Player { get; set; }
         private Dictionary<string, RoomContext> _contexts;
         private Dictionary<string, IScenario> _scenarios;
         public RoomContext CurrentRoomContext { get; set; }

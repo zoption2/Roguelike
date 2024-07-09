@@ -24,6 +24,8 @@ namespace Gameplay
         private INavigationFactory _navigationFactory;
         private ProjectilePooler _projectilePooler;
         private ILevelManager _levelManager;
+        private ILevelContext _levelContext;
+        private IRoomBuilder _roomBuilder;
 
         [Inject]
         public void Construct(
@@ -34,7 +36,9 @@ namespace Gameplay
             INavigationFactory navigationFactory,
             IPoolManager poolManager,
             IRoomObjectsFactory roomObjectsFactory,
-            ILevelManager levelManager)
+            ILevelManager levelManager,
+            ILevelContext levelContext,
+            IRoomBuilder roomBuilder)
         {
             _triggerFactory = triggerFactory;
             _enemyFactory = enemyFactory;
@@ -43,6 +47,8 @@ namespace Gameplay
             _navigationFactory = navigationFactory;
             _roomObjectsFactory = roomObjectsFactory;
             _levelManager = levelManager;
+            _levelContext = levelContext;
+            _roomBuilder = roomBuilder;
             _projectilePooler = poolManager.UseProjectilePooler();
         }
 
@@ -59,7 +65,7 @@ namespace Gameplay
             {
                 case TypeOfState.Init:
                     state =  new InitLevelState(_scenarioInstance, _roomContext, _statsProvider, _triggerFactory, _playerFactory,
-                        _enemyFactory, _navigationFactory, _roomObjectsFactory, _levelManager);
+                        _enemyFactory, _navigationFactory, _roomObjectsFactory, _levelManager, _levelContext, _roomBuilder);
                     break;
                 case TypeOfState.PlayerTurn:
                     state = new PlayerTurnState(_scenarioInstance, _roomContext);

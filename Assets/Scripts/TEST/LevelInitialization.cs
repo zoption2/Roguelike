@@ -8,7 +8,7 @@ public class LevelInitilization : MonoBehaviour
     public void Init(IGameplayService gameplayService)
     {
         _gameplayService = gameplayService;
-        _gameplayService.LevelContext = new LevelContext();
+        //_gameplayService.LevelContext = new LevelContext();
 
         Debug.LogWarning("Level initialization");
     }
