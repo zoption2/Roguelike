@@ -90,8 +90,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IDataService>().To<DataService>().AsSingle(); 
         Container.Bind<ILevelManager>().To<LevelManager>().AsSingle();
 
-        Container.Bind<IRoomContext>().To<RoomContext>().AsTransient();
-
+        Container.Bind<ILevelContext>().To<LevelContext>().AsSingle();
+        Container.Bind<IRoomBuilder>().To<RoomBuilder>().AsSingle();
     }
 
     public void BindInteractions()

@@ -23,7 +23,7 @@ namespace Player
     {
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
-        public void ReInit(Vector3 newPos, Transform newParent);
+        public void SetTransform(Transform newTransform);
     }
 
     public delegate void OnEndTurn();
@@ -148,43 +148,6 @@ namespace Player
             CurrentAbility = _basicAbility;
 
             LaunchedProjectiles = new List<IProjectile>();
-        }
-
-        public void ReInit(Vector3 newPos, Transform newParent)
-        {
-
-            if (CharacterView != null)
-            {
-                CharacterView.ON_CLICK -= OnClick;
-                CharacterView.ON_BEGINDRAG -= OnBeginDrag;
-            }
-
-            _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
-            IMyPoolable poolable = _characterPooler.Pull<IMyPoolable>(CharacterModel.Type, newPos, Quaternion.Euler(90, 0, 0), newParent);
-            CharacterView = poolable.gameObject.GetComponent<CharacterView>();
-            CharacterView.Init(this);
-
-            poolable = _characterUIPooler.Pull<IMyPoolable>(UIType.CharacterUI, newPos, Quaternion.Euler(90, 0, 0), newParent);
-            _UIView = poolable.gameObject.GetComponent<CharacterUIView>();
-            _UIView.Init(CharacterView, _uIViewmodel);
-
-            _uIViewmodel.Init(CharacterModel, _uIFactory, _UIView, this);
-            Effector.Init(_uIViewmodel, _allEffects);
-
-            NavMeshAgent = CharacterView.NavMeshAgent;
-            NavMeshAgent.enabled = false;
-            _navMeshObstacle = CharacterView.NavMeshObstacle;
-            _navMeshObstacle.carving = true;
-            _navMeshObstacle.carveOnlyStationary = true;
-
-            CharacterView.ON_CLICK += OnClick;
-            CharacterView.ON_BEGINDRAG += OnBeginDrag;
-            ON_STOP_MOVEMENT += CheckForEndOfState;
-
-            _uIViewmodel.UpdateStats(ModifiableStats);
-            _uIViewmodel.VisualiseEffects(_allEffects.Value);
-
-            Debug.LogWarning("Reinitialized player view");
         }
 
         public void DoUpdate()
@@ -313,6 +276,11 @@ namespace Player
         public Transform GetTransform()
         {
             return CharacterView.GetTransform();
+        }
+
+        public void SetTransform(Transform newTransform)
+        {
+            CharacterView.SetTransform(newTransform);
         }
 
         public Transform GetProjectileSpawn()

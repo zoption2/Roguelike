@@ -161,6 +161,11 @@ public class CharacterView : MonoBehaviour,
         return _viewTransform;
     }
 
+    public void SetTransform(Transform transform)
+    {
+        _viewTransform = transform;
+    }
+
     public Transform GetProjectileSpawn()
     {
         return _projectileSpawn;

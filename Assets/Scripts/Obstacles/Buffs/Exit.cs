@@ -40,11 +40,11 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
         _gameplayService.CurrentContext = null;
         if(_levelManager.RoomsOrder.Count > 0)
         {
-            _gameplayService.Scenario.Pause();
+            _gameplayService.CurrentScenario.Pause();
             //_gameplayService.LevelManager.LoadNextRoom();
         } else
         {
-            _gameplayService.Scenario.LoadMainMenu();
+            _gameplayService.CurrentScenario.LoadMainMenu();
         }
         
     }

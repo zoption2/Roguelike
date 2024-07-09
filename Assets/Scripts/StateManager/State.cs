@@ -165,6 +165,7 @@ namespace Gameplay
 
         IRoomBuilder _roomBuilder;
         ILevelManager _levelManager;
+        ILevelContext _levelContext;
 
 
         public InitLevelState(
@@ -176,7 +177,9 @@ namespace Gameplay
             IEnemyFactory enemyFactory,
             INavigationFactory navigationFactory,
             IRoomObjectsFactory roomObjectsFactory,
-            ILevelManager levelManager)
+            ILevelManager levelManager,
+            ILevelContext levelContext,
+            IRoomBuilder roomBuilder)
         {
             _scenario = scenario;
             _roomContext = context;
@@ -185,6 +188,8 @@ namespace Gameplay
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;  
             _levelManager = levelManager;
+            _levelContext = levelContext;
+            _roomBuilder = roomBuilder;
             //_navigationFactory = navigationFactory;
             
         }
@@ -193,11 +198,11 @@ namespace Gameplay
         {
             RoomTemplateSO.Template template = _levelManager.GetTemplate();
 
-            if (template == null)
-            {
-                Debug.LogError("Template not found");
-                return;
-            }
+            //if (template == null)
+            //{
+            //    Debug.LogError("Template not found");
+            //    return;
+            //}
 
             //_roomBuilder.BuildLevel(template);
             //OnBuffCreate();
@@ -218,7 +223,7 @@ namespace Gameplay
                 if (buffType != BuffType.None)
                 {
                     Vector3 newPos = spawnPointWithType.SpawnPoint;
-                    IBuff newBuff = _buffFactory.CreateBuff(newPos, _roomBuilder.BuffsParent, buffType);
+                    IBuff newBuff = _buffFactory.CreateBuff(newPos, _roomContext.BuffsParent, buffType);
                     _roomContext.Buffs.Add(newBuff);
                 }
             }
@@ -226,37 +231,27 @@ namespace Gameplay
 
         public void OnPlayerCreate()
         {
-
-            if (_scenario.GameplayService.LevelContext.Player is not null)
+            if (_levelContext.Player != null)
             {
-                PlayerSpawnPointWithType player;
-                CharacterType playerType;
-                for (int i = 0; i < _roomContext.PlayerSpawnPoints.Count; i++)
+                PlayerSpawnPointWithType playerSpawnPoint = _roomContext.PlayerSpawnPoints.FirstOrDefault();
+                if (playerSpawnPoint != null)
                 {
-                    player = _roomContext.PlayerSpawnPoints[i];
-                    playerType = DataTransfer.TypeCollection[i];
-                    Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
-                    Debug.LogWarning(newPos);
-                    IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _roomBuilder.PlayersParent, playerType);
-                    newPlayer.SetCharacterContext(_roomContext);
-                    _roomContext.Players.Add(newPlayer);
+                    Vector3 newPos = new Vector3(playerSpawnPoint.SpawnPoint.x, playerSpawnPoint.SpawnPoint.y + YOffset, playerSpawnPoint.SpawnPoint.z);
+                    Debug.LogWarning($"Moving player to position: {newPos}");
+
+                    _levelContext.Player.GetTransform().position = newPos;
+                }
+                else
+                {
+                    Debug.LogError("No player spawn points available in the current room context.");
                 }
             }
             else
             {
-                Debug.Log("Player already create!!!");
-                for (int i = 0; i < _roomContext.PlayerSpawnPoints.Count; i++)
-                {
-                    PlayerSpawnPointWithType player;
-                    player = _roomContext.PlayerSpawnPoints[i];
-                    Vector3 newPos = new Vector3(player.SpawnPoint.x, player.SpawnPoint.y + YOffset, player.SpawnPoint.z);
-                    Debug.LogWarning(newPos);
-
-                }
+                Debug.LogError("Player has not been created yet!");
             }
-
-
         }
+
 
 
 
@@ -270,7 +265,7 @@ namespace Gameplay
                 if (enemyType != CharacterType.None)
                 {
                     Vector3 newPos = new Vector3(spawnPointWithType.SpawnPoint.x, spawnPointWithType.SpawnPoint.y + YOffset, spawnPointWithType.SpawnPoint.z);
-                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomBuilder.EnemiesParent, enemyType);
+                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomContext.EnemiesParent, enemyType);
                     newEnemy.SetCharacterContext(_roomContext);
                     _roomContext.Enemies.Add(newEnemy);
                 }

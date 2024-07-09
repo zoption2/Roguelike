@@ -1,6 +1,7 @@
 using CharactersStats;
 using Enemy;
 using Player;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -12,13 +13,11 @@ namespace Gameplay
         IPoolManager PoolManager { get; set; }
         void Init(TypeOfScenario type);
         void StartCurrentRoom();
-        IScenario Scenario { get; set; }
+        IScenario CurrentScenario { get; set; }
         IPlayerFactory _playerFactory { get; set; }
         IEnemyFactory _enemyFactory { get; set; }
         IStatsProvider _statsProvider { get; set; }
         IScenarioContext CurrentContext { get; set; }
-        ILevelContext LevelContext { get; set; }
-
         void CheckIfAllStopped();
         void ProcessTurnEnd();
 
@@ -33,9 +32,9 @@ namespace Gameplay
         public IEnemyFactory _enemyFactory { get; set; }
         public IStatsProvider _statsProvider { get; set; }
         public IScenarioFactory _scenarioFactory { get; set; }
-        public IScenario Scenario { get; set; }
+        public IScenario CurrentScenario { get; set; }
         public IScenarioContext CurrentContext { get; set; }
-        public ILevelContext LevelContext { get; set; }
+        private ILevelContext _levelContext;
 
         public event OnEndTurn ON_END_TURN;
 
@@ -45,34 +44,51 @@ namespace Gameplay
             IStatsProvider statsProvider,
             IScenarioFactory scenarioFactory,
             IPlayerFactory playerFactory,
-            IEnemyFactory enemyFactory)
+            IEnemyFactory enemyFactory,
+            ILevelContext levelContext)
         {
             PoolManager = poolManager;
             _scenarioFactory = scenarioFactory;
             _playerFactory = playerFactory;
             _enemyFactory = enemyFactory;
             _statsProvider = statsProvider;
+            _levelContext = levelContext;
         }
 
         public void Init(TypeOfScenario type)
         {
-            Scenario = _scenarioFactory.CreateScenario(type, this);
+            CurrentScenario = _scenarioFactory.CreateScenario(type, this);
             CurrentContext = new RoomContext();
 
-            Scenario.Init(CurrentContext);
+            CurrentScenario.Init(CurrentContext);
         }
 
         public void StartCurrentRoom()
         {
-            if (LevelContext.CurrentRoom != null)
+            string currentRoomName = _levelContext.CurrentRoomName;
+            TypeOfScenario currentRoomType = _levelContext.CurrentRoomType;
+
+            IScenario currentScenario = _scenarioFactory.CreateScenario(currentRoomType, this);
+            _levelContext.CreateScenario(currentRoomName, currentScenario);
+           
+            _levelContext.CurrentRoomContext = _levelContext.GetRoomContext(currentRoomName);
+            _levelContext.CurrentRoomScenario = _levelContext.GetScenario(currentRoomName);
+
+            CurrentScenario = _levelContext.GetScenario(currentRoomName);
+            CurrentContext = _levelContext.CurrentRoomContext;
+
+            if (_levelContext.Player == null)
             {
-                Scenario.Init(LevelContext.CurrentRoom);
+                CreatePlayer();
             }
+
+            CurrentScenario.Init(CurrentContext);
         }
+
 
         public void CheckIfAllStopped()
         {
-            foreach (IPlayerController player in LevelContext.CurrentRoom.Players)
+            foreach (IPlayerController player in _levelContext.CurrentRoomContext.Players)
             {
                 if (player.CheckIfMoving())
                 {
@@ -80,7 +96,7 @@ namespace Gameplay
                 }
             }
 
-            foreach (IEnemyController enemy in LevelContext.CurrentRoom.Enemies)
+            foreach (IEnemyController enemy in _levelContext.CurrentRoomContext.Enemies)
             {
                 if (enemy.CheckIfMoving())
                 {
@@ -92,16 +108,39 @@ namespace Gameplay
 
         public void ProcessTurnEnd()
         {
-            foreach (IPlayerController player in LevelContext.CurrentRoom.Players)
+            foreach (IPlayerController player in _levelContext.CurrentRoomContext.Players)
             {
                 player.UpdateHealthBar();
             }
 
-            foreach (IEnemyController enemy in LevelContext.CurrentRoom.Enemies)
+            foreach (IEnemyController enemy in _levelContext.CurrentRoomContext.Enemies)
             {
                 enemy.UpdateHealthBar();
             }
         }
+
+        public void CreatePlayer()
+        {
+            if (_levelContext.Player == null)
+            {
+                CharacterType playerType = DataTransfer.TypeCollection.FirstOrDefault();
+                Vector3 newPos = new Vector3(0, 0, 0);
+                Debug.LogWarning($"Creating new player at position: {newPos}");
+
+                GameObject playerParentObject = new GameObject("Player");
+
+                IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, playerParentObject.transform, playerType);
+                newPlayer.SetCharacterContext(_levelContext.CurrentRoomContext);
+                _levelContext.CurrentRoomContext.Players.Add(newPlayer);
+
+                _levelContext.Player = newPlayer;
+            }
+            else
+            {
+                Debug.Log("Player already created!!!");
+            }
+        }
+
     }
 
 
