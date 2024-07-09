@@ -24,49 +24,6 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         _stateFactory = stateFactory;
     }
 
-    protected void RemoveCharacterFromTurnsOrder(ICharacterController controller)
-    {
-        foreach (CookedMapper mapper in _turnsOrder)
-        {
-            if (mapper.Controller == controller)
-            {
-                _turnsOrder.Remove(mapper);
-                break;
-            }
-        }
-    }
-
-    protected void RemoveCharacterFromDataTransfer(ICharacterController controller)
-    {
-        foreach (RawMapper mapper in DataTransfer.RawMappers)
-        {
-            if (mapper.Controller == controller)
-            {
-                DataTransfer.RawMappers.Remove(mapper);
-                break;
-            }
-        }
-    }
-
-
-    public override void EraseCharacter(ICharacterController controller)
-    {
-        controller.ON_CHARACTER_DEATH -= EraseCharacter;
-        controller.Dispose();
-        RemoveCharacterFromTurnsOrder(controller);
-        RemoveCharacterFromDataTransfer(controller);
-
-        if (controller is IPlayerController)
-        {
-            _scenarioContext.Players.Remove((IPlayerController)controller);
-        }
-        else
-        {
-            _scenarioContext.Enemies.Remove((IEnemyController)controller);
-        }
-
-        CheckConditonsForEndOfScenario();
-    }
 
     public override void CheckConditonsForEndOfScenario()
     {
@@ -75,54 +32,19 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 
         if (noPlayers)
         {
-            foreach (ICharacterController enemy in _scenarioContext.Enemies)
-            {
-                enemy.ON_CHARACTER_DEATH -= EraseCharacter;
-                enemy.Dispose();
-            }
             LoadMainMenu();
         }
         else if (noEnemies)
         {
             ActivateCompleatedRoomTriggers();
 
-            //PREPAIR LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
+            //PREPAIRE LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
 
             //LoadMainMenu();
         }
     }
 
-    public void SubscribeToDeathOfCharacters()
-    {
-        foreach (ICharacterController controller in _scenarioContext.Players)
-        {
-            controller.ON_CHARACTER_DEATH -= EraseCharacter;
-            controller.ON_CHARACTER_DEATH += EraseCharacter;
-            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for player: {controller}");
-        }
-
-        foreach (ICharacterController controller in _scenarioContext.Enemies)
-        {
-            controller.ON_CHARACTER_DEATH -= EraseCharacter;
-            controller.ON_CHARACTER_DEATH += EraseCharacter;
-            Debug.Log($"Subscribed to ON_CHARACTER_DEATH for enemy: {controller}");
-        }
-    }
-
-    public override void LoadMainMenu()
-    {
-        GameplayService.PoolManager.CleanPoolers();
-        SceneManager.LoadScene("Menu");
-    }
-
-    public void ActivateCompleatedRoomTriggers()
-    {
-        foreach (var trigger in _scenarioContext.CompleatedRoomTriggers)
-        {
-            trigger.ActivateTrigger();
-        }
-    }
-
+    
 
     public override void Init(IScenarioContext context)
     {
@@ -138,40 +60,4 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 
         OnStateEnd();
     }
-
-    private void SortTurns()
-    {
-        DataTransfer.RawMappers = DataTransfer.RawMappers.OrderByDescending(x => x.Speed).ToList();
-        foreach (RawMapper mapper in DataTransfer.RawMappers)
-        {
-            CookedMapper cookedMapper;
-            cookedMapper = ConvertToCookedMapper(mapper.Controller);
-            _turnsOrder.Add(cookedMapper);
-        }
-    }
-
-    private CookedMapper ConvertToCookedMapper(ICharacterController characterController)
-    {
-        CookedMapper cookedMapper = new CookedMapper();
-        cookedMapper.Controller = characterController;
-        if (cookedMapper.Controller is IEnemyController)
-        {
-            cookedMapper.State = TypeOfState.EnemyTurn;
-        }
-        else
-        {
-            cookedMapper.State = TypeOfState.PlayerTurn;
-        }
-        return cookedMapper;
-    }
-    public override void RenewQueue()
-    {
-        foreach (CookedMapper mapper in _turnsOrder)
-        {
-            IState state = _stateFactory.CreateState(mapper.State);
-            state.SetCharacter(mapper.Controller);
-            _queueOfStates.Enqueue(state);
-        }
-    }
-
 }

@@ -38,6 +38,11 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
             _characterView.Normal = collision.GetContact(0).normal;
             _characterView.StartInteraction(interactible);
         }
+
+        if (collision.gameObject.TryGetComponent(out IChest chest))
+        {
+            _rigidbody.velocity = Vector3.zero;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
