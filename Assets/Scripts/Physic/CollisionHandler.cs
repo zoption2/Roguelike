@@ -42,6 +42,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
         if (collision.gameObject.TryGetComponent(out IChest chest))
         {
             _rigidbody.velocity = Vector3.zero;
+            chest.TryOpenChest();
         }
     }
 

@@ -22,6 +22,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec193d983e1ab8f42a674e37dacc21f3
+    m_Address: Assets/Prefabs/RoomBuilderTEST/Chest.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5eccae2c6b4cfce4699825b2956f1609, type: 2}
   m_SchemaSet:

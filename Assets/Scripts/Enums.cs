@@ -116,24 +116,11 @@ public enum TemplateElementType
     DefaultWall = 5,
     ReflectionWall = 6,
     Exit = 7,
+    Chest = 8,
     Barbarian = 100,
     Thrower = 101,
     Summoner = 102,
 
-}
-
-public enum RoomObjectType
-{
-    None = 0,
-    Floor = 1,
-    Player = 2,
-    RandomBuff = 4,
-    DefaultWall = 5,
-    ReflectionWall = 6,
-    Exit = 7,
-    Barbarian = 100,
-    Thrower = 101,
-    Summoner = 102,
 }
 
 public enum ProjectileType

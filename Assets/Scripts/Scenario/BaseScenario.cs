@@ -99,7 +99,6 @@ namespace Gameplay
             if (_queueOfStates.Count != 0)
             {
                 IState state = _queueOfStates.Dequeue();
-                Debug.Log("Dequeue state: " + state);
                 SwitchState(state);
                 CheckConditonsForEndOfScenario();
             }
@@ -110,7 +109,6 @@ namespace Gameplay
         {
             if (_currentState != state)
             {
-                Debug.Log("Switching state from " + _currentState + " to " + state);
                 _currentState?.OnExit();
                 _currentState = state;
                 _currentState.OnEnter();
@@ -136,14 +134,12 @@ namespace Gameplay
             {
                 controller.ON_CHARACTER_DEATH -= EraseCharacter;
                 controller.ON_CHARACTER_DEATH += EraseCharacter;
-                Debug.Log($"Subscribed to ON_CHARACTER_DEATH for player: {controller}");
             }
 
             foreach (ICharacterController controller in _scenarioContext.Enemies)
             {
                 controller.ON_CHARACTER_DEATH -= EraseCharacter;
                 controller.ON_CHARACTER_DEATH += EraseCharacter;
-                Debug.Log($"Subscribed to ON_CHARACTER_DEATH for enemy: {controller}");
             }
         }
 

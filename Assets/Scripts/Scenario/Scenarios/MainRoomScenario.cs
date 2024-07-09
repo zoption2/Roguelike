@@ -17,6 +17,7 @@ public interface IMainRoomScenario : IScenario
 
 public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 {
+    private bool _wonScenario = false;
     public MainRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory)
     {
         GameplayService = gameplayService;
@@ -34,14 +35,24 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         {
             LoadMainMenu();
         }
-        else if (noEnemies)
+        else if (noEnemies && !_wonScenario)
         {
             ActivateCompleatedRoomTriggers();
-
+            UnlockAllChests();
+            _wonScenario=true;
             //PREPAIR LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
 
             //LoadMainMenu();
         }
+    }
+
+    private void UnlockAllChests()
+    {
+        foreach(Chest chest in _scenarioContext.Chests)
+        {
+            chest.UnlockChest();
+        }
+        Debug.Log("unlocked all chests!");
     }
 
 

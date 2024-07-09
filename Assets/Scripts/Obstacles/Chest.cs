@@ -14,6 +14,7 @@ public class Chest : MonoBehaviour, IChest
     private Animator _animator;
 
     private bool _isLocked = true;
+    private bool _wasOpened = false;
 
     public void Start()
     {
@@ -27,9 +28,13 @@ public class Chest : MonoBehaviour, IChest
 
     public void TryOpenChest()
     {
-        if (!_isLocked)
+        if (!_isLocked && !_wasOpened )
         {
             TakeSomeStuff();
+        }
+        else
+        {
+            Debug.LogWarning("не заслужив ти сундук...");
         }
     }
 
@@ -40,7 +45,8 @@ public class Chest : MonoBehaviour, IChest
 
     private void TakeSomeStuff()
     {
-        Debug.Log("Відкрив сундук і получив по будці");
+        _wasOpened = true;
+        Debug.LogWarning("Відкрив сундук і получив по будці");
     }
 
     private void GenerateSomeRundomStuff()

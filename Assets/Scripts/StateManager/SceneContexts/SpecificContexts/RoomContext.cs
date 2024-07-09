@@ -65,6 +65,7 @@ namespace Gameplay
             PlayerSpawnPoints = new List<PlayerSpawnPointWithType>();
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
             BuffSpawnPoints = new List<BuffSpawnPointWithType>();
+            Chests = new List<IChest>();
         }
     }
 

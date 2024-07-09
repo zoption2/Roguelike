@@ -164,7 +164,7 @@ namespace Gameplay
                     scenario = _diContainer.Resolve<IDefaultScenario>();
                     break;
                 case TypeOfScenario.MainRoom:
-                    scenario = _diContainer.Resolve<IDefaultScenario>();
+                    scenario = _diContainer.Resolve<IMainRoomScenario>();
                     break;
                     //case TypeOfScenario.Boss:
                     //    //scenario = new BossScenario(fullService, context);
