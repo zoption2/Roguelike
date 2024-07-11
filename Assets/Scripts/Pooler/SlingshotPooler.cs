@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class SlingshotPooler : ObjectPooler<CharacterType>
 {
-    public SlingshotPooler(SlingShotPrefabHolder provider)
+    public SlingshotPooler(SlingShotPrefabHolder holder)
     {
-        _prefabHolder = provider;
+        _prefabHolder = holder;
     }
 }

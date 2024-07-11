@@ -18,7 +18,12 @@ namespace Projectiles
 
     public class Projectile : MonoBehaviour, IProjectile
     {
+        [SerializeField]
+        private ProjectileCollisionHandler _projectileCollisionHandler;
+        [SerializeField]
         private Rigidbody _rigidbody;
+
+
         private ProjectilePooler _pooler;
         public IControllerInputs ControllerInputs { get; set; }
         public ProjectileType ProjectileType { get; set; }
@@ -27,7 +32,6 @@ namespace Projectiles
         private const float X_ROTATION = 90f;
         private Queue<Vector3> _lastVelocities = new Queue<Vector3>(2);
 
-        private ProjectileCollisionHandler _projectileCollisionHandler;
         private float _maxDistanceFromCharacter = 50f;
 
 
@@ -35,8 +39,6 @@ namespace Projectiles
         {
             _pooler = projectilePooler;
             ControllerInputs = controllerInputs;
-            _rigidbody = GetComponent<Rigidbody>();
-            _projectileCollisionHandler = GetComponent<ProjectileCollisionHandler>();
             ProjectileType = projectileType;
             _projectileCollisionHandler.Init(this);
         }
@@ -49,6 +51,7 @@ namespace Projectiles
         public void PushToPool()
         {
             _projectileCollisionHandler.ResetCollisions();
+            //_projectileCollisionHandler.gameObject.SetActive(false);
             _pooler.Push(ProjectileType, this);
         }
 

@@ -20,13 +20,15 @@ namespace Gameplay
         protected ILevelContext _levelContext;
         protected bool _haslost=false;
         protected bool _hasWon=false;
+        protected IRewardService _rewardService;
 
         public IGameplayService GameplayService { get; set; }
 
         [Inject]
-        public void Construct(ILevelContext levelContext)
+        public void Construct(ILevelContext levelContext, IRewardService rewardService)
         {
             _levelContext = levelContext;
+            _rewardService = rewardService;
         }
         public void RenewQueue()
         {
@@ -83,6 +85,7 @@ namespace Gameplay
 
         public virtual void EraseCharacter(ICharacterController controller)
         {
+            Debug.Log("erasing the " + controller);
             controller.ON_CHARACTER_DEATH -= EraseCharacter;
             controller.Dispose();
 
@@ -111,15 +114,17 @@ namespace Gameplay
             {
                 IState state = _queueOfStates.Dequeue();
                 SwitchState(state);
-                CheckConditonsForEndOfScenario();
             }
+            CheckConditonsForEndOfScenario();
+            Debug.Log("OnStateEnd");
         }
 
 
         public void SwitchState(IState state)
         {
-            if (_currentState != state)
+            if (_currentState !=state)
             {
+                Debug.Log("SwitchState");
                 _currentState?.OnExit();
                 _currentState = state;
                 _currentState.OnEnter();
@@ -136,7 +141,6 @@ namespace Gameplay
         public void LoadMainMenu()
         {
             Debug.Log("load menu");
-            _levelContext.ClearPlayer();
             GameplayService.PoolManager.CleanPoolers();
             _levelManager.LoadMenu();
         }

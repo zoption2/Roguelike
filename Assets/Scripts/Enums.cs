@@ -145,7 +145,13 @@ public enum PoolType
     CharacterPool,
     CharacterUIPool,
     ProjectilePool,
-    SlingshotPool
+    SlingshotPool,
+    RewardUIPool
+}
+
+public enum RewardType
+{
+    Coin
 }
 
 

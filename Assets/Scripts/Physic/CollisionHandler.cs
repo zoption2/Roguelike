@@ -1,5 +1,6 @@
 using Interactions;
 using Obstacles;
+using Player;
 using Projectiles;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
             _characterView.StartInteraction(interactible);
         }
 
-        if (collision.gameObject.TryGetComponent(out IChest chest))
+        if (collision.gameObject.TryGetComponent(out IChestView chest) && _controllerInputs is IPlayerController)
         {
             _rigidbody.velocity = Vector3.zero;
             chest.TryOpenChest();

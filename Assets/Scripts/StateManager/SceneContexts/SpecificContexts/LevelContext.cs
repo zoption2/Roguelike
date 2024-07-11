@@ -21,7 +21,6 @@ namespace Gameplay
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
 
-        public void ClearPlayer();
     }
 
     public class LevelContext : ILevelContext
@@ -47,10 +46,6 @@ namespace Gameplay
                 return context;
             }
             return null;
-        }
-        public void ClearPlayer()
-        {
-            Player = null;
         }
 
         public void CreateRoomContext(string roomName)

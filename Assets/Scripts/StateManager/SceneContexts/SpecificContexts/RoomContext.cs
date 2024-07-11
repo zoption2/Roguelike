@@ -31,7 +31,7 @@ namespace Gameplay
         public List<IEnemyController> Enemies { get; set; }
         public List<IBuff> Buffs { get; set; }
         public List<ICompleatedRoomTrigger> CompleatedRoomTriggers { get; set; }
-        public List<IChest> Chests { get; set; }
+        public List<IChestView> Chests { get; set; }
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
@@ -46,7 +46,7 @@ namespace Gameplay
         public List<IPlayerController> Players { get; set; }
         public List<IEnemyController> Enemies { get; set; }
         public List<ICompleatedRoomTrigger> CompleatedRoomTriggers { get; set; }
-        public List<IChest> Chests { get; set; }
+        public List<IChestView> Chests { get; set; }
         public List<IBuff> Buffs { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
@@ -65,7 +65,7 @@ namespace Gameplay
             PlayerSpawnPoints = new List<PlayerSpawnPointWithType>();
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
             BuffSpawnPoints = new List<BuffSpawnPointWithType>();
-            Chests = new List<IChest>();
+            Chests = new List<IChestView>();
         }
     }
 

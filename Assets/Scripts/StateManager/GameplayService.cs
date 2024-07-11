@@ -45,7 +45,8 @@ namespace Gameplay
             IScenarioFactory scenarioFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
-            ILevelContext levelContext)
+            ILevelContext levelContext,
+            IRewardService rewardService)
         {
             PoolManager = poolManager;
             _scenarioFactory = scenarioFactory;
@@ -53,6 +54,7 @@ namespace Gameplay
             _enemyFactory = enemyFactory;
             _statsProvider = statsProvider;
             _levelContext = levelContext;
+            rewardService.Init();
         }
 
         public void Init(TypeOfScenario type)

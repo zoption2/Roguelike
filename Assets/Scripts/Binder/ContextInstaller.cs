@@ -57,6 +57,10 @@ public class ContextInstaller : MonoInstaller
     [SerializeField]
     private AbilityHolder _abilityHolder;
 
+    [SerializeField]
+    private RewardUIPrefabHolder _rewardUIHolder;
+
+
     #endregion
     public override void InstallBindings()
     {
@@ -92,6 +96,8 @@ public class ContextInstaller : MonoInstaller
 
         Container.Bind<ILevelContext>().To<LevelContext>().AsSingle();
         Container.Bind<IRoomBuilder>().To<RoomBuilder>().AsSingle();
+        Container.Bind<IRewardService>().To<RewardService>().AsSingle();
+
     }
 
     public void BindInteractions()
@@ -119,6 +125,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
         Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
         Container.Bind<ProjectilePooler>().To<ProjectilePooler>().AsSingle();
+        Container.Bind<RewardUIPooler>().To<RewardUIPooler>().AsSingle();
+
 
         Container.Bind<IPoolManager>().To<PoolManager>().AsSingle();
     }
@@ -151,6 +159,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<RoomTemplateSO>().FromInstance(_roomTemplateSO).AsSingle();
         Container.Bind<ProjectilePrefabHolder>().FromInstance(_projectilePrefabHolder).AsSingle();
         Container.Bind<AbilityHolder>().FromInstance(_abilityHolder).AsSingle();
+        Container.Bind<RewardUIPrefabHolder>().FromInstance(_rewardUIHolder).AsSingle();
+
     }
 
     public void BindModelHolders()

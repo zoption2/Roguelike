@@ -76,7 +76,7 @@ public class RoomBuilder : IRoomBuilder
                         break;
                     case TemplateElementType.Chest:
                         GameObject chestObj = _roomObjectsFactory.Build(position, WallsParent, TemplateElementType.Chest);
-                        IChest chest = chestObj.GetComponent<IChest>();
+                        IChestView chest = chestObj.GetComponent<IChestView>();
                         RoomContext.Chests.Add(chest);
                         break;
                 }

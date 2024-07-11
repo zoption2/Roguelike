@@ -31,9 +31,12 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
+        Debug.Log("checking scenario end conditions...");
         if (noPlayers && !_haslost)
         {
+            Debug.LogWarning("player lost");
             _haslost = true;
+            _turnsOrder.Clear();
             _queueOfStates.Clear();
             LoadMainMenu();
         }
@@ -51,13 +54,20 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 
     private void UnlockAllChests()
     {
-        foreach(Chest chest in _scenarioContext.Chests)
+        foreach(ChestView chest in _scenarioContext.Chests)
         {
             chest.UnlockChest();
         }
         Debug.Log("unlocked all chests!");
     }
 
+    public void SubscribeToChestOpening()
+    {
+        foreach (IChestView chest in _scenarioContext.Chests)
+        {
+            chest.On_Chest_Open += _rewardService.ShowReward;
+        }
+    }
 
     public override void Init(IScenarioContext context)
     {
@@ -69,6 +79,7 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         _currentState.OnEnter();
 
         SubscribeToDeathOfCharacters();
+        SubscribeToChestOpening();
         SortTurns();
 
         OnStateEnd();
