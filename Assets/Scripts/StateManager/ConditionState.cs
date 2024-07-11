@@ -122,7 +122,7 @@ public abstract class ActiveState
         Transform spawn = _characterController.GetProjectileSpawn();
 
         IMyPoolable projectilePoolable =  _projectilePooler.Pull<IMyPoolable>(currentAbility.ProjectileType, spawn.position, transform.rotation, transform.parent);
-        Projectile projectile = projectilePoolable.gameObject.GetComponent<Projectile>();
+        IProjectile projectile = projectilePoolable.gameObject.GetComponent<IProjectile>();
 
         if(projectile.ControllerInputs == null)
             projectile.Init((IControllerInputs)_characterController, currentAbility.ProjectileType,_projectilePooler);

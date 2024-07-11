@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Summoner
   m_EditorClassIdentifier: 
   Type: 102
-  Health: 5
+  Health: 4
   Damage: 3
   Speed: 7
   LaunchPower: 15

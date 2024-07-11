@@ -61,6 +61,10 @@ namespace Projectiles
                 obstacle.ProcessCollision(collision, _rigidbody, velocity);
             }
 
+            if (collision.gameObject.TryGetComponent(out IChestView chest))
+            {
+                _projectile.PushToPool();
+            }
 
             if (collision.gameObject.TryGetComponent(out IInteractible interactible))
             {

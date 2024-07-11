@@ -22,7 +22,8 @@ namespace Projectiles
         private ProjectileCollisionHandler _projectileCollisionHandler;
         [SerializeField]
         private Rigidbody _rigidbody;
-
+        [SerializeField]
+        private Transform _transform;
 
         private ProjectilePooler _pooler;
         public IControllerInputs ControllerInputs { get; set; }
@@ -50,6 +51,7 @@ namespace Projectiles
 
         public void PushToPool()
         {
+            _transform.localPosition = Vector3.zero;
             _projectileCollisionHandler.ResetCollisions();
             //_projectileCollisionHandler.gameObject.SetActive(false);
             _pooler.Push(ProjectileType, this);
@@ -96,7 +98,7 @@ namespace Projectiles
 
             ViewRotation();
 
-            if(Vector3.Distance(transform.position, ControllerInputs.GetTransform().position) > _maxDistanceFromCharacter)
+            if(Vector3.Distance(_transform.position, ControllerInputs.GetTransform().position) > _maxDistanceFromCharacter)
             {
                 PushToPool();
             }
@@ -108,7 +110,7 @@ namespace Projectiles
             float rotationSpeed = velocity.magnitude;
             float angle = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg;
             Quaternion targetRotation = Quaternion.Euler(X_ROTATION, angle, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            _transform.rotation = Quaternion.Slerp(_transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
         public void AddLastVelocity(Vector3 velocity)
