@@ -1,22 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 public delegate void OnChestInteraction(RewardType type, int count);
-public delegate void OnChestOpen();
+public delegate void OnChestOpen(Action onOpened);
 
 
-public interface IChestOpener
-{
-    public event OnChestOpen On_Chest_Open;
-}
-public interface IChestController : IChestOpener
+public interface IChestController 
 {
     public IChestView ChestView { get; set; }
     public ChestModel ChestModel { get; set; }
 
-    public event OnChestInteraction On_Chest_Interact;
     public void Init(IChestView chestView, ChestModel chestModel);
     public void LockChest();
     public void UnlockChest();
@@ -27,11 +23,14 @@ public class ChestController : IChestController
     public IChestView ChestView { get; set; }
     public ChestModel ChestModel { get; set; }
 
-    public event OnChestInteraction On_Chest_Interact;
-
-    public event OnChestOpen On_Chest_Open;
-
     private bool _isLocked, _wasOpened;
+
+    private IRewardService _rewardService;
+    
+    public ChestController(IRewardService rewardService)
+    {
+        _rewardService = rewardService;
+    }
 
     public void Init(IChestView chestView, ChestModel chestModel)
     {
@@ -39,7 +38,6 @@ public class ChestController : IChestController
         ChestModel = chestModel;
 
         ChestView.On_Try_Open += TryOpenChest;
-        ChestView.On_Animation_End += TakeSomeStuff;
 
         ChestModel.TypeOfReward = RewardType.Coin;
         ChestModel.RewardCount = 10;
@@ -66,20 +64,20 @@ public class ChestController : IChestController
     private void OpenChest()
     {
         _wasOpened = true;
-        On_Chest_Open?.Invoke();
+        ChestView.OpenChest(() =>
+        {
+            TakeSomeStuff();
+        });
     }
 
     private void TakeSomeStuff()
     {
-        On_Chest_Interact?.Invoke(ChestModel.TypeOfReward, ChestModel.RewardCount);
+        _rewardService.ShowReward(ChestModel.TypeOfReward, ChestModel.RewardCount);
         UnsubscribeEvents();
     }
 
     private void UnsubscribeEvents()
     {
-        On_Chest_Interact = null;
-        On_Chest_Open = null;
-        ChestView.On_Animation_End -= TakeSomeStuff;
         ChestView.On_Try_Open -= TryOpenChest;
     }
 }

@@ -1,23 +1,24 @@
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public interface IChestView
 {
-    public event OnAnimationEnd On_Animation_End;
 
     public event OnTryOpen On_Try_Open;
 
     public void TryOpenChest();
-    public void Init(IChestOpener opener);
+    public void OpenChest();
+    public void OpenChest(Action onOpened);
+
 }
 
-public delegate void OnAnimationEnd();
 public delegate void OnTryOpen();
 
 public class ChestView : MonoBehaviour, IChestView
 {
-    public event OnAnimationEnd On_Animation_End;
     public event OnTryOpen On_Try_Open;
 
     [SerializeField]
@@ -25,22 +26,21 @@ public class ChestView : MonoBehaviour, IChestView
 
     private const string OPENED = "Opened";
 
-    public void Init(IChestOpener opener)
-    {
-        opener.On_Chest_Open += OpenChest;
-    }
     public void TryOpenChest()
     {
         On_Try_Open?.Invoke();
     }
 
-    private void OpenChest()
+    public void OpenChest()
     {
         _animator.SetTrigger(OPENED);
     }
-
-    private void OnOpenAnimationEnd()
+    public async void OpenChest(Action onOpened)
     {
-        On_Animation_End?.Invoke();
+        _animator.SetTrigger(OPENED);
+        float duration = _animator.GetCurrentAnimatorStateInfo(0).length;
+        int delay = (int)duration * 1000;
+        await UniTask.Delay(delay);
+        onOpened?.Invoke();
     }
 }

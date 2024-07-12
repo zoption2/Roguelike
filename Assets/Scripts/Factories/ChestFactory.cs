@@ -29,7 +29,6 @@ public class ChestFactory : IChestFactory
         GameObject chest = GameObject.Instantiate(prefab, position, Quaternion.identity, parent);
         IChestView chestView = chest.GetComponent<IChestView>();
 
-        chestView.Init(controller);
         controller.Init(chestView, model);
 
         return controller;

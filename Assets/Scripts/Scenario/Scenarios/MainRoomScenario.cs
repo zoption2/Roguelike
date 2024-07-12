@@ -59,14 +59,6 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         Debug.Log("unlocked all chests!");
     }
 
-    public void SubscribeToChestOpening()
-    {
-        foreach (IChestController chest in _scenarioContext.Chests)
-        {
-            chest.On_Chest_Interact += _rewardService.ShowReward;
-        }
-    }
-
     public override void Init(IScenarioContext context)
     {
         SetScenarioContext(context);
@@ -77,7 +69,6 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         _currentState.OnEnter();
 
         SubscribeToDeathOfCharacters();
-        SubscribeToChestOpening();
         SortTurns();
 
         OnStateEnd();
