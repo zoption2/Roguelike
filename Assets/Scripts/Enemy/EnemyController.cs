@@ -244,11 +244,9 @@ namespace Enemy
 
         public void PushIfDead()
         {
-            Debug.Log("pushed enemy to pool");
             _characterPooler.Push(CharacterModel.Type, CharacterView);
             PushCharacterUI();
             ON_CHARACTER_DEATH?.Invoke(this);
-            Debug.Log("ON_CHARACTER_DEATH invoked");
         }
 
 

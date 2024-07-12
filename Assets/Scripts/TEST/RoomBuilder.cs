@@ -25,13 +25,15 @@ public class RoomBuilder : IRoomBuilder
 
     private INavigationFactory _navigationFactory;
     private IRoomObjectsFactory _roomObjectsFactory;
+    private IChestFactory _chestFactory;
 
     public RoomBuilder(
         INavigationFactory navigationFactory,
-        IRoomObjectsFactory roomObjectsFactory)
+        IRoomObjectsFactory roomObjectsFactory,IChestFactory chestFactory)
     {
         _navigationFactory = navigationFactory;
         _roomObjectsFactory = roomObjectsFactory;
+        _chestFactory = chestFactory;
     }
 
     public GameObject BuildRoom(RoomTemplateSO.Template roomTemplate, Transform parent)
@@ -75,9 +77,8 @@ public class RoomBuilder : IRoomBuilder
                         _roomObjectsFactory.Build(position, WallsParent, TemplateElementType.DefaultWall);
                         break;
                     case TemplateElementType.Chest:
-                        GameObject chestObj = _roomObjectsFactory.Build(position, WallsParent, TemplateElementType.Chest);
-                        IChestView chest = chestObj.GetComponent<IChestView>();
-                        RoomContext.Chests.Add(chest);
+                        IChestController chestController = _chestFactory.CreateChest(position,WallsParent);
+                        RoomContext.Chests.Add(chestController);
                         break;
                 }
             }

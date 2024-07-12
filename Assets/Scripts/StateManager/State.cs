@@ -16,6 +16,7 @@ namespace Gameplay
     {
         public IScenario Scenario { get; }
         public void SetCharacter(ICharacterController controller);
+        public ICharacterController GetCharacter();
         public void OnEnter();
         public void OnExit();
     }
@@ -50,9 +51,8 @@ namespace Gameplay
 
             _characterController.ProcessOnStartTurn();
 
-            if (!_roomContext.Players.Contains(_characterController) || _characterController.IsStunned)
+            if (_characterController.IsStunned)
             {
-                
                 _scenario.OnStateEnd();
             }
         }
@@ -78,6 +78,11 @@ namespace Gameplay
         {
             _characterController = controller;
         }
+
+        public ICharacterController GetCharacter()
+        {
+            return _characterController;
+        }
     }
     public class EnemyTurnState : IState
     {
@@ -96,15 +101,8 @@ namespace Gameplay
 
         public void OnEnter()
         {
-            if (!_roomContext.Enemies.Contains(_characterController))
-                _scenario.OnStateEnd();
             Debug.Log($"-----------------------------|Enemy {_characterController.GetCharacterType()}|-------------------------------");
-            if (!_roomContext.Enemies.Contains(_characterController))
-            {
-                Debug.Log("removed enemy's turn");   
-                _scenario.OnStateEnd();
-                return;
-            }
+            
             _characterController.IsActive = true;
 
             _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
@@ -140,6 +138,11 @@ namespace Gameplay
         public void SetCharacter(ICharacterController controller)
         {
             _characterController = controller;
+        }
+
+        public ICharacterController GetCharacter()
+        {
+            return _characterController;
         }
     }
 
@@ -280,6 +283,11 @@ namespace Gameplay
         {
 
         }
+
+        public ICharacterController GetCharacter()
+        {
+            return null;
+        }
     }
 
     public class PauseState : IState
@@ -305,6 +313,11 @@ namespace Gameplay
 
         public void SetCharacter(ICharacterController controller)
         {
+        }
+
+        public ICharacterController GetCharacter()
+        {
+            return null;
         }
     }
 

@@ -49,16 +49,16 @@ namespace Projectiles
         {
             _currentCollisions++;
 
-            if(_currentCollisions >= 2)
+            if(_currentCollisions >= 4)
             {
                 _projectile.PushToPool();
             }
 
             if (collision.gameObject.TryGetComponent(out IWall obstacle))
             {
-                CheckRichochet(obstacle);
                 Vector3 velocity = _projectile.GetLastVelocity();
                 obstacle.ProcessCollision(collision, _rigidbody, velocity);
+                CheckRichochet(obstacle);
             }
 
             if (collision.gameObject.TryGetComponent(out IChestView chest))

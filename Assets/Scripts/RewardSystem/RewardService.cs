@@ -14,11 +14,11 @@ public interface IRewardService
 public class RewardService : IRewardService 
 {
     private Dictionary<RewardType,int> _rewards;
-    private IUIFactory _uiFactory;
+    private IRewardPanelFactory _rewardPanelFactory;
 
-    public RewardService(IUIFactory uIFactory)
+    public RewardService(IRewardPanelFactory uIFactory)
     {
-        _uiFactory = uIFactory;
+        _rewardPanelFactory = uIFactory;
     }
 
     public void Init()
@@ -28,9 +28,8 @@ public class RewardService : IRewardService
 
     public void ShowReward(RewardType type, int count)
     {
-        IRewardPanelView rewardPanel = _uiFactory.CreateRewardPanel(type,count);
+        IRewardPanelView rewardPanel = _rewardPanelFactory.CreateRewardPanel(type,count);
         rewardPanel.On_End_Animation += AddReward;
-        //AddReward(type, count);
     }
 
     public void AddReward(RewardType type, int count)

@@ -38,15 +38,12 @@ public abstract class CharacterFactory<TController>
     {
         TController controller = GetNewController();
 
-        RawMapper mapper = new RawMapper();
-        
         _stats = GetStats(type);
         ReactiveStats reactiveStats = _stats.ToReactive();
         List<AbilityType> abilityTypes = GetAbilitiesTypes(type);
         _abilities = CreateAbilities(abilityTypes, reactiveStats);
         
         _characterModel = new CharacterModel(_stats, type, _abilities);
-        mapper.Speed = _stats.Speed;
 
         _poolable =  _characterPooler.Pull<IMyPoolable>(type, position, Quaternion.identity, parent);
         CharacterView characterView = _poolable.gameObject.GetComponent<CharacterView>();
@@ -56,8 +53,6 @@ public abstract class CharacterFactory<TController>
 
         controller.Init(_characterModel, characterView, characterUIView);
 
-        mapper.Controller = controller;
-        DataTransfer.RawMappers.Add(mapper);
 
         return controller;
     }

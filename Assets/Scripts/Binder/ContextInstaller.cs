@@ -125,8 +125,6 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
         Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
         Container.Bind<ProjectilePooler>().To<ProjectilePooler>().AsSingle();
-        Container.Bind<RewardUIPooler>().To<RewardUIPooler>().AsSingle();
-
 
         Container.Bind<IPoolManager>().To<PoolManager>().AsSingle();
     }
@@ -142,6 +140,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IAbilityFactory>().To<AbilityFactory>().AsSingle();
         Container.Bind<IBuffFactory>().To<BuffFactory>().AsSingle();
         Container.Bind<IRoomObjectsFactory>().To<RoomObjectsFactory>().AsSingle();
+        Container.Bind<IChestFactory>().To<ChestFactory>().AsSingle();
+        Container.Bind<IRewardPanelFactory>().To<RewardPanelFactory>().AsSingle();
     }
 
     public void BindPrefabHolders()
@@ -174,6 +174,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IPlayerController>().To<PlayerController>().AsTransient();
         Container.Bind<IEnemyController>().To<EnemyController>().AsTransient();
         Container.Bind<ICharacterPanelController>().To<CharacterPanelController>().AsTransient();
+        Container.Bind<IChestController>().To<ChestController>().AsTransient();
     }
 
     public void BindBehaviourTrees()

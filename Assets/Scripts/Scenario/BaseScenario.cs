@@ -53,18 +53,6 @@ namespace Gameplay
             }
         }
 
-        protected void RemoveCharacterFromDataTransfer(ICharacterController controller)
-        {
-            foreach (RawMapper mapper in DataTransfer.RawMappers)
-            {
-                if (mapper.Controller == controller)
-                {
-                    DataTransfer.RawMappers.Remove(mapper);
-                    break;
-                }
-            }
-        }
-
         public object GetScenarioContext()
         {
             return _scenarioContext;
@@ -89,8 +77,10 @@ namespace Gameplay
             controller.ON_CHARACTER_DEATH -= EraseCharacter;
             controller.Dispose();
 
+            IState stateOfDeadCharacter = GetStateFromQueueByController(controller);
+
             RemoveCharacterFromTurnsOrder(controller);
-            RemoveCharacterFromDataTransfer(controller);
+            RemoveElementFromQueue(stateOfDeadCharacter);
 
             if (controller is IPlayerController)
             {
@@ -103,6 +93,7 @@ namespace Gameplay
 
         }
 
+
         public void OnStateEnd()
         {
             if (_queueOfStates.Count == 0)
@@ -110,19 +101,20 @@ namespace Gameplay
                 RenewQueue();
             }
 
+            CheckConditonsForEndOfScenario();
+
             if (_queueOfStates.Count != 0)
             {
                 IState state = _queueOfStates.Dequeue();
                 SwitchState(state);
             }
-            CheckConditonsForEndOfScenario();
             Debug.Log("OnStateEnd");
         }
 
 
         public void SwitchState(IState state)
         {
-            if (_currentState !=state)
+            if (_currentState != state)
             {
                 Debug.Log("SwitchState");
                 _currentState?.OnExit();
@@ -160,15 +152,74 @@ namespace Gameplay
             }
         }
 
+
         protected void SortTurns()
         {
-            DataTransfer.RawMappers = DataTransfer.RawMappers.OrderByDescending(x => x.Speed).ToList();
-            foreach (RawMapper mapper in DataTransfer.RawMappers)
+            List<RawMapper> rawMappers = GetRawMappers();
+
+            rawMappers = rawMappers.OrderByDescending(x => x.Speed).ToList();
+
+            foreach (RawMapper mapper in rawMappers)
             {
                 CookedMapper cookedMapper;
                 cookedMapper = ConvertToCookedMapper(mapper.Controller);
                 _turnsOrder.Add(cookedMapper);
             }
+        }
+
+        protected IState GetStateFromQueueByController(ICharacterController controller)
+        {
+            foreach (IState state in _queueOfStates)
+            {
+                if (state.GetCharacter() == controller)
+                {
+                    return state;
+                }
+            }
+            return null;
+        }
+
+        protected void RemoveElementFromQueue(IState stateForRemoval)
+        {
+
+            Queue<IState> queue = new Queue<IState>();
+
+            foreach(IState queueState in _queueOfStates)
+            {
+                if (queueState != stateForRemoval)
+                {
+                    queue.Enqueue(queueState);
+                }
+            }
+
+            _queueOfStates = queue;
+        }
+
+        protected void ClearTurnOrder()
+        {
+            _turnsOrder.Clear();
+        }
+
+        protected void AddToRawMappers(List<RawMapper> rawMappers, List<ICharacterController> controllers)
+        {
+            foreach (ICharacterController controller in controllers)
+            {
+                RawMapper mapper = new RawMapper();
+                mapper.Controller = controller;
+                mapper.Speed = controller.CharacterModel.Speed;
+                rawMappers.Add(mapper);
+            }
+        }
+
+        protected List<RawMapper> GetRawMappers()
+        {
+            List<RawMapper> rawMappers = new List<RawMapper>();
+
+            AddToRawMappers(rawMappers, _scenarioContext.Players.Cast<ICharacterController>().ToList());
+
+            AddToRawMappers(rawMappers, _scenarioContext.Enemies.Cast<ICharacterController>().ToList());
+
+            return rawMappers;
         }
 
         protected CookedMapper ConvertToCookedMapper(ICharacterController characterController)
@@ -209,5 +260,11 @@ namespace Gameplay
         {
             return $"Controller: {Controller}, State: {State}";
         }
+    }
+
+    public class RawMapper
+    {
+        public int Speed;
+        public ICharacterController Controller;
     }
 }

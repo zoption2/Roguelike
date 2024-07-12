@@ -13,7 +13,6 @@ public interface IPoolManager
     CharacterUIPooler UseCharacterUIPooler();
     ProjectilePooler UseProjectilePooler();
     SlingshotPooler UseSlingshotPooler();
-    RewardUIPooler UseRewardUIPooler();
     void InitPool(PoolType poolType, string poolName);
     void CleanPoolers();
     public void Init(GameObject parent);
@@ -29,7 +28,6 @@ public class PoolManager : IPoolManager
     private CharacterUIPooler _characterUIPooler;
     private ProjectilePooler _projectilePooler;
     private SlingshotPooler _slingshotPooler;
-    private RewardUIPooler _rewardUIPooler;
 
     private Transform _globalParent;
 
@@ -42,8 +40,7 @@ public class PoolManager : IPoolManager
         CharacterPooler characterPooler,
         CharacterUIPooler characterUIPooler,
         ProjectilePooler projectilePooler,
-        SlingshotPooler slingshotPooler,
-        RewardUIPooler rewardUIPooler
+        SlingshotPooler slingshotPooler
     )
     {
         _buffPooler = buffPooler;
@@ -54,7 +51,6 @@ public class PoolManager : IPoolManager
         _characterUIPooler = characterUIPooler;
         _projectilePooler = projectilePooler;
         _slingshotPooler = slingshotPooler;
-        _rewardUIPooler = rewardUIPooler;
     }
 
     public void Init(GameObject parent)
@@ -110,12 +106,6 @@ public class PoolManager : IPoolManager
         return _slingshotPooler;
     }
 
-    public RewardUIPooler UseRewardUIPooler()
-    {
-        InitPool(PoolType.RewardUIPool, "RewardUIPool");
-        return _rewardUIPooler;
-    }
-
     public void InitPool(PoolType poolType, string poolName)
     {
         switch (poolType)
@@ -144,9 +134,6 @@ public class PoolManager : IPoolManager
             case PoolType.SlingshotPool:
                 InitSinglePool(_slingshotPooler, poolName);
                 break;
-            case PoolType.RewardUIPool:
-                InitSinglePool(_rewardUIPooler, poolName);
-                break;
             default:
                 Debug.LogWarning("Unknown pool type: " + poolType);
                 break;
@@ -168,6 +155,5 @@ public class PoolManager : IPoolManager
         _characterUIPooler.CleanPool();
         _projectilePooler.CleanPool();
         _slingshotPooler.CleanPool();
-        _rewardUIPooler.CleanPool();
     }
 }

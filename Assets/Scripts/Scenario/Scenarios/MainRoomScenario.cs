@@ -36,13 +36,11 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         {
             Debug.LogWarning("player lost");
             _haslost = true;
-            _turnsOrder.Clear();
-            _queueOfStates.Clear();
+            ClearTurnOrder();
             LoadMainMenu();
         }
         else if (noEnemies && !_hasWon)
         {
-            _queueOfStates.Clear();
             ActivateCompleatedRoomTriggers();
             UnlockAllChests();
             _hasWon = true;
@@ -54,7 +52,7 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 
     private void UnlockAllChests()
     {
-        foreach(ChestView chest in _scenarioContext.Chests)
+        foreach(IChestController chest in _scenarioContext.Chests)
         {
             chest.UnlockChest();
         }
@@ -63,9 +61,9 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
 
     public void SubscribeToChestOpening()
     {
-        foreach (IChestView chest in _scenarioContext.Chests)
+        foreach (IChestController chest in _scenarioContext.Chests)
         {
-            chest.On_Chest_Open += _rewardService.ShowReward;
+            chest.On_Chest_Interact += _rewardService.ShowReward;
         }
     }
 

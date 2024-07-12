@@ -51,7 +51,8 @@ public class LevelManager : ILevelManager
         IGameplayService gameplayService,
         INavigationFactory navigationFactory,
         IRoomObjectsFactory roomObjectsFactory,
-        ILevelContext levelContext
+        ILevelContext levelContext,
+        IChestFactory chestFactory
     )
     {
         _roomTemplate = roomTemplateSO;
@@ -62,7 +63,8 @@ public class LevelManager : ILevelManager
 
         _roomBuilder = new RoomBuilder(
             navigationFactory,
-            roomObjectsFactory
+            roomObjectsFactory,
+            chestFactory
         );
 
         GameObject poolManagerObject = new GameObject("PoolManager");
