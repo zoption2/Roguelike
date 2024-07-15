@@ -37,6 +37,7 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
             Debug.LogWarning("player lost");
             _haslost = true;
             ClearTurnOrder();
+            ClearTurnQueue();
             LoadMainMenu();
         }
         else if (noEnemies && !_hasWon)

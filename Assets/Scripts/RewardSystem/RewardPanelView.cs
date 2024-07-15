@@ -7,17 +7,17 @@ using Zenject;
 
 public interface IRewardPanelView
 {
-    public void Init(RewardType rewardType, int rewardCount);
+    public void Init(CurrencyType rewardType, int rewardCount);
     public event OnEndAnimation On_End_Animation;
 }
-public delegate void OnEndAnimation(RewardType rewardType, int rewardCount);
+public delegate void OnEndAnimation(CurrencyType rewardType, int rewardCount);
 public class RewardPanelView : MonoBehaviour, IRewardPanelView
 {
     public event OnEndAnimation On_End_Animation;
-    private RewardType _rewardType;
+    private CurrencyType _rewardType;
     private int _rewardCount;
 
-    public void Init(RewardType rewardType, int rewardCount)
+    public void Init(CurrencyType rewardType, int rewardCount)
     {
         _rewardType = rewardType;
         _rewardCount = rewardCount;

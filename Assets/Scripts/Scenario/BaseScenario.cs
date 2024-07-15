@@ -114,6 +114,7 @@ namespace Gameplay
 
         public void SwitchState(IState state)
         {
+            Debug.Log("tried switching");
             if (_currentState != state)
             {
                 Debug.Log("SwitchState");
@@ -198,6 +199,11 @@ namespace Gameplay
         protected void ClearTurnOrder()
         {
             _turnsOrder.Clear();
+        }
+
+        protected void ClearTurnQueue()
+        {
+            _queueOfStates.Clear();
         }
 
         protected void AddToRawMappers(List<RawMapper> rawMappers, List<ICharacterController> controllers)

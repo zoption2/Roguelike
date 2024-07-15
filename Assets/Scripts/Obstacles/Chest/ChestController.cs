@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public delegate void OnChestInteraction(RewardType type, int count);
+public delegate void OnChestInteraction(CurrencyType type, int count);
 public delegate void OnChestOpen(Action onOpened);
 
 
@@ -39,7 +39,7 @@ public class ChestController : IChestController
 
         ChestView.On_Try_Open += TryOpenChest;
 
-        ChestModel.TypeOfReward = RewardType.Coin;
+        ChestModel.TypeOfReward = CurrencyType.Coin;
         ChestModel.RewardCount = 10;
     }
 

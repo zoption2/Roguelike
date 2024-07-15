@@ -485,6 +485,11 @@ public class DeadState : IConditionState
     public void OnEnter()
     {
         Debug.Log("<color=#FFFFFF>" + "--|Enter Dead Condition State|-- " + "</color>");
+        if (_characterController.IsMoving)
+        {
+            _characterController.IsMoving = false;
+            _characterController.HandleStopMovement();
+        }
         _characterController.PushIfDead();
     }
 

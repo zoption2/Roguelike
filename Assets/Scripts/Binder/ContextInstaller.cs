@@ -97,6 +97,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<ILevelContext>().To<LevelContext>().AsSingle();
         Container.Bind<IRoomBuilder>().To<RoomBuilder>().AsSingle();
         Container.Bind<IRewardService>().To<RewardService>().AsSingle();
+        Container.Bind<ICurrencyManager>().To<CurrencyManager>().AsSingle();
 
     }
 

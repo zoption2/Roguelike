@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Prefab
 {
     [CreateAssetMenu]
-    public class RewardUIPrefabHolder : PrefabHolder<RewardType>
+    public class RewardUIPrefabHolder : PrefabHolder<CurrencyType>
     {
 
     }

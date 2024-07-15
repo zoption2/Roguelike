@@ -12,7 +12,22 @@ namespace SaveSystem
         private const string kStatsFormat = "{0}_Stats";
         private const string kAbilitiesFormat = "{0}_Abilities";
         private const string PLAYER_TYPE_FORMAT = "AvailablePlayers";
+        private const string kCurrencyFormat = "{0}_Currency";
        
+
+        public void SetAmountOfCurrency(CurrencyType currencyType, int countOfCurrency)
+        {
+            string key = string.Format(kCurrencyFormat, currencyType);
+            GPrefs.SetInt(key, countOfCurrency);
+        }
+
+        public int GetAmountOfCurrency(CurrencyType currencyType)
+        {
+            string key = string.Format(kCurrencyFormat, currencyType);
+            int amountOfCurrency = GPrefs.GetInt(key);
+            return amountOfCurrency;
+        }
+
         public void SetStats(CharacterType type, OriginStats stats)
         {
             string data = JSON.ToJSON(stats);   

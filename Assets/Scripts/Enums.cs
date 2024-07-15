@@ -148,7 +148,7 @@ public enum PoolType
     SlingshotPool
 }
 
-public enum RewardType
+public enum CurrencyType
 {
     Coin
 }

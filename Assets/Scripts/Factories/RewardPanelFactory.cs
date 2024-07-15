@@ -5,7 +5,7 @@ using Prefab;
 
 public interface IRewardPanelFactory
 {
-    public IRewardPanelView CreateRewardPanel(RewardType type, int count);
+    public IRewardPanelView CreateRewardPanel(CurrencyType type, int count);
 }
 public class RewardPanelFactory : IRewardPanelFactory
 {
@@ -15,7 +15,7 @@ public class RewardPanelFactory : IRewardPanelFactory
     {
         _holder = holder;
     }
-    public IRewardPanelView CreateRewardPanel(RewardType type, int count)
+    public IRewardPanelView CreateRewardPanel(CurrencyType type, int count)
     {
         GameObject prefab = _holder.GetPrefab(type);
         GameObject rewardPanelObject = GameObject.Instantiate(prefab);

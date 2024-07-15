@@ -105,6 +105,7 @@ namespace Gameplay
                     return;
                 }
             }
+            Debug.Log("invoked ON_END_TURN");
             ON_END_TURN?.Invoke();
         }
 

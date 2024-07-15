@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class ChestModel
 {
-    public RewardType TypeOfReward;
+    public CurrencyType TypeOfReward;
     public int RewardCount;
 }
