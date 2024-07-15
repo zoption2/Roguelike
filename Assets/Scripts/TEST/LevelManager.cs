@@ -3,7 +3,9 @@ using Gameplay;
 using Pool;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -73,6 +75,7 @@ public class LevelManager : ILevelManager
         _mainRoomOrder = new List<TypeOfScenario>
         {
             TypeOfScenario.MainRoom,
+            TypeOfScenario.DefaultRoom,
             TypeOfScenario.DefaultRoom
         };
 
@@ -102,6 +105,7 @@ public class LevelManager : ILevelManager
 
     private void CreateRooms(Transform parent)
     {
+        float currentZPosition = 0;
         bool isFirstRoom = true;
 
         foreach (var typeOfScenario in RoomsOrder)
@@ -116,6 +120,12 @@ public class LevelManager : ILevelManager
                 _roomBuilder.RoomContext = roomContext;
 
                 GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
+
+                roomObject.transform.position = new Vector3(0, 0, currentZPosition);
+
+                _roomBuilder.OnNavigationCreate(parent);
+
+                currentZPosition += GetRoomHeight(template);
 
                 if (isFirstRoom)
                 {
@@ -132,8 +142,31 @@ public class LevelManager : ILevelManager
                 }
             }
         }
+
         _gameplayService.StartCurrentRoom();
     }
+
+    private float GetRoomHeight(RoomTemplateSO.Template template)
+    {
+        var coordinates = template.Coordinates;
+        float maxZ = coordinates[0, 0].z;
+        float minZ = coordinates[0, 0].z;
+
+        for (int i = 0; i < coordinates.GetLength(0); i++)
+        {
+            for (int j = 0; j < coordinates.GetLength(1); j++)
+            {
+                if (coordinates[i, j].z > maxZ)
+                    maxZ = coordinates[i, j].z;
+                if (coordinates[i, j].z < minZ)
+                    minZ = coordinates[i, j].z;
+            }
+        }
+
+        return maxZ - minZ + 1;
+    }
+
+
 
     //public void StartCurrentRoom()
     //{

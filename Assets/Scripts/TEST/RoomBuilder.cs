@@ -1,12 +1,15 @@
 using Gameplay;
 using Obstacles;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 
 public interface IRoomBuilder
 {
     GameObject BuildRoom(RoomTemplateSO.Template template, Transform parent);
+    public void OnNavigationCreate(Transform parent);
     Transform PlayersParent { get; set; }
     Transform EnemiesParent { get; set; }
     Transform BuffsParent { get; set; }
@@ -80,7 +83,7 @@ public class RoomBuilder : IRoomBuilder
 
         BuildExits(templateElements, coordinates);
         CenterCamera(roomTemplate);
-        OnNavigationCreate(roomObject.transform);
+        //OnNavigationCreate(roomObject.transform);
 
         Debug.Log($"Room '{roomTemplate.name}' created with context.");
 
@@ -190,6 +193,9 @@ public class RoomBuilder : IRoomBuilder
         Camera.main.transform.position = new Vector3(center.x, Camera.main.transform.position.y, center.z);
         Camera.main.transform.LookAt(new Vector3(center.x, 0, center.z));
     }
+
+
+
 
     private Transform CreateParent(string name, Transform parent)
     {
