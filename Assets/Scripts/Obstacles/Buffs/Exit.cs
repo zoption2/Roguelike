@@ -1,15 +1,15 @@
 using Gameplay;
 using Obstacles;
-using Pool;
 using UnityEngine;
-using Zenject;
 
 public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 {
     private bool _isActivated;
     private BoxCollider _boxCollider;
     private IGameplayService _gameplayService;
-    private ILevelManager _levelManager;    
+    private ILevelManager _levelManager;
+    private TemplateElementType _exitType;
+    private ExitDirection _exitDirection; // Додане поле для напрямку виходу
 
     private void Start()
     {
@@ -22,14 +22,25 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
         _levelManager = levelManager;
     }
 
-    //[Inject]
-    //public void Construct(
-    //    IGameplayService gameplayService,
-    //    ILevelManager levelManager)
-    //{
-    //    _gameplayService = gameplayService;
-    //    _levelManager = levelManager;
-    //}
+    public void SetExitType(TemplateElementType exitType)
+    {
+        _exitType = exitType;
+    }
+
+    public TemplateElementType GetExitType()
+    {
+        return _exitType;
+    }
+
+    public void SetExitDirection(ExitDirection exitDirection)
+    {
+        _exitDirection = exitDirection;
+    }
+
+    public ExitDirection GetExitDirection()
+    {
+        return _exitDirection;
+    }
 
     public bool GetActiveStatus()
     {
@@ -44,16 +55,8 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
     public void UseTrigger()
     {
         _gameplayService.CurrentContext = null;
-        if(_levelManager.RoomsOrder.Count > 0)
-        {
-            _gameplayService.CurrentScenario.Pause();
-            _levelManager.SwitchToNextRoom();
-            //_gameplayService.LevelManager.LoadNextRoom();
-        } else
-        {
-            _gameplayService.CurrentScenario.LoadMainMenu();
-        }
-        
+        _gameplayService.CurrentScenario.Pause();
+        _levelManager.SwitchToNextRoom();
     }
 
     public void DisableTrigger()
