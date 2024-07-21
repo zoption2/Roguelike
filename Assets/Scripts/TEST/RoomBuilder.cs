@@ -131,10 +131,11 @@ public class RoomBuilder : IRoomBuilder
         Debug.Log($"Analyzed template {roomTemplate}: PlayerSpawnPoints={RoomContext.PlayerSpawnPoints.Count}, EnemySpawnPoints={RoomContext.EnemySpawnPoints.Count}, BuffSpawnPoints={RoomContext.BuffSpawnPoints.Count}");
     }
 
-    private  void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
+    private void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)
     {
         int rows = templateElements.GetLength(0);
         int cols = templateElements.GetLength(1);
+        List<Exit> exits = new List<Exit>();
 
         for (int i = 0; i < rows; i++)
         {
@@ -147,8 +148,12 @@ public class RoomBuilder : IRoomBuilder
                         templateElements[i, j + 2] == TemplateElementType.Exit)
                     {
                         Vector3 centerPos = coordinates[i, j + 1];
-                        GameObject exit =  _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+                        GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
                         exit.transform.rotation = Quaternion.Euler(0, 90, 0);
+
+                        Exit exitComponent = exit.GetComponent<Exit>();
+                        SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
+                        exits.Add(exitComponent);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
                         RoomContext.CompleatedRoomTriggers.Add(trigger);
@@ -161,7 +166,11 @@ public class RoomBuilder : IRoomBuilder
                              templateElements[i + 2, j] == TemplateElementType.Exit)
                     {
                         Vector3 centerPos = coordinates[i + 1, j];
-                        GameObject exit =  _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+                        GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
+
+                        Exit exitComponent = exit.GetComponent<Exit>();
+                        SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
+                        exits.Add(exitComponent);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
                         RoomContext.CompleatedRoomTriggers.Add(trigger);
@@ -170,6 +179,69 @@ public class RoomBuilder : IRoomBuilder
                         templateElements[i + 2, j] = TemplateElementType.None;
                     }
                 }
+            }
+        }
+
+        SetExitTypes(exits);
+    }
+
+    private void SetExitDirection(Exit exit, Vector3 position, Vector3[,] coordinates, int rows, int cols)
+    {
+        // визначення меж координат
+        float minX = float.MaxValue;
+        float maxX = float.MinValue;
+        float minZ = float.MaxValue;
+        float maxZ = float.MinValue;
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                if (coordinates[i, j].x < minX) minX = coordinates[i, j].x;
+                if (coordinates[i, j].x > maxX) maxX = coordinates[i, j].x;
+                if (coordinates[i, j].z < minZ) minZ = coordinates[i, j].z;
+                if (coordinates[i, j].z > maxZ) maxZ = coordinates[i, j].z;
+            }
+        }
+
+        // Встановлення напряму залежно від позиції
+        if (position.x == minX)
+        {
+            exit.SetExitDirection(ExitDirection.Left);
+        }
+        else if (position.x == maxX)
+        {
+            exit.SetExitDirection(ExitDirection.Right);
+        }
+        else if (position.z == minZ)
+        {
+            exit.SetExitDirection(ExitDirection.Bottom);
+        }
+        else if (position.z == maxZ)
+        {
+            exit.SetExitDirection(ExitDirection.Top);
+        }
+        else
+        {
+            Debug.LogWarning("Не вдалося визначити напрямок виходу для позиції: " + position);
+        }
+    }
+
+    private void SetExitTypes(List<Exit> exits)
+    {
+        if (exits.Count == 0) return;
+
+        exits[0].SetExitType(TemplateElementType.ExitToStoryRoom);
+
+        for (int i = 1; i < exits.Count; i++)
+        {
+            if (i % 2 == 0)
+            {
+                exits[i].SetExitType(TemplateElementType.ExitToBountyRoom);
+            }
+            else
+            {
+                exits[i].SetExitType(TemplateElementType.ExitToRandomeRoom);
             }
         }
     }

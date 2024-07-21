@@ -8,8 +8,11 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
     private BoxCollider _boxCollider;
     private IGameplayService _gameplayService;
     private ILevelManager _levelManager;
+    [SerializeField]
     private TemplateElementType _exitType;
-    private ExitDirection _exitDirection; // Додане поле для напрямку виходу
+    [SerializeField]
+    private ExitDirection _exitDirection;
+    public Transform Transform { get; set; }
 
     private void Start()
     {
