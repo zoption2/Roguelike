@@ -243,7 +243,7 @@ namespace Gameplay
             return cookedMapper;
         }
 
-        public void ActivateCompleatedRoomTriggers()
+        public void ActivateCompletedRoomTriggers()
         {
             foreach (var trigger in _scenarioContext.CompleatedRoomTriggers)
             {

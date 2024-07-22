@@ -114,7 +114,7 @@ public class ContextInstaller : MonoInstaller
     public void BindScenarios()
     {
         Container.Bind<IDefaultScenario>().To<DefaultScenario>().AsTransient();
-        Container.Bind<IMainRoomScenario>().To<MainRoomScenario>().AsTransient();
+        Container.Bind<IChestScenario>().To<ChestScenario>().AsTransient();
     }
     public void BindPoolers()
     {
@@ -148,7 +148,7 @@ public class ContextInstaller : MonoInstaller
     public void BindPrefabHolders()
     {
         Container.Bind<CharacterPrefabHolder>().FromInstance(_characterPrefabHolder).AsSingle();
-        Container.Bind<CharacterUIPrefabHolder>().FromInstance(_characterUIPrefabHolder).AsTransient();
+        Container.Bind<CharacterUIPrefabHolder>().FromInstance(_characterUIPrefabHolder).AsSingle();
         Container.Bind<SlingShotPrefabHolder>().FromInstance(_slingShotPrefabHolder).AsSingle();
         Container.Bind<CharacterPanelPrefabHolder>().FromInstance(characterPanelPrefabHolder).AsSingle();
         Container.Bind<BuffPrefabHolder>().FromInstance(_buffPrefabHolder).AsSingle();

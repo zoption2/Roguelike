@@ -25,12 +25,21 @@ public class BossScenario : Scenario<RoomContext>
 
     public override void CheckConditonsForEndOfScenario()
     {
+        bool noPlayers = _scenarioContext.Players.Count == 0;
+        bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
+        if (noPlayers && !_haslost)
+        {
+            _haslost = true;
+            ClearTurnOrder();
+            ClearTurnQueue();
+            LoadMainMenu();
+        }
+        else if (noEnemies && !_hasWon)
+        {
+            ActivateCompletedRoomTriggers();
+            _hasWon = true;
+        }
     }
 
-    public override void EraseCharacter(ICharacterController controller)
-    {
-        base.EraseCharacter(controller);
-        CheckConditonsForEndOfScenario();
-    }
 }

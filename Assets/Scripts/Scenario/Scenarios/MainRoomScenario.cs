@@ -9,15 +9,15 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public interface IMainRoomScenario : IScenario
+public interface IChestScenario : IScenario
 { 
 
 }
 
 
-public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
+public class ChestScenario : Scenario<RoomContext>, IChestScenario
 {
-    public MainRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory, ILevelManager levelManager)
+    public ChestScenario(IGameplayService gameplayService, IStateFactory stateFactory, ILevelManager levelManager)
     {
         GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
@@ -42,7 +42,7 @@ public class MainRoomScenario : Scenario<RoomContext>, IMainRoomScenario
         }
         else if (noEnemies && !_hasWon)
         {
-            ActivateCompleatedRoomTriggers();
+            ActivateCompletedRoomTriggers();
             UnlockAllChests();
             _hasWon = true;
             //PREPAIR LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!

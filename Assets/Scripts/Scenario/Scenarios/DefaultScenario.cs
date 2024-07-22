@@ -41,7 +41,7 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         {
             _queueOfStates.Clear();
             _hasWon = true;
-            ActivateCompleatedRoomTriggers();
+            ActivateCompletedRoomTriggers();
 
             //PREPAIRE LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
 
