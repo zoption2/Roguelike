@@ -126,6 +126,37 @@ public class LevelManager : ILevelManager
         }
     }
 
+    private void CreateMainRoom(Transform parent)
+    {
+        if (RoomsOrder.Count == 0) return;
+
+        var typeOfScenario = RoomsOrder.Dequeue();
+        var template = SetTemplate(typeOfScenario);
+        if (template != null)
+        {
+            string roomName = template.name;
+            _levelContext.CreateRoomContext(roomName);
+            RoomContext roomContext = _levelContext.GetRoomContext(roomName);
+
+            _roomBuilder.RoomContext = roomContext;
+
+            GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
+
+            roomObject.transform.position = Vector3.zero;
+
+            _roomBuilder.OnNavigationCreate(parent);
+
+            roomObject.SetActive(true);
+            _levelContext.CurrentRoomContext = roomContext;
+            _levelContext.CurrentRoomName = roomName;
+            _levelContext.CurrentRoomType = typeOfScenario;
+
+            SetExitTypesAndDirections(roomContext, template);
+            BuildNextRooms();
+            _gameplayService.StartCurrentRoom();
+        }
+    }
+
     public void LoadMenu()
     {
         SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
