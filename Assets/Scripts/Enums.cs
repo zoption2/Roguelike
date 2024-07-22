@@ -123,7 +123,7 @@ public enum TemplateElementType
     Summoner = 102,
     ExitToStoryRoom = 200,
     ExitToBountyRoom = 201,
-    ExitToRandomeRoom = 202
+    ExitToRandomRoom = 202
 }
 
 public enum ProjectileType
@@ -138,7 +138,7 @@ public enum TypeOfScenario
     MainRoom,
     Boss,
     BountyRoom,
-    RandomeRoom,
+    RandomRoom,
 }
 
 public enum PoolType

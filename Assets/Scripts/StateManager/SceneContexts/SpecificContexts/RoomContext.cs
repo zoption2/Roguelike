@@ -68,39 +68,4 @@ namespace Gameplay
             Chests = new List<IChestController>();
         }
     }
-
-    //public void CheckIfAllStopped()
-    //{
-    //    foreach (IPlayerController player in Players)
-    //    {
-    //        if (player.CheckIfMoving())
-    //        {
-    //            return;
-    //        }
-    //    }
-
-    //    foreach (IEnemyController enemy in Enemies)
-    //    {
-    //        if (enemy.CheckIfMoving())
-    //        {
-    //            return;
-    //        }
-    //    }
-    //    ON_END_TURN?.Invoke();
-    //}
-
-    //public void ProcessTurnEnd()
-    //{
-    //    foreach (IPlayerController player in Players)
-    //    {
-    //        player.UpdateHealthBar();
-    //    }
-
-    //    foreach (IEnemyController enemy in Enemies)
-    //    {
-    //        enemy.UpdateHealthBar();
-    //    }
-    //}
 }
-
-

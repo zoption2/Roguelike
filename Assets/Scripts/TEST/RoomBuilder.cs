@@ -159,7 +159,6 @@ public class RoomBuilder : IRoomBuilder
 
                         Exit exitComponent = exit.GetComponent<Exit>();
                         exitComponent.Transform = exit.transform;
-                        SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
                         exits.Add(exitComponent);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
@@ -177,7 +176,6 @@ public class RoomBuilder : IRoomBuilder
 
                         Exit exitComponent = exit.GetComponent<Exit>();
                         exitComponent.Transform = exit.transform;
-                        SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
                         exits.Add(exitComponent);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
@@ -187,63 +185,6 @@ public class RoomBuilder : IRoomBuilder
                         templateElements[i + 2, j] = TemplateElementType.None;
                     }
                 }
-            }
-        }
-
-        SetExitTypes(exits);
-    }
-
-    private void SetExitDirection(Exit exit, Vector3 position, Vector3[,] coordinates, int rows, int cols)
-    {
-        float minX = float.MaxValue;
-        float maxX = float.MinValue;
-        float minZ = float.MaxValue;
-        float maxZ = float.MinValue;
-
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                if (coordinates[i, j].x < minX) minX = coordinates[i, j].x;
-                if (coordinates[i, j].x > maxX) maxX = coordinates[i, j].x;
-                if (coordinates[i, j].z < minZ) minZ = coordinates[i, j].z;
-                if (coordinates[i, j].z > maxZ) maxZ = coordinates[i, j].z;
-            }
-        }
-
-        if (position.x == minX)
-        {
-            exit.SetExitDirection(ExitDirection.Left);
-        }
-        else if (position.x == maxX)
-        {
-            exit.SetExitDirection(ExitDirection.Right);
-        }
-        else if (position.z == minZ)
-        {
-            exit.SetExitDirection(ExitDirection.Bottom);
-        }
-        else if (position.z == maxZ)
-        {
-            exit.SetExitDirection(ExitDirection.Top);
-        }
-    }
-
-    private void SetExitTypes(List<Exit> exits)
-    {
-        if (exits.Count == 0) return;
-
-        exits[0].SetExitType(TemplateElementType.ExitToStoryRoom);
-
-        for (int i = 1; i < exits.Count; i++)
-        {
-            if (i % 2 == 0)
-            {
-                exits[i].SetExitType(TemplateElementType.ExitToBountyRoom);
-            }
-            else
-            {
-                exits[i].SetExitType(TemplateElementType.ExitToRandomeRoom);
             }
         }
     }

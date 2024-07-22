@@ -81,15 +81,6 @@ public class RoomTemplateSO : ScriptableObject
         [HideInInspector] public TemplateElementType rightExit;
         [HideInInspector] public TemplateElementType topExit;
         [HideInInspector] public TemplateElementType bottomExit;
-
-        public bool HasExit(Vector3 direction)
-        {
-            if (direction == Vector3.left && rightExit == TemplateElementType.Exit) return true;
-            if (direction == Vector3.right && leftExit == TemplateElementType.Exit) return true;
-            if (direction == Vector3.up && bottomExit == TemplateElementType.Exit) return true;
-            if (direction == Vector3.down && topExit == TemplateElementType.Exit) return true;
-            return false;
-        }
     }
 
     [SerializeField]

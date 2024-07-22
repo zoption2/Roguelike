@@ -128,33 +128,29 @@ public class LevelManager : ILevelManager
 
     private void CreateMainRoom(Transform parent)
     {
-        if (RoomsOrder.Count == 0) return;
-
         var typeOfScenario = RoomsOrder.Dequeue();
         var template = SetTemplate(typeOfScenario);
-        if (template != null)
-        {
-            string roomName = template.name;
-            _levelContext.CreateRoomContext(roomName);
-            RoomContext roomContext = _levelContext.GetRoomContext(roomName);
 
-            _roomBuilder.RoomContext = roomContext;
+        string roomName = template.name;
+        _levelContext.CreateRoomContext(roomName);
+        RoomContext roomContext = _levelContext.GetRoomContext(roomName);
 
-            GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
+        _roomBuilder.RoomContext = roomContext;
 
-            roomObject.transform.position = Vector3.zero;
+        GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
 
-            _roomBuilder.OnNavigationCreate(parent);
+        roomObject.transform.position = Vector3.zero;
 
-            roomObject.SetActive(true);
-            _levelContext.CurrentRoomContext = roomContext;
-            _levelContext.CurrentRoomName = roomName;
-            _levelContext.CurrentRoomType = typeOfScenario;
+        _roomBuilder.OnNavigationCreate(parent);
 
-            SetExitTypesAndDirections(roomContext, template);
-            BuildNextRooms();
-            _gameplayService.StartCurrentRoom();
-        }
+        roomObject.SetActive(true);
+        _levelContext.CurrentRoomContext = roomContext;
+        _levelContext.CurrentRoomName = roomName;
+        _levelContext.CurrentRoomType = typeOfScenario;
+
+        SetExitTypesAndDirections(roomContext, template);
+        _gameplayService.StartCurrentRoom();
+
     }
 
     public void LoadMenu()
@@ -179,11 +175,11 @@ public class LevelManager : ILevelManager
     {
         var exits = roomContext.CompleatedRoomTriggers;
         var exitTypes = new List<TemplateElementType>
-    {
-        TemplateElementType.ExitToStoryRoom,
-        TemplateElementType.ExitToBountyRoom,
-        TemplateElementType.ExitToRandomeRoom
-    };
+        {
+            TemplateElementType.ExitToStoryRoom,
+            TemplateElementType.ExitToBountyRoom,
+            TemplateElementType.ExitToRandomRoom
+        };
 
         for (int i = 0; i < exits.Count; i++)
         {
@@ -226,36 +222,6 @@ public class LevelManager : ILevelManager
         }
     }
 
-    private void CreateRooms(Transform parent)
-    {
-        if (RoomsOrder.Count == 0) return;
-
-        var typeOfScenario = RoomsOrder.Dequeue();
-        var template = SetTemplate(typeOfScenario);
-        if (template != null)
-        {
-            string roomName = template.name;
-            _levelContext.CreateRoomContext(roomName);
-            RoomContext roomContext = _levelContext.GetRoomContext(roomName);
-
-            _roomBuilder.RoomContext = roomContext;
-
-            GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
-
-            roomObject.transform.position = Vector3.zero;
-
-            _roomBuilder.OnNavigationCreate(parent);
-
-            roomObject.SetActive(true);
-            _levelContext.CurrentRoomContext = roomContext;
-            _levelContext.CurrentRoomName = roomName;
-            _levelContext.CurrentRoomType = typeOfScenario;
-
-            _gameplayService.StartCurrentRoom();
-        }
-    }
-
-
     public void BuildNextRooms()
     {
         var exits = _levelContext.CurrentRoomContext.CompleatedRoomTriggers.ToList();
@@ -279,8 +245,8 @@ public class LevelManager : ILevelManager
                 case TemplateElementType.ExitToBountyRoom:
                     nextRoomType = TypeOfScenario.BountyRoom;
                     break;
-                case TemplateElementType.ExitToRandomeRoom:
-                    nextRoomType = TypeOfScenario.RandomeRoom;
+                case TemplateElementType.ExitToRandomRoom:
+                    nextRoomType = TypeOfScenario.RandomRoom;
                     break;
                 default:
                     Debug.LogWarning($"Unhandled exit type: {exit.GetExitType()}");
@@ -299,22 +265,24 @@ public class LevelManager : ILevelManager
 
                     _roomBuilder.RoomContext = nextRoomContext;
 
+                    Vector3 newRoomZeroCoordinate = template.Coordinates[0, 0];
+
                     switch (exit.GetExitDirection())
                     {
                         case ExitDirection.Top:
-                            newPosition = exit.Transform.position + new Vector3(0, 0, 1);
+                            newPosition = exit.Transform.position + new Vector3(0, 0, 1) - newRoomZeroCoordinate;
                             newRotation = Quaternion.Euler(0, 0, 0);
                             break;
                         case ExitDirection.Bottom:
-                            newPosition = exit.Transform.position + new Vector3(0, 0, -1);
+                            newPosition = exit.Transform.position + new Vector3(0, 0, -1) - newRoomZeroCoordinate;
                             newRotation = Quaternion.Euler(0, 180, 0);
                             break;
                         case ExitDirection.Left:
-                            newPosition = exit.Transform.position + new Vector3(-1, 0, 0);
+                            newPosition = exit.Transform.position + new Vector3(-1, 0, 0) - newRoomZeroCoordinate;
                             newRotation = Quaternion.Euler(0, -90, 0);
                             break;
                         case ExitDirection.Right:
-                            newPosition = exit.Transform.position + new Vector3(1, 0, 0);
+                            newPosition = exit.Transform.position + new Vector3(1, 0, 0) - newRoomZeroCoordinate;
                             newRotation = Quaternion.Euler(0, 90, 0);
                             break;
                         default:
@@ -325,41 +293,63 @@ public class LevelManager : ILevelManager
                     GameObject roomObject = _roomBuilder.BuildRoom(template, RoomsParent);
                     roomObject.transform.position = newPosition;
                     roomObject.transform.rotation = newRotation;
-                    //roomObject.SetActive(false);
 
                     Debug.Log($"Created room {nextRoomName} of type {nextRoomType} at position {newPosition} with rotation {newRotation}");
+
+                    var newRoomExits = nextRoomContext.CompleatedRoomTriggers;
+                    if (newRoomExits.Count > 0)
+                    {
+                        var oppositeExit = newRoomExits.FirstOrDefault();
+                        if (oppositeExit != null)
+                        {
+                            switch (exit.GetExitDirection())
+                            {
+                                case ExitDirection.Top:
+                                    oppositeExit.SetExitDirection(ExitDirection.Bottom);
+                                    break;
+                                case ExitDirection.Bottom:
+                                    oppositeExit.SetExitDirection(ExitDirection.Top);
+                                    break;
+                                case ExitDirection.Left:
+                                    oppositeExit.SetExitDirection(ExitDirection.Right);
+                                    break;
+                                case ExitDirection.Right:
+                                    oppositeExit.SetExitDirection(ExitDirection.Left);
+                                    break;
+                            }
+                        }
+
+                        var exitTypes = new List<TemplateElementType>
+                        {
+                            TemplateElementType.ExitToStoryRoom,
+                            TemplateElementType.ExitToBountyRoom,
+                            TemplateElementType.ExitToRandomRoom
+                        };
+                        for (int i = 1; i < newRoomExits.Count; i++)
+                        {
+                            newRoomExits[i].SetExitType(exitTypes[Random.Range(0, exitTypes.Count)]);
+                            var availableDirections = new List<ExitDirection>
+                            {
+                                ExitDirection.Top,
+                                ExitDirection.Bottom,
+                                ExitDirection.Left,
+                                ExitDirection.Right
+                            };
+                            availableDirections.Remove(oppositeExit.GetExitDirection());
+                            newRoomExits[i].SetExitDirection(availableDirections[Random.Range(0, availableDirections.Count)]);
+                        }
+                    }
                 }
                 else
                 {
                     Debug.LogWarning($"Room {nextRoomName} already exists, skipping creation.");
                 }
-
             }
             else
             {
                 Debug.LogWarning($"No template found for room type: {nextRoomType}");
             }
         }
-    }
-
-    private float GetRoomHeight(RoomTemplateSO.Template template)
-    {
-        var coordinates = template.Coordinates;
-        float maxZ = coordinates[0, 0].z;
-        float minZ = coordinates[0, 0].z;
-
-        for (int i = 0; i < coordinates.GetLength(0); i++)
-        {
-            for (int j = 0; j < coordinates.GetLength(1); j++)
-            {
-                if (coordinates[i, j].z > maxZ)
-                    maxZ = coordinates[i, j].z;
-                if (coordinates[i, j].z < minZ)
-                    minZ = coordinates[i, j].z;
-            }
-        }
-
-        return maxZ - minZ + 1;
     }
 
     public void SwitchToNextRoom()
@@ -411,19 +401,4 @@ public class LevelManager : ILevelManager
 
         return selectedTemplate;
     }
-
-    public void MoveObjectToScene(GameObject obj, string targetSceneName)
-    {
-        Scene targetScene = SceneManager.GetSceneByName(targetSceneName);
-        if (!targetScene.IsValid())
-        {
-            targetScene = SceneManager.CreateScene(targetSceneName);
-        }
-
-        SceneManager.MoveGameObjectToScene(obj, targetScene);
-    }
 }
-
-
-
-
