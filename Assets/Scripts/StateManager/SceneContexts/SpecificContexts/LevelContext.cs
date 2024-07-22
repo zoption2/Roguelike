@@ -20,7 +20,7 @@ namespace Gameplay
         IScenario CurrentRoomScenario { get; set; }
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
-
+        public NavMeshSurface NavMeshSurface { get; set; }
     }
 
     public class LevelContext : ILevelContext
@@ -32,6 +32,7 @@ namespace Gameplay
         public IScenario CurrentRoomScenario { get; set; }
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
+        public NavMeshSurface NavMeshSurface { get; set; } // ������ ����
 
         public LevelContext()
         {
@@ -93,4 +94,5 @@ namespace Gameplay
             }
         }
     }
+
 }

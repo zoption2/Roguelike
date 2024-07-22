@@ -35,6 +35,7 @@ namespace Gameplay
         public IScenario CurrentScenario { get; set; }
         public IScenarioContext CurrentContext { get; set; }
         private ILevelContext _levelContext;
+        private ILevelManager _levelManager;
 
         public event OnEndTurn ON_END_TURN;
 
@@ -72,7 +73,7 @@ namespace Gameplay
 
             IScenario currentScenario = _scenarioFactory.CreateScenario(currentRoomType, this);
             _levelContext.CreateScenario(currentRoomName, currentScenario);
-           
+
             _levelContext.CurrentRoomContext = _levelContext.GetRoomContext(currentRoomName);
             _levelContext.CurrentRoomScenario = _levelContext.GetScenario(currentRoomName);
 
@@ -84,8 +85,11 @@ namespace Gameplay
                 CreatePlayer();
             }
 
+            
             CurrentScenario.Init(CurrentContext);
+            _levelManager.BuildNextRooms();
         }
+
 
 
         public void CheckIfAllStopped()

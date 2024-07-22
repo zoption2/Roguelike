@@ -100,6 +100,7 @@ public enum NavigationType
 
 public enum ExitDirection
 {
+    None,
     Left,
     Right,
     Top,
@@ -120,7 +121,9 @@ public enum TemplateElementType
     Barbarian = 100,
     Thrower = 101,
     Summoner = 102,
-
+    ExitToStoryRoom = 200,
+    ExitToBountyRoom = 201,
+    ExitToRandomeRoom = 202
 }
 
 public enum ProjectileType
@@ -133,7 +136,9 @@ public enum TypeOfScenario
 {
     DefaultRoom,
     MainRoom,
-    Boss
+    Boss,
+    BountyRoom,
+    RandomeRoom,
 }
 
 public enum PoolType
