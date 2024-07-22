@@ -175,6 +175,57 @@ public class LevelManager : ILevelManager
         }
     }
 
+    private void SetExitTypesAndDirections(RoomContext roomContext, RoomTemplateSO.Template template)
+    {
+        var exits = roomContext.CompleatedRoomTriggers;
+        var exitTypes = new List<TemplateElementType>
+    {
+        TemplateElementType.ExitToStoryRoom,
+        TemplateElementType.ExitToBountyRoom,
+        TemplateElementType.ExitToRandomeRoom
+    };
+
+        for (int i = 0; i < exits.Count; i++)
+        {
+            var exit = exits[i];
+            exit.SetExitType(exitTypes[i % exitTypes.Count]);
+
+            Vector3 position = exit.Transform.position;
+            float minX = float.MaxValue, maxX = float.MinValue, minZ = float.MaxValue, maxZ = float.MinValue;
+
+            var coordinates = template.Coordinates;
+
+            for (int row = 0; row < coordinates.GetLength(0); row++)
+            {
+                for (int col = 0; col < coordinates.GetLength(1); col++)
+                {
+                    var coord = coordinates[row, col];
+                    if (coord.x < minX) minX = coord.x;
+                    if (coord.x > maxX) maxX = coord.x;
+                    if (coord.z < minZ) minZ = coord.z;
+                    if (coord.z > maxZ) maxZ = coord.z;
+                }
+            }
+
+            if (position.x == minX)
+            {
+                exit.SetExitDirection(ExitDirection.Left);
+            }
+            else if (position.x == maxX)
+            {
+                exit.SetExitDirection(ExitDirection.Right);
+            }
+            else if (position.z == minZ)
+            {
+                exit.SetExitDirection(ExitDirection.Bottom);
+            }
+            else if (position.z == maxZ)
+            {
+                exit.SetExitDirection(ExitDirection.Top);
+            }
+        }
+    }
+
     private void CreateRooms(Transform parent)
     {
         if (RoomsOrder.Count == 0) return;
@@ -372,3 +423,7 @@ public class LevelManager : ILevelManager
         SceneManager.MoveGameObjectToScene(obj, targetScene);
     }
 }
+
+
+
+
