@@ -153,7 +153,7 @@ public class RoomBuilder : IRoomBuilder
 
                         Exit exitComponent = exit.GetComponent<Exit>();
                         exitComponent.Transform = exit.transform;
-                        SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
+                        //SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
                         exits.Add(exitComponent);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
@@ -171,7 +171,7 @@ public class RoomBuilder : IRoomBuilder
 
                         Exit exitComponent = exit.GetComponent<Exit>();
                         exitComponent.Transform = exit.transform;
-                        SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
+                        //SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
                         exits.Add(exitComponent);
 
                         ICompleatedRoomTrigger trigger = exit.GetComponent<ICompleatedRoomTrigger>();
@@ -184,7 +184,7 @@ public class RoomBuilder : IRoomBuilder
             }
         }
 
-        SetExitTypes(exits);
+        //SetExitTypes(exits);
     }
 
     private void SetExitDirection(Exit exit, Vector3 position, Vector3[,] coordinates, int rows, int cols)
