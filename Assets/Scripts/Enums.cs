@@ -100,6 +100,7 @@ public enum NavigationType
 
 public enum ExitDirection
 {
+    None,
     Left,
     Right,
     Top,

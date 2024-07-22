@@ -152,6 +152,7 @@ public class RoomBuilder : IRoomBuilder
                         exit.transform.rotation = Quaternion.Euler(0, 90, 0);
 
                         Exit exitComponent = exit.GetComponent<Exit>();
+                        exitComponent.Transform = exit.transform;
                         SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
                         exits.Add(exitComponent);
 
@@ -169,6 +170,7 @@ public class RoomBuilder : IRoomBuilder
                         GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, RoomObjectType.Exit);
 
                         Exit exitComponent = exit.GetComponent<Exit>();
+                        exitComponent.Transform = exit.transform;
                         SetExitDirection(exitComponent, centerPos, coordinates, rows, cols);
                         exits.Add(exitComponent);
 
@@ -187,7 +189,6 @@ public class RoomBuilder : IRoomBuilder
 
     private void SetExitDirection(Exit exit, Vector3 position, Vector3[,] coordinates, int rows, int cols)
     {
-        // визначення меж координат
         float minX = float.MaxValue;
         float maxX = float.MinValue;
         float minZ = float.MaxValue;
@@ -204,7 +205,6 @@ public class RoomBuilder : IRoomBuilder
             }
         }
 
-        // Встановлення напряму залежно від позиції
         if (position.x == minX)
         {
             exit.SetExitDirection(ExitDirection.Left);
@@ -220,10 +220,6 @@ public class RoomBuilder : IRoomBuilder
         else if (position.z == maxZ)
         {
             exit.SetExitDirection(ExitDirection.Top);
-        }
-        else
-        {
-            Debug.LogWarning("Не вдалося визначити напрямок виходу для позиції: " + position);
         }
     }
 

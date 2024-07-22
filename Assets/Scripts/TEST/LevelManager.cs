@@ -83,7 +83,6 @@ public class LevelManager : ILevelManager
         _levelContext = levelContext;
         _roomBuilder = new RoomBuilder(navigationFactory, roomObjectsFactory);
 
-        // Створюємо GlobalPoolParent та ініціалізуємо PoolManager
         GameObject globalPoolParentObject = GameObject.Find("GlobalPoolParent");
         if (globalPoolParentObject == null)
         {
@@ -118,66 +117,54 @@ public class LevelManager : ILevelManager
                 GameObject roomsObject = new GameObject("Rooms");
                 SceneManager.MoveGameObjectToScene(roomsObject, scene);
 
-                CreateRooms(roomsObject.transform);
+                CreateMainRoom(roomsObject.transform);
 
                 SceneManager.sceneLoaded -= OnLevelSceneLoaded;
             }
         }
     }
 
-    private void CreateRooms(Transform parent)
+    private void CreateMainRoom(Transform parent)
     {
-        float currentZPosition = 0;
-        bool isFirstRoom = true;
+        if (RoomsOrder.Count == 0) return;
 
-        foreach (var typeOfScenario in RoomsOrder)
+        var typeOfScenario = RoomsOrder.Dequeue();
+        var template = SetTemplate(typeOfScenario);
+        if (template != null)
         {
-            var template = SetTemplate(typeOfScenario);
-            if (template != null)
-            {
-                string roomName = template.name;
-                _levelContext.CreateRoomContext(roomName);
-                RoomContext roomContext = _levelContext.GetRoomContext(roomName);
+            string roomName = template.name;
+            _levelContext.CreateRoomContext(roomName);
+            RoomContext roomContext = _levelContext.GetRoomContext(roomName);
 
-                _roomBuilder.RoomContext = roomContext;
+            _roomBuilder.RoomContext = roomContext;
 
-                GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
+            GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
 
-                roomObject.transform.position = new Vector3(0, 0, currentZPosition);
+            roomObject.transform.position = Vector3.zero;
 
-                _roomBuilder.OnNavigationCreate(parent);
+            _roomBuilder.OnNavigationCreate(parent);
 
-                currentZPosition += GetRoomHeight(template);
+            roomObject.SetActive(true);
+            _levelContext.CurrentRoomContext = roomContext;
+            _levelContext.CurrentRoomName = roomName;
+            _levelContext.CurrentRoomType = typeOfScenario;
 
-                if (isFirstRoom)
-                {
-                    roomObject.SetActive(true);
-                    _levelContext.CurrentRoomContext = roomContext;
-                    _levelContext.CurrentRoomName = roomName;
-                    _levelContext.CurrentRoomType = typeOfScenario;
-
-                    isFirstRoom = false;
-                }
-                else
-                {
-                    roomObject.SetActive(false);
-                }
-            }
+            _gameplayService.StartCurrentRoom();
         }
-
-        _gameplayService.StartCurrentRoom();
     }
+
 
     public void BuildNextRooms()
     {
-        var exits = _levelContext.CurrentRoomContext.CompleatedRoomTriggers.ToList(); // Робимо копію списку
+        var exits = _levelContext.CurrentRoomContext.CompleatedRoomTriggers.ToList();
         Debug.Log($"Total exits to process: {exits.Count}");
         Debug.Log($"RoomsParent: {RoomsParent.name}");
 
         foreach (var exit in exits)
         {
-            TypeOfScenario nextRoomType = TypeOfScenario.DefaultRoom; // за замовчуванням
+            TypeOfScenario nextRoomType = TypeOfScenario.DefaultRoom;
             Vector3 newPosition = Vector3.zero;
+            Quaternion newRotation = Quaternion.identity;
 
             switch (exit.GetExitType())
             {
@@ -185,20 +172,13 @@ public class LevelManager : ILevelManager
                     if (RoomsOrder.Count > 0)
                     {
                         nextRoomType = RoomsOrder.Dequeue();
-                        Debug.Log($"Creating room from RoomsOrder: {nextRoomType}");
-                    }
-                    else
-                    {
-                        Debug.LogWarning("RoomsOrder is empty, defaulting to DefaultRoom");
                     }
                     break;
                 case TemplateElementType.ExitToBountyRoom:
                     nextRoomType = TypeOfScenario.BountyRoom;
-                    Debug.Log("Creating BountyRoom");
                     break;
                 case TemplateElementType.ExitToRandomeRoom:
                     nextRoomType = TypeOfScenario.RandomeRoom;
-                    Debug.Log("Creating RandomeRoom");
                     break;
                 default:
                     Debug.LogWarning($"Unhandled exit type: {exit.GetExitType()}");
@@ -210,7 +190,6 @@ public class LevelManager : ILevelManager
             {
                 string nextRoomName = template.name;
 
-                // Перевірка, чи вже існує контекст кімнати
                 if (_levelContext.GetRoomContext(nextRoomName) == null)
                 {
                     _levelContext.CreateRoomContext(nextRoomName);
@@ -218,38 +197,41 @@ public class LevelManager : ILevelManager
 
                     _roomBuilder.RoomContext = nextRoomContext;
 
-                    // Визначення позиції нової кімнати на основі типу виходу
                     switch (exit.GetExitDirection())
                     {
                         case ExitDirection.Top:
                             newPosition = exit.Transform.position + new Vector3(0, 0, 1);
+                            newRotation = Quaternion.Euler(0, 0, 0);
                             break;
                         case ExitDirection.Bottom:
                             newPosition = exit.Transform.position + new Vector3(0, 0, -1);
+                            newRotation = Quaternion.Euler(0, 180, 0);
                             break;
                         case ExitDirection.Left:
                             newPosition = exit.Transform.position + new Vector3(-1, 0, 0);
+                            newRotation = Quaternion.Euler(0, -90, 0);
                             break;
                         case ExitDirection.Right:
                             newPosition = exit.Transform.position + new Vector3(1, 0, 0);
+                            newRotation = Quaternion.Euler(0, 90, 0);
                             break;
                         default:
                             Debug.LogWarning("Invalid exit direction");
                             break;
                     }
 
-                    GameObject roomObject = _roomBuilder.BuildRoom(template, RoomsParent); // Створюємо кімнату у Rooms
+                    GameObject roomObject = _roomBuilder.BuildRoom(template, RoomsParent);
                     roomObject.transform.position = newPosition;
-                    roomObject.SetActive(false); // щоб нові кімнати були неактивні до переходу
+                    roomObject.transform.rotation = newRotation;
+                    //roomObject.SetActive(false);
 
-                    Debug.Log($"Created room {nextRoomName} of type {nextRoomType} at position {newPosition}");
+                    Debug.Log($"Created room {nextRoomName} of type {nextRoomType} at position {newPosition} with rotation {newRotation}");
                 }
                 else
                 {
                     Debug.LogWarning($"Room {nextRoomName} already exists, skipping creation.");
                 }
 
-                // exit.SetExitType(TemplateElementType.None); // Не потрібно помічати вихід як використаний, якщо це новий вихід
             }
             else
             {
@@ -257,8 +239,6 @@ public class LevelManager : ILevelManager
             }
         }
     }
-
-
 
     private float GetRoomHeight(RoomTemplateSO.Template template)
     {
