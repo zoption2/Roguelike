@@ -26,6 +26,7 @@ public class CharacterUIViewmodel
     private bool isActivated = false;
     private bool _isActive = false;
 
+    
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
     {
         _characterController = characterController;
@@ -60,8 +61,16 @@ public class CharacterUIViewmodel
 
     public void ToggleActiveIndicator()
     {
-        _isActive = !_isActive; 
-        _activeIndicator.gameObject.SetActive(_isActive); 
+        //_isActive = !_isActive;
+        if (_characterController.IsActive)
+        {
+            _activeIndicator.gameObject.SetActive(true);
+        }
+        else
+        { 
+            _activeIndicator.gameObject.SetActive(false);
+        }
+        
     }
 
     public void UpdateReloadIndicators()
@@ -151,6 +160,7 @@ public class CharacterUIViewmodel
         }
     }
 
+    
     public void ChangeButtonInteractible(IAbility ability,bool value)
     {
         int index = _abilities.IndexOf(ability);

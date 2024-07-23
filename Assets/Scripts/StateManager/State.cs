@@ -42,6 +42,7 @@ namespace Gameplay
             Debug.Log($"-----------------------------|Player {_characterController.GetCharacterType()}|-------------------------------");
             _characterController.IsActive = true;
 
+            _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
             _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
             //_roomContext.ON_END_TURN += _scenario.OnStateEnd;
 
@@ -241,7 +242,6 @@ namespace Gameplay
                 {
                     Vector3 newPos = new Vector3(playerSpawnPoint.SpawnPoint.x, playerSpawnPoint.SpawnPoint.y + YOffset, playerSpawnPoint.SpawnPoint.z);
                     Debug.LogWarning($"Moving player to position: {newPos}");
-
                     _levelContext.Player.GetTransform().position = newPos;
                 }
                 else

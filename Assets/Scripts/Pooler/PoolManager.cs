@@ -155,5 +155,10 @@ public class PoolManager : IPoolManager
         _characterUIPooler.CleanPool();
         _projectilePooler.CleanPool();
         _slingshotPooler.CleanPool();
+
+        foreach (Transform child in _globalParent)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
     }
 }

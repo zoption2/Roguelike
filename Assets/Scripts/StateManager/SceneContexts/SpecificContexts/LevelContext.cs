@@ -21,6 +21,8 @@ namespace Gameplay
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
+
+        public void CleanContexts();
     }
 
     public class LevelContext : ILevelContext
@@ -38,6 +40,11 @@ namespace Gameplay
         {
             _contexts = new Dictionary<string, RoomContext>();
             _scenarios = new Dictionary<string, IScenario>();
+        }
+
+        public void CleanContexts()
+        {
+            _contexts.Clear();
         }
 
         public RoomContext GetRoomContext(string roomName)

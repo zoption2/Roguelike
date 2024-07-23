@@ -135,9 +135,7 @@ namespace Gameplay
                 Vector3 newPos = new Vector3(0, 0, 0);
                 Debug.LogWarning($"Creating new player at position: {newPos}");
 
-                GameObject playerParentObject = new GameObject("Player");
-
-                IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, playerParentObject.transform, playerType);
+                IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _levelManager.PlayerParent, playerType);
                 newPlayer.SetCharacterContext(_levelContext.CurrentRoomContext);
                 _levelContext.CurrentRoomContext.Players.Add(newPlayer);
 

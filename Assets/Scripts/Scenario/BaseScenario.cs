@@ -97,6 +97,7 @@ namespace Gameplay
 
         public void OnStateEnd()
         {
+            Debug.LogWarning(_queueOfStates.Count);
             if (_queueOfStates.Count == 0)
             {
                 RenewQueue();
@@ -136,6 +137,8 @@ namespace Gameplay
         {
             Debug.Log("load menu");
             GameplayService.PoolManager.CleanPoolers();
+            _levelContext.CleanContexts();
+            _levelContext.Player = null;
             _levelManager.LoadMenu();
         }
 
@@ -257,6 +260,7 @@ namespace Gameplay
 
         }
     }
+
 
     public class CookedMapper
     {

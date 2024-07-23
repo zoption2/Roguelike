@@ -32,7 +32,8 @@ public class RoomBuilder : IRoomBuilder
 
     public RoomBuilder(
         INavigationFactory navigationFactory,
-        IRoomObjectsFactory roomObjectsFactory,IChestFactory chestFactory)
+        IRoomObjectsFactory roomObjectsFactory,
+        IChestFactory chestFactory)
     {
         _navigationFactory = navigationFactory;
         _roomObjectsFactory = roomObjectsFactory;
@@ -80,7 +81,7 @@ public class RoomBuilder : IRoomBuilder
                         _roomObjectsFactory.Build(position, WallsParent, TemplateElementType.DefaultWall);
                         break;
                     case TemplateElementType.Chest:
-                        IChestController chestController = _chestFactory.CreateChest(position,WallsParent);
+                        IChestController chestController = _chestFactory.CreateChest(position, WallsParent);
                         RoomContext.Chests.Add(chestController);
                         break;
                 }
@@ -89,7 +90,7 @@ public class RoomBuilder : IRoomBuilder
 
         BuildExits(templateElements, coordinates);
         CenterCamera(roomTemplate);
-        //OnNavigationCreate(roomObject.transform);
+        OnNavigationCreate(roomObject.transform);
 
         Debug.Log($"Room '{roomTemplate.name}' created with context.");
 
@@ -154,7 +155,7 @@ public class RoomBuilder : IRoomBuilder
                         templateElements[i, j + 2] == TemplateElementType.Exit)
                     {
                         Vector3 centerPos = coordinates[i, j + 1];
-                        GameObject exit =  _roomObjectsFactory.Build(centerPos, WallsParent, TemplateElementType.Exit);
+                        GameObject exit = _roomObjectsFactory.Build(centerPos, WallsParent, TemplateElementType.Exit);
                         exit.transform.rotation = Quaternion.Euler(0, 90, 0);
 
                         Exit exitComponent = exit.GetComponent<Exit>();
@@ -209,9 +210,6 @@ public class RoomBuilder : IRoomBuilder
         Camera.main.transform.LookAt(new Vector3(center.x, 0, center.z));
     }
 
-
-
-
     private Transform CreateParent(string name, Transform parent)
     {
         GameObject parentObject = new GameObject(name);
@@ -228,3 +226,4 @@ public class RoomBuilder : IRoomBuilder
         navMeshSurface.BuildNavMesh();
     }
 }
+

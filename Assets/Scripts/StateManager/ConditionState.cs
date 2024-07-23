@@ -489,8 +489,9 @@ public class DeadState : IConditionState
         if (_characterController.IsMoving)
         {
             _characterController.IsMoving = false;
-            _characterController.HandleStopMovement();
+            
         }
+        _characterController.HandleStopMovement();
         _characterController.PushIfDead();
     }
 
