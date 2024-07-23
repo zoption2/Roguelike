@@ -89,7 +89,6 @@ namespace Gameplay
 
             
             CurrentScenario.Init(CurrentContext);
-            _levelManager.BuildNextRooms();
         }
 
 

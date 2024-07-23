@@ -93,6 +93,7 @@ public abstract class ActiveState
                 _navObstacle.enabled = true;
             }
             ON_STOPPED?.Invoke();
+            ON_STOPPED = null;
         }
     }
 

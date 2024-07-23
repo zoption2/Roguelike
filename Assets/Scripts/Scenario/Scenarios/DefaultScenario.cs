@@ -43,8 +43,6 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
             _hasWon = true;
             ActivateCompletedRoomTriggers();
 
-            //PREPAIRE LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
-
             //LoadMainMenu();
         }
     }

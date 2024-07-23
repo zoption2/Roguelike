@@ -1,6 +1,7 @@
 using Gameplay;
 using Obstacles;
 using UnityEngine;
+using Zenject;
 
 public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 {
@@ -55,11 +56,17 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
         _boxCollider.isTrigger = true;
     }
 
+    //public void UseTrigger()
+    //{
+    //    _gameplayService.CurrentContext = null;
+    //    _gameplayService.CurrentScenario.Pause();
+    //    _levelManager.SwitchToNextRoom();
+    //}
+
     public void UseTrigger()
     {
         _gameplayService.CurrentContext = null;
-        _gameplayService.CurrentScenario.Pause();
-        _levelManager.SwitchToNextRoom();
+        _levelManager.BuildNextRoom();
     }
 
     public void DisableTrigger()
