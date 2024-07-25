@@ -213,4 +213,12 @@ public class CharacterUIViewmodel
         _uIView.ChangeHealthBarOnEndTurn();
     }
 
+    public void Dispose()
+    {
+        _characterController = null;
+        _model = null;
+        _factory = null;
+        _activeIndicator = null;
+        _abilityIcons.Clear();
+    }
 }

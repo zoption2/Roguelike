@@ -31,6 +31,12 @@ namespace Gameplay
             _levelContext = levelContext;
             _rewardService = rewardService;
         }
+
+        public void ClearTurnsOrder()
+        {
+            _turnsOrder.Clear();
+        }
+
         public void RenewQueue()
         {
             foreach (CookedMapper mapper in _turnsOrder)
@@ -136,6 +142,7 @@ namespace Gameplay
         public void LoadMainMenu()
         {
             Debug.Log("load menu");
+            _turnsOrder.Clear();
             GameplayService.PoolManager.CleanPoolers();
             _levelContext.CleanContexts();
             _levelContext.Player = null;

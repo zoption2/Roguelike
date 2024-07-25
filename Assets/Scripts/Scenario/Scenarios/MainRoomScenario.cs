@@ -72,7 +72,7 @@ public class ChestScenario : Scenario<RoomContext>, IChestScenario
         SubscribeToDeathOfCharacters();
         SortTurns();
 
-        OnStateEnd();
+        OnStateEnd(); //??
     }
 
 }

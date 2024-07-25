@@ -13,5 +13,6 @@ namespace Gameplay
         public IGameplayService GameplayService { get; set; }
         public void LoadMainMenu();
         public void RenewQueue();
+        public void ClearTurnsOrder();
     }
 }

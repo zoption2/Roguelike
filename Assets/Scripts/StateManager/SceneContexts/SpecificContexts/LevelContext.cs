@@ -22,6 +22,7 @@ namespace Gameplay
         public TypeOfScenario CurrentRoomType { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
 
+        public void CleanAllContexts();
         public void CleanContexts();
     }
 
@@ -45,6 +46,28 @@ namespace Gameplay
         public void CleanContexts()
         {
             _contexts.Clear();
+        }
+
+        public void CleanAllContexts()
+        {
+            foreach (var context in _contexts.Values)
+            {
+                context.Players.Clear();
+                context.Enemies.Clear();
+                context.Buffs.Clear();
+                context.CompleatedRoomTriggers.Clear();
+                context.Chests.Clear();
+                context.PlayerSpawnPoints.Clear();
+                context.EnemySpawnPoints.Clear();
+                context.BuffSpawnPoints.Clear();
+                context.TeleportWallEnters.Clear();
+            }
+            _contexts.Clear();
+
+            CurrentRoomContext = null;
+            CurrentRoomScenario = null;
+            CurrentRoomName = null;
+            CurrentRoomType = default;
         }
 
         public RoomContext GetRoomContext(string roomName)

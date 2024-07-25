@@ -59,6 +59,8 @@ namespace Pool
             _prefabHolder.ReleaseAllAssets();
         }
 
+
+
         private Transform ParentTransform
         {
             get

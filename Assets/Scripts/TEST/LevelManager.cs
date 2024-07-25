@@ -19,6 +19,7 @@ public interface ILevelManager
 public class LevelManager : ILevelManager
 {
     private List<TypeOfScenario> _mainRoomOrder;
+    private List<RoomTemplateSO.Template> _usedTemplates = new List<RoomTemplateSO.Template>();
 
     public Queue<TypeOfScenario> RoomsOrder { get; set; }
     private RoomTemplateSO _roomTemplate;
@@ -94,9 +95,10 @@ public class LevelManager : ILevelManager
     {
         _mainRoomOrder = new List<TypeOfScenario>
         {
-            TypeOfScenario.MainRoom,
-            TypeOfScenario.DefaultRoom,
-            TypeOfScenario.DefaultRoom
+            TypeOfScenario.MainRoom
+
+            //,
+            //TypeOfScenario.DefaultRoom
         };
 
         RoomsOrder = new Queue<TypeOfScenario>(_mainRoomOrder);
@@ -161,6 +163,9 @@ public class LevelManager : ILevelManager
 
     public void LoadMenu()
     {
+        _usedTemplates.Clear();
+        _levelContext.CleanAllContexts();
+
         SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
         SceneManager.sceneLoaded += OnLevelSceneLoaded;
 
@@ -206,6 +211,10 @@ public class LevelManager : ILevelManager
 
     public void BuildNextRoom()
     {
+        ///
+        _levelContext.CleanContexts();
+        ///
+
         GameObject.Destroy(_currentRoom);
 
         if (RoomsOrder.Count > 0)
@@ -217,9 +226,7 @@ public class LevelManager : ILevelManager
             {
                 string roomName = template.name;
 
-                ///
-                _levelContext.CleanContexts();
-                ///
+
 
                 _levelContext.CreateRoomContext(roomName);
                 RoomContext roomContext = _levelContext.GetRoomContext(roomName);
@@ -268,7 +275,7 @@ public class LevelManager : ILevelManager
 
     private RoomTemplateSO.Template SetTemplate(TypeOfScenario type)
     {
-        var templatesOfType = _roomTemplate.Templates.Where(t => t.ScenarioType == type).ToList();
+        var templatesOfType = _roomTemplate.Templates.Where(t => t.ScenarioType == type && !_usedTemplates.Contains(t)).ToList();
 
         if (templatesOfType.Count == 0)
         {
@@ -278,6 +285,8 @@ public class LevelManager : ILevelManager
 
         int randomIndex = Random.Range(0, templatesOfType.Count);
         var selectedTemplate = templatesOfType[randomIndex];
+
+        _usedTemplates.Add(selectedTemplate);
 
         Debug.Log($"Selected template: {selectedTemplate.name} for scenario type: {type}");
 
