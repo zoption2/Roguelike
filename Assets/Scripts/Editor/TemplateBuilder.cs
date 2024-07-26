@@ -29,7 +29,7 @@ public class TemplateBuilder : EditorWindow
     private bool _displayNewObjectFields = false;
 
     private TemplatePlacebleElements _templatePlacebleElementsSO;
-    private TypeOfScenario __selectedScenarioType = TypeOfScenario.DefaultRoom;
+    private TypeOfScenario _selectedScenarioType = TypeOfScenario.DefaultRoom;
 
     private bool _showInitialOptions = true;
     private bool _createNewArray = false;
@@ -403,7 +403,7 @@ public class TemplateBuilder : EditorWindow
         GUILayout.Space(10);
 
         GUILayout.Label("Scenario Type", EditorStyles.boldLabel);
-        __selectedScenarioType = (TypeOfScenario)EditorGUILayout.EnumPopup("Scenario Type", __selectedScenarioType); // Додайте цей рядок
+        _selectedScenarioType = (TypeOfScenario)EditorGUILayout.EnumPopup("Scenario Type", _selectedScenarioType);
 
         GUILayout.Space(10);
 
@@ -711,7 +711,7 @@ public class TemplateBuilder : EditorWindow
         if (existingTemplate != null && name == existingTemplate.name)
         {
             existingTemplate.TemplateElement = (TemplateElementType[,])levelArray.Clone();
-            existingTemplate.ScenarioType = __selectedScenarioType;
+            existingTemplate.ScenarioType = _selectedScenarioType;
             existingTemplate.DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             AssignExits(existingTemplate, levelArray);
             Debug.Log($"Updated existing template: {name}");
@@ -732,7 +732,7 @@ public class TemplateBuilder : EditorWindow
                 name = name,
                 id = id,
                 TemplateElement = (TemplateElementType[,])levelArray.Clone(),
-                ScenarioType = __selectedScenarioType,
+                ScenarioType = _selectedScenarioType,
                 DateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
@@ -816,7 +816,7 @@ public class TemplateBuilder : EditorWindow
         }
 
         _levelArray = template.TemplateElement;
-        __selectedScenarioType = template.ScenarioType;
+        _selectedScenarioType = template.ScenarioType;
         int rows = _levelArray.GetLength(0);
         int cols = _levelArray.GetLength(1);
         _originalLevelArray = new TemplateElementType[rows, cols];

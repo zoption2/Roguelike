@@ -10,11 +10,11 @@ namespace Gameplay
     public interface ILevelContext : IScenarioContext
     {
         IPlayerController Player { get; set; }
-        RoomContext CurrentRoomContext { get; set; }
-        IScenario CurrentRoomScenario { get; set; }
-        public string CurrentRoomName { get; set; }
-        public TypeOfScenario CurrentRoomType { get; set; }
-        public NavMeshSurface NavMeshSurface { get; set; }
+        //RoomContext CurrentRoomContext { get; set; }
+        //IScenario CurrentRoomScenario { get; set; }
+        //public string CurrentRoomName { get; set; }
+        //public TypeOfScenario CurrentRoomType { get; set; }
+        //public NavMeshSurface NavMeshSurface { get; set; }
         public void CleanAllContexts();
     }
 

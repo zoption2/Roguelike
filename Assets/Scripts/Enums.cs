@@ -134,6 +134,7 @@ public enum ProjectileType
 
 public enum TypeOfScenario
 {
+    None,
     DefaultRoom,
     MainRoom,
     Boss,

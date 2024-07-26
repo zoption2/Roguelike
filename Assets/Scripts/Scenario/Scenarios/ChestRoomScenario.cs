@@ -15,9 +15,9 @@ public interface IChestScenario : IScenario
 }
 
 
-public class ChestScenario : Scenario<RoomContext>, IChestScenario
+public class ChestRoomScenario : Scenario<RoomContext>, IChestScenario
 {
-    public ChestScenario(IGameplayService gameplayService, IStateFactory stateFactory, ILevelManager levelManager)
+    public ChestRoomScenario(IGameplayService gameplayService, IStateFactory stateFactory, ILevelManager levelManager)
     {
         GameplayService = gameplayService;
         _queueOfStates = new Queue<IState>();
@@ -28,6 +28,10 @@ public class ChestScenario : Scenario<RoomContext>, IChestScenario
 
     public override void CheckConditonsForEndOfScenario()
     {
+        foreach (var obj in _turnsOrder)
+        { 
+            Debug.LogWarning(obj.ToString());
+        }
         Debug.LogError(_scenarioContext.Players.Count);
         Debug.LogError(_scenarioContext.Enemies.Count);
 

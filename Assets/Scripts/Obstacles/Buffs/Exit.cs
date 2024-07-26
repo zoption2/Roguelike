@@ -19,13 +19,14 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 
     private void Start()
     {
-        _boxCollider = GetComponent<BoxCollider>();
+        
     }
 
     public void Init(IGameplayService gameplayService, ILevelManager levelManager)
     {
         _gameplayService = gameplayService;
         _levelManager = levelManager;
+        _boxCollider = GetComponent<BoxCollider>();
     }
 
     public void SetExitType(TemplateElementType exitType)
@@ -68,7 +69,6 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
     public void UseTrigger()
     {
         //_gameplayService.CurrentContext.ClearContext();
-        _gameplayService.CurrentScenario = null;
         _levelManager.BuildNextRoom();
     }
 

@@ -255,9 +255,6 @@ namespace Gameplay
             }
         }
 
-
-
-
         public void OnEnemyCreate()
         {
             for (int i = 0; i < _roomContext.EnemySpawnPoints.Count; i++)

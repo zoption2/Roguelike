@@ -28,6 +28,14 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 
     public override void CheckConditonsForEndOfScenario()
     {
+        foreach (var obj in _turnsOrder)
+        {
+            Debug.LogWarning(obj.ToString());
+        }
+
+        Debug.LogError(_scenarioContext.Players.Count);
+        Debug.LogError(_scenarioContext.Enemies.Count);
+
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 

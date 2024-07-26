@@ -144,7 +144,9 @@ namespace Gameplay
             ClearTurnOrder();
             ClearTurnQueue();
             _levelContext.CleanAllContexts();
-            _levelContext.CurrentRoomScenario = null;
+            GameplayService.CurrentScenario = null;
+            GameplayService.CurrentRoomName = null;
+            GameplayService.CurrentRoomType = TypeOfScenario.MainRoom;
             _hasWon = false;
             _haslost = false;
             GameplayService.PoolManager.CleanPoolers();

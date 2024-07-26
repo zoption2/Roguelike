@@ -12,7 +12,6 @@ public interface ILevelManager
     public RoomTemplateSO.Template GetTemplate();
     public void LoadLevel();
     public void LoadMenu();
-    public void SwitchToNextRoom();
     public void BuildNextRoom();
     
 }
@@ -141,9 +140,9 @@ public class LevelManager : ILevelManager
                 roomObject.transform.position = Vector3.zero;
 
                 roomObject.SetActive(true);
-                _levelContext.CurrentRoomContext = roomContext;
-                _levelContext.CurrentRoomName = roomName;
-                _levelContext.CurrentRoomType = typeOfScenario;
+                _gameplayService.CurrentContext = roomContext;
+                _gameplayService.CurrentRoomName = roomName;
+                _gameplayService.CurrentRoomType = typeOfScenario;
 
                 var exits = roomContext.CompleatedRoomTriggers;
                 foreach (var exit in exits)
@@ -159,8 +158,8 @@ public class LevelManager : ILevelManager
     public void LoadMenu()
     {
         _usedTemplates.Clear();
-        _levelContext.CurrentRoomScenario = null;
-        _levelContext.CurrentRoomContext = null;
+        _gameplayService.CurrentScenario = null;
+        _gameplayService.CurrentContext = null;
 
         SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
         SceneManager.sceneLoaded += OnLevelSceneLoaded;
@@ -175,30 +174,6 @@ public class LevelManager : ILevelManager
                 }
                 SceneManager.sceneLoaded -= OnLevelSceneLoaded;
             }
-        }
-    }
-
-    public void SwitchToNextRoom()
-    {
-        if (RoomsOrder.Count > 0)
-        {
-            var nextRoomScenario = RoomsOrder.Dequeue();
-            var template = SetTemplate(nextRoomScenario);
-
-            if (template != null)
-            {
-                string roomName = template.name;
-                RoomContext roomContext = new RoomContext();
-
-                _levelContext.CurrentRoomContext = roomContext;
-                _levelContext.CurrentRoomName = roomName;
-                _levelContext.CurrentRoomType = nextRoomScenario;
-                _gameplayService.StartCurrentRoom();
-            }
-        }
-        else
-        {
-            Debug.Log("No more rooms to switch to.");
         }
     }
 
@@ -224,19 +199,18 @@ public class LevelManager : ILevelManager
                 roomObject.transform.position = Vector3.zero;
                 roomObject.SetActive(true);
 
-                _levelContext.CurrentRoomContext = roomContext;
-                Debug.LogWarning(_levelContext.CurrentRoomContext);
-                _levelContext.CurrentRoomName = roomName;
-                _levelContext.CurrentRoomType = nextRoomScenario;
+                _gameplayService.CurrentContext = roomContext;
+                _gameplayService.CurrentRoomName = roomName;
+                _gameplayService.CurrentRoomType = nextRoomScenario;
 
                 if (_levelContext.Player != null)
                 { 
-                    if (_levelContext.CurrentRoomContext.Players.Count == 0)
+                    if (_gameplayService.CurrentContext.Players.Count == 0)
                     {
-                        _levelContext.CurrentRoomContext.Players.Add(_levelContext.Player);
+                        _gameplayService.CurrentContext.Players.Add(_levelContext.Player);
                     }
                     
-                    _levelContext.Player.SetCharacterContext(_levelContext.CurrentRoomContext);
+                    _levelContext.Player.SetCharacterContext(_gameplayService.CurrentContext);
                 }
                 else
                 {
@@ -255,7 +229,7 @@ public class LevelManager : ILevelManager
         else
         {
             Debug.Log("No more rooms to build.");
-            _levelContext.CurrentRoomScenario.LoadMainMenu();
+            _gameplayService.CurrentScenario.LoadMainMenu();
         }
     }
 

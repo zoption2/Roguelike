@@ -117,7 +117,7 @@ public class ContextInstaller : MonoInstaller
     public void BindScenarios()
     {
         Container.Bind<IDefaultScenario>().To<DefaultScenario>().AsTransient();
-        Container.Bind<IChestScenario>().To<ChestScenario>().AsTransient();
+        Container.Bind<IChestScenario>().To<ChestRoomScenario>().AsTransient();
     }
     public void BindPoolers()
     {
