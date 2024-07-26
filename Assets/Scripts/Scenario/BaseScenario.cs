@@ -103,7 +103,6 @@ namespace Gameplay
 
         public void OnStateEnd()
         {
-            Debug.LogWarning(_queueOfStates.Count);
             if (_queueOfStates.Count == 0)
             {
                 RenewQueue();
@@ -142,12 +141,14 @@ namespace Gameplay
         public void LoadMainMenu()
         {
             Debug.Log("load menu");
-            _turnsOrder.Clear();
+            ClearTurnOrder();
+            ClearTurnQueue();
+            _levelContext.CleanAllContexts();
+            _levelContext.CurrentRoomScenario = null;
             _hasWon = false;
             _haslost = false;
             GameplayService.PoolManager.CleanPoolers();
-            _levelContext.CleanContexts();
-            _levelContext.Player = null;
+
             _levelManager.LoadMenu();
         }
 
@@ -286,5 +287,10 @@ namespace Gameplay
     {
         public int Speed;
         public ICharacterController Controller;
+
+        public override string ToString()
+        {
+            return $"Controller: {Controller}, Speed: {Speed}";
+        }
     }
 }

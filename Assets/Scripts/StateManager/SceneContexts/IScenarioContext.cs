@@ -8,6 +8,6 @@ namespace Gameplay
 {
     public interface IScenarioContext
     {
-
+        public void ClearContext();
     }
 }

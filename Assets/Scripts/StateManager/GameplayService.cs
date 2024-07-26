@@ -9,31 +9,32 @@ namespace Gameplay
 {
     public interface IGameplayService
     {
-        GameObject Player { get; set; }
-        IPoolManager PoolManager { get; set; }
-        void Init(TypeOfScenario type);
-        void StartCurrentRoom();
-        IScenario CurrentScenario { get; set; }
-        IPlayerFactory _playerFactory { get; set; }
-        IEnemyFactory _enemyFactory { get; set; }
-        IStatsProvider _statsProvider { get; set; }
-        IScenarioContext CurrentContext { get; set; }
-        void CheckIfAllStopped();
-        void ProcessTurnEnd();
+        public GameObject Player { get; set; }
+        public IPoolManager PoolManager { get; set; }
+        public IScenario CurrentScenario { get; set; }
+        public IPlayerFactory PlayerFactory { get; set; }
+        public IEnemyFactory EnemyFactory { get; set; }
+        public IStatsProvider StatsProvider { get; set; }
+        public IScenarioContext CurrentContext { get; set; }
+        public void Init(TypeOfScenario type);
+        public void StartCurrentRoom();
+        public void CheckIfAllStopped();
+        public void ProcessTurnEnd();
 
-        event OnEndTurn ON_END_TURN;
+        public event OnEndTurn ON_END_TURN;
     }
 
     public class GameplayService : IGameplayService
     {
         public GameObject Player { get; set; }
         public IPoolManager PoolManager { get; set; }
-        public IPlayerFactory _playerFactory { get; set; }
-        public IEnemyFactory _enemyFactory { get; set; }
-        public IStatsProvider _statsProvider { get; set; }
-        public IScenarioFactory _scenarioFactory { get; set; }
+        public IPlayerFactory PlayerFactory { get; set; }
+        public IEnemyFactory EnemyFactory { get; set; }
+        public IStatsProvider StatsProvider { get; set; }
+        public IScenarioFactory ScenarioFactory { get; set; }
         public IScenario CurrentScenario { get; set; }
         public IScenarioContext CurrentContext { get; set; }
+
         private ILevelContext _levelContext;
         private ILevelManager _levelManager;
 
@@ -51,10 +52,10 @@ namespace Gameplay
             ILevelManager levelManager)
         {
             PoolManager = poolManager;
-            _scenarioFactory = scenarioFactory;
-            _playerFactory = playerFactory;
-            _enemyFactory = enemyFactory;
-            _statsProvider = statsProvider;
+            ScenarioFactory = scenarioFactory;
+            PlayerFactory = playerFactory;
+            EnemyFactory = enemyFactory;
+            StatsProvider = statsProvider;
             _levelContext = levelContext;
             _levelManager = levelManager;
             rewardService.Init();
@@ -62,7 +63,7 @@ namespace Gameplay
 
         public void Init(TypeOfScenario type)
         {
-            CurrentScenario = _scenarioFactory.CreateScenario(type, this);
+            CurrentScenario = ScenarioFactory.CreateScenario(type, this);
             CurrentContext = new RoomContext();
 
             CurrentScenario.Init(CurrentContext);
@@ -73,13 +74,7 @@ namespace Gameplay
             string currentRoomName = _levelContext.CurrentRoomName;
             TypeOfScenario currentRoomType = _levelContext.CurrentRoomType;
 
-            IScenario currentScenario = _scenarioFactory.CreateScenario(currentRoomType, this);
-            _levelContext.CreateScenario(currentRoomName, currentScenario);
-
-            _levelContext.CurrentRoomContext = _levelContext.GetRoomContext(currentRoomName);
-            _levelContext.CurrentRoomScenario = _levelContext.GetScenario(currentRoomName);
-
-            CurrentScenario = _levelContext.GetScenario(currentRoomName);
+            CurrentScenario = ScenarioFactory.CreateScenario(currentRoomType, this);
             CurrentContext = _levelContext.CurrentRoomContext;
 
             if (_levelContext.Player == null)
@@ -87,7 +82,7 @@ namespace Gameplay
                 CreatePlayer();
             }
 
-            
+            _levelContext.CurrentRoomScenario = CurrentScenario;
             CurrentScenario.Init(CurrentContext);
         }
 
@@ -110,7 +105,7 @@ namespace Gameplay
                     return;
                 }
             }
-            Debug.Log("invoked ON_END_TURN");
+            Debug.LogWarning($"invoked ON_END_TURN for {CurrentScenario}  {_levelContext.CurrentRoomScenario}");
             ON_END_TURN?.Invoke();
         }
 
@@ -135,7 +130,7 @@ namespace Gameplay
                 Vector3 newPos = new Vector3(0, 0, 0);
                 Debug.LogWarning($"Creating new player at position: {newPos}");
 
-                IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _levelManager.PlayerParent, playerType);
+                IPlayerController newPlayer = PlayerFactory.CreatePlayer(newPos, _levelManager.PlayerParent, playerType);
                 newPlayer.SetCharacterContext(_levelContext.CurrentRoomContext);
                 _levelContext.CurrentRoomContext.Players.Add(newPlayer);
 

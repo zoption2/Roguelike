@@ -7,32 +7,32 @@ using Zenject;
 
 public interface ILevelManager
 {
-    void LoadLevel();
-    void LoadMenu();
-    RoomTemplateSO.Template GetTemplate();
-    Queue<TypeOfScenario> RoomsOrder { get; set; }
-    void SwitchToNextRoom();
-    void BuildNextRoom();
     public Transform PlayerParent { get; }
+    public Queue<TypeOfScenario> RoomsOrder { get; set; }
+    public RoomTemplateSO.Template GetTemplate();
+    public void LoadLevel();
+    public void LoadMenu();
+    public void SwitchToNextRoom();
+    public void BuildNextRoom();
+    
 }
 
 public class LevelManager : ILevelManager
 {
-    private List<TypeOfScenario> _mainRoomOrder;
-    private List<RoomTemplateSO.Template> _usedTemplates = new List<RoomTemplateSO.Template>();
-
     public Queue<TypeOfScenario> RoomsOrder { get; set; }
-    private RoomTemplateSO _roomTemplate;
-    private RoomTemplateSO.Template _template;
-    private IGameplayService _gameplayService;
     public IPoolManager PoolManager { get; private set; }
 
+    private List<RoomTemplateSO.Template> _usedTemplates = new List<RoomTemplateSO.Template>();
+    private RoomTemplateSO _roomTemplate;
+    private RoomTemplateSO.Template _template;
     private Transform _globalPoolParent;
-    private ILevelContext _levelContext;
     private RoomBuilder _roomBuilder;
     private Transform _roomsParent;
     private Transform _playerParent;
     private GameObject _currentRoom;
+    private LevelSetingsSO _levelSettings;
+    private IGameplayService _gameplayService;
+    private ILevelContext _levelContext;
 
     public Transform PlayerParent
     {
@@ -71,6 +71,7 @@ public class LevelManager : ILevelManager
     [Inject]
     public void Construct(
         RoomTemplateSO roomTemplateSO,
+        LevelSetingsSO levelSetingsSO,
         IPoolManager poolManager,
         IGameplayService gameplayService,
         INavigationFactory navigationFactory,
@@ -80,6 +81,7 @@ public class LevelManager : ILevelManager
     )
     {
         _roomTemplate = roomTemplateSO;
+        _levelSettings = levelSetingsSO;
         PoolManager = poolManager;
         _gameplayService = gameplayService;
         _levelContext = levelContext;
@@ -93,15 +95,8 @@ public class LevelManager : ILevelManager
 
     public void LoadLevel()
     {
-        _mainRoomOrder = new List<TypeOfScenario>
-        {
-            TypeOfScenario.MainRoom
 
-            //,
-            //TypeOfScenario.DefaultRoom
-        };
-
-        RoomsOrder = new Queue<TypeOfScenario>(_mainRoomOrder);
+        RoomsOrder = new Queue<TypeOfScenario>(_levelSettings.RoomsOrder);
 
         SceneManager.LoadScene("Level", LoadSceneMode.Additive);
         SceneManager.sceneLoaded += OnLevelSceneLoaded;
@@ -135,8 +130,8 @@ public class LevelManager : ILevelManager
             if (template != null)
             {
                 string roomName = template.name;
-                _levelContext.CreateRoomContext(roomName);
-                RoomContext roomContext = _levelContext.GetRoomContext(roomName);
+
+                RoomContext roomContext = new RoomContext();
 
                 _roomBuilder.RoomContext = roomContext;
 
@@ -164,7 +159,8 @@ public class LevelManager : ILevelManager
     public void LoadMenu()
     {
         _usedTemplates.Clear();
-        _levelContext.CleanAllContexts();
+        _levelContext.CurrentRoomScenario = null;
+        _levelContext.CurrentRoomContext = null;
 
         SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
         SceneManager.sceneLoaded += OnLevelSceneLoaded;
@@ -192,15 +188,12 @@ public class LevelManager : ILevelManager
             if (template != null)
             {
                 string roomName = template.name;
-                RoomContext roomContext = _levelContext.GetRoomContext(roomName);
+                RoomContext roomContext = new RoomContext();
 
-                if (roomContext != null)
-                {
-                    _levelContext.CurrentRoomContext = roomContext;
-                    _levelContext.CurrentRoomName = roomName;
-                    _levelContext.CurrentRoomType = nextRoomScenario;
-                    _gameplayService.StartCurrentRoom();
-                }
+                _levelContext.CurrentRoomContext = roomContext;
+                _levelContext.CurrentRoomName = roomName;
+                _levelContext.CurrentRoomType = nextRoomScenario;
+                _gameplayService.StartCurrentRoom();
             }
         }
         else
@@ -211,10 +204,6 @@ public class LevelManager : ILevelManager
 
     public void BuildNextRoom()
     {
-        ///
-        _levelContext.CleanContexts();
-        ///
-
         GameObject.Destroy(_currentRoom);
 
         if (RoomsOrder.Count > 0)
@@ -226,10 +215,7 @@ public class LevelManager : ILevelManager
             {
                 string roomName = template.name;
 
-
-
-                _levelContext.CreateRoomContext(roomName);
-                RoomContext roomContext = _levelContext.GetRoomContext(roomName);
+                RoomContext roomContext = new RoomContext();
 
                 _roomBuilder.RoomContext = roomContext;
 
@@ -239,12 +225,17 @@ public class LevelManager : ILevelManager
                 roomObject.SetActive(true);
 
                 _levelContext.CurrentRoomContext = roomContext;
+                Debug.LogWarning(_levelContext.CurrentRoomContext);
                 _levelContext.CurrentRoomName = roomName;
                 _levelContext.CurrentRoomType = nextRoomScenario;
 
                 if (_levelContext.Player != null)
-                {
-                    _levelContext.CurrentRoomContext.Players.Add(_levelContext.Player);
+                { 
+                    if (_levelContext.CurrentRoomContext.Players.Count == 0)
+                    {
+                        _levelContext.CurrentRoomContext.Players.Add(_levelContext.Player);
+                    }
+                    
                     _levelContext.Player.SetCharacterContext(_levelContext.CurrentRoomContext);
                 }
                 else

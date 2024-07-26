@@ -5,14 +5,16 @@ using Zenject;
 
 public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 {
-    private bool _isActivated;
-    private BoxCollider _boxCollider;
-    private IGameplayService _gameplayService;
-    private ILevelManager _levelManager;
     [SerializeField]
     private TemplateElementType _exitType;
     [SerializeField]
     private ExitDirection _exitDirection;
+
+    private bool _isActivated;
+    private BoxCollider _boxCollider;
+    private IGameplayService _gameplayService;
+    private ILevelManager _levelManager;
+    
     public Transform Transform { get; set; }
 
     private void Start()
@@ -65,7 +67,8 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 
     public void UseTrigger()
     {
-        _gameplayService.CurrentContext = null;
+        //_gameplayService.CurrentContext.ClearContext();
+        _gameplayService.CurrentScenario = null;
         _levelManager.BuildNextRoom();
     }
 

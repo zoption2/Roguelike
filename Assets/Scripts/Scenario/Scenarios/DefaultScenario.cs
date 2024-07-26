@@ -31,25 +31,23 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
+        Debug.Log("checking scenario end conditions...");
         if (noPlayers && !_haslost)
         {
-            _queueOfStates.Clear();
+            Debug.LogWarning("player lost in defaultScenario");
             _haslost = true;
+            ClearTurnOrder();
+            ClearTurnQueue();
             LoadMainMenu();
         }
         else if (noEnemies && !_hasWon)
         {
-            _queueOfStates.Clear();
-            _hasWon = true;
             ActivateCompletedRoomTriggers();
+            _hasWon = true;
 
             //LoadMainMenu();
         }
     }
-
-    
-
-
 
     public override void Init(IScenarioContext context)
     {

@@ -28,13 +28,16 @@ public class ChestScenario : Scenario<RoomContext>, IChestScenario
 
     public override void CheckConditonsForEndOfScenario()
     {
+        Debug.LogError(_scenarioContext.Players.Count);
+        Debug.LogError(_scenarioContext.Enemies.Count);
+
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
         Debug.Log("checking scenario end conditions...");
         if (noPlayers && !_haslost)
         {
-            Debug.LogWarning("player lost");
+            Debug.LogWarning("player lost in mainScenario");
             _haslost = true;
             ClearTurnOrder();
             ClearTurnQueue();
@@ -45,7 +48,6 @@ public class ChestScenario : Scenario<RoomContext>, IChestScenario
             ActivateCompletedRoomTriggers();
             UnlockAllChests();
             _hasWon = true;
-            //PREPAIR LOGIC TO MOVE PLAYER INTO ANOTHER SCENE!!!!!!
 
             //LoadMainMenu();
         }

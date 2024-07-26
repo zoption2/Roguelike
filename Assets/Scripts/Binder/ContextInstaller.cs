@@ -19,6 +19,9 @@ public class ContextInstaller : MonoInstaller
     private RoomTemplateSO _roomTemplateSO;
 
     [SerializeField]
+    private LevelSetingsSO _levelSetingsSO;
+
+    [SerializeField]
     private CharacterPrefabHolder _characterPrefabHolder;
 
     [SerializeField]
@@ -158,6 +161,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<RoomObjectsPrefabHolder>().FromInstance(_roomObjectsPrefabHolder).AsSingle();
 
         Container.Bind<RoomTemplateSO>().FromInstance(_roomTemplateSO).AsSingle();
+        Container.Bind<LevelSetingsSO>().FromInstance(_levelSetingsSO).AsSingle();
         Container.Bind<ProjectilePrefabHolder>().FromInstance(_projectilePrefabHolder).AsSingle();
         Container.Bind<AbilityHolder>().FromInstance(_abilityHolder).AsSingle();
         Container.Bind<RewardUIPrefabHolder>().FromInstance(_rewardUIHolder).AsSingle();

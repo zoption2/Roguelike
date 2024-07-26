@@ -39,6 +39,7 @@ namespace Gameplay
         public NavMeshSurface NavMeshSurface { get; set; }
         public Transform EnemiesParent { get; set; }
         public Transform BuffsParent { get; set; }
+        
     }
 
     public class RoomContext : IRoomContext
@@ -66,6 +67,18 @@ namespace Gameplay
             EnemySpawnPoints = new List<EnemySpawnPointWithType>();
             BuffSpawnPoints = new List<BuffSpawnPointWithType>();
             Chests = new List<IChestController>();
+        }
+
+        public void ClearContext()
+        {
+            Players.Clear();
+            Enemies.Clear();
+            Buffs.Clear();
+            CompleatedRoomTriggers.Clear();
+            PlayerSpawnPoints.Clear();
+            EnemySpawnPoints.Clear();
+            BuffSpawnPoints.Clear();
+            Chests.Clear();
         }
     }
 }

@@ -1,20 +1,18 @@
 using Gameplay;
 using Obstacles;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.AI;
 
 public interface IRoomBuilder
 {
-    GameObject BuildRoom(RoomTemplateSO.Template template, Transform parent);
+    public Transform PlayersParent { get; set; }
+    public Transform EnemiesParent { get; set; }
+    public Transform BuffsParent { get; set; }
+    public Transform WallsParent { get; set; }
+    public Transform FloorsParent { get; set; }
     public void OnNavigationCreate(Transform parent);
-    Transform PlayersParent { get; set; }
-    Transform EnemiesParent { get; set; }
-    Transform BuffsParent { get; set; }
-    Transform WallsParent { get; set; }
-    Transform FloorsParent { get; set; }
+    public GameObject BuildRoom(RoomTemplateSO.Template template, Transform parent);
 }
 
 public class RoomBuilder : IRoomBuilder

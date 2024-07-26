@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -7,7 +5,7 @@ using Zenject;
 public class GameStarter : MonoBehaviour
 {
     [Inject]
-    IPoolManager _poolManager;
+    private IPoolManager _poolManager;
     private Transform _globalPoolParent;
 
     public Transform GlobalPoolParent
@@ -16,10 +14,10 @@ public class GameStarter : MonoBehaviour
         {
             if (_globalPoolParent == null)
             {
-                GameObject globalParentObject = GameObject.Find("GlobalPoolParent");
+                GameObject globalParentObject = GameObject.Find("Pools");
                 if (globalParentObject == null)
                 {
-                    globalParentObject = new GameObject("GlobalPoolParent");
+                    globalParentObject = new GameObject("Pools");
                 }
                 _globalPoolParent = globalParentObject.transform;
             }
