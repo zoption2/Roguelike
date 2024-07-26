@@ -143,6 +143,8 @@ namespace Gameplay
         {
             Debug.Log("load menu");
             _turnsOrder.Clear();
+            _hasWon = false;
+            _haslost = false;
             GameplayService.PoolManager.CleanPoolers();
             _levelContext.CleanContexts();
             _levelContext.Player = null;

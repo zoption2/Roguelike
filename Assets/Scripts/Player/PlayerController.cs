@@ -365,17 +365,17 @@ namespace Player
             CharacterView.ON_BEGINDRAG -= OnBeginDrag;
             ON_STOP_MOVEMENT -= CheckForEndOfState;
 
-            _uIViewmodel.Dispose();
+            //_uIViewmodel.Dispose();
 
-            _UIView = null;
-            _uIViewmodel = null;
-            _slingShotInitPosition = null;
-            CharacterModel = null;
-            CharacterView = null;
-            _currentState = null;
-            Analyzer = null;
-            NavMeshAgent = null;
-            _navMeshObstacle = null;
+            //_UIView = null;
+            //_uIViewmodel = null;
+            //_slingShotInitPosition = null;
+            //CharacterModel = null;
+            //CharacterView = null;
+            //_currentState = null;
+            //Analyzer = null;
+            //NavMeshAgent = null;
+            //_navMeshObstacle = null;
         }
 
         public void ActivateUI()
