@@ -22,7 +22,6 @@ namespace Gameplay
     {
         public IPlayerController Player { get; set; }
         public RoomContext CurrentRoomContext { get; set; }
-        public IScenario CurrentRoomScenario { get; set; }
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
@@ -33,7 +32,6 @@ namespace Gameplay
 
             CurrentRoomContext?.ClearContext();
             CurrentRoomContext = null;
-            CurrentRoomScenario = null;
             CurrentRoomName = null;
             CurrentRoomType = default;
         }

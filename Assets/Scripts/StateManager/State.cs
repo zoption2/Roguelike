@@ -103,9 +103,9 @@ namespace Gameplay
         public void OnEnter()
         {
             Debug.Log($"-----------------------------|Enemy {_characterController.GetCharacterType()}|-------------------------------");
-            
             _characterController.IsActive = true;
 
+            _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
             _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
             //_roomContext.ON_END_TURN += _scenario.OnStateEnd;
 
@@ -262,15 +262,15 @@ namespace Gameplay
                 var spawnPointWithType = _roomContext.EnemySpawnPoints[i];
                 CharacterType enemyType = spawnPointWithType.Type;
 
-                if (enemyType != CharacterType.None)
-                {
-                    Vector3 newPos = new Vector3(spawnPointWithType.SpawnPoint.x, spawnPointWithType.SpawnPoint.y + YOffset, spawnPointWithType.SpawnPoint.z);
-                    IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomContext.EnemiesParent, enemyType);
-                    newEnemy.SetCharacterContext(_roomContext);
-                    _roomContext.Enemies.Add(newEnemy);
-                }
+                Vector3 newPos = new Vector3(spawnPointWithType.SpawnPoint.x, spawnPointWithType.SpawnPoint.y + YOffset, spawnPointWithType.SpawnPoint.z);
+                IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomContext.EnemiesParent, enemyType);
+                newEnemy.SetCharacterContext(_roomContext);
+                _roomContext.Enemies.Add(newEnemy);
+
             }
         }
+
+
 
         public void OnExit()
         {
