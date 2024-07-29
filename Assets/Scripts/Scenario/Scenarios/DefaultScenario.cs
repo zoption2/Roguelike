@@ -1,16 +1,9 @@
-using Enemy;
 using Gameplay;
-using Player;
-using Pool;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine;
-using Zenject;
-using System.Linq;
 
 public interface IDefaultScenario : IScenario
 {
-    //public void LoadMainMenu();
 }
 
 public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
@@ -28,21 +21,11 @@ public class DefaultScenario : Scenario<RoomContext>, IDefaultScenario
 
     public override void CheckConditonsForEndOfScenario()
     {
-        foreach (var obj in _turnsOrder)
-        {
-            Debug.LogWarning(obj.ToString());
-        }
-
-        Debug.LogError(_scenarioContext.Players.Count);
-        Debug.LogError(_scenarioContext.Enemies.Count);
-
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
-        Debug.Log("checking scenario end conditions...");
         if (noPlayers && !_haslost)
         {
-            Debug.LogWarning("player lost in defaultScenario");
             _haslost = true;
             ClearTurnOrder();
             ClearTurnQueue();

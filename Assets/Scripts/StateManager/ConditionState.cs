@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using Abilities;
-using Zenject;
 using Pool;
 using Projectiles;
 

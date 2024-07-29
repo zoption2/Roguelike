@@ -1,13 +1,6 @@
-using Enemy;
 using Gameplay;
-using Player;
-using Pool;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public interface IChestScenario : IScenario
 { 
@@ -28,20 +21,11 @@ public class ChestRoomScenario : Scenario<RoomContext>, IChestScenario
 
     public override void CheckConditonsForEndOfScenario()
     {
-        foreach (var obj in _turnsOrder)
-        { 
-            Debug.LogWarning(obj.ToString());
-        }
-        Debug.LogError(_scenarioContext.Players.Count);
-        Debug.LogError(_scenarioContext.Enemies.Count);
-
         bool noPlayers = _scenarioContext.Players.Count == 0;
         bool noEnemies = _scenarioContext.Enemies.Count == 0;
 
-        Debug.Log("checking scenario end conditions...");
         if (noPlayers && !_haslost)
         {
-            Debug.LogWarning("player lost in mainScenario");
             _haslost = true;
             ClearTurnOrder();
             ClearTurnQueue();
@@ -78,7 +62,7 @@ public class ChestRoomScenario : Scenario<RoomContext>, IChestScenario
         SubscribeToDeathOfCharacters();
         SortTurns();
 
-        OnStateEnd(); //??
+        OnStateEnd();
     }
 
 }

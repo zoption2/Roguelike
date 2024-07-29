@@ -90,8 +90,6 @@ public class RoomBuilder : IRoomBuilder
         CenterCamera(roomTemplate);
         OnNavigationCreate(roomObject.transform);
 
-        Debug.Log($"Room '{roomTemplate.name}' created with context.");
-
         return roomObject;
     }
 

@@ -1,7 +1,5 @@
 using Pool;
-using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 public interface IPoolManager
 {
@@ -28,11 +26,8 @@ public class PoolManager : IPoolManager
     private CharacterUIPooler _characterUIPooler;
     private ProjectilePooler _projectilePooler;
     private SlingshotPooler _slingshotPooler;
-
     private Transform _globalParent;
-
-    [Inject]
-    public void Construct(
+    public PoolManager(
         BuffPooler buffPooler,
         EffectPooler effectPooler,
         AbilityIconPooler abilityIconPooler,

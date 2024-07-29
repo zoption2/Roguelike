@@ -2,7 +2,6 @@ using CharactersStats;
 using Interactions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Abilities;
@@ -13,7 +12,6 @@ public class CharacterUIViewmodel
     public ReactiveInt ReactiveHealth;
 
     private CharacterModel _model;
-
     private ICharacterController _characterController;
     private IUIFactory _factory;
     private CharacterUIView _uIView;
@@ -45,7 +43,6 @@ public class CharacterUIViewmodel
 
     public  void ActivateSkillsBTNs()
     {
-        //ChangeAbilityPanelPos();
         isActivated = !isActivated; 
         if (isActivated)
         {
@@ -61,7 +58,6 @@ public class CharacterUIViewmodel
 
     public void ToggleActiveIndicator()
     {
-        //_isActive = !_isActive;
         if (_characterController.IsActive)
         {
             _activeIndicator.gameObject.SetActive(true);
@@ -92,52 +88,6 @@ public class CharacterUIViewmodel
         ReactiveHealth = stats.Health;
         _model.SetHealth(ReactiveHealth.Value);
     }
-
-    //private void ChangeAbilityPanelPos()
-    //{
-    //    RectTransform panelRect = _abilityPanel.GetComponent<RectTransform>();
-    //    Vector2 panelSize = panelRect.sizeDelta;
-
-    //    Camera mainCamera = Camera.main;
-    //    float cameraHeight = 2f * mainCamera.orthographicSize;
-    //    float cameraWidth = cameraHeight * mainCamera.aspect;
-
-    //    float cameraHalfWidth = cameraWidth / 2f;
-    //    float cameraHalfHeight = mainCamera.orthographicSize;
-
-    //    _abilityPanel.transform.localPosition = new Vector3(0, -2, 0);
-
-    //    Vector3 panelPosition = _abilityPanel.transform.position;
-
-    //    float panelHalfWidth = panelSize.x / 2f;
-    //    float panelHalfHeight = panelSize.y / 2f;
-
-    //    Vector3 panelDistanceFromCamera = mainCamera.transform.position - panelPosition;
-       
-    //    float verticalDistanceFromCamera = Mathf.Abs(Vector3.Dot(panelDistanceFromCamera, mainCamera.transform.up));
-
-    //    bool isVerticalOutOfCamera = verticalDistanceFromCamera - panelHalfHeight > cameraHalfHeight;
-
-    //    if (isVerticalOutOfCamera)
-    //    {
-    //        float newX = panelPosition.x;
-
-    //        float distanceToRightEdge = cameraHalfWidth - (panelPosition.x + panelHalfWidth);
-    //        float distanceToLeftEdge = cameraHalfWidth + (panelPosition.x - panelHalfWidth);
-
-    //        if (distanceToRightEdge > distanceToLeftEdge)
-    //        {
-    //            newX += 2.55f;
-    //        }
-    //        else
-    //        {
-    //            newX -= 2.55f;
-    //        }
-
-    //        _abilityPanel.transform.position = new Vector3(newX, panelPosition.y + 1.25f, panelPosition.z);
-    //    }
-    //}
-
 
     public void VisualiseAbilities()
     {

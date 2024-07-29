@@ -1,12 +1,14 @@
 using Gameplay;
 using Obstacles;
 using UnityEngine;
-using Zenject;
 
 public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 {
+    public Transform Transform { get; set; }
+
     [SerializeField]
     private TemplateElementType _exitType;
+
     [SerializeField]
     private ExitDirection _exitDirection;
 
@@ -15,12 +17,6 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
     private IGameplayService _gameplayService;
     private ILevelManager _levelManager;
     
-    public Transform Transform { get; set; }
-
-    private void Start()
-    {
-        
-    }
 
     public void Init(IGameplayService gameplayService, ILevelManager levelManager)
     {
@@ -59,16 +55,9 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
         _boxCollider.isTrigger = true;
     }
 
-    //public void UseTrigger()
-    //{
-    //    _gameplayService.CurrentContext = null;
-    //    _gameplayService.CurrentScenario.Pause();
-    //    _levelManager.SwitchToNextRoom();
-    //}
-
     public void UseTrigger()
     {
-        //_gameplayService.CurrentContext.ClearContext();
+        _gameplayService.CurrentScenario.Pause();
         _levelManager.BuildNextRoom();
     }
 

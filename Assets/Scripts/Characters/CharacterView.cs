@@ -10,6 +10,7 @@ public interface IMovable
 {
     public void ApplyForce(IInteractible provider, IInteractible handler);
 }
+
 public interface IInteractible
 {
     public void StartInteraction(IInteractible interactible);
@@ -19,6 +20,7 @@ public interface IInteractible
     public Vector3 GetLastVelocity();
     public Vector3 GetVelocity();
 }
+
 public interface ICharacterView
 {
     public Transform transform { get; }
@@ -42,16 +44,17 @@ public class CharacterView : MonoBehaviour,
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
     
-    private Transform _viewTransform;
     [SerializeField]
     private Transform _projectileSpawn;
+
+    public float MaxVelocity = 50f;
     public ParticleSystem ParticleTestSystem { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; }
     public Vector3 Normal { get; set; }
-
-    public float MaxVelocity = 50f;
+    
+    private Transform _viewTransform;
     private Rigidbody _rigidbody;
     private CollisionHandler _collisionHandler;
     private Queue<Vector3> _lastVelocities = new(2);
@@ -141,7 +144,6 @@ public class CharacterView : MonoBehaviour,
 
     public void OnPull()
     {
-        //ControllerInputs = null;
     }
 
     public void OnRelease()

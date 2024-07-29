@@ -27,7 +27,6 @@ namespace Enemy
         public bool IsActive { get; set; }
         public bool IsStunned { get; set; }
         public bool IsMoving { get; set; }
-
         public bool IsDead { get; set; }
         public IAbility CurrentAbility { get; set; }
         public IAnalyzer Analyzer { get; set; }
@@ -57,8 +56,7 @@ namespace Enemy
         private DiContainer _container;
         private IGameplayService _gameplayService;
 
-        [Inject]
-        public void Construct(
+        public EnemyController(
             IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,

@@ -1,8 +1,5 @@
 using CharactersStats;
 using Pool;
-using Zenject;
-using Projectiles;
-using UnityEngine;
 
 namespace Gameplay
 {
@@ -27,8 +24,7 @@ namespace Gameplay
         private ILevelContext _levelContext;
         private IRoomBuilder _roomBuilder;
 
-        [Inject]
-        public void Construct(
+        public StateData(
             IBuffFactory triggerFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,

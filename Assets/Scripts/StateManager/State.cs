@@ -44,7 +44,6 @@ namespace Gameplay
 
             _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
             _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
-            //_roomContext.ON_END_TURN += _scenario.OnStateEnd;
 
 
             _characterController.UseEffectsOnStart();
@@ -68,10 +67,8 @@ namespace Gameplay
             _characterController.ProcessOnEndTurn();
             
             _scenario.GameplayService.ProcessTurnEnd();
-            //_roomContext.ProcessTurnEnd();
 
             _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
-            //_roomContext.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
         }
 
@@ -107,7 +104,6 @@ namespace Gameplay
 
             _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
             _scenario.GameplayService.ON_END_TURN += _scenario.OnStateEnd;
-            //_roomContext.ON_END_TURN += _scenario.OnStateEnd;
 
             _characterController.UseEffectsOnStart();
             _characterController.AnalizeCondition();
@@ -129,10 +125,8 @@ namespace Gameplay
             _characterController.ProcessOnEndTurn();
 
             _scenario.GameplayService.ProcessTurnEnd();
-            //_roomContext.ProcessTurnEnd();
 
             _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
-            //_roomContext.ON_END_TURN -= _scenario.OnStateEnd;
             Debug.Log("----------------------------|EXIT|--------------------------------");
         }
 
@@ -193,22 +187,13 @@ namespace Gameplay
             _enemyFactory = enemyFactory;  
             _levelManager = levelManager;
             _levelContext = levelContext;
-            _roomBuilder = roomBuilder;
-            //_navigationFactory = navigationFactory;
-            
+            _roomBuilder = roomBuilder;       
         }
 
         public void OnEnter()
         {
             RoomTemplateSO.Template template = _levelManager.GetTemplate();
 
-            //if (template == null)
-            //{
-            //    Debug.LogError("Template not found");
-            //    return;
-            //}
-
-            //_roomBuilder.BuildLevel(template);
             //OnBuffCreate();
             OnPlayerCreate();
             OnEnemyCreate();
@@ -269,8 +254,6 @@ namespace Gameplay
 
             }
         }
-
-
 
         public void OnExit()
         {

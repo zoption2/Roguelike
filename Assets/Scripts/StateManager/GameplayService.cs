@@ -3,7 +3,6 @@ using Enemy;
 using Player;
 using System.Linq;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay
 {
@@ -22,6 +21,7 @@ namespace Gameplay
         public void StartCurrentRoom();
         public void CheckIfAllStopped();
         public void ProcessTurnEnd();
+        public void SetLevelManager(ILevelManager levelManager);
 
         public event OnEndTurn ON_END_TURN;
     }
@@ -44,16 +44,14 @@ namespace Gameplay
 
         public event OnEndTurn ON_END_TURN;
 
-        [Inject]
-        public void Construct(
+        public GameplayService(
             IPoolManager poolManager,
             IStatsProvider statsProvider,
             IScenarioFactory scenarioFactory,
             IPlayerFactory playerFactory,
             IEnemyFactory enemyFactory,
             ILevelContext levelContext,
-            IRewardService rewardService,
-            ILevelManager levelManager)
+            IRewardService rewardService)
         {
             PoolManager = poolManager;
             ScenarioFactory = scenarioFactory;
@@ -61,7 +59,6 @@ namespace Gameplay
             EnemyFactory = enemyFactory;
             StatsProvider = statsProvider;
             _levelContext = levelContext;
-            _levelManager = levelManager;
             rewardService.Init();
         }
 
@@ -71,6 +68,11 @@ namespace Gameplay
             CurrentContext = new RoomContext();
 
             CurrentScenario.Init(CurrentContext);
+        }
+
+        public void SetLevelManager(ILevelManager levelManager)
+        {
+            _levelManager = levelManager;
         }
 
         public void StartCurrentRoom()
@@ -142,59 +144,5 @@ namespace Gameplay
             }
         }
 
-    }
-
-
-    public interface IScenarioFactory
-    {
-        public IScenario CreateScenario(TypeOfScenario type, IGameplayService fullService);
-        public IScenarioContext CreateContext(TypeOfScenario type);
-    }
-
-    public class ScenarioFactory : IScenarioFactory
-    {
-        [Inject]
-        public DiContainer _diContainer;
-
-        public IScenario CreateScenario(TypeOfScenario type, IGameplayService fullService)
-        {
-            IScenario scenario = null;
-            switch (type)
-            {
-                case TypeOfScenario.DefaultRoom:
-                    scenario = _diContainer.Resolve<IDefaultScenario>();
-                    break;
-                case TypeOfScenario.MainRoom:
-                    scenario = _diContainer.Resolve<IChestScenario>();
-                    break;
-                    //case TypeOfScenario.Boss:
-                    //    //scenario = new BossScenario(fullService, context);
-                    //    scenario = new BossScenario(fullService);
-                    //    break;
-            }
-            return scenario;
-        }
-
-        public IScenarioContext CreateContext(TypeOfScenario type)
-        {
-            IScenarioContext context = null;
-
-            switch (type)
-            {
-                case TypeOfScenario.DefaultRoom:
-                    context = new RoomContext();
-                    break;
-                case TypeOfScenario.MainRoom:
-                    context = new RoomContext();
-                    break;
-                default:
-                    Debug.LogWarning("--|" + this + "Can`t create a scenario context |--");
-                    break;
-            }
-
-            return context;
-        }
-
-        
     }
 }

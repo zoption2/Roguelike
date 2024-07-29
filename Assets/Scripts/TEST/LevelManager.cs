@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine;
-using Zenject;
 
 public interface ILevelManager
 {
@@ -13,7 +12,6 @@ public interface ILevelManager
     public void LoadLevel();
     public void LoadMenu();
     public void BuildNextRoom();
-    
 }
 
 public class LevelManager : ILevelManager
@@ -67,8 +65,7 @@ public class LevelManager : ILevelManager
         }
     }
 
-    [Inject]
-    public void Construct(
+    public LevelManager(
         RoomTemplateSO roomTemplateSO,
         LevelSetingsSO levelSetingsSO,
         IPoolManager poolManager,
@@ -95,6 +92,7 @@ public class LevelManager : ILevelManager
 
     public void LoadLevel()
     {
+        _gameplayService.SetLevelManager(this);
 
         RoomsOrder = new Queue<TypeOfScenario>(_levelSettings.RoomsOrder);
 

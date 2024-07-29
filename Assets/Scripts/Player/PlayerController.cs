@@ -13,9 +13,6 @@ using System.Linq;
 using Enemy;
 using Abilities;
 using Projectiles;
-using UnityEngine.UIElements;
-using Unity.VisualScripting;
-
 
 namespace Player
 {
@@ -65,10 +62,7 @@ namespace Player
         private IRoomContext _characterScenarioContext;
         private IUIFactory _uIFactory;
         private IGameplayService _gameplayService;
-        
-
-        [Inject]
-        public void Construct(
+        public PlayerController(
             IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
             IInteractionDealer interactionDealer,

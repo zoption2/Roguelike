@@ -1,11 +1,8 @@
-using CharactersStats;
 using Enemy;
 using Player;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Gameplay
@@ -121,7 +118,6 @@ namespace Gameplay
 
         public void SwitchState(IState state)
         {
-            Debug.Log("tried switching");
             if (_currentState != state)
             {
                 Debug.Log("SwitchState");
