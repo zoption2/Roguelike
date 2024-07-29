@@ -10,5 +10,8 @@ namespace Gameplay
         public void LoadMainMenu();
         public void RenewQueue();
         public void ClearTurnsOrder();
+        public void ClearTurnOrder();
+        public void ClearTurnQueue();
+        public void HandleRoomChange();
     }
 }

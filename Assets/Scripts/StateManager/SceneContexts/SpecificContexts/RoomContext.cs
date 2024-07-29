@@ -36,7 +36,6 @@ namespace Gameplay
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }
         public List<BuffSpawnPointWithType> BuffSpawnPoints { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
-        public NavMeshSurface NavMeshSurface { get; set; }
         public Transform EnemiesParent { get; set; }
         public Transform BuffsParent { get; set; }
         
@@ -49,7 +48,6 @@ namespace Gameplay
         public List<ICompleatedRoomTrigger> CompleatedRoomTriggers { get; set; }
         public List<IChestController> Chests { get; set; }
         public List<IBuff> Buffs { get; set; }
-        public NavMeshSurface NavMeshSurface { get; set; }
         public List<TeleportWallEnter> TeleportWallEnters { get; set; }
         public List<PlayerSpawnPointWithType> PlayerSpawnPoints { get; set; }
         public List<EnemySpawnPointWithType> EnemySpawnPoints { get; set; }

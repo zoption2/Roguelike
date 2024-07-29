@@ -17,6 +17,7 @@ namespace Gameplay
         public RoomContext CurrentContext { get; set; }
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
+        public ILevelContext LevelContext { get; set; }
         public void StartCurrentRoom();
         public void CheckIfAllStopped();
         public void ProcessTurnEnd();
@@ -38,7 +39,7 @@ namespace Gameplay
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
 
-        private ILevelContext _levelContext;
+        public ILevelContext LevelContext { get; set; }
         private ILevelManager _levelManager;
 
         public event OnEndTurn ON_END_TURN;
@@ -57,7 +58,7 @@ namespace Gameplay
             PlayerFactory = playerFactory;
             EnemyFactory = enemyFactory;
             StatsProvider = statsProvider;
-            _levelContext = levelContext;
+            LevelContext = levelContext;
 
             rewardService.Init();
         }
@@ -71,12 +72,13 @@ namespace Gameplay
         {
             CurrentScenario = ScenarioFactory.CreateScenario(CurrentRoomType, this);
 
-            if (_levelContext.Player == null)
+            if (LevelContext.Player == null)
             {
                 CreatePlayer();
             }
 
             CurrentScenario.Init(CurrentContext);
+            Debug.LogWarning("Next room was inited");
         }
 
         public void CheckIfAllStopped()
@@ -115,7 +117,7 @@ namespace Gameplay
 
         public void CreatePlayer()
         {
-            if (_levelContext.Player == null)
+            if (LevelContext.Player == null)
             {
                 CharacterType playerType = DataTransfer.TypeCollection.FirstOrDefault();
                 Vector3 newPos = new Vector3(0, 0, 0);
@@ -125,7 +127,7 @@ namespace Gameplay
                 newPlayer.SetCharacterContext(CurrentContext);
                 CurrentContext.Players.Add(newPlayer);
 
-                _levelContext.Player = newPlayer;
+                LevelContext.Player = newPlayer;
             }
             else
             {

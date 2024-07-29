@@ -57,6 +57,12 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 
     public void UseTrigger()
     {
+        Debug.LogWarning("Exit from level");
+        _gameplayService.CurrentScenario.ClearTurnOrder();
+        _gameplayService.CurrentScenario.ClearTurnQueue();
+        _gameplayService.CurrentScenario.HandleRoomChange();
+        _gameplayService.LevelContext.Player.StopPlayer();
+        _gameplayService.LevelContext.Player.IsMoving = false;
         _levelManager.BuildNextRoom();
     }
 

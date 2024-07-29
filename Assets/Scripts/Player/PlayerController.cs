@@ -21,6 +21,7 @@ namespace Player
         public void OnClick(Transform point, PointerEventData eventData);
         public void OnBeginDrag(PointerEventData eventData);
         public void SetTransform(Transform newTransform);
+        public void StopPlayer();
     }
 
     public delegate void OnEndTurn();
@@ -57,7 +58,7 @@ namespace Player
         private ReactiveList<IEffect> _allEffects;
         private List<IAbility> _abilitiesForReload;
         private IAbility _basicAbility;
-        private IConditionState _currentState;
+        private IConditionState _currentConditionState;
         private IStateFactory _stateFactory;
         private IRoomContext _characterScenarioContext;
         private IUIFactory _uIFactory;
@@ -108,7 +109,7 @@ namespace Player
             CharacterView = characterView;
             CharacterView.Init(this);
 
-            _currentState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
+            _currentConditionState = _stateFactory.CreateConditionState(TypeOfConditionState.InactiveState, this);
             Analyzer = new Analyzer(this);
 
             _UIView = characterUIView;       
@@ -146,7 +147,7 @@ namespace Player
 
         public void DoUpdate()
         {
-            _currentState.DoUpdate();
+            _currentConditionState.DoUpdate();
         }
 
 
@@ -182,13 +183,13 @@ namespace Player
 
             if (!IsMoving && LaunchedProjectiles.Count == 0)
             {
-                _currentState.UseSlingshotAsync(eventData, _slingShotInitPosition);
+                _currentConditionState.UseSlingshotAsync(eventData, _slingShotInitPosition);
             }
         }
 
         public IInteraction GetInteraction()
         {
-            return _currentState.GetInteraction();
+            return _currentConditionState.GetInteraction();
         }
 
         public void DisableEnemiesSkillButtons()
@@ -201,7 +202,7 @@ namespace Player
 
         public void ApplyInteraction(IInteraction interaction)
         {
-            _currentState.ApplyInteraction(interaction);
+            _currentConditionState.ApplyInteraction(interaction);
 
             _uIViewmodel.UpdateStats(ModifiableStats);
             _uIViewmodel.VisualiseEffects(_allEffects.Value);
@@ -211,11 +212,11 @@ namespace Player
         {
             if (interactible is IProjectile)
             {
-                _currentState.ApplyBump(interactible, bumpFromDealer);
+                _currentConditionState.ApplyBump(interactible, bumpFromDealer);
             }
             else if (IsActive)
             {
-                _currentState.ApplyBump(interactible, bumpFromDealer);
+                _currentConditionState.ApplyBump(interactible, bumpFromDealer);
             }
         }
 
@@ -242,18 +243,18 @@ namespace Player
 
         public void AddEffects(List<IEffect> effects)
         {
-            _currentState.AddEffects(effects);
+            _currentConditionState.AddEffects(effects);
             _uIViewmodel.VisualiseEffects(_allEffects.Value);
         }
 
         public void Attack()
         {
-            _currentState.Attack();
+            _currentConditionState.Attack();
         }
 
         public void Move()
         {
-            _currentState.Move();
+            _currentConditionState.Move();
         }
 
         public void Tick()
@@ -311,11 +312,11 @@ namespace Player
         {
             IConditionState newState = _stateFactory.CreateConditionState(state, this);
 
-            if (_currentState.GetType() != newState.GetType())
+            if (_currentConditionState.GetType() != newState.GetType())
             {
-                _currentState?.OnExit();
-                _currentState = newState;
-                _currentState.OnEnter();
+                _currentConditionState?.OnExit();
+                _currentConditionState = newState;
+                _currentConditionState.OnEnter();
 
                 if (state == TypeOfConditionState.DeadState)
                 {
@@ -331,11 +332,12 @@ namespace Player
 
         public void HandleStopMovement()
         {
+            Debug.LogError("HANDLE STOP MOVEMENT!");
             ON_STOP_MOVEMENT?.Invoke();
         }
         public IConditionState GetCurrentConditionState()
         {
-            return _currentState;
+            return _currentConditionState;
         }
 
         public Rigidbody GetRigidbody()
@@ -443,6 +445,11 @@ namespace Player
             RevertReadyUnactiveAbilityButtons();
         }
 
-        
+        public void StopPlayer()
+        {
+            Rigidbody rb = CharacterView.GetRigidbody();
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 }

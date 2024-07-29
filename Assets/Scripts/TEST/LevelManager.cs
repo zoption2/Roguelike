@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
 
 public interface ILevelManager
 {
@@ -148,9 +150,23 @@ public class LevelManager : ILevelManager
                     exit.Init(_gameplayService, this);
                 }
 
+                OnNavigationCreate(RoomsParent, _levelContext);
+
                 _gameplayService.StartCurrentRoom();
             }
         }
+    }
+
+    public void OnNavigationCreate(Transform parent, ILevelContext context)
+    {
+        GameObject navMeshObject = new GameObject("NavMeshSurface");
+        navMeshObject.transform.SetParent(parent);
+        navMeshObject.transform.localPosition = Vector3.zero;
+
+        NavMeshSurface navMeshSurface = navMeshObject.AddComponent<NavMeshSurface>();
+        navMeshSurface.AddData();
+        context.NavMeshSurface = navMeshSurface;
+        navMeshSurface.BuildNavMesh();
     }
 
     public void LoadMenu()
@@ -220,7 +236,15 @@ public class LevelManager : ILevelManager
                     exit.Init(_gameplayService, this);
                 }
 
+                NavMeshData newData = new NavMeshData();
+                
+
                 _gameplayService.StartCurrentRoom();
+
+                _levelContext.NavMeshSurface = null;
+
+                _levelContext.NavMeshSurface.RemoveData();
+                _levelContext.NavMeshSurface.BuildNavMesh();
             }
         }
         else

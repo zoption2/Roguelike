@@ -11,7 +11,7 @@ public interface IRoomBuilder
     public Transform BuffsParent { get; set; }
     public Transform WallsParent { get; set; }
     public Transform FloorsParent { get; set; }
-    public void OnNavigationCreate(Transform parent);
+    //public void OnNavigationCreate(Transform parent);
     public GameObject BuildRoom(RoomTemplateSO.Template template, Transform parent);
 }
 
@@ -88,7 +88,7 @@ public class RoomBuilder : IRoomBuilder
 
         BuildExits(templateElements, coordinates);
         CenterCamera(roomTemplate);
-        OnNavigationCreate(roomObject.transform);
+        //OnNavigationCreate(roomObject.transform);
 
         return roomObject;
     }
@@ -215,11 +215,15 @@ public class RoomBuilder : IRoomBuilder
         return parentObject.transform;
     }
 
-    public void OnNavigationCreate(Transform parent)
-    {
-        NavMeshSurface navMeshSurface = parent.gameObject.AddComponent<NavMeshSurface>();
-        RoomContext.NavMeshSurface = navMeshSurface;
-        navMeshSurface.BuildNavMesh();
-    }
+    //public void OnNavigationCreate(Transform parent)
+    //{
+    //    GameObject navMeshObject = new GameObject("NavMeshSurface");
+    //    navMeshObject.transform.SetParent(parent);
+    //    navMeshObject.transform.localPosition = Vector3.zero;
+
+    //    NavMeshSurface navMeshSurface = navMeshObject.AddComponent<NavMeshSurface>();
+    //    RoomContext.NavMeshSurface = navMeshSurface;
+    //    navMeshSurface.BuildNavMesh();
+    //}
 }
 

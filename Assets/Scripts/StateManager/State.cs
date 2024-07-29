@@ -251,7 +251,6 @@ namespace Gameplay
                 IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomContext.EnemiesParent, enemyType);
                 newEnemy.SetCharacterContext(_roomContext);
                 _roomContext.Enemies.Add(newEnemy);
-
             }
         }
 

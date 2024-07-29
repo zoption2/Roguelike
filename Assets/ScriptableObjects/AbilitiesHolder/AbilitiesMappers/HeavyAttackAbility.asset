@@ -17,3 +17,4 @@ MonoBehaviour:
   ProjectileType: 0
   ReloadTime: 2
   LaunchModifier: 1
+  RicochetCount: 0

@@ -29,6 +29,11 @@ namespace Gameplay
             _rewardService = rewardService;
         }
 
+        public IState GetCurrentState()
+        {
+            return _currentState;
+        }
+
         public void ClearTurnsOrder()
         {
             _turnsOrder.Clear();
@@ -66,11 +71,6 @@ namespace Gameplay
         {
             _scenarioContext = (T)context;
             Debug.Log("Scenario context set: " + _scenarioContext);
-        }
-
-        public IState GetCurrentState()
-        {
-            return _currentState;
         }
 
         public abstract void Init(IScenarioContext context);
@@ -125,6 +125,11 @@ namespace Gameplay
                 _currentState = state;
                 _currentState.OnEnter();
             }
+        }
+
+        public void HandleRoomChange()
+        {
+            _currentState.OnExit();
         }
 
         public void Pause()
@@ -204,12 +209,12 @@ namespace Gameplay
             _queueOfStates = queue;
         }
 
-        protected void ClearTurnOrder()
+        public void ClearTurnOrder()
         {
             _turnsOrder.Clear();
         }
 
-        protected void ClearTurnQueue()
+        public void ClearTurnQueue()
         {
             _queueOfStates.Clear();
         }

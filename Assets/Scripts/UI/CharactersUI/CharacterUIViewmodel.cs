@@ -22,7 +22,6 @@ public class CharacterUIViewmodel
     private List<IAbility> _abilities;
     private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
-    private bool _isActive = false;
 
     
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)

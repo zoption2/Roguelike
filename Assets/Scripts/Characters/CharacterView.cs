@@ -65,6 +65,7 @@ public class CharacterView : MonoBehaviour,
         ControllerInputs = controllerInputs;
         NavMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         NavMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
+
     }
 
     private void Start()

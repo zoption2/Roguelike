@@ -91,7 +91,7 @@ namespace Gameplay
                     state = new StunState(controller);
                     break;
                 case TypeOfConditionState.PlayerActiveState:
-                    state = new PlayerActiveState(controller,_projectilePooler);
+                    state = new PlayerActiveState(controller, _projectilePooler);
                     break;
                 case TypeOfConditionState.EnemyActiveState:
                     state = new EnemyActiveState(controller, _projectilePooler);

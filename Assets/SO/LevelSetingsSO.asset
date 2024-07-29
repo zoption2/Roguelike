@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc11f96534c06cf4e9871f40e8f4ef72, type: 3}
   m_Name: LevelSetingsSO
   m_EditorClassIdentifier: 
-  RoomsOrder: 0200000001000000
+  RoomsOrder: 020000000100000001000000
