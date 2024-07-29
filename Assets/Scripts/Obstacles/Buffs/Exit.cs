@@ -57,7 +57,6 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
 
     public void UseTrigger()
     {
-        _gameplayService.CurrentScenario.Pause();
         _levelManager.BuildNextRoom();
     }
 

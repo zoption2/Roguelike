@@ -17,7 +17,6 @@ namespace Gameplay
         public RoomContext CurrentContext { get; set; }
         public string CurrentRoomName { get; set; }
         public TypeOfScenario CurrentRoomType { get; set; }
-        public void Init(TypeOfScenario type);
         public void StartCurrentRoom();
         public void CheckIfAllStopped();
         public void ProcessTurnEnd();
@@ -59,15 +58,8 @@ namespace Gameplay
             EnemyFactory = enemyFactory;
             StatsProvider = statsProvider;
             _levelContext = levelContext;
+
             rewardService.Init();
-        }
-
-        public void Init(TypeOfScenario type)
-        {
-            CurrentScenario = ScenarioFactory.CreateScenario(type, this);
-            CurrentContext = new RoomContext();
-
-            CurrentScenario.Init(CurrentContext);
         }
 
         public void SetLevelManager(ILevelManager levelManager)
@@ -77,10 +69,7 @@ namespace Gameplay
 
         public void StartCurrentRoom()
         {
-            string currentRoomName = CurrentRoomName;
-            TypeOfScenario currentRoomType = CurrentRoomType;
-
-            CurrentScenario = ScenarioFactory.CreateScenario(currentRoomType, this);
+            CurrentScenario = ScenarioFactory.CreateScenario(CurrentRoomType, this);
 
             if (_levelContext.Player == null)
             {

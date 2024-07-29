@@ -138,7 +138,6 @@ public class LevelManager : ILevelManager
 
                 roomObject.transform.position = Vector3.zero;
 
-                roomObject.SetActive(true);
                 _gameplayService.CurrentContext = roomContext;
                 _gameplayService.CurrentRoomName = roomName;
                 _gameplayService.CurrentRoomType = typeOfScenario;
@@ -196,7 +195,6 @@ public class LevelManager : ILevelManager
                 GameObject roomObject = _roomBuilder.BuildRoom(template, RoomsParent);
                 _currentRoom = roomObject;
                 roomObject.transform.position = Vector3.zero;
-                roomObject.SetActive(true);
 
                 _gameplayService.CurrentContext = roomContext;
                 _gameplayService.CurrentRoomName = roomName;
