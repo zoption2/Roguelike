@@ -1,6 +1,7 @@
 using Gameplay;
 using Obstacles;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.AI.Navigation;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ public interface IRoomBuilder
     public Transform WallsParent { get; set; }
     public Transform FloorsParent { get; set; }
     //public void OnNavigationCreate(Transform parent);
-    public GameObject BuildRoom(RoomTemplateSO.Template template, Transform parent);
+    public Task<GameObject> BuildRoom(RoomTemplateSO.Template roomTemplate, Transform parent);
 }
 
 public class RoomBuilder : IRoomBuilder
@@ -38,7 +39,7 @@ public class RoomBuilder : IRoomBuilder
         _chestFactory = chestFactory;
     }
 
-    public GameObject BuildRoom(RoomTemplateSO.Template roomTemplate, Transform parent)
+    public async Task<GameObject> BuildRoom(RoomTemplateSO.Template roomTemplate, Transform parent)
     {
 
         AnalyzeTemplate(roomTemplate);
@@ -89,6 +90,7 @@ public class RoomBuilder : IRoomBuilder
 
         BuildExits(templateElements, coordinates);
         CenterCamera(roomTemplate);
+        await Task.Delay(50);
         OnNavigationCreate(roomObject.transform);
 
         return roomObject;

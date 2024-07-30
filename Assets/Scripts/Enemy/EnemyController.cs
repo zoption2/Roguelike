@@ -11,6 +11,7 @@ using Gameplay;
 using UnityEngine.AI;
 using Abilities;
 using Projectiles;
+using DG.Tweening;
 
 
 namespace Enemy
@@ -376,6 +377,10 @@ namespace Enemy
         public void ProcessOnStartTurn()
         {
             _uIViewmodel.ToggleActiveIndicator();
+
+            Transform transform = GetTransform();
+
+            _gameplayService.ChangeVirtualCameraFollow(transform, 1f);
         }
 
         public void RevertReadyUnactiveAbilityButtons()

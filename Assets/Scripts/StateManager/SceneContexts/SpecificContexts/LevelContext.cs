@@ -1,3 +1,4 @@
+using Cinemachine;
 using Player;
 using Unity.AI.Navigation;
 
@@ -7,6 +8,7 @@ namespace Gameplay
     {
         IPlayerController Player { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
+        public CinemachineVirtualCamera VirtualCamera { get; set; }
         public void CleanAllContexts();
     }
 
@@ -14,6 +16,7 @@ namespace Gameplay
     {
         public IPlayerController Player { get; set; }
         public NavMeshSurface NavMeshSurface { get; set; }
+        public CinemachineVirtualCamera VirtualCamera { get; set; }
 
         public void CleanAllContexts()
         {

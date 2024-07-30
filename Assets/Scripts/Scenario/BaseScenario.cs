@@ -105,13 +105,14 @@ namespace Gameplay
                 RenewQueue();
             }
 
-            CheckConditonsForEndOfScenario();
-
             if (_queueOfStates.Count != 0)
             {
                 IState state = _queueOfStates.Dequeue();
                 SwitchState(state);
             }
+
+            CheckConditonsForEndOfScenario();
+
             Debug.Log("OnStateEnd");
         }
 

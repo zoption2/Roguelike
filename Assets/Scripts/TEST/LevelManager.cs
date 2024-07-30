@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using Unity.AI.Navigation;
 using UnityEngine.AI;
+using Cinemachine;
 
 public interface ILevelManager
 {
@@ -32,6 +33,8 @@ public class LevelManager : ILevelManager
     private LevelSetingsSO _levelSettings;
     private IGameplayService _gameplayService;
     private ILevelContext _levelContext;
+
+    private CinemachineVirtualCamera _virtualCamera;
 
     public Transform PlayerParent
     {
@@ -94,7 +97,7 @@ public class LevelManager : ILevelManager
 
     public void LoadLevel()
     {
-        _gameplayService.SetLevelManager(this);
+        
 
         RoomsOrder = new Queue<TypeOfScenario>(_levelSettings.RoomsOrder);
 
@@ -110,8 +113,15 @@ public class LevelManager : ILevelManager
                     SceneManager.UnloadSceneAsync("Menu");
                 }
 
+                GameObject virtualCamera = CreateVirtualCamera();
+
+                SceneManager.MoveGameObjectToScene(virtualCamera, scene);
                 SceneManager.MoveGameObjectToScene(RoomsParent.gameObject, scene);
                 SceneManager.MoveGameObjectToScene(PlayerParent.gameObject, scene);
+
+                _levelContext.VirtualCamera = virtualCamera.GetComponent<CinemachineVirtualCamera>();
+
+                _gameplayService.SetLevelManager(this);
 
                 CreateInitialRoom(RoomsParent);
 
@@ -120,7 +130,29 @@ public class LevelManager : ILevelManager
         }
     }
 
-    private void CreateInitialRoom(Transform parent)
+    private GameObject CreateVirtualCamera()
+    {
+        GameObject virtualCameraObject = new GameObject("VirtualCamera");
+        _virtualCamera = virtualCameraObject.AddComponent<CinemachineVirtualCamera>();
+
+        CinemachineTransposer transposer = _virtualCamera.AddCinemachineComponent<CinemachineTransposer>();
+        transposer.m_FollowOffset = new Vector3(0, 20, 0);
+        transposer.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
+        transposer.m_XDamping = 0;
+        transposer.m_YDamping = 0;
+        transposer.m_ZDamping = 0;
+
+        CinemachineComposer composer = _virtualCamera.AddCinemachineComponent<CinemachineComposer>();
+        composer.m_TrackedObjectOffset = new Vector3(0, 0, 0);
+        composer.m_LookaheadTime = 0;
+        composer.m_LookaheadSmoothing = 0;
+
+        return virtualCameraObject;
+    }
+
+
+
+    private async void CreateInitialRoom(Transform parent)
     {
         if (RoomsOrder.Count > 0)
         {
@@ -135,7 +167,7 @@ public class LevelManager : ILevelManager
 
                 _roomBuilder.RoomContext = roomContext;
 
-                GameObject roomObject = _roomBuilder.BuildRoom(template, parent);
+                GameObject roomObject = await _roomBuilder.BuildRoom(template, parent);
                 _currentRoom = roomObject;
 
                 roomObject.transform.position = Vector3.zero;
@@ -191,7 +223,7 @@ public class LevelManager : ILevelManager
         }
     }
 
-    public void BuildNextRoom()
+    public async void BuildNextRoom()
     {
         GameObject.Destroy(_currentRoom);
 
@@ -208,7 +240,7 @@ public class LevelManager : ILevelManager
 
                 _roomBuilder.RoomContext = roomContext;
 
-                GameObject roomObject = _roomBuilder.BuildRoom(template, RoomsParent);
+                GameObject roomObject = await _roomBuilder.BuildRoom(template, RoomsParent);
                 _currentRoom = roomObject;
                 roomObject.transform.position = Vector3.zero;
 

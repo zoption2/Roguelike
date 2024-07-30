@@ -13,6 +13,7 @@ using System.Linq;
 using Enemy;
 using Abilities;
 using Projectiles;
+using DG.Tweening;
 
 namespace Player
 {
@@ -413,7 +414,12 @@ namespace Player
             }
             _uIViewmodel.UpdateReloadIndicators();
             CurrentAbility = _basicAbility;
+
+            Transform transform = GetTransform();
+
+            _gameplayService.ChangeVirtualCameraFollow(transform, 1f);
         }
+
 
         public void RevertReadyUnactiveAbilityButtons()
         {

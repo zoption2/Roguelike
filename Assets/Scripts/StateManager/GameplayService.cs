@@ -1,7 +1,10 @@
 using CharactersStats;
+using Cinemachine;
+using DG.Tweening;
 using Enemy;
 using Player;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Gameplay
@@ -22,6 +25,7 @@ namespace Gameplay
         public void CheckIfAllStopped();
         public void ProcessTurnEnd();
         public void SetLevelManager(ILevelManager levelManager);
+        public void ChangeVirtualCameraFollow(Transform targetTransform, float duration);
 
         public event OnEndTurn ON_END_TURN;
     }
@@ -41,6 +45,7 @@ namespace Gameplay
 
         public ILevelContext LevelContext { get; set; }
         private ILevelManager _levelManager;
+        private CinemachineVirtualCamera _virtualCamera;
 
         public event OnEndTurn ON_END_TURN;
 
@@ -66,7 +71,32 @@ namespace Gameplay
         public void SetLevelManager(ILevelManager levelManager)
         {
             _levelManager = levelManager;
+            _virtualCamera = LevelContext.VirtualCamera;
         }
+
+        public void ChangeVirtualCameraFollow(Transform targetTransform, float duration)
+        {
+            Vector3 currentPosition = _virtualCamera.transform.position;
+            Vector3 targetPosition = new Vector3(targetTransform.position.x, currentPosition.y, targetTransform.position.z);
+
+            if (_virtualCamera.Follow != null && _virtualCamera.LookAt != null)
+            {
+                _virtualCamera.transform.DOMove(targetPosition, duration).OnComplete(() =>
+                {
+                    _virtualCamera.Follow = targetTransform;
+                    _virtualCamera.LookAt = targetTransform;
+                });
+            }
+            else
+            {
+                _virtualCamera.transform.position = targetPosition;
+                _virtualCamera.Follow = targetTransform;
+                _virtualCamera.LookAt = targetTransform;
+            }
+        }
+
+
+
 
         public void StartCurrentRoom()
         {
