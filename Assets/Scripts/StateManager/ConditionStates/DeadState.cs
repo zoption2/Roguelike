@@ -38,8 +38,10 @@ public class DeadState : IConditionState
             _characterController.IsMoving = false;
 
         }
-        _characterController.HandleStopMovement();
+        
         _characterController.PushIfDead();
+        _characterController.HandleStopMovement();
+
     }
 
     public void AddEffects(List<IEffect> effects)

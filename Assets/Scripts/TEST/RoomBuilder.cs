@@ -40,6 +40,7 @@ public class RoomBuilder : IRoomBuilder
 
     public GameObject BuildRoom(RoomTemplateSO.Template roomTemplate, Transform parent)
     {
+
         AnalyzeTemplate(roomTemplate);
 
         if (roomTemplate == null)
@@ -88,7 +89,7 @@ public class RoomBuilder : IRoomBuilder
 
         BuildExits(templateElements, coordinates);
         CenterCamera(roomTemplate);
-        //OnNavigationCreate(roomObject.transform);
+        OnNavigationCreate(roomObject.transform);
 
         return roomObject;
     }
@@ -215,15 +216,16 @@ public class RoomBuilder : IRoomBuilder
         return parentObject.transform;
     }
 
-    //public void OnNavigationCreate(Transform parent)
-    //{
-    //    GameObject navMeshObject = new GameObject("NavMeshSurface");
-    //    navMeshObject.transform.SetParent(parent);
-    //    navMeshObject.transform.localPosition = Vector3.zero;
+    public void OnNavigationCreate(Transform parent)
+    {
 
-    //    NavMeshSurface navMeshSurface = navMeshObject.AddComponent<NavMeshSurface>();
-    //    RoomContext.NavMeshSurface = navMeshSurface;
-    //    navMeshSurface.BuildNavMesh();
-    //}
+        GameObject navMeshObject = new GameObject("NavMeshSurface");
+        navMeshObject.transform.SetParent(parent);
+        navMeshObject.transform.localPosition = Vector3.zero;
+
+        NavMeshSurface navMeshSurface = navMeshObject.AddComponent<NavMeshSurface>();
+        RoomContext.NavMeshSurface = navMeshSurface;
+        navMeshSurface.BuildNavMesh();
+    }
 }
 

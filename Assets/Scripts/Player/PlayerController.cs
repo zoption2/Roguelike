@@ -225,17 +225,6 @@ namespace Player
             _gameplayService.CheckIfAllStopped();
         }
 
-        public void PushIfDead()
-        {
-            Debug.Log("pushed player to pool!");
-            _characterPooler.Push(CharacterModel.Type, CharacterView);
-            PushCharacterUI();
-            
-            ON_CHARACTER_DEATH?.Invoke(this);
-            Dispose();
-        }
-
-
         public ReactiveStats GetCharacterStats()
         {
             return ModifiableStats;
@@ -335,6 +324,17 @@ namespace Player
             Debug.LogError("HANDLE STOP MOVEMENT!");
             ON_STOP_MOVEMENT?.Invoke();
         }
+
+        public void PushIfDead()
+        {
+            Debug.Log("pushed player to pool!");
+            _characterPooler.Push(CharacterModel.Type, CharacterView);
+            PushCharacterUI();
+
+            ON_CHARACTER_DEATH?.Invoke(this);
+            Dispose();
+        }
+
         public IConditionState GetCurrentConditionState()
         {
             return _currentConditionState;
