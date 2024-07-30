@@ -236,15 +236,20 @@ public class LevelManager : ILevelManager
                     exit.Init(_gameplayService, this);
                 }
 
-                NavMeshData newData = new NavMeshData();
-                
+                if (_levelContext.NavMeshSurface != null)
+                {
+                    _levelContext.NavMeshSurface.RemoveData();
+                    _levelContext.NavMeshSurface.BuildNavMesh();
+                }
+                else
+                {
+                    OnNavigationCreate(RoomsParent, _levelContext);
+                }
+
 
                 _gameplayService.StartCurrentRoom();
 
-                _levelContext.NavMeshSurface = null;
-
-                _levelContext.NavMeshSurface.RemoveData();
-                _levelContext.NavMeshSurface.BuildNavMesh();
+                
             }
         }
         else
