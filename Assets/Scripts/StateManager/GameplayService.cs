@@ -76,23 +76,8 @@ namespace Gameplay
 
         public void ChangeVirtualCameraFollow(Transform targetTransform, float duration)
         {
-            Vector3 currentPosition = _virtualCamera.transform.position;
-            Vector3 targetPosition = new Vector3(targetTransform.position.x, currentPosition.y, targetTransform.position.z);
-
-            if (_virtualCamera.Follow != null && _virtualCamera.LookAt != null)
-            {
-                _virtualCamera.transform.DOMove(targetPosition, duration).OnComplete(() =>
-                {
-                    _virtualCamera.Follow = targetTransform;
-                    _virtualCamera.LookAt = targetTransform;
-                });
-            }
-            else
-            {
-                _virtualCamera.transform.position = targetPosition;
-                _virtualCamera.Follow = targetTransform;
-                _virtualCamera.LookAt = targetTransform;
-            }
+            _virtualCamera.Follow = targetTransform;
+            _virtualCamera.LookAt = targetTransform;
         }
 
 
