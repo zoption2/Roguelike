@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Unity.AI.Navigation;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 namespace Gameplay
@@ -164,6 +165,7 @@ namespace Gameplay
         IRoomBuilder _roomBuilder;
         ILevelManager _levelManager;
         ILevelContext _levelContext;
+        ICameraManager _cameraManager;
 
 
         public InitLevelState(
@@ -177,7 +179,8 @@ namespace Gameplay
             IRoomObjectsFactory roomObjectsFactory,
             ILevelManager levelManager,
             ILevelContext levelContext,
-            IRoomBuilder roomBuilder)
+            IRoomBuilder roomBuilder,
+            ICameraManager cameraManager)
         {
             _scenario = scenario;
             _roomContext = context;
@@ -187,7 +190,8 @@ namespace Gameplay
             _enemyFactory = enemyFactory;  
             _levelManager = levelManager;
             _levelContext = levelContext;
-            _roomBuilder = roomBuilder;       
+            _roomBuilder = roomBuilder;   
+            _cameraManager = cameraManager;
         }
 
         public void OnEnter()
@@ -236,7 +240,21 @@ namespace Gameplay
             }
             else
             {
-                Debug.LogError("Player has not been created yet!");
+                CharacterType playerType = DataTransfer.TypeCollection.FirstOrDefault();
+                PlayerSpawnPointWithType playerSpawnPoint = _roomContext.PlayerSpawnPoints.FirstOrDefault();
+                Vector3 newPos = new Vector3(playerSpawnPoint.SpawnPoint.x, playerSpawnPoint.SpawnPoint.y + YOffset, playerSpawnPoint.SpawnPoint.z);
+                Debug.LogWarning($"Creating new player at position: {newPos}");
+
+                IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _levelManager.PlayerParent, playerType);
+                newPlayer.SetCharacterContext(_roomContext);
+                _roomContext.Players.Add(newPlayer);
+
+                _levelContext.Player = newPlayer;
+
+                Transform characterTransform = newPlayer.GetTransform();
+
+                var virtualCamera = _cameraManager.CreateVirtualCamera(characterTransform, playerType.ToString());
+                newPlayer.SetVirtualCamera(virtualCamera);
             }
         }
 
@@ -251,6 +269,11 @@ namespace Gameplay
                 IEnemyController newEnemy = _enemyFactory.CreateEnemy(newPos, _roomContext.EnemiesParent, enemyType);
                 newEnemy.SetCharacterContext(_roomContext);
                 _roomContext.Enemies.Add(newEnemy);
+
+                Transform characterTransform = newEnemy.GetTransform();
+
+                var virtualCamera = _cameraManager.CreateVirtualCamera(characterTransform, enemyType.ToString());
+                newEnemy.SetVirtualCamera(virtualCamera);
             }
         }
 
@@ -269,6 +292,51 @@ namespace Gameplay
         }
     }
 
+    public class InterstitialState : IState
+    {
+        private IScenario _scenario;
+        private IRoomContext _roomContext;
+        private ICameraManager _cameraManager;
+        private ICharacterController _characterController;
+
+        public IScenario Scenario { get { return _scenario; } }
+
+        public InterstitialState(
+            IScenario scenario,
+            IRoomContext roomContext,
+            ICameraManager cameraManager)
+        {
+            _scenario = scenario;
+            _roomContext = roomContext;
+            _cameraManager = cameraManager;
+        }
+
+        public ICharacterController GetCharacter()
+        {
+            return null;
+        }
+
+        public async void OnEnter()
+        {
+            Debug.Log($"-----------------------------|ENTER INTERTITIAL STATE FOR {_characterController}|-------------------------------");
+            var virtualCamera = _characterController.GetVirtualCamera();
+            Transform characterTransform = _characterController.GetTransform();
+            _cameraManager.SetMainCamera(virtualCamera);
+            await _cameraManager.WaitForCameraToReachTarget(characterTransform);
+            _scenario.OnStateEnd();
+        }
+
+        public void OnExit()
+        {
+            Debug.Log($"-----------------------------|EXIT INTERTITIAL STATE FOR {_scenario}|-------------------------------");
+        }
+
+        public void SetCharacter(ICharacterController controller)
+        {
+            _characterController = controller;
+        }
+    }
+
     public class PauseState : IState
     {
         private IScenario _scenario;
@@ -283,6 +351,7 @@ namespace Gameplay
         public void OnEnter()
         {
             Debug.Log($"-----------------------------|ENTER PAUSE STATE FOR {_scenario}|-------------------------------");
+            
         }
 
         public void OnExit()

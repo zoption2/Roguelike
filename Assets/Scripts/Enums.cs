@@ -3,6 +3,7 @@ public enum TypeOfState
     Init,
     PlayerTurn,
     EnemyTurn,
+    Interstitial,
     Pause,
 }
 

@@ -23,6 +23,7 @@ namespace Gameplay
         private ILevelManager _levelManager;
         private ILevelContext _levelContext;
         private IRoomBuilder _roomBuilder;
+        private ICameraManager _cameraManager;
 
         public StateData(
             IBuffFactory triggerFactory,
@@ -34,7 +35,8 @@ namespace Gameplay
             IRoomObjectsFactory roomObjectsFactory,
             ILevelManager levelManager,
             ILevelContext levelContext,
-            IRoomBuilder roomBuilder)
+            IRoomBuilder roomBuilder,
+            ICameraManager cameraManager)
         {
             _triggerFactory = triggerFactory;
             _enemyFactory = enemyFactory;
@@ -45,6 +47,7 @@ namespace Gameplay
             _levelManager = levelManager;
             _levelContext = levelContext;
             _roomBuilder = roomBuilder;
+            _cameraManager = cameraManager;
             _projectilePooler = poolManager.UseProjectilePooler();
         }
 
@@ -61,13 +64,16 @@ namespace Gameplay
             {
                 case TypeOfState.Init:
                     state =  new InitLevelState(_scenarioInstance, _roomContext, _statsProvider, _triggerFactory, _playerFactory,
-                        _enemyFactory, _navigationFactory, _roomObjectsFactory, _levelManager, _levelContext, _roomBuilder);
+                        _enemyFactory, _navigationFactory, _roomObjectsFactory, _levelManager, _levelContext, _roomBuilder, _cameraManager);
                     break;
                 case TypeOfState.PlayerTurn:
                     state = new PlayerTurnState(_scenarioInstance, _roomContext);
                     break;
                 case TypeOfState.EnemyTurn:
                     state = new EnemyTurnState(_scenarioInstance, _roomContext);
+                    break;
+                case TypeOfState.Interstitial:
+                    state = new InterstitialState(_scenarioInstance, _roomContext, _cameraManager);
                     break;
                 case TypeOfState.Pause:
                     state = new PauseState(_scenarioInstance);

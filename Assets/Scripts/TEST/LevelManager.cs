@@ -113,13 +113,8 @@ public class LevelManager : ILevelManager
                     SceneManager.UnloadSceneAsync("Menu");
                 }
 
-                GameObject virtualCamera = CreateVirtualCamera();
-
-                SceneManager.MoveGameObjectToScene(virtualCamera, scene);
                 SceneManager.MoveGameObjectToScene(RoomsParent.gameObject, scene);
                 SceneManager.MoveGameObjectToScene(PlayerParent.gameObject, scene);
-
-                _levelContext.VirtualCamera = virtualCamera.GetComponent<CinemachineVirtualCamera>();
 
                 _gameplayService.SetLevelManager(this);
 
@@ -129,28 +124,6 @@ public class LevelManager : ILevelManager
             }
         }
     }
-
-    private GameObject CreateVirtualCamera()
-    {
-        GameObject virtualCameraObject = new GameObject("VirtualCamera");
-        _virtualCamera = virtualCameraObject.AddComponent<CinemachineVirtualCamera>();
-
-        CinemachineTransposer transposer = _virtualCamera.AddCinemachineComponent<CinemachineTransposer>();
-        transposer.m_FollowOffset = new Vector3(0, 20, 0);
-        transposer.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
-        transposer.m_XDamping = 0;
-        transposer.m_YDamping = 0;
-        transposer.m_ZDamping = 0;
-
-        CinemachineComposer composer = _virtualCamera.AddCinemachineComponent<CinemachineComposer>();
-        composer.m_TrackedObjectOffset = new Vector3(0, 0, 0);
-        composer.m_LookaheadTime = 0;
-        composer.m_LookaheadSmoothing = 0;
-
-        return virtualCameraObject;
-    }
-
-
 
     private async void CreateInitialRoom(Transform parent)
     {

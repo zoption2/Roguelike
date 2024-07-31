@@ -101,6 +101,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IRoomBuilder>().To<RoomBuilder>().AsSingle();
         Container.Bind<IRewardService>().To<RewardService>().AsSingle();
         Container.Bind<ICurrencyManager>().To<CurrencyManager>().AsSingle();
+        Container.Bind<ICameraManager>().To<CameraManager>().AsSingle();
 
     }
 

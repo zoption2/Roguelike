@@ -41,13 +41,29 @@ namespace Gameplay
 
         public void RenewQueue()
         {
-            foreach (CookedMapper mapper in _turnsOrder)
+            _queueOfStates.Clear();
+
+            for (int i = 0; i < _turnsOrder.Count; i++)
             {
-                IState state = _stateFactory.CreateState(mapper.State);
-                state.SetCharacter(mapper.Controller);
+                CookedMapper currentMapper = _turnsOrder[i];
+
+                IState state = _stateFactory.CreateState(currentMapper.State);
+                state.SetCharacter(currentMapper.Controller);
                 _queueOfStates.Enqueue(state);
+
+                if (_turnsOrder.Count > 1)
+                {
+                    CookedMapper nextMapper = _turnsOrder[(i + 1) % _turnsOrder.Count];
+                    IState interstitialState = _stateFactory.CreateState(TypeOfState.Interstitial);
+                    interstitialState.SetCharacter(nextMapper.Controller);
+                    _queueOfStates.Enqueue(interstitialState);
+                }
             }
         }
+
+
+
+
         public abstract void CheckConditonsForEndOfScenario();
 
         protected void RemoveCharacterFromTurnsOrder(ICharacterController controller)
@@ -60,6 +76,7 @@ namespace Gameplay
                     break;
                 }
             }
+            RenewQueue();
         }
 
         public object GetScenarioContext()
@@ -116,11 +133,14 @@ namespace Gameplay
             Debug.Log("OnStateEnd");
         }
 
-
         public void SwitchState(IState state)
         {
+
             if (_currentState != state)
             {
+                //_currentState = _stateFactory.CreateState(TypeOfState.Interstitial);
+                //_currentState.OnEnter();
+
                 Debug.Log("SwitchState");
                 _currentState?.OnExit();
                 _currentState = state;

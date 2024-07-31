@@ -14,6 +14,7 @@ using Enemy;
 using Abilities;
 using Projectiles;
 using DG.Tweening;
+using Cinemachine;
 
 namespace Player
 {
@@ -64,6 +65,9 @@ namespace Player
         private IRoomContext _characterScenarioContext;
         private IUIFactory _uIFactory;
         private IGameplayService _gameplayService;
+
+        private CinemachineVirtualCamera _virtualCamera;
+        private ICameraManager _cameraManager;
         public PlayerController(
             IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
@@ -73,7 +77,8 @@ namespace Player
             IStateFactory stateFactory,
             IUIFactory uIFactory,
             DiContainer container,
-            IGameplayService gameplayService)
+            IGameplayService gameplayService,
+            ICameraManager cameraManager)
         {
             SlingShotPooler = poolManager.UseSlingshotPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -86,6 +91,7 @@ namespace Player
             _uIFactory = uIFactory; 
             _container = container;
             _gameplayService = gameplayService;
+            _cameraManager = cameraManager;
         }
 
         public void Init(
@@ -151,6 +157,15 @@ namespace Player
             _currentConditionState.DoUpdate();
         }
 
+        public void SetVirtualCamera(CinemachineVirtualCamera VC)
+        {
+            _virtualCamera = VC;
+        }
+
+        public CinemachineVirtualCamera GetVirtualCamera()
+        {
+            return _virtualCamera;
+        }
 
         public void SetCurrentAbility(IAbility ability)
         {
@@ -322,7 +337,7 @@ namespace Player
 
         public void HandleStopMovement()
         {
-            Debug.LogError("HANDLE STOP MOVEMENT!");
+            Debug.LogWarning("HANDLE STOP MOVEMENT!");
             ON_STOP_MOVEMENT?.Invoke();
         }
 
@@ -415,9 +430,7 @@ namespace Player
             _uIViewmodel.UpdateReloadIndicators();
             CurrentAbility = _basicAbility;
 
-            Transform transform = GetTransform();
-
-            _gameplayService.ChangeVirtualCameraFollow(transform, 1f);
+            _cameraManager.SetMainCamera(_virtualCamera);
         }
 
 

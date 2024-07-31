@@ -7,6 +7,7 @@ using UnityEngine.AI;
 using Abilities;
 using System.Collections.Generic;
 using Projectiles;
+using Cinemachine;
 
 public interface ICharacterController
 {
@@ -33,6 +34,8 @@ public interface ICharacterController
     public void ProcessOnStartTurn();
     public void ProcessOnEndTurn();
     public void SetCurrentAbility(IAbility ability);
+    public void SetVirtualCamera(CinemachineVirtualCamera VC);
+    public CinemachineVirtualCamera GetVirtualCamera();
     public void UpdateHealthBar();
     public CharacterType GetCharacterType();
     public Transform GetTransform();

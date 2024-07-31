@@ -12,6 +12,7 @@ using UnityEngine.AI;
 using Abilities;
 using Projectiles;
 using DG.Tweening;
+using Cinemachine;
 
 
 namespace Enemy
@@ -57,6 +58,9 @@ namespace Enemy
         private DiContainer _container;
         private IGameplayService _gameplayService;
 
+        private CinemachineVirtualCamera _virtualCamera;
+        private ICameraManager _cameraManager;
+
         public EnemyController(
             IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
@@ -66,7 +70,8 @@ namespace Enemy
             IStateFactory stateFactory,
             IUIFactory uIFactory,
             DiContainer container,
-            IGameplayService gameplayService)
+            IGameplayService gameplayService,
+            ICameraManager cameraManager)
         {
             _characterUIPooler = poolManager.UseCharacterUIPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -78,6 +83,7 @@ namespace Enemy
             _uIFactory = uIFactory;
             _container = container;
             _gameplayService = gameplayService;
+            _cameraManager = cameraManager; 
         }
 
         public void Init(
@@ -136,6 +142,16 @@ namespace Enemy
 
         public void SetCurrentAbility(IAbility ability)
         {
+        }
+
+        public void SetVirtualCamera(CinemachineVirtualCamera VC)
+        {
+            _virtualCamera = VC;
+        }
+
+        public CinemachineVirtualCamera GetVirtualCamera()
+        {
+            return _virtualCamera;
         }
 
         public void DisactivateAbilityPanel()
@@ -378,9 +394,7 @@ namespace Enemy
         {
             _uIViewmodel.ToggleActiveIndicator();
 
-            Transform transform = GetTransform();
-
-            _gameplayService.ChangeVirtualCameraFollow(transform, 1f);
+            _cameraManager.SetMainCamera(_virtualCamera);
         }
 
         public void RevertReadyUnactiveAbilityButtons()
