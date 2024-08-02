@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
@@ -51,6 +51,9 @@ public class TemplateBuilder : EditorWindow
 
     private int _deleteIndex = -1;
 
+    private float _lastClickTime;
+    private const float DoubleClickThreshold = 0.3f;
+
     private const string C_TemplatePlaceableElementsPath = "Assets/SO/TemplatePlacebleElementsSO.asset";
     private const string C_RoomTemplateSOPath = "Assets/SO/RoomTemplateSO.asset";
     #endregion
@@ -59,7 +62,7 @@ public class TemplateBuilder : EditorWindow
     public static void ShowWindow()
     {
         var window = GetWindow<TemplateBuilder>("Template Builder");
-        window.minSize = new Vector2(300, 400);
+        window.minSize = new Vector2(500, 400);
     }
 
     #region GUI 
@@ -92,6 +95,24 @@ public class TemplateBuilder : EditorWindow
             _templates = _roomTemplateSO.Templates;
             Debug.Log($"Loaded {_templates.Count} templates from SO.");
         }
+    }
+
+    private void DrawGrid(float gridSpacing, Color gridColor)
+    {
+        Handles.BeginGUI();
+        Handles.color = gridColor;
+
+        for (float x = 0; x < position.width; x += gridSpacing)
+        {
+            Handles.DrawLine(new Vector3(x, 0, 0), new Vector3(x, position.height, 0));
+        }
+
+        for (float y = 0; y < position.height; y += gridSpacing)
+        {
+            Handles.DrawLine(new Vector3(0, y, 0), new Vector3(position.width, y, 0));
+        }
+
+        Handles.EndGUI();
     }
 
     private void OnGUI()
@@ -149,31 +170,51 @@ public class TemplateBuilder : EditorWindow
     private void ShowInitialOptions()
     {
         GUILayout.Space(20);
-        GUILayout.Label("TEMPLATE BUILDER", _headerStyle, GUILayout.Height(40));
+
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        GUILayout.Label("TEMPLATE BUILDER", _headerStyle, GUILayout.Width(400), GUILayout.Height(60));
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
 
         GUILayout.FlexibleSpace();
 
-        if (GUILayout.Button("Empty Template", _buttonStyle, GUILayout.Height(50)))
+        float buttonWidth = 400;
+        float buttonHeight = 80;
+
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("Empty Template", _buttonStyle, GUILayout.Width(buttonWidth), GUILayout.Height(buttonHeight)))
         {
             _createNewArray = true;
             _showInitialOptions = false;
         }
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Template From Tilemap", _buttonStyle, GUILayout.Height(50)))
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("Template From Tilemap", _buttonStyle, GUILayout.Width(buttonWidth), GUILayout.Height(buttonHeight)))
         {
             _createFromTilemap = true;
             _showInitialOptions = false;
         }
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Edit Existing Template", _buttonStyle, GUILayout.Height(50)))
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("Edit Existing Template", _buttonStyle, GUILayout.Width(buttonWidth), GUILayout.Height(buttonHeight)))
         {
             _editExistingTemplate = true;
             _showInitialOptions = false;
         }
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
 
         GUILayout.FlexibleSpace();
     }
@@ -198,7 +239,6 @@ public class TemplateBuilder : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
     }
-
 
     private void ShowTilemapOptions()
     {
@@ -277,7 +317,19 @@ public class TemplateBuilder : EditorWindow
                 Rect rect = GUILayoutUtility.GetLastRect();
                 if (Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition))
                 {
-                    _selectedTemplateIndex = i;
+                    if (_selectedTemplateIndex == i && (Time.realtimeSinceStartup - _lastClickTime) < DoubleClickThreshold)
+                    {
+                        LoadTemplate(_templates[_selectedTemplateIndex]);
+                        _editExistingTemplate = false;
+                        _showInitialOptions = false;
+                        GUIUtility.ExitGUI();
+                    }
+                    else
+                    {
+                        _selectedTemplateIndex = i;
+                        _lastClickTime = Time.realtimeSinceStartup;
+                    }
+
                     Repaint();
                 }
             }
@@ -285,14 +337,14 @@ public class TemplateBuilder : EditorWindow
         }
 
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Edit Template"))
+        if (GUILayout.Button("Edit Template", GUILayout.Height(50)))
         {
             if (_selectedTemplateIndex >= 0 && _selectedTemplateIndex < _templates.Count)
             {
                 LoadTemplate(_templates[_selectedTemplateIndex]);
             }
         }
-        if (GUILayout.Button("Back"))
+        if (GUILayout.Button("Back", GUILayout.Height(50)))
         {
             _editExistingTemplate = false;
             _showInitialOptions = true;
@@ -336,8 +388,6 @@ public class TemplateBuilder : EditorWindow
 
     private void ShowMainGUI()
     {
-        GUILayout.Space(10);
-
         if (_levelArray != null)
         {
             EditorGUILayout.BeginHorizontal();
@@ -357,59 +407,66 @@ public class TemplateBuilder : EditorWindow
             EditorGUILayout.EndHorizontal();
         }
 
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+
+        GUILayout.BeginVertical();
+        GUILayout.Label("Resize Template", EditorStyles.boldLabel);
+
         GUILayout.Space(10);
 
-        GUILayout.Label("Selected element", EditorStyles.boldLabel);
-        if (_selectedObjectIndex != -1)
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("↓", GUILayout.Width(50), GUILayout.Height(30)))
         {
-            EditorGUILayout.LabelField("Type: " + _placeableObjects[_selectedObjectIndex].Type);
-            EditorGUILayout.LabelField("Color: " + _placeableObjects[_selectedObjectIndex].Color);
+            ResizeArray(_levelArray.GetLength(0), _levelArray.GetLength(1) - 1);
         }
+        if (GUILayout.Button("↑", GUILayout.Width(50), GUILayout.Height(30)))
+        {
+            ResizeArray(_levelArray.GetLength(0), _levelArray.GetLength(1) + 1);
+        }
+        GUILayout.Label($"Height: {_levelArray.GetLength(1)}", GUILayout.Width(100), GUILayout.Height(30));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("←", GUILayout.Width(50), GUILayout.Height(30)))
+        {
+            ResizeArray(_levelArray.GetLength(0) - 1, _levelArray.GetLength(1));
+        }
+        if (GUILayout.Button("→", GUILayout.Width(50), GUILayout.Height(30)))
+        {
+            ResizeArray(_levelArray.GetLength(0) + 1, _levelArray.GetLength(1));
+        }
+        GUILayout.Label($"Width: {_levelArray.GetLength(0)}", GUILayout.Width(100), GUILayout.Height(30));
+        GUILayout.EndHorizontal();
+
+        GUILayout.EndVertical();
+
+        GUILayout.FlexibleSpace();
+
+        GUILayout.BeginVertical();
+        GUILayout.Label("Scenario Type", EditorStyles.boldLabel);
+
+        GUILayout.Space(10);
+
+        _selectedScenarioType = (TypeOfScenario)EditorGUILayout.EnumPopup(_selectedScenarioType, GUILayout.Width(150), GUILayout.Height(30));
+        GUILayout.EndVertical();
+
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
 
         GUILayout.Label("Elements to build", EditorStyles.boldLabel);
         DisplayPlaceableObjects();
 
-        if (!_displayNewObjectFields)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Add New Object"))
-            {
-                _displayNewObjectFields = true;
-            }
-            GUILayout.EndHorizontal();
-        }
-        else
-        {
-            _newObjectName = EditorGUILayout.TextField("Name", _newObjectName);
-            _newObjectType = (TemplateElementType)EditorGUILayout.Popup("Type", (int)_newObjectType, System.Enum.GetNames(typeof(TemplateElementType)));
-            _newObjectColor = EditorGUILayout.ColorField("Color", _newObjectColor);
-
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Add Object"))
-            {
-                AddNewObject();
-                _displayNewObjectFields = false;
-            }
-            if (GUILayout.Button("Cancel"))
-            {
-                _displayNewObjectFields = false;
-            }
-            GUILayout.EndHorizontal();
-        }
-
-        GUILayout.Space(10);
-
-        GUILayout.Label("Scenario Type", EditorStyles.boldLabel);
-        _selectedScenarioType = (TypeOfScenario)EditorGUILayout.EnumPopup("Scenario Type", _selectedScenarioType);
-
-        GUILayout.Space(10);
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
 
         if (!_DisplayNewTemplateRecordFields)
         {
-            if (GUILayout.Button("Add New Template Record"))
+            if (GUILayout.Button("Add New Template Record", GUILayout.Width(Screen.width / 2)))
             {
                 _DisplayNewTemplateRecordFields = true;
                 if (_selectedTemplateIndex >= 0 && _selectedTemplateIndex < _templates.Count)
@@ -417,34 +474,38 @@ public class TemplateBuilder : EditorWindow
                     _newRecordName = _templates[_selectedTemplateIndex].name;
                 }
             }
+
+            if (GUILayout.Button("Return To Menu", GUILayout.Width(Screen.width / 2)))
+            {
+                _showInitialOptions = true;
+                _createNewArray = false;
+                _createFromTilemap = false;
+                _editExistingTemplate = false;
+                _resizeArray = false;
+            }
         }
-        else
+
+        GUILayout.EndHorizontal();
+
+        if (_DisplayNewTemplateRecordFields)
         {
             GUILayout.Label("New Template Record", EditorStyles.boldLabel);
             _newRecordName = EditorGUILayout.TextField("Name", _newRecordName);
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Create Template Record"))
+            if (GUILayout.Button("Create Template Record", GUILayout.Width(Screen.width / 2)))
             {
                 CreateOrUpdateRecordInSO(_newRecordName, _levelArray);
                 _DisplayNewTemplateRecordFields = false;
                 _newRecordName = "";
             }
-            if (GUILayout.Button("Cancel"))
+            if (GUILayout.Button("Cancel", GUILayout.Width(Screen.width / 2)))
             {
                 _DisplayNewTemplateRecordFields = false;
             }
             GUILayout.EndHorizontal();
         }
-
-        GUILayout.Space(10);
-
-        if (GUILayout.Button("Resize Array", GUILayout.Height(50)))
-        {
-            _resizeArray = true;
-        }
     }
-
     #endregion
 
     #region MainWindowLogic
@@ -628,40 +689,109 @@ public class TemplateBuilder : EditorWindow
 
         float nameWidth = Screen.width * 0.25f;
         float typeWidth = Screen.width * 0.25f;
-        float colorWidth = Screen.width * 0.35f;
-        float buttonWidth = Screen.width * 0.15f;
+        float colorWidth = Screen.width * 0.2f;
+        float buttonWidth = 50f;
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Name", GUILayout.Width(nameWidth));
         GUILayout.Label("Type", GUILayout.Width(typeWidth));
         GUILayout.Label("Color", GUILayout.Width(colorWidth));
-        GUILayout.FlexibleSpace();
+        GUILayout.Label("", GUILayout.Width(buttonWidth));
         GUILayout.EndHorizontal();
 
         for (int i = 0; i < _placeableObjects.Count; i++)
         {
             var obj = _placeableObjects[i];
-            EditorGUILayout.BeginHorizontal();
+
+            GUIStyle style = new GUIStyle(GUI.skin.box);
+            if (_selectedObjectIndex == i)
+            {
+                style.normal.background = MakeTex(1, 1, new Color(115 / 255f, 115 / 255f, 115 / 255f));
+                style.normal.textColor = Color.white;
+            }
+
+            EditorGUILayout.BeginHorizontal(style);
 
             GUILayout.Label(obj.Name, GUILayout.Width(nameWidth));
             GUILayout.Label(obj.Type.ToString(), GUILayout.Width(typeWidth));
 
             Rect colorRect = EditorGUILayout.GetControlRect(GUILayout.Width(colorWidth));
-            EditorGUI.DrawRect(new Rect(colorRect.x, colorRect.y, colorWidth - buttonWidth, colorRect.height), obj.Color);
+            EditorGUI.DrawRect(new Rect(colorRect.x, colorRect.y, colorWidth, colorRect.height), obj.Color);
 
             GUILayout.FlexibleSpace();
 
-            GUILayout.Space(-buttonWidth);
+            if (GUILayout.Button("Delete", GUILayout.Width(buttonWidth)))
+            {
+                RemoveObject(i);
+                EditorGUILayout.EndHorizontal();
+                break;
+            }
 
-            if (GUILayout.Button("Select", GUILayout.Width(buttonWidth)))
+            EditorGUILayout.EndHorizontal();
+
+            Rect rect = GUILayoutUtility.GetLastRect();
+            if (Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition))
             {
                 _selectedObjectIndex = i;
+                Repaint();
+            }
+        }
+
+        if (_displayNewObjectFields)
+        {
+            EditorGUILayout.BeginHorizontal(GUI.skin.box);
+
+            _newObjectName = EditorGUILayout.TextField(_newObjectName, GUILayout.Width(nameWidth));
+            _newObjectType = (TemplateElementType)EditorGUILayout.EnumPopup(_newObjectType, GUILayout.Width(typeWidth));
+            _newObjectColor = EditorGUILayout.ColorField(_newObjectColor, GUILayout.Width(colorWidth));
+
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Add", GUILayout.Width(buttonWidth)))
+            {
+                AddNewObject();
+                _displayNewObjectFields = false;
+            }
+
+            if (GUILayout.Button("Cancel", GUILayout.Width(buttonWidth)))
+            {
+                _displayNewObjectFields = false;
             }
 
             EditorGUILayout.EndHorizontal();
         }
+        else
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Add New Object"))
+            {
+                _displayNewObjectFields = true;
+            }
+            GUILayout.EndHorizontal();
+        }
 
         GUILayout.EndVertical();
+    }
+
+    private void RemoveObject(int index)
+    {
+        if (index >= 0 && index < _placeableObjects.Count)
+        {
+            _placeableObjects.RemoveAt(index);
+
+            if (_templatePlacebleElementsSO != null)
+            {
+                _templatePlacebleElementsSO.PlacebleElements.RemoveAt(index);
+                EditorUtility.SetDirty(_templatePlacebleElementsSO);
+                AssetDatabase.SaveAssets();
+                Debug.Log($"Removed object at index: {index}");
+            }
+            else
+            {
+                Debug.LogError("TemplatePlacebleElements SO is null. Failed to remove object.");
+            }
+        }
     }
 
     private void AddNewObject()
@@ -750,7 +880,6 @@ public class TemplateBuilder : EditorWindow
         EditorUtility.SetDirty(_roomTemplateSO);
         AssetDatabase.SaveAssets();
     }
-
 
     private void AssignExits(RoomTemplateSO.Template template, TemplateElementType[,] levelArray)
     {

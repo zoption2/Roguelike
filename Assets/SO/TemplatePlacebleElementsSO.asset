@@ -16,12 +16,6 @@ MonoBehaviour:
   - Name: Player
     Color: {r: 0.10617697, g: 1, b: 0, a: 1}
     Type: 2
-  - Name: Default Wall
-    Color: {r: 1, g: 0.8173368, b: 0, a: 1}
-    Type: 5
-  - Name: Buff
-    Color: {r: 0, g: 0.09511185, b: 1, a: 1}
-    Type: 4
   - Name: Background
     Color: {r: 0, g: 0, b: 0, a: 1}
     Type: 0
@@ -40,6 +34,6 @@ MonoBehaviour:
   - Name: Barbarian
     Color: {r: 1, g: 0, b: 0, a: 1}
     Type: 100
-  - Name: Chest
-    Color: {r: 0.6981132, g: 0.36648244, b: 0, a: 1}
-    Type: 8
+  - Name: Default Wall
+    Color: {r: 1, g: 0.82380366, b: 0, a: 1}
+    Type: 5

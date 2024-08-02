@@ -9,15 +9,15 @@ namespace Gameplay
 {
     public abstract class Scenario<T> : IScenario where T : IRoomContext
     {
-        protected IState _currentState;
+        protected bool _haslost = false;
+        protected bool _hasWon = false;
+        protected List<CookedMapper> _turnsOrder;
         protected Queue<IState> _queueOfStates;
+        protected IState _currentState;
         protected T _scenarioContext;
         protected IStateFactory _stateFactory;
         protected ILevelManager _levelManager;
-        protected List<CookedMapper> _turnsOrder;
         protected ILevelContext _levelContext;
-        protected bool _haslost=false;
-        protected bool _hasWon=false;
         protected IRewardService _rewardService;
 
         public IGameplayService GameplayService { get; set; }
