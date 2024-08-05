@@ -60,7 +60,6 @@ public class CameraManager : ICameraManager
         {
             await Task.Yield();
         }
-        Debug.Log("Camera reached the target position.");
     }
 
 }

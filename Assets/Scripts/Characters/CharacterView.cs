@@ -73,7 +73,6 @@ public class CharacterView : MonoBehaviour,
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _collisionHandler = gameObject.AddComponent<CollisionHandler>();
         _collisionHandler.Init(ControllerInputs, this);
-        Debug.Log("CharacterView initialized with transform: " + _viewTransform);
     }
 
     private void FixedUpdate()

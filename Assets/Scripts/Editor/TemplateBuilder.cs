@@ -65,6 +65,7 @@ public class TemplateBuilder : EditorWindow
         window.minSize = new Vector2(500, 400);
     }
 
+
     #region GUI 
     private void OnEnable()
     {

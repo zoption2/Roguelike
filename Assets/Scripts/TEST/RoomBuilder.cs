@@ -124,7 +124,6 @@ public class RoomBuilder : IRoomBuilder
                     case TemplateElementType.Summoner:
                     case TemplateElementType.Thrower:
                         RoomContext.EnemySpawnPoints.Add(new EnemySpawnPointWithType { SpawnPoint = position, Type = (CharacterType)elementType });
-                        Debug.Log($"Added enemy spawn point at {position} of type {elementType}");
                         break;
 
                     case TemplateElementType.RandomBuff:
@@ -133,8 +132,6 @@ public class RoomBuilder : IRoomBuilder
                 }
             }
         }
-
-        Debug.Log($"Analyzed template {roomTemplate}: PlayerSpawnPoints={RoomContext.PlayerSpawnPoints.Count}, EnemySpawnPoints={RoomContext.EnemySpawnPoints.Count}, BuffSpawnPoints={RoomContext.BuffSpawnPoints.Count}");
     }
 
     private void BuildExits(TemplateElementType[,] templateElements, Vector3[,] coordinates)

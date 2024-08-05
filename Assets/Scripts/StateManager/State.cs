@@ -243,7 +243,6 @@ namespace Gameplay
                 CharacterType playerType = DataTransfer.TypeCollection.FirstOrDefault();
                 PlayerSpawnPointWithType playerSpawnPoint = _roomContext.PlayerSpawnPoints.FirstOrDefault();
                 Vector3 newPos = new Vector3(playerSpawnPoint.SpawnPoint.x, playerSpawnPoint.SpawnPoint.y + YOffset, playerSpawnPoint.SpawnPoint.z);
-                Debug.LogWarning($"Creating new player at position: {newPos}");
 
                 IPlayerController newPlayer = _playerFactory.CreatePlayer(newPos, _levelManager.PlayerParent, playerType);
                 newPlayer.SetCharacterContext(_roomContext);

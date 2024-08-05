@@ -337,7 +337,6 @@ namespace Player
 
         public void HandleStopMovement()
         {
-            Debug.LogWarning("HANDLE STOP MOVEMENT!");
             ON_STOP_MOVEMENT?.Invoke();
         }
 

@@ -72,22 +72,10 @@ namespace Gameplay
             _levelManager = levelManager;
         }
 
-        
-
-
-
-
         public void StartCurrentRoom()
         {
             CurrentScenario = ScenarioFactory.CreateScenario(CurrentRoomType, this);
-
-            //if (LevelContext.Player == null)
-            //{
-            //    CreatePlayer();
-            //}
-
             CurrentScenario.Init(CurrentContext);
-            Debug.LogWarning("Next room was inited");
         }
 
         public void CheckIfAllStopped()
@@ -107,7 +95,6 @@ namespace Gameplay
                     return;
                 }
             }
-            Debug.LogWarning($"invoked ON_END_TURN for {CurrentScenario}  {CurrentScenario}");
             ON_END_TURN?.Invoke();
         }
 

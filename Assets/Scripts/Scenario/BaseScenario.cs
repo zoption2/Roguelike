@@ -87,7 +87,6 @@ namespace Gameplay
         public void SetScenarioContext(IScenarioContext context)
         {
             _scenarioContext = (T)context;
-            Debug.Log("Scenario context set: " + _scenarioContext);
         }
 
         public abstract void Init(IScenarioContext context);
@@ -129,8 +128,6 @@ namespace Gameplay
             }
 
             CheckConditonsForEndOfScenario();
-
-            Debug.Log("OnStateEnd");
         }
 
         public void SwitchState(IState state)
@@ -138,13 +135,10 @@ namespace Gameplay
 
             if (_currentState != state)
             {
-                //_currentState = _stateFactory.CreateState(TypeOfState.Interstitial);
-                //_currentState.OnEnter();
-
-                Debug.Log("SwitchState");
                 _currentState?.OnExit();
                 _currentState = state;
                 _currentState.OnEnter();
+                Debug.Log("Switched turn State");
             }
         }
 
