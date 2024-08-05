@@ -3,10 +3,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Abilities;
-using Unity.VisualScripting;
-using UnityEngine.UIElements;
-using System.Net;
-using TMPro;
 
 
 namespace BehaviourTree
@@ -37,7 +33,8 @@ namespace BehaviourTree
                 new Sequence(new List<Node>
                 {
                     new CanAttackNode(),
-                    new TaskAttackNode(),
+                    
+                    new TaskAttackNode(GetTarget()),
                 }),
                 new Sequence(new List<Node>
                 {

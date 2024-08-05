@@ -28,9 +28,11 @@ public abstract class ActiveState
         _projectilePooler = projectilePooler;
     }
 
-    public void OnEnter()
+    public virtual void OnEnter()
     {
         Debug.Log("<color=#44F44F>" + "--|Enter Active State|-- " + "</color>");
+
+        //_characterController.SwitchState(TypeOfConditionState.Preparation);
     }
 
     public void DoUpdate()
@@ -160,7 +162,7 @@ public abstract class ActiveState
         character.rotation = Quaternion.Slerp(character.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 
-    public void OnExit()
+    public virtual void OnExit()
     {
         if (_slingShot != null)
         {

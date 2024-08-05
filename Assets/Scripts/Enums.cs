@@ -15,6 +15,8 @@ public enum TypeOfConditionState
     InactiveState,
     DeadState,
     StunState,
+    Preparation,
+    Finalization,
 }
 
 public enum CharacterType
