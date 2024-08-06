@@ -13,6 +13,8 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition)
     {
+        _characterController.AnimationController.Attack(true);
+
         CharacterType type = _characterController.GetCharacterType();
 
         Vector3 fixedInitPosition = new Vector3(slingShotInitPosition.position.x, slingShotInitPosition.position.y, slingShotInitPosition.position.z);
@@ -47,6 +49,8 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector3 direction)
     {
+        _characterController.AnimationController.Attack(false);
+
         float slingshotRadius = 2.1f;
         float slingshotMultiplier = direction.magnitude / slingshotRadius;
         Vector3 forceVector = GetForceVector(direction);

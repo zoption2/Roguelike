@@ -71,14 +71,14 @@ namespace SlingShotLogic
             {
                 if (IsInDeadZone(_cursor.rectTransform.position, _touchZone.rectTransform))
                 {
-                    UnsubscribeEvents(); // Відписуємо події перед поверненням в пул
+                    UnsubscribeEvents();
                     _slingShotPooler.Push(_type, this);
                 }
                 else
                 {
                     OnShoot?.Invoke(_direction);
                     OnAbilityUse?.Invoke();
-                    UnsubscribeEvents(); // Відписуємо події перед поверненням в пул
+                    UnsubscribeEvents();
                     _slingShotPooler.Push(_type, this);
                 }
             }

@@ -102,7 +102,6 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IRewardService>().To<RewardService>().AsSingle();
         Container.Bind<ICurrencyManager>().To<CurrencyManager>().AsSingle();
         Container.Bind<ICameraManager>().To<CameraManager>().AsSingle();
-        Container.Bind<IAnimationController>().To<AnimationController>().AsSingle();
 
     }
 

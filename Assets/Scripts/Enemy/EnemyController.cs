@@ -72,8 +72,7 @@ namespace Enemy
             IUIFactory uIFactory,
             DiContainer container,
             IGameplayService gameplayService,
-            ICameraManager cameraManager,
-            IAnimationController animationController)
+            ICameraManager cameraManager)
         {
             _characterUIPooler = poolManager.UseCharacterUIPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -86,7 +85,6 @@ namespace Enemy
             _container = container;
             _gameplayService = gameplayService;
             _cameraManager = cameraManager;
-            AnimationController = animationController;
         }
 
         public void Init(
@@ -137,6 +135,7 @@ namespace Enemy
 
             LaunchedProjectiles = new List<IProjectile>();
 
+            AnimationController = new EnemyAnimationController();
             AnimationController.SetCharacter(this);
         }
 

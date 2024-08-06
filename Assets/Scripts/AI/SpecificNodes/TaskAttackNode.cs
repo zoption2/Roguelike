@@ -19,7 +19,7 @@ namespace BehaviourTree
             Transform target = _behaviourTree.GetTarget();
             Transform objectToAnimate = _characterController.GetTransform();
 
-            _characterController.AnimationController.Attack(target, _isAnimationCompleted);
+            _characterController.AnimationController.Attack(_isAnimationCompleted, target);
 
             if (_isAnimationCompleted)
             {

@@ -79,8 +79,7 @@ namespace Player
             IUIFactory uIFactory,
             DiContainer container,
             IGameplayService gameplayService,
-            ICameraManager cameraManager,
-            IAnimationController animationController)
+            ICameraManager cameraManager)
         {
             SlingShotPooler = poolManager.UseSlingshotPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -94,7 +93,6 @@ namespace Player
             _container = container;
             _gameplayService = gameplayService;
             _cameraManager = cameraManager;
-            AnimationController = animationController;
         }
 
         public void Init(
@@ -154,6 +152,7 @@ namespace Player
 
             LaunchedProjectiles = new List<IProjectile>();
 
+            AnimationController = new PlayerAnimationController();
             AnimationController.SetCharacter(this);
         }
 
@@ -181,6 +180,7 @@ namespace Player
 
         public void OnClick(Transform point, PointerEventData eventData)
         {
+
             _slingShotInitPosition = point;
             if(!IsMoving && IsActive)
             {
@@ -204,7 +204,7 @@ namespace Player
 
             if (!IsMoving && LaunchedProjectiles.Count == 0)
             {
-                _currentConditionState.UseSlingshotAsync(eventData, _slingShotInitPosition);
+                _currentConditionState.UseSlingshotAsync(eventData, _slingShotInitPosition); 
             }
         }
 
