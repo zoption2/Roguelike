@@ -32,6 +32,7 @@ namespace Enemy
         public bool IsDead { get; set; }
         public IAbility CurrentAbility { get; set; }
         public IAnalyzer Analyzer { get; set; }
+        public IAnimationController AnimationController { get; set; }
         public IEffectProcessor Effector { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
@@ -71,7 +72,8 @@ namespace Enemy
             IUIFactory uIFactory,
             DiContainer container,
             IGameplayService gameplayService,
-            ICameraManager cameraManager)
+            ICameraManager cameraManager,
+            IAnimationController animationController)
         {
             _characterUIPooler = poolManager.UseCharacterUIPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -83,7 +85,8 @@ namespace Enemy
             _uIFactory = uIFactory;
             _container = container;
             _gameplayService = gameplayService;
-            _cameraManager = cameraManager; 
+            _cameraManager = cameraManager;
+            AnimationController = animationController;
         }
 
         public void Init(
@@ -133,6 +136,8 @@ namespace Enemy
             NavMeshObstacle.carveOnlyStationary = true;
 
             LaunchedProjectiles = new List<IProjectile>();
+
+            AnimationController.SetCharacter(this);
         }
 
         public void DoUpdate()

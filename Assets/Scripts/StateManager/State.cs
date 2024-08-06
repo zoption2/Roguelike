@@ -1,14 +1,9 @@
 using CharactersStats;
-using Cysharp.Threading.Tasks;
 using Enemy;
 using Obstacles;
 using Player;
-using Pool;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
-using Unity.AI.Navigation;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 namespace Gameplay

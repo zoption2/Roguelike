@@ -1,4 +1,3 @@
-using DG.Tweening;
 using UnityEngine;
 
 namespace BehaviourTree
@@ -6,7 +5,7 @@ namespace BehaviourTree
     public class TaskAttackNode : Node
     {
         private IDefaultBehaviourTree _behaviourTree;
-        private bool _animationCompleted = false;
+        private bool _isAnimationCompleted = false;
 
         public TaskAttackNode(IDefaultBehaviourTree behaviourTree)
         {
@@ -20,34 +19,16 @@ namespace BehaviourTree
             Transform target = _behaviourTree.GetTarget();
             Transform objectToAnimate = _characterController.GetTransform();
 
-            RotateAndShakeSync(target, objectToAnimate);
+            _characterController.AnimationController.Attack(target, _isAnimationCompleted);
 
-
-            if (_animationCompleted)
+            if (_isAnimationCompleted)
             {
-                _animationCompleted = false;
+                _isAnimationCompleted = false;
                 _state = NodeState.Success;
             }
             
 
             return _state;
-        }
-
-        private void RotateAndShakeSync(Transform target, Transform objectToAnimate)
-        {
-            DG.Tweening.Sequence sequence = DOTween.Sequence();
-
-            sequence.Append(objectToAnimate.transform.DOLookAt(target.position, 1f));
-            sequence.AppendInterval(0.5f);
-            sequence.Append(objectToAnimate.transform.DOShakePosition(0.3f, new Vector3(0.5f, 0, 0.5f), 20, 20f));
-
-            sequence.OnComplete(() =>
-            {
-                _characterController.Attack();
-                _animationCompleted = true;
-            });
-
-            sequence.Play();
         }
     }
 }

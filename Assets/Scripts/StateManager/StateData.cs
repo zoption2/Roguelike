@@ -102,9 +102,6 @@ namespace Gameplay
                 case TypeOfConditionState.EnemyActiveState:
                     state = new EnemyActiveState(controller, _projectilePooler);
                     break;
-                case TypeOfConditionState.Preparation:
-                    state = new PreparationState(controller, _projectilePooler);
-                    break;
             }
             return state;
         }

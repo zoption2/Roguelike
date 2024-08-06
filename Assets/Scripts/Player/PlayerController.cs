@@ -36,6 +36,7 @@ namespace Player
         public bool IsMoving { get; set; }
         public bool IsDead { get; set; }
         public IAbility CurrentAbility { get; set; }
+        public IAnimationController AnimationController { get; set; }
         public IInteractionProcessor InteractionProcessor { get; set; }
         public IInteractionDealer InteractionDealer { get; set; }
         public IInteractionCalculator InteractionCalculator { get; set; }
@@ -78,7 +79,8 @@ namespace Player
             IUIFactory uIFactory,
             DiContainer container,
             IGameplayService gameplayService,
-            ICameraManager cameraManager)
+            ICameraManager cameraManager,
+            IAnimationController animationController)
         {
             SlingShotPooler = poolManager.UseSlingshotPooler();
             _characterPooler = poolManager.UseCharacterPooler();
@@ -92,6 +94,7 @@ namespace Player
             _container = container;
             _gameplayService = gameplayService;
             _cameraManager = cameraManager;
+            AnimationController = animationController;
         }
 
         public void Init(
@@ -150,6 +153,8 @@ namespace Player
             CurrentAbility = _basicAbility;
 
             LaunchedProjectiles = new List<IProjectile>();
+
+            AnimationController.SetCharacter(this);
         }
 
         public void DoUpdate()
