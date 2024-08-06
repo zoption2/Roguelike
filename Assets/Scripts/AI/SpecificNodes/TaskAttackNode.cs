@@ -1,35 +1,53 @@
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace BehaviourTree
 {
     public class TaskAttackNode : Node
     {
-        private Transform _target;
+        private IDefaultBehaviourTree _behaviourTree;
+        private bool _animationCompleted = false;
 
-        public TaskAttackNode(Transform target)
-        { 
-            _target = target;
+        public TaskAttackNode(IDefaultBehaviourTree behaviourTree)
+        {
+            _behaviourTree = behaviourTree;
         }
 
         public override NodeState Evaluate()
         {
-            Transform objToMove = _characterController.GetTransform();
-            RotateAndShakeAsync(_target, objToMove);
-            _characterController.Attack();
-            _state = NodeState.Success;
+            _state = NodeState.Running;
+
+            Transform target = _behaviourTree.GetTarget();
+            Transform objectToAnimate = _characterController.GetTransform();
+
+            RotateAndShakeSync(target, objectToAnimate);
+
+
+            if (_animationCompleted)
+            {
+                _animationCompleted = false;
+                _state = NodeState.Success;
+            }
+            
+
             return _state;
         }
 
-        public async Task RotateAndShakeAsync(Transform target, Transform objectToAnimate)
+        private void RotateAndShakeSync(Transform target, Transform objectToAnimate)
         {
-            await objectToAnimate.transform.DOLookAt(target.position, 1f).AsyncWaitForCompletion();
+            DG.Tweening.Sequence sequence = DOTween.Sequence();
 
-            await objectToAnimate.transform.DOShakePosition(0.5f, new Vector3(0.5f, 0, 0.5f), 10, 90f).AsyncWaitForCompletion();
+            sequence.Append(objectToAnimate.transform.DOLookAt(target.position, 1f));
+            sequence.AppendInterval(0.5f);
+            sequence.Append(objectToAnimate.transform.DOShakePosition(0.3f, new Vector3(0.5f, 0, 0.5f), 20, 20f));
+
+            sequence.OnComplete(() =>
+            {
+                _characterController.Attack();
+                _animationCompleted = true;
+            });
+
+            sequence.Play();
         }
-
     }
 }

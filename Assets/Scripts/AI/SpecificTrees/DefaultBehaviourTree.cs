@@ -33,8 +33,7 @@ namespace BehaviourTree
                 new Sequence(new List<Node>
                 {
                     new CanAttackNode(),
-                    
-                    new TaskAttackNode(GetTarget()),
+                    new TaskAttackNode(this),
                 }),
                 new Sequence(new List<Node>
                 {
