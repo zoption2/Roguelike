@@ -1,11 +1,12 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 
 public interface IAnimationController
 {
     void SetCharacter(ICharacterController character);
     void Attack(bool animationStatus, Transform target = null);
-    public void Move(bool isAnimationComplete);
+    public void Move(Transform characterTransform, bool isAnimationComplete);
 }
 
 public interface IEnemyAnimationController : IAnimationController
@@ -25,30 +26,12 @@ public abstract class AnimationControllerBase : IAnimationController
         _characterController = character;
     }
 
-    public abstract void Attack(bool isAnimationComplete, Transform target = null);
-
-    public void Move(bool isAnimationComplete)
+    public virtual void Attack(bool isAnimationComplete, Transform target = null)
     {
-        Transform characterTransform = _characterController.CharacterView.transform;
-        float initialRotationY = characterTransform.eulerAngles.y;
-        float initialRotationZ = characterTransform.eulerAngles.z;
+    }
 
-        if (isAnimationComplete)
-        {
-            if (!DOTween.IsTweening(characterTransform))
-            {
-                characterTransform.DOKill();
-                characterTransform.DORotate(new Vector3(360f, initialRotationY, initialRotationZ), 0.5f, RotateMode.LocalAxisAdd)
-                    .SetLoops(-1, LoopType.Incremental)
-                    .SetEase(Ease.Linear);
-            }
-        }
-        else
-        {
-            characterTransform.DOKill();
-            characterTransform.DORotate(new Vector3(0f, initialRotationY, initialRotationZ), 0.5f)
-                .SetEase(Ease.Linear);
-        }
+    public virtual void Move(Transform characterTransform, bool isAnimationComplete)
+    {
     }
 }
 
@@ -100,4 +83,42 @@ public class PlayerAnimationController : AnimationControllerBase, IPlayerAnimati
             characterTransform.localScale = initialScale;
         }
     }
+}
+
+public abstract class AnimationBase
+{
+    protected ICharacterController _characterController;
+    public abstract void Animate(Action onComplete);
+
+    public AnimationBase(ICharacterController characterController)
+    {
+        _characterController = characterController;
+    }
+}
+
+public class EnemyAttackAnimation : AnimationBase
+{
+    public EnemyAttackAnimation(ICharacterController characterController) : base(characterController)
+    {
+    }
+
+    public override void Animate(Action onComplete)
+    {
+        Transform characterTransform = _characterController.GetTransform();
+        Transform target = _characterController.DefaultBehaviourTree.GetTarget();
+
+        Sequence sequence = DOTween.Sequence();
+
+        sequence.Append(characterTransform.DOLookAt(target.position, 0.5f));
+        sequence.AppendInterval(0.5f);
+        sequence.Append(characterTransform.DOShakePosition(0.4f, new Vector3(0.2f, 0, 0.2f), 20, 20f));
+
+        sequence.OnComplete(() =>
+        {
+            onComplete?.Invoke();
+        });
+
+        sequence.Play();
+    }
+
 }

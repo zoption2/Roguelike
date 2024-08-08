@@ -10,6 +10,12 @@ namespace Obstacles
 
             Vector3 reflectedVelocity = Vector3.Reflect(new Vector3(velocity.x, 0, velocity.z), reflectionVector);
             rigidbody.velocity = reflectedVelocity;
+
+            if (reflectedVelocity != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(reflectedVelocity);
+                rigidbody.rotation = Quaternion.Slerp(rigidbody.rotation, targetRotation, Time.deltaTime * 10f);
+            }
         }
     }
 }

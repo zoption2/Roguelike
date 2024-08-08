@@ -44,18 +44,21 @@ public abstract class ActiveState
 
         if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
-            _characterController.AnimationController.Move(true);
+            Transform transform = _characterController.GetTransform();
+            _characterController.AnimationController.Move(transform, true);
             _characterController.IsMoving = true;
         }
         else if (_characterController.GetVelocity().magnitude < 0.05f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
-            _characterController.AnimationController.Move(false);
+            Transform transform = _characterController.GetTransform();
+            _characterController.AnimationController.Move(transform, false);
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
         else if (_characterController.GetVelocity().magnitude == 0 && _characterController.IsMoving)
-        {   
-            _characterController.AnimationController.Move(false);
+        {
+            Transform transform = _characterController.GetTransform();
+            _characterController.AnimationController.Move(transform, false);
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
