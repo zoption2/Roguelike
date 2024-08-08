@@ -15,10 +15,14 @@ namespace Enemy
     public interface IEnemyController : ICharacterController
     {
         void DisactivateAbilityPanel();
+        public AnimationBase AttackAnimation { get; set; }
     }
 
     public class EnemyController : CharacterControllerBase, IEnemyController
     {
+        public AnimationBase AttackAnimation {  get; set; }
+        public AnimationBase MoveAnimation { get; set; }
+
         public EnemyController(
             IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
@@ -80,8 +84,8 @@ namespace Enemy
 
             LaunchedProjectiles = new List<IProjectile>();
 
-            AnimationController = new EnemyAnimationController();
-            AnimationController.SetCharacter(this);
+            AttackAnimation = new EnemyAttackAnimation(this);
+            MoveAnimation = new MoveAnimation(this);
         }
 
         public override void SetCurrentAbility(IAbility ability)

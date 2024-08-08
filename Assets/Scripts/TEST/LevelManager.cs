@@ -1,11 +1,10 @@
+using Cinemachine;
 using Gameplay;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.SceneManagement;
-using UnityEngine;
 using Unity.AI.Navigation;
-using UnityEngine.AI;
-using Cinemachine;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public interface ILevelManager
 {
@@ -97,7 +96,7 @@ public class LevelManager : ILevelManager
 
     public void LoadLevel()
     {
-        
+
 
         RoomsOrder = new Queue<TypeOfScenario>(_levelSettings.RoomsOrder);
 
@@ -222,12 +221,12 @@ public class LevelManager : ILevelManager
                 _gameplayService.CurrentRoomType = nextRoomScenario;
 
                 if (_levelContext.Player != null)
-                { 
+                {
                     if (_gameplayService.CurrentContext.Players.Count == 0)
                     {
                         _gameplayService.CurrentContext.Players.Add(_levelContext.Player);
                     }
-                    
+
                     _levelContext.Player.SetCharacterContext(_gameplayService.CurrentContext);
                 }
                 else
@@ -243,7 +242,7 @@ public class LevelManager : ILevelManager
 
                 _gameplayService.StartCurrentRoom();
 
-                
+
             }
         }
         else

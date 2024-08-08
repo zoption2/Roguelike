@@ -5,10 +5,9 @@ using Pool;
 using Projectiles;
 using SlingShotLogic;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
-using UnityEngine;
-using Gameplay;
 
 public abstract class ActiveState
 {
@@ -44,21 +43,18 @@ public abstract class ActiveState
 
         if (_characterController.GetVelocity().magnitude > 0.5f && !_characterController.IsMoving)
         {
-            Transform transform = _characterController.GetTransform();
-            _characterController.AnimationController.Move(transform, true);
+            _characterController.MoveAnimation.Play(() => { });
             _characterController.IsMoving = true;
         }
         else if (_characterController.GetVelocity().magnitude < 0.05f && _characterController.GetVelocity().magnitude > 0f && _characterController.IsMoving)
         {
-            Transform transform = _characterController.GetTransform();
-            _characterController.AnimationController.Move(transform, false);
+            _characterController.MoveAnimation.Stop(() => { });
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }
         else if (_characterController.GetVelocity().magnitude == 0 && _characterController.IsMoving)
         {
-            Transform transform = _characterController.GetTransform();
-            _characterController.AnimationController.Move(transform, false);
+            _characterController.MoveAnimation.Stop(() => { });
             _characterController.IsMoving = false;
             _characterController.HandleStopMovement();
         }

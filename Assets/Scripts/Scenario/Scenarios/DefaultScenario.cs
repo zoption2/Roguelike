@@ -1,6 +1,5 @@
 using Gameplay;
 using System.Collections.Generic;
-using UnityEngine;
 
 public interface IDefaultScenario : IScenario
 {

@@ -18,13 +18,14 @@ public abstract class CharacterControllerBase : ICharacterController, IControlle
 {
     public event OnCharacterDeath ON_CHARACTER_DEATH;
     public event OnStopMovement ON_STOP_MOVEMENT;
+
+    public AnimationBase MoveAnimation { get; set; }
     public bool IsActive { get; set; }
     public bool IsStunned { get; set; }
     public bool IsMoving { get; set; }
     public bool IsDead { get; set; }
     public IAnalyzer Analyzer { get; set; }
     public IAbility CurrentAbility { get; set; }
-    public IAnimationController AnimationController { get; set; }
     public IEffectProcessor Effector { get; set; }
     public IInteractionProcessor InteractionProcessor { get; set; }
     public IInteractionDealer InteractionDealer { get; set; }

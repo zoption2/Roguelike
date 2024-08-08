@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace BehaviourTree
 {
@@ -8,12 +6,12 @@ namespace BehaviourTree
     {
         public Sequence() : base()
         {
-            
+
         }
 
         public Sequence(List<Node> children) : base(children)
         {
-            
+
         }
 
         public override NodeState Evaluate()
@@ -22,7 +20,7 @@ namespace BehaviourTree
 
             foreach (Node child in _children)
             {
-                switch(child.Evaluate())
+                switch (child.Evaluate())
                 {
                     case NodeState.Failure:
                         _state = NodeState.Failure;
@@ -37,7 +35,7 @@ namespace BehaviourTree
 
             if (someoneRunning)
                 _state = NodeState.Running;
-            else 
+            else
                 _state = NodeState.Success;
             return _state;
         }

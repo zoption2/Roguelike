@@ -1,10 +1,7 @@
 using CharactersStats;
 using Cinemachine;
-using DG.Tweening;
 using Enemy;
 using Player;
-using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Gameplay

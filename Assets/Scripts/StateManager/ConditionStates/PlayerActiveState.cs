@@ -1,5 +1,5 @@
 using Abilities;
-using Gameplay;
+using Player;
 using Pool;
 using SlingShotLogic;
 using UnityEngine;
@@ -7,13 +7,15 @@ using UnityEngine.EventSystems;
 
 public class PlayerActiveState : ActiveState, IConditionState
 {
+    IPlayerController _playerController;
     public PlayerActiveState(ICharacterController characterController, ProjectilePooler projectilePooler) : base(characterController, projectilePooler)
     {
+        _playerController = (IPlayerController)characterController;
     }
 
     public override void UseSlingshotAsync(PointerEventData eventData, Transform slingShotInitPosition)
     {
-        _characterController.AnimationController.Attack(true);
+        _playerController.PlayerAttackWaitingAnimation.Play(() => { });
 
         CharacterType type = _characterController.GetCharacterType();
 
@@ -49,7 +51,7 @@ public class PlayerActiveState : ActiveState, IConditionState
 
     public override void LaunchYourself(Vector3 direction)
     {
-        _characterController.AnimationController.Attack(false);
+        _playerController.PlayerAttackWaitingAnimation.Stop(() => { });
 
         float slingshotRadius = 2.1f;
         float slingshotMultiplier = direction.magnitude / slingshotRadius;

@@ -1,27 +1,30 @@
+using Abilities;
+using BehaviourTree;
 using CharactersStats;
-using Interactions;
+using Enemy;
 using Gameplay;
+using Interactions;
+using Projectiles;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using Zenject;
-using UnityEngine.AI;
-using BehaviourTree;
-using System.Linq;
-using Enemy;
-using Abilities;
-using Projectiles;
 
 namespace Player
 {
     public interface IPlayerController : ICharacterController
     {
+        public AnimationBase PlayerAttackWaitingAnimation { get; set; }
         void SetTransform(Transform newTransform);
         void StopPlayer();
     }
 
     public class PlayerController : CharacterControllerBase, IPlayerController
     {
+        public AnimationBase PlayerAttackWaitingAnimation { get; set; }
+
         private List<IAbility> AbilitiesForReload;
         private IAbility BasicAbility;
 
@@ -97,8 +100,8 @@ namespace Player
 
             LaunchedProjectiles = new List<IProjectile>();
 
-            AnimationController = new PlayerAnimationController();
-            AnimationController.SetCharacter(this);
+            PlayerAttackWaitingAnimation = new PlayerAttackWaitingAnimation(this);
+            MoveAnimation = new MoveAnimation(this);
         }
 
         public override void SetCurrentAbility(IAbility ability)

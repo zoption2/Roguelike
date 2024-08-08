@@ -1,3 +1,4 @@
+using Enemy;
 using UnityEngine;
 
 namespace BehaviourTree
@@ -19,7 +20,12 @@ namespace BehaviourTree
             Transform target = _behaviourTree.GetTarget();
             Transform objectToAnimate = _characterController.GetTransform();
 
-            _characterController.AnimationController.Attack(_isAnimationCompleted, target);
+            IEnemyController enemyController = (IEnemyController)_characterController;
+            enemyController.AttackAnimation.Play(() =>
+            {
+                _isAnimationCompleted = true;
+                _characterController.Attack();
+            });
 
             if (_isAnimationCompleted)
             {

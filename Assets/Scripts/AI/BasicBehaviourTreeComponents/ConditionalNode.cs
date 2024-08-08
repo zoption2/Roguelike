@@ -1,8 +1,3 @@
-using BehaviourTree;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace BehaviourTree
 {
     public abstract class ConditionalNode : Node
@@ -10,7 +5,7 @@ namespace BehaviourTree
         protected abstract string _key { get; }
         public override NodeState Evaluate()
         {
-            bool value = (bool) _blackboard.GetData(_key);
+            bool value = (bool)_blackboard.GetData(_key);
             if (value)
             {
                 _state = NodeState.Success;
