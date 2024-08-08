@@ -61,6 +61,7 @@ namespace Enemy
 
         private CinemachineVirtualCamera _virtualCamera;
         private ICameraManager _cameraManager;
+        private Animator _animator;
 
         public EnemyController(
             IPoolManager poolManager,
@@ -148,6 +149,11 @@ namespace Enemy
         {
         }
 
+        public void SetAnimator(Animator animator)
+        {
+            _animator = animator;
+        }
+
         public void SetVirtualCamera(CinemachineVirtualCamera VC)
         {
             _virtualCamera = VC;
@@ -162,7 +168,6 @@ namespace Enemy
         {
             _uIViewmodel.DeactivateSkillsBTNs();
         }
-
 
         public void OnClick(Transform point, PointerEventData eventData)
         {

@@ -47,6 +47,9 @@ public class CharacterView : MonoBehaviour,
     [SerializeField]
     private Transform _projectileSpawn;
 
+    [SerializeField]
+    private Animator _animator;
+
     public float MaxVelocity = 50f;
     public ParticleSystem ParticleTestSystem { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
@@ -73,6 +76,8 @@ public class CharacterView : MonoBehaviour,
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _collisionHandler = gameObject.AddComponent<CollisionHandler>();
         _collisionHandler.Init(ControllerInputs, this);
+
+        ControllerInputs.SetAnimator(_animator);
     }
 
     private void FixedUpdate()

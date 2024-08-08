@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 5128870247787867843}
   - component: {fileID: 3343622773524607542}
   - component: {fileID: 6612742267057689316}
+  - component: {fileID: -1144735264185000773}
   m_Layer: 7
   m_Name: Warrior
   m_TagString: Player
@@ -221,6 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileSpawn: {fileID: 8101284788601911292}
+  _animator: {fileID: -1144735264185000773}
   MaxVelocity: 50
 --- !u!135 &216731504792179663
 SphereCollider:
@@ -5103,6 +5105,27 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!95 &-1144735264185000773
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5019426081544581403}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5408903682962262979
 GameObject:
   m_ObjectHideFlags: 0

@@ -69,6 +69,8 @@ namespace Player
 
         private CinemachineVirtualCamera _virtualCamera;
         private ICameraManager _cameraManager;
+        private Animator _animator;
+
         public PlayerController(
             IPoolManager poolManager,
             IInteractionProcessor interactionProcessor,
@@ -159,6 +161,11 @@ namespace Player
         public void DoUpdate()
         {
             _currentConditionState.DoUpdate();
+        }
+
+        public void SetAnimator(Animator animator)
+        {
+            _animator = animator;
         }
 
         public void SetVirtualCamera(CinemachineVirtualCamera VC)
