@@ -27,6 +27,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2f2e18abdf74ff42b6fcf55ef694436
+    m_Address: Assets/Prefabs/WallParticles.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5eccae2c6b4cfce4699825b2956f1609, type: 2}
   m_SchemaSet:

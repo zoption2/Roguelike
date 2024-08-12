@@ -22,6 +22,9 @@ public class ContextInstaller : MonoInstaller
     private LevelSetingsSO _levelSetingsSO;
 
     [SerializeField]
+    private ParticlePrefabHolder _particlePrefabHolder;
+
+    [SerializeField]
     private CharacterPrefabHolder _characterPrefabHolder;
 
     [SerializeField]
@@ -130,6 +133,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<BuffPooler>().To<BuffPooler>().AsSingle();
         Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
         Container.Bind<ProjectilePooler>().To<ProjectilePooler>().AsSingle();
+        Container.Bind<ParticlePooler>().To<ParticlePooler>().AsSingle();
 
         Container.Bind<IPoolManager>().To<PoolManager>().AsSingle();
     }
@@ -160,6 +164,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<NavigationPrefabHolder>().FromInstance(_navPrefabHolder).AsSingle();
         Container.Bind<UIAbilitiesPrefabHolder>().FromInstance(_uIAbilitiesPrefabHolder).AsSingle();
         Container.Bind<RoomObjectsPrefabHolder>().FromInstance(_roomObjectsPrefabHolder).AsSingle();
+        Container.Bind<ParticlePrefabHolder>().FromInstance(_particlePrefabHolder).AsSingle();
 
         Container.Bind<RoomTemplateSO>().FromInstance(_roomTemplateSO).AsSingle();
         Container.Bind<LevelSetingsSO>().FromInstance(_levelSetingsSO).AsSingle();

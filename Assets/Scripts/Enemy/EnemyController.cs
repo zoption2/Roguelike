@@ -21,7 +21,6 @@ namespace Enemy
     public class EnemyController : CharacterControllerBase, IEnemyController
     {
         public AnimationBase AttackAnimation {  get; set; }
-        public AnimationBase MoveAnimation { get; set; }
 
         public EnemyController(
             IPoolManager poolManager,
@@ -84,8 +83,10 @@ namespace Enemy
 
             LaunchedProjectiles = new List<IProjectile>();
 
-            AttackAnimation = new EnemyAttackAnimation(this);
-            MoveAnimation = new MoveAnimation(this);
+            AttackAnimation = new EnemyAttackAnimation();
+            AttackAnimation.SetCharacterController(this);
+            MoveAnimation = new MoveAnimation();
+            MoveAnimation.SetCharacterController(this);
         }
 
         public override void SetCurrentAbility(IAbility ability)

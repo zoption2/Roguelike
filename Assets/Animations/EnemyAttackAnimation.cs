@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class EnemyAttackAnimation : AnimationBase
 {
-    public EnemyAttackAnimation(ICharacterController characterController) : base(characterController)
-    {
-    }
 
     public override void Play(Action onComplete)
     {

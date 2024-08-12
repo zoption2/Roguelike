@@ -17,13 +17,16 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
     private Rigidbody _rigidbody;
     private bool _isStoppedInsideTrigger;
     private IControllerInputs _controllerInputs;
-    
-    
+    private ParticlePooler _particlePooler;
+
+
+
     public void Init(IControllerInputs controllerInputs, CharacterView characterView)
     {
         _controllerInputs = controllerInputs;
         _characterView = characterView;
         _rigidbody = _characterView.GetRigidbody();
+        _particlePooler = _controllerInputs.PoolManager.UseParticlePooler();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -31,7 +34,9 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
         if (collision.gameObject.TryGetComponent(out IWall obstacle))
         {
             Vector3 velocity = _characterView.GetLastVelocity();
-            obstacle.ProcessCollision(collision, _rigidbody, velocity);
+            
+            obstacle.ProcessCollision(collision, _rigidbody, velocity, _particlePooler);
+            _controllerInputs.CameraManager.SimulateCollisionEffect(velocity);
         }
 
         if (collision.gameObject.TryGetComponent(out IInteractible interactible) && interactible is not IProjectile)

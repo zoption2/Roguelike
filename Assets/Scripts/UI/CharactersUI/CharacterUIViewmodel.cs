@@ -5,6 +5,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Abilities;
+using Player;
+using Enemy;
 
 
 public class CharacterUIViewmodel
@@ -23,7 +25,9 @@ public class CharacterUIViewmodel
     private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
 
-    
+    public AnimationBase PlayerActiveIndicatorAnimation {  get; set; }
+    public AnimationBase EnemyActiveIndicatorAnimation { get; set; }
+
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
     {
         _characterController = characterController;
@@ -36,7 +40,13 @@ public class CharacterUIViewmodel
         _abilityIcons = new List<IAbilityIconView>();
         _activeIndicator = _uIView.GetActiveIndicator();
         _abilityPanel = _uIView.GetAbilityPanel();
-        
+
+        PlayerActiveIndicatorAnimation = new PlayerActiveIndicatorAnimation();
+        PlayerActiveIndicatorAnimation.SetGameobjectToAnimate(_activeIndicator.gameObject);
+
+        EnemyActiveIndicatorAnimation = new EnemyActiveIndicatorAnimation();
+        EnemyActiveIndicatorAnimation.SetGameobjectToAnimate(_activeIndicator.gameObject);
+
         VisualiseAbilities();
     }
 
@@ -60,9 +70,33 @@ public class CharacterUIViewmodel
         if (_characterController.IsActive)
         {
             _activeIndicator.gameObject.SetActive(true);
+
+            if (_characterController is IPlayerController)
+            {
+                PlayerActiveIndicatorAnimation.Play(() =>
+                {
+
+                });
+            }
+            else if (_characterController is IEnemyController)
+            {
+                EnemyActiveIndicatorAnimation.Play(() =>
+                {
+
+                });
+            }
+            
         }
         else
-        { 
+        {
+            if (_characterController is IPlayerController)
+            {
+                PlayerActiveIndicatorAnimation.Stop(() =>
+                {
+
+                });
+            } 
+            
             _activeIndicator.gameObject.SetActive(false);
         }
         

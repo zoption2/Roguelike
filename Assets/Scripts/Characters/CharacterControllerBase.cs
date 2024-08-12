@@ -24,6 +24,7 @@ public abstract class CharacterControllerBase : ICharacterController, IControlle
     public bool IsStunned { get; set; }
     public bool IsMoving { get; set; }
     public bool IsDead { get; set; }
+    public IPoolManager PoolManager { get; set; }
     public IAnalyzer Analyzer { get; set; }
     public IAbility CurrentAbility { get; set; }
     public IEffectProcessor Effector { get; set; }
@@ -39,6 +40,7 @@ public abstract class CharacterControllerBase : ICharacterController, IControlle
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public List<IProjectile> LaunchedProjectiles { get; set; }
     public CinemachineVirtualCamera VirtualCamera { get; set; }
+    public ICameraManager CameraManager { get; set; }
 
     protected IConditionState CurrentState;
     protected IStateFactory StateFactory;
@@ -52,7 +54,7 @@ public abstract class CharacterControllerBase : ICharacterController, IControlle
     protected CharacterUIViewmodel UIViewmodel;
     protected DiContainer Container;
     protected IGameplayService GameplayService;
-    protected ICameraManager CameraManager;
+    
     protected Animator Animator;
 
     public CharacterControllerBase(
@@ -67,6 +69,7 @@ public abstract class CharacterControllerBase : ICharacterController, IControlle
         IGameplayService gameplayService,
         ICameraManager cameraManager)
     {
+        PoolManager = poolManager;
         CharacterUIPooler = poolManager.UseCharacterUIPooler();
         CharacterPooler = poolManager.UseCharacterPooler();
         InteractionProcessor = interactionProcessor;

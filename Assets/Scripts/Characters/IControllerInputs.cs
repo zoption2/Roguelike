@@ -1,4 +1,5 @@
 using CharactersStats;
+using Cinemachine;
 using Interactions;
 using Projectiles;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ public interface IControllerInputs
     public bool IsMoving { get; set; }
     public bool IsActive { get; set; }
     public List<IProjectile> LaunchedProjectiles { get; set; }
+    public IPoolManager PoolManager { get; set; }
+    public ICameraManager CameraManager { get; set; }
     public void SetAnimator(Animator animator);
     public ReactiveStats GetCharacterStats();
     public IInteraction GetInteraction();

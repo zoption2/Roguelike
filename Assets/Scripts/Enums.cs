@@ -154,12 +154,18 @@ public enum PoolType
     CharacterPool,
     CharacterUIPool,
     ProjectilePool,
-    SlingshotPool
+    SlingshotPool,
+    ParticlePool
 }
 
 public enum CurrencyType
 {
     Coin
+}
+
+public enum ParticleType
+{
+    WallParticle,
 }
 
 

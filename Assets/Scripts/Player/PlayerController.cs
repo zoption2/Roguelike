@@ -100,8 +100,10 @@ namespace Player
 
             LaunchedProjectiles = new List<IProjectile>();
 
-            PlayerAttackWaitingAnimation = new PlayerAttackWaitingAnimation(this);
-            MoveAnimation = new MoveAnimation(this);
+            PlayerAttackWaitingAnimation = new PlayerAttackWaitingAnimation();
+            PlayerAttackWaitingAnimation.SetCharacterController(this);
+            MoveAnimation = new MoveAnimation();
+            MoveAnimation.SetCharacterController(this);
         }
 
         public override void SetCurrentAbility(IAbility ability)
@@ -112,6 +114,10 @@ namespace Player
 
         public override void OnClick(Transform point, PointerEventData eventData)
         {
+            UIViewmodel.PlayerActiveIndicatorAnimation.Stop(() => 
+            { 
+
+            });
             SlingShotInitPosition = point;
             if (!IsMoving && IsActive)
             {

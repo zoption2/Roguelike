@@ -8,10 +8,6 @@ public class PlayerAttackWaitingAnimation : AnimationBase
     private Vector3 _initialScale;
     private Tween _scaleTween;
 
-    public PlayerAttackWaitingAnimation(ICharacterController characterController) : base(characterController)
-    {
-    }
-
     public override void Play(Action onComplete)
     {
         Transform characterTransform = _characterController.GetTransform();

@@ -7,10 +7,6 @@ public class MoveAnimation : AnimationBase
     private Tween _rotationTween;
     private bool _isAnimating = false;
 
-    public MoveAnimation(ICharacterController characterController) : base(characterController)
-    {
-    }
-
     public override void Play(Action onComplete)
     {
         Transform characterTransform = _characterController.GetTransform();

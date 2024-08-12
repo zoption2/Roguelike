@@ -6,6 +6,7 @@ using UnityEngine;
 public interface ICameraManager
 {
     public CinemachineVirtualCamera CreateVirtualCamera(Transform target, string name);
+    public void SimulateCollisionEffect(Vector3 collisionDirection);
     public void SetMainCamera(CinemachineVirtualCamera virtualCamera);
     public Task WaitForCameraToReachTarget(Transform target);
 }
@@ -60,6 +61,35 @@ public class CameraManager : ICameraManager
         {
             await Task.Yield();
         }
+    }
+
+    public async void SimulateCollisionEffect(Vector3 collisionDirection)
+    {
+        //foreach (var virtualCamera in _allVirtualCameras)
+        //{
+        //    var transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+        //    if (transposer != null)
+        //    {
+        //        Vector3 originalOffset = transposer.m_FollowOffset;
+        //        Vector3 collisionOffset = collisionDirection.normalized * 2f;
+
+        //        transposer.m_FollowOffset += collisionOffset;
+
+        //        await Task.Delay(100);
+
+        //        float elapsedTime = 0f;
+        //        float duration = 0.5f;
+
+        //        while (elapsedTime < duration)
+        //        {
+        //            transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset, originalOffset, elapsedTime / duration);
+        //            elapsedTime += Time.deltaTime;
+        //            await Task.Yield();
+        //        }
+
+        //        transposer.m_FollowOffset = originalOffset;
+        //    }
+        //}
     }
 
 }

@@ -3,14 +3,15 @@ using UnityEngine;
 
 public interface IPoolManager
 {
-    BuffPooler UseBuffPooler();
-    EffectPooler UseEffectPooler();
-    AbilityIconPooler UseAbilityIconPooler();
-    CharacterPanelPooler UseCharacterPanelPooler();
-    CharacterPooler UseCharacterPooler();
-    CharacterUIPooler UseCharacterUIPooler();
-    ProjectilePooler UseProjectilePooler();
-    SlingshotPooler UseSlingshotPooler();
+    public BuffPooler UseBuffPooler();
+    public EffectPooler UseEffectPooler();
+    public AbilityIconPooler UseAbilityIconPooler();
+    public CharacterPanelPooler UseCharacterPanelPooler();
+    public CharacterPooler UseCharacterPooler();
+    public CharacterUIPooler UseCharacterUIPooler();
+    public ProjectilePooler UseProjectilePooler();
+    public SlingshotPooler UseSlingshotPooler();
+    public ParticlePooler UseParticlePooler();
     void InitPool(PoolType poolType, string poolName);
     void CleanPoolers();
     public void Init(GameObject parent);
@@ -26,6 +27,7 @@ public class PoolManager : IPoolManager
     private CharacterUIPooler _characterUIPooler;
     private ProjectilePooler _projectilePooler;
     private SlingshotPooler _slingshotPooler;
+    private ParticlePooler _particlePooler;
     private Transform _globalParent;
     public PoolManager(
         BuffPooler buffPooler,
@@ -35,7 +37,8 @@ public class PoolManager : IPoolManager
         CharacterPooler characterPooler,
         CharacterUIPooler characterUIPooler,
         ProjectilePooler projectilePooler,
-        SlingshotPooler slingshotPooler
+        SlingshotPooler slingshotPooler,
+        ParticlePooler particlePooler
     )
     {
         _buffPooler = buffPooler;
@@ -46,6 +49,7 @@ public class PoolManager : IPoolManager
         _characterUIPooler = characterUIPooler;
         _projectilePooler = projectilePooler;
         _slingshotPooler = slingshotPooler;
+        _particlePooler = particlePooler;
     }
 
     public void Init(GameObject parent)
@@ -101,6 +105,12 @@ public class PoolManager : IPoolManager
         return _slingshotPooler;
     }
 
+    public ParticlePooler UseParticlePooler()
+    {
+        InitPool(PoolType.ParticlePool, "ParticlePool");
+        return _particlePooler;
+    }
+
     public void InitPool(PoolType poolType, string poolName)
     {
         switch (poolType)
@@ -129,6 +139,9 @@ public class PoolManager : IPoolManager
             case PoolType.SlingshotPool:
                 InitSinglePool(_slingshotPooler, poolName);
                 break;
+            case PoolType.ParticlePool:
+                InitSinglePool(_particlePooler, poolName);
+                break;
             default:
                 Debug.LogWarning("Unknown pool type: " + poolType);
                 break;
@@ -150,6 +163,7 @@ public class PoolManager : IPoolManager
         _characterUIPooler.CleanPool();
         _projectilePooler.CleanPool();
         _slingshotPooler.CleanPool();
+        _particlePooler.CleanPool();
 
 
         foreach (Transform child in _globalParent)
