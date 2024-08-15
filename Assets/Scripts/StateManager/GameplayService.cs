@@ -107,26 +107,5 @@ namespace Gameplay
                 enemy.UpdateHealthBar();
             }
         }
-
-        //public void CreatePlayer()
-        //{
-        //    if (LevelContext.Player == null)
-        //    {
-        //        CharacterType playerType = DataTransfer.TypeCollection.FirstOrDefault();
-        //        Vector3 newPos = new Vector3(0, 0, 0);
-        //        Debug.LogWarning($"Creating new player at position: {newPos}");
-
-        //        IPlayerController newPlayer = PlayerFactory.CreatePlayer(newPos, _levelManager.PlayerParent, playerType);
-        //        newPlayer.SetCharacterContext(CurrentContext);
-        //        CurrentContext.Players.Add(newPlayer);
-
-        //        LevelContext.Player = newPlayer;
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("Player already created!!!");
-        //    }
-        //}
-
     }
 }

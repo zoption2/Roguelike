@@ -111,6 +111,7 @@ namespace Gameplay
                 _scenarioContext.Enemies.Remove((IEnemyController)controller);
             }
 
+            CheckConditonsForEndOfScenario();
         }
 
 

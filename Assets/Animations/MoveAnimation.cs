@@ -14,7 +14,12 @@ public class MoveAnimation : AnimationBase
         if (!_isAnimating)
         {
             _isAnimating = true;
-            _rotationTween = characterTransform.DORotate(new Vector3(360, characterTransform.rotation.y, 0), 2f, RotateMode.FastBeyond360)
+
+            Vector3 initialRotation = characterTransform.eulerAngles;
+
+            _rotationTween = DOTween.To(() => characterTransform.localEulerAngles.x,
+                                        x => characterTransform.localRotation = Quaternion.Euler(x, characterTransform.localEulerAngles.y, characterTransform.localEulerAngles.z),
+                                        360 + initialRotation.x, 2f)
                 .SetLoops(-1, LoopType.Incremental)
                 .SetEase(Ease.Linear)
                 .OnKill(() =>
@@ -33,9 +38,12 @@ public class MoveAnimation : AnimationBase
             _isAnimating = false;
 
             Transform characterTransform = _characterController.GetTransform();
-            characterTransform.localRotation = Quaternion.Euler(0, characterTransform.localRotation.y, characterTransform.rotation.z);
+
+            characterTransform.localEulerAngles = new Vector3(0, characterTransform.localEulerAngles.y, 0);
 
             onComplete?.Invoke();
         }
     }
+
+
 }
