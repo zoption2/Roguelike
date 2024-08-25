@@ -1,8 +1,8 @@
+using Abilities;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using Abilities;
 
 
 namespace BehaviourTree
@@ -17,18 +17,18 @@ namespace BehaviourTree
         public void SetAbilities(List<IAbility> abilities);
         public void SetCurrentAbility(IAbility ability);
         public bool CanAttackAfterMove(NavMeshPath path);
-        
+
     }
     public class DefaultBehaviourTree : BehaviourTree, IDefaultBehaviourTree
     {
-        private string _attackKey = "CanAttack", _moveKey = "CanMove", _targetKey ="Target";
+        private string _attackKey = "CanAttack", _moveKey = "CanMove", _targetKey = "Target";
 
         private AbilityChooser _attackChooser;
 
         private List<IAbility> _abilities;
         protected override Node SetupRootNode()
         {
-            Node rootNode = new Selector( new List<Node>
+            Node rootNode = new Selector(new List<Node>
             {
                 new Sequence(new List<Node>
                 {
@@ -56,10 +56,10 @@ namespace BehaviourTree
         protected override void UpdateData()
         {
             FindTarget();
-            if(GetTarget() != null)
+            if (GetTarget() != null)
             {
                 CheckIfCanAttack();
-                CheckIfCanMove();   
+                CheckIfCanMove();
             }
             else
             {
@@ -74,7 +74,7 @@ namespace BehaviourTree
             {
                 Debug.Log("Can Move");
                 _blackboard.SetData(_moveKey, true);
-            } 
+            }
             else
             {
                 Debug.Log("CAN'T MOVE");
@@ -102,9 +102,9 @@ namespace BehaviourTree
 
         }
 
-        protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance,Vector3 startingPoint,float castRadius = 0.5f)
+        protected RaycastHit ShootSphereCastToTarget(Vector3 target, float distance, Vector3 startingPoint, float castRadius = 0.5f)
         {
-            LayerMask mask = LayerMask.GetMask("Default", "Enemy","Player");
+            LayerMask mask = LayerMask.GetMask("Default", "Enemy", "Player");
             Vector3 direction = target - startingPoint;
             direction.y = 0;
             direction.Normalize();
@@ -128,8 +128,8 @@ namespace BehaviourTree
         {
             Transform target = GetTarget();
             NavMeshAgent navAgent = GetAgent();
-            float minStoppingDistance= 2f;
-            Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z );
+            float minStoppingDistance = 2f;
+            Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z);
 
             float maxDistance = GetMaxLaunchDistance();
             float walkedDistance = 0f;
@@ -143,7 +143,7 @@ namespace BehaviourTree
             Vector3 endPoint;
 
 
-            for(int i = 1; i < corners.Length; i++)
+            for (int i = 1; i < corners.Length; i++)
             {
                 if (walkedDistance + Vector3.Distance(corners[i - 1], corners[i]) < maxDistance)
                 {
@@ -156,11 +156,11 @@ namespace BehaviourTree
                 }
                 else
                 {
-                    direction = corners[i] - corners[i-1];
+                    direction = corners[i] - corners[i - 1];
                     remainingDistance = maxDistance - walkedDistance;
                     divider = direction.magnitude / remainingDistance;
                     neededVector = direction / divider;
-                    endPoint = corners[i-1] + neededVector;
+                    endPoint = corners[i - 1] + neededVector;
                     distanceToTarget = Vector3.Distance(endPoint, targetPosition);
 
                     if (distanceToTarget < minStoppingDistance)
@@ -180,7 +180,7 @@ namespace BehaviourTree
             return false;
         }
 
-        protected bool CanAttackWithRemainingDistance(Vector3 previousPoint ,Vector3 currentPoint,float remainingDistance,float minStoppingDistance = 2f)
+        protected bool CanAttackWithRemainingDistance(Vector3 previousPoint, Vector3 currentPoint, float remainingDistance, float minStoppingDistance = 2f)
         {
             Transform target = GetTarget();
             Vector3 targetPosition = new Vector3(target.position.x, target.position.y, target.position.z);
@@ -203,7 +203,7 @@ namespace BehaviourTree
             else
                 return false;
         }
-        
+
         protected bool HitTransformIsTarget(Transform hitTransform, Transform target)
         {
             if (hitTransform != null && hitTransform == target)
@@ -215,7 +215,7 @@ namespace BehaviourTree
         }
         public bool RemoteSphereCastHitTarget(Transform target, Vector3 startingPoint)
         {
-            RaycastHit hit = ShootSphereCastToTarget(target.position, Mathf.Infinity, startingPoint,0.2f);
+            RaycastHit hit = ShootSphereCastToTarget(target.position, Mathf.Infinity, startingPoint, 0.2f);
             Transform hitTransform = hit.transform;
             return HitTransformIsTarget(hitTransform, target);
         }
@@ -226,12 +226,12 @@ namespace BehaviourTree
 
             float maxDistance = GetMaxLaunchDistance() * abilityMultiplier;
 
-            if(remainingDistance > 0)
+            if (remainingDistance > 0)
             {
                 maxDistance = Mathf.Min(maxDistance, remainingDistance);
             }
 
-            RaycastHit hit = ShootSphereCastToTarget(target.position,maxDistance, startingPoint);
+            RaycastHit hit = ShootSphereCastToTarget(target.position, maxDistance, startingPoint);
             Transform hitTransform = hit.transform;
 
             return HitTransformIsTarget(hitTransform, target);
@@ -240,16 +240,16 @@ namespace BehaviourTree
         protected void FindTarget()
         {
             Vector3 characterPosition = _characterController.GetTransform().position;
-            List<Transform> allTargets= new List<Transform>();
+            List<Transform> allTargets = new List<Transform>();
 
             foreach (ICharacterController characterController in _characterScenarioContext.Players)
             {
                 allTargets.Add(characterController.GetTransform());
             }
 
-            allTargets = allTargets.OrderBy(x => Vector3.Distance(x.position,characterPosition)).ToList();
+            allTargets = allTargets.OrderBy(x => Vector3.Distance(x.position, characterPosition)).ToList();
 
-            if(allTargets.Count > 0)
+            if (allTargets.Count > 0)
             {
                 Transform finalTarget = allTargets[0];
                 foreach (Transform target in allTargets)

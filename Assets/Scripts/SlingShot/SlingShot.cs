@@ -11,16 +11,16 @@ namespace SlingShotLogic
     {
         public void Init(Vector3 _initPosition, CharacterType type, float currentLaunchDistance);
         public void UnsubscribeEvents();
-        public event Action<Vector3> OnShoot;
-        public event Action OnAbilityUse;
-        public event Action<Vector3> OnDirectionChange;
+        public event Action<Vector3> ON_SHOOT;
+        public event Action ON_ABILITY_USE;
+        public event Action<Vector3> ON_DIRECTION_CHANGE;
     }
 
     public class SlingShot : MonoBehaviour, ISlingShot, IDragHandler, IEndDragHandler
     {
-        public event Action<Vector3> OnShoot;
-        public event Action OnAbilityUse;
-        public event Action<Vector3> OnDirectionChange;
+        public event Action<Vector3> ON_SHOOT;
+        public event Action ON_ABILITY_USE;
+        public event Action<Vector3> ON_DIRECTION_CHANGE;
         public bool IsDragging = false;
 
         [SerializeField] Image _cursor;
@@ -62,7 +62,7 @@ namespace SlingShotLogic
             _direction = _startPoint - _endPoint;
             ChangePointerDirection(_direction);
             ChangePointerLength(_direction.magnitude, _direction);
-            OnDirectionChange?.Invoke(_direction);
+            ON_DIRECTION_CHANGE?.Invoke(_direction);
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -76,8 +76,8 @@ namespace SlingShotLogic
                 }
                 else
                 {
-                    OnShoot?.Invoke(_direction);
-                    OnAbilityUse?.Invoke();
+                    ON_SHOOT?.Invoke(_direction);
+                    ON_ABILITY_USE?.Invoke();
                     UnsubscribeEvents();
                     _slingShotPooler.Push(_type, this);
                 }
@@ -87,9 +87,9 @@ namespace SlingShotLogic
 
         public void UnsubscribeEvents()
         {
-            OnShoot = null;
-            OnAbilityUse = null;
-            OnDirectionChange = null;
+            ON_SHOOT = null;
+            ON_ABILITY_USE = null;
+            ON_DIRECTION_CHANGE = null;
         }
 
         private bool IsInDeadZone(Vector3 position, RectTransform zone)

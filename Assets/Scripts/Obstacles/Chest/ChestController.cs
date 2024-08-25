@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 
 public delegate void OnChestInteraction(CurrencyType type, int count);
 public delegate void OnChestOpen(Action onOpened);
 
 
-public interface IChestController 
+public interface IChestController
 {
     public IChestView ChestView { get; set; }
     public ChestModel ChestModel { get; set; }
@@ -26,7 +23,7 @@ public class ChestController : IChestController
     private bool _isLocked, _wasOpened;
 
     private IRewardService _rewardService;
-    
+
     public ChestController(IRewardService rewardService)
     {
         _rewardService = rewardService;
@@ -37,7 +34,7 @@ public class ChestController : IChestController
         ChestView = chestView;
         ChestModel = chestModel;
 
-        ChestView.On_Try_Open += TryOpenChest;
+        ChestView.ON_TRY_OPEN += TryOpenChest;
 
         ChestModel.TypeOfReward = CurrencyType.Coin;
         ChestModel.RewardCount = 10;
@@ -78,6 +75,6 @@ public class ChestController : IChestController
 
     private void UnsubscribeEvents()
     {
-        ChestView.On_Try_Open -= TryOpenChest;
+        ChestView.ON_TRY_OPEN -= TryOpenChest;
     }
 }

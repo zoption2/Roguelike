@@ -168,8 +168,8 @@ public abstract class ActiveState
     {
         if (_slingShot != null)
         {
-            _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
-            _slingShot.OnShoot -= LaunchYourself;
+            _slingShot.ON_DIRECTION_CHANGE -= _characterController.CharacterView.ChangeDirection;
+            _slingShot.ON_SHOOT -= LaunchYourself;
         }
     }
 

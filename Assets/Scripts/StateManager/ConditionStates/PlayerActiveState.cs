@@ -25,24 +25,24 @@ public class PlayerActiveState : ActiveState, IConditionState
 
         _slingShot.Init(slingShotInitPosition.position, type, _characterController.GetCurrentLaunchDistance());
 
-        _slingShot.OnDirectionChange -= _characterController.CharacterView.ChangeDirection;
-        _slingShot.OnDirectionChange += _characterController.CharacterView.ChangeDirection;
+        _slingShot.ON_DIRECTION_CHANGE -= _characterController.CharacterView.ChangeDirection;
+        _slingShot.ON_DIRECTION_CHANGE += _characterController.CharacterView.ChangeDirection;
         IAbility currentAbility = _characterController.CurrentAbility;
         if (currentAbility.ProjectileType == ProjectileType.None)
         {
-            _slingShot.OnShoot -= LaunchProjectile;
-            _slingShot.OnShoot -= LaunchYourself;
-            _slingShot.OnShoot += LaunchYourself;
+            _slingShot.ON_SHOOT -= LaunchProjectile;
+            _slingShot.ON_SHOOT -= LaunchYourself;
+            _slingShot.ON_SHOOT += LaunchYourself;
         }
         else
         {
-            _slingShot.OnShoot -= LaunchYourself;
-            _slingShot.OnShoot -= LaunchProjectile;
-            _slingShot.OnShoot += LaunchProjectile;
+            _slingShot.ON_SHOOT -= LaunchYourself;
+            _slingShot.ON_SHOOT -= LaunchProjectile;
+            _slingShot.ON_SHOOT += LaunchProjectile;
         }
 
-        _slingShot.OnAbilityUse -= _characterController.ProcessReloadAbility;
-        _slingShot.OnAbilityUse += _characterController.ProcessReloadAbility;
+        _slingShot.ON_ABILITY_USE -= _characterController.ProcessReloadAbility;
+        _slingShot.ON_ABILITY_USE += _characterController.ProcessReloadAbility;
 
         DragInputModule.dragFocusObject = _slingShot.gameObject;
         eventData.pointerDrag = _slingShot.gameObject;
@@ -58,14 +58,14 @@ public class PlayerActiveState : ActiveState, IConditionState
         Vector3 forceVector = GetForceVector(direction);
         _characterController.GetRigidbody().velocity = forceVector * slingshotMultiplier;
 
-        _slingShot.OnShoot -= LaunchYourself;
+        _slingShot.ON_SHOOT -= LaunchYourself;
 
     }
 
     public override void LaunchProjectile(Vector3 direction)
     {
         base.LaunchProjectile(direction);
-        _slingShot.OnShoot -= LaunchProjectile;
+        _slingShot.ON_SHOOT -= LaunchProjectile;
     }
 
 

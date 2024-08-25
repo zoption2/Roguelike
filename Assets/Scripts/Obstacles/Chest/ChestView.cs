@@ -1,13 +1,11 @@
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IChestView
 {
 
-    public event OnTryOpen On_Try_Open;
+    public event OnTryOpen ON_TRY_OPEN;
 
     public void TryOpenChest();
     public void OpenChest();
@@ -19,7 +17,7 @@ public delegate void OnTryOpen();
 
 public class ChestView : MonoBehaviour, IChestView
 {
-    public event OnTryOpen On_Try_Open;
+    public event OnTryOpen ON_TRY_OPEN;
 
     [SerializeField]
     private Animator _animator;
@@ -28,7 +26,7 @@ public class ChestView : MonoBehaviour, IChestView
 
     public void TryOpenChest()
     {
-        On_Try_Open?.Invoke();
+        ON_TRY_OPEN?.Invoke();
     }
 
     public void OpenChest()
