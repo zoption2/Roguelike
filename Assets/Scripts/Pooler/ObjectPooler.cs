@@ -31,7 +31,7 @@ namespace Pool
 
         protected GameObject GetPrefab(TEnum tag)
         {
-            GameObject prefab =  _prefabHolder.GetPrefab(tag);
+            GameObject prefab = _prefabHolder.GetPrefab(tag);
             return prefab;
         }
 
@@ -100,7 +100,7 @@ namespace Pool
             }
             else
             {
-                GameObject prefab =  GetPrefab(tag);
+                GameObject prefab = GetPrefab(tag);
 
                 GameObject spawnedInstance = null;
 

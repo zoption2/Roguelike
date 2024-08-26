@@ -6,5 +6,5 @@ namespace Obstacles
     {
         public void ProcessCollision(Collision collision, Rigidbody rigidbody, Vector3 velocity, ParticlePooler particlePooler = null);
     }
-} 
+}
 

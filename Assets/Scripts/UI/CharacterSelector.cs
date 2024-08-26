@@ -1,7 +1,7 @@
 using Gameplay;
+using SaveSystem;
 using System.Collections.Generic;
 using UnityEngine;
-using SaveSystem;
 
 namespace UI
 {
@@ -18,7 +18,7 @@ namespace UI
     {
         private List<ICharacterPanelController> _availablePanels = new List<ICharacterPanelController>();
         private List<ICharacterPanelController> _unSelectedPanels = new List<ICharacterPanelController>();
-        private List<ICharacterPanelController> _selectedPanels= new List<ICharacterPanelController>();
+        private List<ICharacterPanelController> _selectedPanels = new List<ICharacterPanelController>();
         private ICharacterPanelFactory _characterPanelFactory;
         private IDataService _dataService;
         private int _requiredPlayers;
@@ -47,7 +47,7 @@ namespace UI
         }
         public void MakeUnselectedRevertInteract()
         {
-            foreach(ICharacterPanelController controller in _unSelectedPanels)
+            foreach (ICharacterPanelController controller in _unSelectedPanels)
             {
                 controller.RevertInteract();
             }
@@ -55,7 +55,7 @@ namespace UI
         public void UnSelectPanel(ICharacterPanelController controller)
         {
             _selectedPanels.Remove(controller);
-            if(_selectedPanels.Count + 1 == _requiredPlayers)
+            if (_selectedPanels.Count + 1 == _requiredPlayers)
                 MakeUnselectedRevertInteract();
             _unSelectedPanels.Add(controller);
             DataTransfer.TypeCollection.Remove(controller.GetModelType());
@@ -80,10 +80,10 @@ namespace UI
         }
         public void AddPanel(CharacterType characterType)
         {
-            ICharacterPanelController controller =  _characterPanelFactory.CreateCharacterPanel(characterType, RectTrans);
+            ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(characterType, RectTrans);
             _availablePanels.Add(controller);
             _unSelectedPanels.Add(controller);
-            if(HasRequiredNumberOfPlayers())
+            if (HasRequiredNumberOfPlayers())
                 controller.RevertInteract();
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IChestScenario : IScenario
-{ 
+{
 
 }
 
@@ -43,7 +43,7 @@ public class ChestRoomScenario : Scenario<RoomContext>, IChestScenario
 
     private void UnlockAllChests()
     {
-        foreach(IChestController chest in _scenarioContext.Chests)
+        foreach (IChestController chest in _scenarioContext.Chests)
         {
             chest.UnlockChest();
         }

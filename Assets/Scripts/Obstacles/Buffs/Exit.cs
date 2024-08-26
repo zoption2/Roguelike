@@ -16,7 +16,7 @@ public class Exit : MonoBehaviour, ICompleatedRoomTrigger
     private BoxCollider _boxCollider;
     private IGameplayService _gameplayService;
     private ILevelManager _levelManager;
-    
+
 
     public void Init(IGameplayService gameplayService, ILevelManager levelManager)
     {

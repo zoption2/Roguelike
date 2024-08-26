@@ -34,14 +34,14 @@ namespace BehaviourTree
 
         protected void SetupBlackboard(Node node)
         {
-            if(node.GetType() != typeof(Selector) && node.GetType() != typeof(Sequence))
+            if (node.GetType() != typeof(Selector) && node.GetType() != typeof(Sequence))
             {
                 node.SetBlackboard(_blackboard);
             }
 
             if (node.HasChildren())
             {
-                foreach(Node node1 in node.GetChildren())
+                foreach (Node node1 in node.GetChildren())
                 {
                     SetupBlackboard(node1);
                 }

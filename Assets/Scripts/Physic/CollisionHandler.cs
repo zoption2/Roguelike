@@ -34,7 +34,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
         if (collision.gameObject.TryGetComponent(out IWall obstacle))
         {
             Vector3 velocity = _characterView.GetLastVelocity();
-            
+
             obstacle.ProcessCollision(collision, _rigidbody, velocity, _particlePooler);
             _controllerInputs.CameraManager.SimulateCollisionEffect(velocity);
         }
@@ -62,7 +62,7 @@ public class CollisionHandler : MonoBehaviour, ICollisionHandler
 
         if (other.gameObject.TryGetComponent(out ICompleatedRoomTrigger trigger))
         {
-             trigger.UseTrigger();
+            trigger.UseTrigger();
         }
     }
 

@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "RoomTemplateSO", menuName = "ScriptableObjects/RoomTemplateSO", order = 1)]

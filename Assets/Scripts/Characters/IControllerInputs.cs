@@ -1,5 +1,4 @@
 using CharactersStats;
-using Cinemachine;
 using Interactions;
 using Projectiles;
 using System.Collections.Generic;

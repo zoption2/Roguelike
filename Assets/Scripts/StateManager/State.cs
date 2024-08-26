@@ -27,7 +27,7 @@ namespace Gameplay
 
         private ICharacterController _characterController;
 
-        public PlayerTurnState( IScenario scenario, RoomContext context)
+        public PlayerTurnState(IScenario scenario, RoomContext context)
         {
             _scenario = scenario;
             _roomContext = context;
@@ -61,7 +61,7 @@ namespace Gameplay
             _characterController.AnalizeCondition();
 
             _characterController.ProcessOnEndTurn();
-            
+
             _scenario.GameplayService.ProcessTurnEnd();
 
             _scenario.GameplayService.ON_END_TURN -= _scenario.OnStateEnd;
@@ -108,7 +108,7 @@ namespace Gameplay
 
             _characterController.Tick();
 
-            
+
         }
 
         public void OnExit()
@@ -117,7 +117,7 @@ namespace Gameplay
 
             _characterController.UseEffectsOnEnd();
             _characterController.AnalizeCondition();
-            
+
             _characterController.ProcessOnEndTurn();
 
             _scenario.GameplayService.ProcessTurnEnd();
@@ -179,13 +179,13 @@ namespace Gameplay
         {
             _scenario = scenario;
             _roomContext = context;
-            _statsProvider  = provider;
+            _statsProvider = provider;
             _buffFactory = buffFactory;
             _playerFactory = playerFactory;
-            _enemyFactory = enemyFactory;  
+            _enemyFactory = enemyFactory;
             _levelManager = levelManager;
             _levelContext = levelContext;
-            _roomBuilder = roomBuilder;   
+            _roomBuilder = roomBuilder;
             _cameraManager = cameraManager;
         }
 
@@ -199,7 +199,7 @@ namespace Gameplay
 
         }
 
-        public  void OnBuffCreate()
+        public void OnBuffCreate()
         {
             var buffTypes = Enum.GetValues(typeof(BuffType)).Cast<BuffType>().Where(t => t != BuffType.None).ToList();
             var shuffledSpawnPoints = _roomContext.BuffSpawnPoints.OrderBy(x => UnityEngine.Random.value).ToList();
@@ -345,7 +345,7 @@ namespace Gameplay
         public void OnEnter()
         {
             Debug.Log($"-----------------------------|ENTER PAUSE STATE FOR {_scenario}|-------------------------------");
-            
+
         }
 
         public void OnExit()

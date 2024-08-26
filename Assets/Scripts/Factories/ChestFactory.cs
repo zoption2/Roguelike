@@ -11,7 +11,7 @@ public class ChestFactory : IChestFactory
     private RoomObjectsPrefabHolder _holder;
     private DiContainer _container;
 
-    public ChestFactory(RoomObjectsPrefabHolder holder,DiContainer container)
+    public ChestFactory(RoomObjectsPrefabHolder holder, DiContainer container)
     {
         _holder = holder;
         _container = container;

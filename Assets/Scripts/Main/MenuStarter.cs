@@ -16,10 +16,10 @@ public class MenuStarter : MonoBehaviour
     {
         _characterSelector = characterSelector;
     }
-    
+
     void Start()
     {
-        _characterSelector.Init(_requiredPlayers,_rectTransform);
+        _characterSelector.Init(_requiredPlayers, _rectTransform);
     }
 
 }

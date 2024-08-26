@@ -1,17 +1,17 @@
-using UnityEngine;
-using UnityEngine.EventSystems;
-using System;
-using Interactions;
-using System.Collections.Generic;
-using Pool;
+using Abilities;
 using BehaviourTree;
 using CharactersStats;
-using Zenject;
-using Gameplay;
-using UnityEngine.AI;
-using Abilities;
-using Projectiles;
 using Cinemachine;
+using Gameplay;
+using Interactions;
+using Pool;
+using Projectiles;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.EventSystems;
+using Zenject;
 
 public delegate void OnEndTurn();
 public abstract class CharacterControllerBase : ICharacterController, IControllerInputs, IDisposable
@@ -54,7 +54,7 @@ public abstract class CharacterControllerBase : ICharacterController, IControlle
     protected CharacterUIViewmodel UIViewmodel;
     protected DiContainer Container;
     protected IGameplayService GameplayService;
-    
+
     protected Animator Animator;
 
     public CharacterControllerBase(

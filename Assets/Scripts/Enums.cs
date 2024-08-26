@@ -131,8 +131,8 @@ public enum TemplateElementType
 
 public enum ProjectileType
 {
-    None= 0,
-    Arrow =1,
+    None = 0,
+    Arrow = 1,
 }
 
 public enum TypeOfScenario

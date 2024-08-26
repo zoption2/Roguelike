@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using Pool;
+using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System;
-using Pool;
 using Zenject;
 
 namespace SlingShotLogic

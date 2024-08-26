@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace BehaviourTree
 {
     public class DoNothingNode : Node

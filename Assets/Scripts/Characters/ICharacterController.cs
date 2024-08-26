@@ -1,13 +1,13 @@
+using Abilities;
 using BehaviourTree;
 using CharactersStats;
+using Cinemachine;
 using Gameplay;
 using Interactions;
+using Projectiles;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Abilities;
-using System.Collections.Generic;
-using Projectiles;
-using Cinemachine;
 
 public interface ICharacterController
 {

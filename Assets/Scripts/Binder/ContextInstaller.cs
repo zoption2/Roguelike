@@ -1,16 +1,16 @@
-using Gameplay;
-using Player;
-using UnityEngine;
-using Zenject;
-using Pool;
-using Prefab;
+using Abilities;
+using BehaviourTree;
 using CharactersStats;
 using Enemy;
-using UI;
+using Gameplay;
 using Interactions;
+using Player;
+using Pool;
+using Prefab;
 using SaveSystem;
-using BehaviourTree;
-using Abilities;
+using UI;
+using UnityEngine;
+using Zenject;
 
 public class ContextInstaller : MonoInstaller
 {
@@ -97,7 +97,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IStateFactory>().To<StateData>().AsSingle();
         Container.Bind<IStatsProvider>().To<StatsProvider>().AsSingle();
         Container.Bind<ICharacterSelector>().To<CharacterSelector>().AsSingle();
-        Container.Bind<IDataService>().To<DataService>().AsSingle(); 
+        Container.Bind<IDataService>().To<DataService>().AsSingle();
         Container.Bind<ILevelManager>().To<LevelManager>().AsSingle();
 
         Container.Bind<ILevelContext>().To<LevelContext>().AsSingle();

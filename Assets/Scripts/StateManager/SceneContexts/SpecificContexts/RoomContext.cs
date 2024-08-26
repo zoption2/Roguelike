@@ -39,7 +39,7 @@ namespace Gameplay
         public NavMeshSurface NavMeshSurface { get; set; }
         public Transform EnemiesParent { get; set; }
         public Transform BuffsParent { get; set; }
-        
+
     }
 
     public class RoomContext : IRoomContext

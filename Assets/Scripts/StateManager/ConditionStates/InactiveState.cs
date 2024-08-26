@@ -1,8 +1,8 @@
 using CharactersStats;
 using Interactions;
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InactiveState : IConditionState
 {

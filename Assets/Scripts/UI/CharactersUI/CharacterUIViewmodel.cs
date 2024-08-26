@@ -1,12 +1,12 @@
+using Abilities;
 using CharactersStats;
+using Enemy;
 using Interactions;
+using Player;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using Abilities;
-using Player;
-using Enemy;
 
 
 public class CharacterUIViewmodel
@@ -25,7 +25,7 @@ public class CharacterUIViewmodel
     private List<IAbilityIconView> _abilityIcons;
     private bool isActivated = false;
 
-    public AnimationBase PlayerActiveIndicatorAnimation {  get; set; }
+    public AnimationBase PlayerActiveIndicatorAnimation { get; set; }
     public AnimationBase EnemyActiveIndicatorAnimation { get; set; }
 
     public void Init(CharacterModel model, IUIFactory uIFactory, CharacterUIView uIView, ICharacterController characterController)
@@ -50,13 +50,13 @@ public class CharacterUIViewmodel
         VisualiseAbilities();
     }
 
-    public  void ActivateSkillsBTNs()
+    public void ActivateSkillsBTNs()
     {
-        isActivated = !isActivated; 
+        isActivated = !isActivated;
         if (isActivated)
         {
             _abilityPanel.SetActive(true);
-            
+
         }
         else
         {
@@ -85,7 +85,7 @@ public class CharacterUIViewmodel
 
                 });
             }
-            
+
         }
         else
         {
@@ -95,11 +95,11 @@ public class CharacterUIViewmodel
                 {
 
                 });
-            } 
-            
+            }
+
             _activeIndicator.gameObject.SetActive(false);
         }
-        
+
     }
 
     public void UpdateReloadIndicators()
@@ -138,13 +138,13 @@ public class CharacterUIViewmodel
 
         for (int i = 0; i < _buttons.Length; i++)
         {
-            int index = i; 
+            int index = i;
             _buttons[i].onClick.AddListener(() => OnAbilityButtonClick(_abilities[index]));
         }
     }
 
-    
-    public void ChangeButtonInteractible(IAbility ability,bool value)
+
+    public void ChangeButtonInteractible(IAbility ability, bool value)
     {
         int index = _abilities.IndexOf(ability);
         _buttons[index].interactable = value;
@@ -154,10 +154,10 @@ public class CharacterUIViewmodel
     {
         _characterController.RevertReadyUnactiveAbilityButtons();
         _characterController.SetCurrentAbility(ability);
-        ChangeButtonInteractible(ability,false);
+        ChangeButtonInteractible(ability, false);
     }
 
-    public  void VisualiseEffects(List<IEffect> displayedEffects)
+    public void VisualiseEffects(List<IEffect> displayedEffects)
     {
         GridLayoutGroup effectPanel = _uIView.GetEffectsPanel();
 
@@ -175,7 +175,7 @@ public class CharacterUIViewmodel
                 }
                 else
                 {
-                    IEffectIconView icon =  _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
+                    IEffectIconView icon = _factory.CreateEffectIcon(effectType, effectPanel.transform.position, effectPanel.transform);
                     _visualizedEffects.Add(effectType, icon);
                     _visualizedEffects[effectType].UpdateDurationText(effect.Duration);
                 }

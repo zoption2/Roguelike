@@ -133,7 +133,6 @@ namespace Gameplay
 
         public void SwitchState(IState state)
         {
-
             if (_currentState != state)
             {
                 _currentState?.OnExit();
@@ -214,7 +213,7 @@ namespace Gameplay
 
             Queue<IState> queue = new Queue<IState>();
 
-            foreach(IState queueState in _queueOfStates)
+            foreach (IState queueState in _queueOfStates)
             {
                 if (queueState != stateForRemoval)
                 {

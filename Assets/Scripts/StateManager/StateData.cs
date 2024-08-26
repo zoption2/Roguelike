@@ -63,7 +63,7 @@ namespace Gameplay
             switch (type)
             {
                 case TypeOfState.Init:
-                    state =  new InitLevelState(_scenarioInstance, _roomContext, _statsProvider, _triggerFactory, _playerFactory,
+                    state = new InitLevelState(_scenarioInstance, _roomContext, _statsProvider, _triggerFactory, _playerFactory,
                         _enemyFactory, _navigationFactory, _roomObjectsFactory, _levelManager, _levelContext, _roomBuilder, _cameraManager);
                     break;
                 case TypeOfState.PlayerTurn:

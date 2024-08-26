@@ -1,10 +1,10 @@
 using Interactions;
 using Pool;
 using System;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.AI;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 public interface IMovable
 {
@@ -15,7 +15,7 @@ public interface IInteractible
 {
     public void StartInteraction(IInteractible interactible);
     public IControllerInputs ControllerInputs { get; set; }
-    public Vector3 Normal {  get; set; }
+    public Vector3 Normal { get; set; }
     public Rigidbody GetRigidbody();
     public Vector3 GetLastVelocity();
     public Vector3 GetVelocity();
@@ -30,7 +30,7 @@ public interface ICharacterView
 
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
-    
+
 }
 
 public class CharacterView : MonoBehaviour,
@@ -43,7 +43,7 @@ public class CharacterView : MonoBehaviour,
 {
     public event Action<Transform, PointerEventData> ON_CLICK;
     public event Action<PointerEventData> ON_BEGINDRAG;
-    
+
     [SerializeField]
     private Transform _projectileSpawn;
 
@@ -56,7 +56,7 @@ public class CharacterView : MonoBehaviour,
     public NavMeshObstacle NavMeshObstacle { get; set; }
     public IControllerInputs ControllerInputs { get; set; }
     public Vector3 Normal { get; set; }
-    
+
     private Transform _viewTransform;
     private Rigidbody _rigidbody;
     private CollisionHandler _collisionHandler;
@@ -115,7 +115,7 @@ public class CharacterView : MonoBehaviour,
         var handlerType = interactible.ControllerInputs.GetType();
 
         IInteraction interactionFromDealer = ControllerInputs.GetInteraction();
-        
+
         if (!dealerType.Equals(handlerType) && interactionFromDealer != null)
         {
             interactible.ControllerInputs.ApplyInteraction(interactionFromDealer);

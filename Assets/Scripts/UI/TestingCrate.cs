@@ -1,12 +1,10 @@
 using CharactersStats;
-using Prefab;
+using SaveSystem;
+using System.Collections.Generic;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
-using SaveSystem;
-using System.Collections.Generic;
-using Interactions;
 
 public class TestingCrate : MonoBehaviour
 {
@@ -34,7 +32,7 @@ public class TestingCrate : MonoBehaviour
     {
         OriginStats load = _dataService.PlayerData.GetStats(CharacterType);
         //Debug.Log(GPrefs.dataPath);
-        if (load==null)
+        if (load == null)
         {
             OriginStats stats = _statsProvider.GetPlayerStats(CharacterType);
             _dataService.PlayerData.SetStats(CharacterType, stats);
@@ -47,7 +45,7 @@ public class TestingCrate : MonoBehaviour
     [ContextMenu("Reset Saves")]
     private void ResetPlayerSaves()
     {
-        List<CharacterType> characterTypes= _dataService.PlayerData.GetAvailablePlayers();
+        List<CharacterType> characterTypes = _dataService.PlayerData.GetAvailablePlayers();
         foreach (CharacterType characterType in characterTypes)
         {
             OriginStats defaultStats = _statsProvider.GetDefaultPlayerStats(characterType);

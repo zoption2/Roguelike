@@ -32,7 +32,7 @@ namespace BehaviourTree
                 _isAnimationCompleted = false;
                 _state = NodeState.Success;
             }
-            
+
 
             return _state;
         }

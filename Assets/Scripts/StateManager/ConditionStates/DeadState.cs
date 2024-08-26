@@ -1,7 +1,7 @@
 using Interactions;
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class DeadState : IConditionState
 {
@@ -38,7 +38,7 @@ public class DeadState : IConditionState
             _characterController.IsMoving = false;
 
         }
-        
+
         _characterController.PushIfDead();
         _characterController.HandleStopMovement();
 

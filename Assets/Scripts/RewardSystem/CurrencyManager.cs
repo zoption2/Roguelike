@@ -1,9 +1,7 @@
 using SaveSystem;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -57,7 +55,7 @@ public class CurrencyManager : ICurrencyManager
             _currencies.Add(type, count);
         }
 
-         Debug.Log("amount of " + type + ": " + _currencies[type]);
+        Debug.Log("amount of " + type + ": " + _currencies[type]);
         _dataService.PlayerData.SetAmountOfCurrency(type, _currencies[type]);
     }
 
