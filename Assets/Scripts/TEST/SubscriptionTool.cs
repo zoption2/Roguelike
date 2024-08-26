@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
@@ -27,12 +27,7 @@ public class DetailedEventSubscriptionTracker : EditorWindow
 
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-        //GUILayout.Label("Events:", EditorStyles.boldLabel);
         DisplayEvents(eventSubscriptionInfoWithUnderscore);
-
-        //GUILayout.Space(20);
-        //GUILayout.Label("Other:", EditorStyles.boldLabel);
-        //DisplayEvents(eventSubscriptionInfoWithoutUnderscore);
 
         EditorGUILayout.EndScrollView();
 
@@ -58,7 +53,6 @@ public class DetailedEventSubscriptionTracker : EditorWindow
                 if (lines[i].StartsWith(">>>"))
                 {
                     GUI.color = new Color(1.0f, 0.9f, 0.6f);
-
                     lines[i] = lines[i].Substring(3);
                 }
                 else
@@ -120,7 +114,6 @@ public class DetailedEventSubscriptionTracker : EditorWindow
 
         GUILayout.EndHorizontal();
     }
-
 
     private void DisplayEvents(Dictionary<string, EventSubscriptionInfo> eventSubscriptionInfo)
     {
@@ -210,6 +203,8 @@ public class DetailedEventSubscriptionTracker : EditorWindow
     {
         string subscriptionPattern = @"(\w+)\s*\+=\s*(\w+)";
         string unsubscriptionPattern = @"(\w+)\s*-\=\s*(\w+)";
+        string addListenerPattern = @"(\w+)\.AddListener\((\w+)\)";
+        string removeListenerPattern = @"(\w+)\.RemoveListener\((\w+)\)";
 
         var eventSubscriptionCount = new Dictionary<string, int>();
         var eventUnsubscriptionCount = new Dictionary<string, int>();
@@ -233,6 +228,7 @@ public class DetailedEventSubscriptionTracker : EditorWindow
 
                 targetDictionary[eventName].SubscriptionCount++;
                 targetDictionary[eventName].SubscribedElements.Add(new SubscriptionDetail(subscriber, filePath, i + 1));
+
 
                 if (!eventSubscriptionCount.ContainsKey(eventName))
                 {
@@ -262,6 +258,36 @@ public class DetailedEventSubscriptionTracker : EditorWindow
                     eventUnsubscriptionCount[eventName] = 0;
                 }
                 eventUnsubscriptionCount[eventName]++;
+            }
+
+            match = Regex.Match(line, addListenerPattern);
+            if (match.Success)
+            {
+                string eventName = match.Groups[1].Value;
+                string subscriber = match.Groups[2].Value;
+
+                if (!eventSubscriptionInfoWithUnderscore.ContainsKey(eventName))
+                {
+                    eventSubscriptionInfoWithUnderscore[eventName] = new EventSubscriptionInfo();
+                }
+
+                eventSubscriptionInfoWithUnderscore[eventName].SubscriptionCount++;
+                eventSubscriptionInfoWithUnderscore[eventName].SubscribedElements.Add(new SubscriptionDetail(subscriber, filePath, i + 1));
+            }
+
+            match = Regex.Match(line, removeListenerPattern);
+            if (match.Success)
+            {
+                string eventName = match.Groups[1].Value;
+                string unsubscribedElement = match.Groups[2].Value;
+
+                if (!eventSubscriptionInfoWithUnderscore.ContainsKey(eventName))
+                {
+                    eventSubscriptionInfoWithUnderscore[eventName] = new EventSubscriptionInfo();
+                }
+
+                eventSubscriptionInfoWithUnderscore[eventName].UnsubscriptionCount++;
+                eventSubscriptionInfoWithUnderscore[eventName].UnsubscribedElements.Add(new SubscriptionDetail(unsubscribedElement, filePath, i + 1));
             }
         }
     }
