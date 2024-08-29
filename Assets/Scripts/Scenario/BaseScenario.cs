@@ -29,6 +29,16 @@ namespace Gameplay
             _rewardService = rewardService;
         }
 
+        public List<CookedMapper> GetTurnsOrder()
+        {
+            return _turnsOrder;
+        }
+
+        public Queue<IState> GetQueueOfStates()
+        {
+            return _queueOfStates;
+        }
+
         public IState GetCurrentState()
         {
             return _currentState;
