@@ -1,15 +1,16 @@
-using NUnit.Framework;
-using NSubstitute;
-using System.Collections.Generic;
 using Gameplay;
-using Zenject;
+using NSubstitute;
+using NUnit.Framework;
 
+[TestFixture]
 public class ScenarioTests
 {
-    private Scenario<IRoomContext> _scenario;
+    private DefaultScenario _scenario;
     private IStateFactory _stateFactory;
     private ILevelContext _levelContext;
     private IRewardService _rewardService;
+    private IGameplayService _gameplayService;
+    private ILevelManager _levelManager;
 
     [SetUp]
     public void SetUp()
@@ -17,25 +18,20 @@ public class ScenarioTests
         _stateFactory = Substitute.For<IStateFactory>();
         _levelContext = Substitute.For<ILevelContext>();
         _rewardService = Substitute.For<IRewardService>();
+        _gameplayService = Substitute.For<IGameplayService>();
+        _levelManager = Substitute.For<ILevelManager>();
 
-        _scenario = Substitute.ForPartsOf<TestScenario>();
+        _scenario = new DefaultScenario(_gameplayService, _stateFactory, _levelManager);
         _scenario.Construct(_levelContext, _rewardService);
-        //_scenario.SetStateFactory(_stateFactory);
 
-        _scenario.ClearTurnOrder();
+        _scenario.ClearTurnsOrder();
         _scenario.ClearTurnQueue();
     }
 
-    private class TestScenario : Scenario<IRoomContext>
-    {
-        public override void CheckConditonsForEndOfScenario() { }
-        public override void Init(IScenarioContext context) { }
-    }
-
     [Test]
-    public void RenewQueue_PopulatesQueueBasedOnTurnsOrder()
+    public void Scenario_OnTurnOrderCreate_IsTheTurnOrderCorrect()
     {
-
+        // Arrange //
         var mockController1 = Substitute.For<ICharacterController>();
         var mockController2 = Substitute.For<ICharacterController>();
 
@@ -54,15 +50,16 @@ public class ScenarioTests
         _stateFactory.CreateState(TypeOfState.EnemyTurn).Returns(state2);
         _stateFactory.CreateState(TypeOfState.Interstitial).Returns(interstitialState);
 
+        // Act //
         _scenario.RenewQueue();
 
+        // Assert //
         var queueOfStates = _scenario.GetQueueOfStates();
-        Assert.AreEqual(4, queueOfStates.Count);
+        Assert.AreEqual(4, queueOfStates.Count, "The queue should contain four states.");
 
-        Assert.AreEqual(state1, queueOfStates.Dequeue());
-        Assert.AreEqual(interstitialState, queueOfStates.Dequeue());
-        Assert.AreEqual(state2, queueOfStates.Dequeue());
-        Assert.AreEqual(interstitialState, queueOfStates.Dequeue());
+        Assert.AreEqual(state1, queueOfStates.Dequeue(), "First state should be state1 (PlayerTurn).");
+        Assert.AreEqual(interstitialState, queueOfStates.Dequeue(), "Second state should be interstitialState.");
+        Assert.AreEqual(state2, queueOfStates.Dequeue(), "Third state should be state2 (EnemyTurn).");
+        Assert.AreEqual(interstitialState, queueOfStates.Dequeue(), "Fourth state should be interstitialState.");
     }
-
 }
