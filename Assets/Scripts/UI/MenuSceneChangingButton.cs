@@ -23,7 +23,7 @@ namespace UI
             Button button = GetComponent<Button>();
             button.onClick.AddListener(SwitchScene);
         }
-
+        
         private void SwitchScene()
         {
             if (_characterSelector.HasRequiredNumberOfPlayers())

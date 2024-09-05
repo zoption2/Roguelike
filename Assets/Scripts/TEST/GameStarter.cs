@@ -1,12 +1,20 @@
+using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
 public class GameStarter : MonoBehaviour
 {
-    [Inject]
     private IPoolManager _poolManager;
+    private IUIManager _UIManager;
     private Transform _globalPoolParent;
+
+    [Inject]
+    public void Construct(IPoolManager poolManager, IUIManager uIManager)
+    {
+        _poolManager = poolManager;
+        _UIManager = uIManager;
+    }
 
     public Transform GlobalPoolParent
     {
@@ -28,7 +36,13 @@ public class GameStarter : MonoBehaviour
     void Start()
     {
         _poolManager.Init(GlobalPoolParent.gameObject);
-        SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
+
+        var container = FindObjectOfType<ProjectContext>().Container;
+        container.Inject(this);
+
+        LoadingScreenManager.SetScenesToLoad(new string[] { "Menu" });
+        SceneManager.LoadScene("LoadingScene", LoadSceneMode.Additive);
+
     }
 
 }

@@ -12,6 +12,7 @@ public interface IPoolManager
     public ProjectilePooler UseProjectilePooler();
     public SlingshotPooler UseSlingshotPooler();
     public ParticlePooler UseParticlePooler();
+    public UIPooler UseUIPooler();
     void InitPool(PoolType poolType, string poolName);
     void CleanPoolers();
     public void Init(GameObject parent);
@@ -28,6 +29,7 @@ public class PoolManager : IPoolManager
     private ProjectilePooler _projectilePooler;
     private SlingshotPooler _slingshotPooler;
     private ParticlePooler _particlePooler;
+    private UIPooler _UIPooler;
     private Transform _globalParent;
     public PoolManager(
         BuffPooler buffPooler,
@@ -38,7 +40,8 @@ public class PoolManager : IPoolManager
         CharacterUIPooler characterUIPooler,
         ProjectilePooler projectilePooler,
         SlingshotPooler slingshotPooler,
-        ParticlePooler particlePooler
+        ParticlePooler particlePooler,
+        UIPooler uIPooler
     )
     {
         _buffPooler = buffPooler;
@@ -50,6 +53,7 @@ public class PoolManager : IPoolManager
         _projectilePooler = projectilePooler;
         _slingshotPooler = slingshotPooler;
         _particlePooler = particlePooler;
+        _UIPooler = uIPooler;
     }
 
     public void Init(GameObject parent)
@@ -111,6 +115,12 @@ public class PoolManager : IPoolManager
         return _particlePooler;
     }
 
+    public UIPooler UseUIPooler()
+    {
+        InitPool(PoolType.UIPool, "UIPool");
+        return _UIPooler;
+    }
+
     public void InitPool(PoolType poolType, string poolName)
     {
         switch (poolType)
@@ -142,6 +152,9 @@ public class PoolManager : IPoolManager
             case PoolType.ParticlePool:
                 InitSinglePool(_particlePooler, poolName);
                 break;
+            case PoolType.UIPool:
+                InitSinglePool(_UIPooler, poolName);
+                break;
             default:
                 Debug.LogWarning("Unknown pool type: " + poolType);
                 break;
@@ -164,7 +177,7 @@ public class PoolManager : IPoolManager
         _projectilePooler.CleanPool();
         _slingshotPooler.CleanPool();
         _particlePooler.CleanPool();
-
+        _UIPooler.CleanPool();
 
         foreach (Transform child in _globalParent)
         {

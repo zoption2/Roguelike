@@ -19,6 +19,9 @@ public class ContextInstaller : MonoInstaller
     private RoomTemplateSO _roomTemplateSO;
 
     [SerializeField]
+    private UIPrefabHolder _UIPrefabHolder;
+
+    [SerializeField]
     private LevelSetingsSO _levelSetingsSO;
 
     [SerializeField]
@@ -106,6 +109,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<ICurrencyManager>().To<CurrencyManager>().AsSingle();
         Container.Bind<ICameraManager>().To<CameraManager>().AsSingle();
 
+        Container.Bind<IUIManager>().To<UIManager>().AsSingle();
     }
 
     public void BindInteractions()
@@ -134,6 +138,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<AbilityIconPooler>().To<AbilityIconPooler>().AsSingle();
         Container.Bind<ProjectilePooler>().To<ProjectilePooler>().AsSingle();
         Container.Bind<ParticlePooler>().To<ParticlePooler>().AsSingle();
+        Container.Bind<UIPooler>().To<UIPooler>().AsSingle();
+
 
         Container.Bind<IPoolManager>().To<PoolManager>().AsSingle();
     }
@@ -165,6 +171,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<UIAbilitiesPrefabHolder>().FromInstance(_uIAbilitiesPrefabHolder).AsSingle();
         Container.Bind<RoomObjectsPrefabHolder>().FromInstance(_roomObjectsPrefabHolder).AsSingle();
         Container.Bind<ParticlePrefabHolder>().FromInstance(_particlePrefabHolder).AsSingle();
+        Container.Bind<UIPrefabHolder>().FromInstance(_UIPrefabHolder).AsSingle();
 
         Container.Bind<RoomTemplateSO>().FromInstance(_roomTemplateSO).AsSingle();
         Container.Bind<LevelSetingsSO>().FromInstance(_levelSetingsSO).AsSingle();

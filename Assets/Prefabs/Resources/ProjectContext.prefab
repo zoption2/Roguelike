@@ -75,6 +75,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roomTemplateSO: {fileID: 11400000, guid: 27378a92fbe6a754ba3efff0bef0116d, type: 2}
+  _UIPrefabHolder: {fileID: 11400000, guid: 7d53d276c1aa0a44ba2ff1cd8c7a7e49, type: 2}
   _levelSetingsSO: {fileID: 11400000, guid: f66ef1878c99c1944bfd6aa7b367a042, type: 2}
   _particlePrefabHolder: {fileID: 11400000, guid: 40bc895eacfedf74e871a4f81a8d6584, type: 2}
   _characterPrefabHolder: {fileID: 11400000, guid: 5da325074efa2ed4ea757a097f82aba8, type: 2}

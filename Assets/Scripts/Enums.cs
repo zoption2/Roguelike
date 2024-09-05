@@ -95,6 +95,15 @@ public enum UIType
 
 }
 
+public enum UIElementType
+{
+    None = 0,
+    Menu = 1,
+    LevelSelector = 2,
+
+
+}
+
 public enum NavigationType
 {
     Default = 0,
@@ -155,7 +164,8 @@ public enum PoolType
     CharacterUIPool,
     ProjectilePool,
     SlingshotPool,
-    ParticlePool
+    ParticlePool,
+    UIPool
 }
 
 public enum CurrencyType
