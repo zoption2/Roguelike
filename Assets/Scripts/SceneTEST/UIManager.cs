@@ -9,21 +9,22 @@ namespace UI
         void CreateUIElement(UIElementType type);
         void ShowUIElement(UIElementType type);
         void HideUIElement(UIElementType type);
-        GameObject GetUIElement(UIElementType type);
+        IUIWindowController GetUIElement(UIElementType type);
     }
 
     public class UIManager : IUIManager
     {
-
-        private Dictionary<UIElementType, GameObject> _uiElements = new Dictionary<UIElementType, GameObject>();
-        private GameObject _activeUIElement;
+        private Dictionary<UIElementType, IUIWindowController> _uiElements = new Dictionary<UIElementType, IUIWindowController>();
+        private IUIWindowController _activeUIElement;
         private UIPrefabHolder _UIPrefabHolder;
         private GameObject _uiParent;
+        private IUIWindowFactory _uiWindowFactory;
 
         [Inject]
-        public UIManager(UIPrefabHolder uIPrefabHolder)
+        public UIManager(UIPrefabHolder uIPrefabHolder, IUIWindowFactory uIWindowFactory)
         {
             _UIPrefabHolder = uIPrefabHolder;
+            _uiWindowFactory = uIWindowFactory;
             _uiParent = new GameObject("UI");
         }
 
@@ -31,10 +32,7 @@ namespace UI
         {
             if (!_uiElements.ContainsKey(type))
             {
-                GameObject prefab = _UIPrefabHolder.GetPrefab(type);
-                GameObject uiElement = GameObject.Instantiate(prefab);
-                uiElement.transform.SetParent(_uiParent.transform, false);
-                uiElement.SetActive(false);
+                var uiElement = _uiWindowFactory.CreateWindow(type, _uiParent.transform);
                 _uiElements.Add(type, uiElement);
             }
             else
@@ -49,11 +47,11 @@ namespace UI
             {
                 if (_activeUIElement != null)
                 {
-                    _activeUIElement.SetActive(false);
+                    _activeUIElement.SetDisactive();
                 }
 
-                GameObject uiElement = _uiElements[type];
-                uiElement.SetActive(true);
+                IUIWindowController uiElement = _uiElements[type];
+                uiElement.SetActive();
                 _activeUIElement = uiElement;
             }
             else
@@ -66,8 +64,8 @@ namespace UI
         {
             if (_uiElements.ContainsKey(type))
             {
-                GameObject uiElement = _uiElements[type];
-                uiElement.SetActive(false);
+                IUIWindowController uiElement = _uiElements[type];
+                uiElement.SetDisactive();
 
                 if (_activeUIElement == uiElement)
                 {
@@ -80,7 +78,7 @@ namespace UI
             }
         }
 
-        public GameObject GetUIElement(UIElementType type)
+        public IUIWindowController GetUIElement(UIElementType type)
         {
             if (_uiElements.ContainsKey(type))
             {
@@ -93,10 +91,4 @@ namespace UI
             }
         }
     }
-
 }
-
-
-
-
-

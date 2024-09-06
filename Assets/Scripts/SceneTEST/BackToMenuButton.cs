@@ -28,7 +28,6 @@ public class BackToMenuButton : MonoBehaviour
 
     private void DoSOmeButtonLogic()
     {
-        Debug.Log("Hi");
         _UIManager.ShowUIElement(UIElementType.Menu);
     }
 }

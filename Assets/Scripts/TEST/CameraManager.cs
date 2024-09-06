@@ -63,7 +63,7 @@ public class CameraManager : ICameraManager
         }
     }
 
-    public async void SimulateCollisionEffect(Vector3 collisionDirection)
+    public  void SimulateCollisionEffect(Vector3 collisionDirection)
     {
         //foreach (var virtualCamera in _allVirtualCameras)
         //{

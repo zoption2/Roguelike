@@ -110,6 +110,7 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<ICameraManager>().To<CameraManager>().AsSingle();
 
         Container.Bind<IUIManager>().To<UIManager>().AsSingle();
+        Container.Bind<IGameManager>().To<GameManager>().AsSingle();
     }
 
     public void BindInteractions()
@@ -157,6 +158,8 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IRoomObjectsFactory>().To<RoomObjectsFactory>().AsSingle();
         Container.Bind<IChestFactory>().To<ChestFactory>().AsSingle();
         Container.Bind<IRewardPanelFactory>().To<RewardPanelFactory>().AsSingle();
+
+        Container.Bind<IUIWindowFactory>().To<UIWindowFactory>().AsSingle();
     }
 
     public void BindPrefabHolders()
@@ -193,6 +196,9 @@ public class ContextInstaller : MonoInstaller
         Container.Bind<IEnemyController>().To<EnemyController>().AsTransient();
         Container.Bind<ICharacterPanelController>().To<CharacterPanelController>().AsTransient();
         Container.Bind<IChestController>().To<ChestController>().AsTransient();
+
+        Container.Bind<IUIWindowController>().WithId("LevelSelector").To<LevelSelectorController>().AsTransient();
+        Container.Bind<IUIWindowController>().WithId("Menu").To<MenuController>().AsTransient();
     }
 
     public void BindBehaviourTrees()

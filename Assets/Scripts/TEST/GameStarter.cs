@@ -1,41 +1,22 @@
-using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
 public class GameStarter : MonoBehaviour
 {
-    private IPoolManager _poolManager;
-    private IUIManager _UIManager;
-    private Transform _globalPoolParent;
+    private IGameManager _gameManager;
 
     [Inject]
-    public void Construct(IPoolManager poolManager, IUIManager uIManager)
+    public void Construct(IGameManager gameManager)
     {
-        _poolManager = poolManager;
-        _UIManager = uIManager;
+        _gameManager = gameManager;
     }
 
-    public Transform GlobalPoolParent
-    {
-        get
-        {
-            if (_globalPoolParent == null)
-            {
-                GameObject globalParentObject = GameObject.Find("Pools");
-                if (globalParentObject == null)
-                {
-                    globalParentObject = new GameObject("Pools");
-                }
-                _globalPoolParent = globalParentObject.transform;
-            }
-            return _globalPoolParent;
-        }
-    }
+
 
     void Start()
     {
-        _poolManager.Init(GlobalPoolParent.gameObject);
+        _gameManager.Init();
 
         var container = FindObjectOfType<ProjectContext>().Container;
         container.Inject(this);

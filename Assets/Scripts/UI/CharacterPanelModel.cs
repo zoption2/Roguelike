@@ -1,10 +1,5 @@
-using Player;
-using Prefab;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using SaveSystem;
 using CharactersStats;
+using SaveSystem;
 
 namespace UI
 {
