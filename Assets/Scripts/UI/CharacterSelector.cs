@@ -8,8 +8,7 @@ namespace UI
     public interface ICharacterSelector
     {
         void AddPanel(CharacterType characterType);
-        public RectTransform RectTrans { get; set; }
-        public void Init(int requiredPlayersNumber, RectTransform rectTransform);
+        public void Init(int requiredPlayersNumber, Transform parent);
         public void SelectPanel(ICharacterPanelController controller);
         public void UnSelectPanel(ICharacterPanelController controller);
         public bool HasRequiredNumberOfPlayers();
@@ -22,7 +21,7 @@ namespace UI
         private ICharacterPanelFactory _characterPanelFactory;
         private IDataService _dataService;
         private int _requiredPlayers;
-        public RectTransform RectTrans { get; set; }
+        private Transform _parent;
         public CharacterSelector(ICharacterPanelFactory characterPanelFactory, IDataService dataService)
         {
             _characterPanelFactory = characterPanelFactory;
@@ -61,11 +60,11 @@ namespace UI
             DataTransfer.TypeCollection.Remove(controller.GetModelType());
         }
 
-        public void Init(int requiredPlayersNumber, RectTransform rectTransform)
+        public void Init(int requiredPlayersNumber, Transform parent)
         {
             DataTransfer.ClearCollections();
-            RectTrans = rectTransform;
             _requiredPlayers = requiredPlayersNumber;
+            _parent = parent;
             List<CharacterType> availablePlayers = new List<CharacterType>();
             availablePlayers = _dataService.PlayerData.GetAvailablePlayers();
             _unSelectedPanels = new List<ICharacterPanelController>();
@@ -80,7 +79,7 @@ namespace UI
         }
         public void AddPanel(CharacterType characterType)
         {
-            ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(characterType, RectTrans);
+            ICharacterPanelController controller = _characterPanelFactory.CreateCharacterPanel(characterType, _parent);
             _availablePanels.Add(controller);
             _unSelectedPanels.Add(controller);
             if (HasRequiredNumberOfPlayers())

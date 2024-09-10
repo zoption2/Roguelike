@@ -1,5 +1,6 @@
 using CharactersStats;
 using SaveSystem;
+using UnityEngine;
 
 namespace UI
 {
@@ -21,6 +22,7 @@ namespace UI
         {
             PlayerCharacterType = playerType;
             OriginStats stats = _dataService.PlayerData.GetStats(playerType);
+            Debug.Log("CharacterPanelModel was inited");
         }
     }
 }

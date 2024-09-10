@@ -18,6 +18,7 @@ namespace UI
     {
         public void Init(ICharacterPanelView panelView, ICharacterPanelModel panelModel);
         public CharacterType GetModelType();
+        public void ChangeBool(bool toggleValue);
         public void RevertInteract();
         public bool _isEnabled { get; set; }
     }
@@ -33,6 +34,7 @@ namespace UI
         }
         public void ChangeBool(bool toggleValue)
         {
+            Debug.LogWarning("sELECTED!");
             _isEnabled = toggleValue;
             if (_isEnabled)
             {
@@ -57,7 +59,7 @@ namespace UI
         {
             _panelModel = panelModel;
             _panelView = panelView;
-            _panelView.Init(this);
+            _panelView.Init(this, this);
             _panelModel.Init(_panelView.CharacterType);
         }
     }

@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,13 +14,23 @@ public class MagneticScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     private RectTransform[] characterPanels;
     private RectTransform scrollViewport;
+    private ILevelSelectorView _levelSelectorView;
+    private List<ICharacterPanelView> _characterPanelViews;
 
     private void Start()
     {
-        characterPanels = new RectTransform[contentPanel.childCount];
-        for (int i = 0; i < contentPanel.childCount; i++)
+        //_levelSelectorView = FindObjectOfType<LevelSelectorView>();
+    }
+
+    public void Init(ILevelSelectorView levelSelectorView)
+    {
+        _levelSelectorView = levelSelectorView;
+        _characterPanelViews = _levelSelectorView.GetCharacterPanels();
+
+        characterPanels = new RectTransform[_characterPanelViews.Count];
+        for (int i = 0; i < _characterPanelViews.Count; i++)
         {
-            characterPanels[i] = contentPanel.GetChild(i).GetComponent<RectTransform>();
+            characterPanels[i] = _characterPanelViews[i].GameObject.GetComponent<RectTransform>();
         }
 
         scrollViewport = scrollRect.viewport;
@@ -43,14 +55,16 @@ public class MagneticScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         if (closestPanel != null)
         {
             Vector2 targetPosition = GetSnapPosition(closestPanel);
-
+            Debug.Log("Before while");
             while (Vector2.Distance(contentPanel.anchoredPosition, targetPosition) > snapThreshold)
             {
                 contentPanel.anchoredPosition = Vector2.Lerp(contentPanel.anchoredPosition, targetPosition, snapSpeed * Time.deltaTime);
                 yield return null;
             }
-
+            Debug.Log("After while");
             contentPanel.anchoredPosition = targetPosition;
+
+            SelectClosestPanel(closestPanel);
         }
     }
 
@@ -71,6 +85,22 @@ public class MagneticScroll : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
 
         return closestPanel;
+    }
+
+    private void SelectClosestPanel(RectTransform closestPanel)
+    {
+        foreach (var characterPanelView in _characterPanelViews)
+        {
+            if (characterPanelView.GameObject.GetComponent<RectTransform>() == closestPanel)
+            {
+                ICharacterPanelController charcterPanelController = characterPanelView.GetCharacterPanelController();
+                charcterPanelController.ChangeBool(true); 
+            }
+            else
+            {
+                characterPanelView.GetCharacterPanelController().ChangeBool(false);
+            }
+        }
     }
 
     private float GetDistanceToCenter(RectTransform panel)

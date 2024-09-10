@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IWindowView
 {
-    public void Init();
+    
 }
